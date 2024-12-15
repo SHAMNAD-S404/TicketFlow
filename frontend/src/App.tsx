@@ -1,6 +1,6 @@
 import './App.css'
-import LandingNavbar from './components/user/layout/landingNavbar'
-import HeroSection from './components/user/home/HeroSection'
+//import LandingNavbar from './components/user/layout/landingNavbar'
+import LandingPage from './pages/LandingPage'
 
 
 function App() {
@@ -8,7 +8,8 @@ function App() {
   return (
     
    // <LandingNavbar/>
-    <HeroSection/>
+   <LandingPage/>
+   
   )
 }
 
