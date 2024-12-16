@@ -42,17 +42,17 @@ const features = [
 
 const FeatureSession: React.FC = () => {
   return (
-    <section className="bg-blue-50 py-12">
+    <section className="bg-blue-100 py-12">
       <div className="container mx-auto px-6 md:px-12">
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
             Explore Our Innovative Ticketing Feature
           </h2>
-          <p className="text-gray-600 md:text-lg">
+          <p className="text-gray-600 md:text-lg font-medium shado">
             Our IT Ticketing System is designed to streamline communication
             between departments. With real-time updates and efficient ticket
-            management, your team can resolve issues faster than ever.
+            management,<br/> your team can resolve issues faster than ever.
           </p>
         </div>
 

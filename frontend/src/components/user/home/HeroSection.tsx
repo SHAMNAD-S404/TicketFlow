@@ -23,10 +23,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
         {/* Text section*/}
         <div className="lg:w-1/2 w-full">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 leading-tight">
+          <h1 className="text-2xl md:text-4xl font-bold text-gray-800 leading-tight">
             {heading}
           </h1>
-          <p className="mt-6 text-gray-600 text-lg"> {text} </p>
+          <p className="mt-6 text-gray-600 phone:text-sm md:text-lg"> {text} </p>
           <div className="mt-8 flex space-x-4">
             <button className="bg-black text-white px-6  py-3 rounded-full shadow-md hover:bg-gray-600 transition">
               Learn More
@@ -40,7 +40,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         {/*Right Content*/}
         <div className="lg:w-1/2 w-full flex justify-center mt-10 lg:mt-0">
           <img src={image} alt="image" 
-            className="max-w-full h-auto object-contain rounded-lg shadow-lg "
+            className="max-w-full h-auto object-contain  "
           />
         </div>
       </div>
