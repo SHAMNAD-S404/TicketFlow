@@ -5,9 +5,11 @@ const TrialComponent: React.FC = () => {
     <section className="bg-blue-100 py-8 px-6 lg:px-16 flex flex-col lg:flex-row items-center justify-between gap-6">
       {/* Left Text Section */}
       <div className="w-full lg:w-1/2 text-center ">
-        <h2 className="text-2xl bg-gradient-to-r from-purple-600 via-green-500 to-blue-700 bg-clip-text text-transparent
+        <h2
+          className="text-2xl bg-gradient-to-r from-purple-600 via-green-500 to-blue-700 bg-clip-text text-transparent
             lg:text-5xl font-bold sm:mb-4  hover:bg-gradient-to-r hover:from-yellow-500 hover:via-red-500 hover:to-pink-500
-            hover:text-transparent hoer:bg-clip-text transition duration-300 ">
+            hover:text-transparent hoer:bg-clip-text transition duration-300 "
+        >
           Start your free trial today
         </h2>
       </div>

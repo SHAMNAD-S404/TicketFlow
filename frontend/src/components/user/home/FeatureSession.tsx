@@ -52,7 +52,8 @@ const FeatureSession: React.FC = () => {
           <p className="text-gray-600 md:text-lg font-medium shado">
             Our IT Ticketing System is designed to streamline communication
             between departments. With real-time updates and efficient ticket
-            management,<br/> your team can resolve issues faster than ever.
+            management,
+            <br /> your team can resolve issues faster than ever.
           </p>
         </div>
 

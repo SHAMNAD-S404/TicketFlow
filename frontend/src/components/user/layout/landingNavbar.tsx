@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { MdLogin, MdPersonAddAlt1 } from "react-icons/md";
 
 const LandingNavbar: React.FC = () => {
-  
   // State to toggle mobile menu
   const [isOpen, setIsOpen] = useState(false);
 
@@ -10,7 +9,7 @@ const LandingNavbar: React.FC = () => {
   const navmenuList: string[] = ["Features", "Customers", "Pricing", "About"];
 
   return (
-    <nav className="bg-blue-100 shadow-md ">
+    <nav className="bg-blue-200 shadow-md ">
       <div className="container  gap-2  px-6 py-4 flex justify-between items-center">
         {/* Logo */}
         <div className="text-2xl font-bold text-black">
