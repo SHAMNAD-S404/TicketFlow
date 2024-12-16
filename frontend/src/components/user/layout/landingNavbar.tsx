@@ -10,7 +10,7 @@ const LandingNavbar: React.FC = () => {
   const navmenuList: string[] = ["Features", "Customers", "Pricing", "About"];
 
   return (
-    <nav className="bg-gray-50 shadow-md ">
+    <nav className="bg-blue-100 shadow-md ">
       <div className="container  gap-2  px-6 py-4 flex justify-between items-center">
         {/* Logo */}
         <div className="text-2xl font-bold text-black">
@@ -88,7 +88,7 @@ const LandingNavbar: React.FC = () => {
             className="bg-gradient-to-r from-purple-500 to-blue-600 p-2 rounded-full w-44 
           hover:bg-gradient-to-r hover:from-yellow-500 hover:to-red-500  "
           >
-            <span className="font-semibold text-white shadow-xl flex items-center gap-1 ms-2 hover:text-black">
+            <span className="font-semibold text-white  flex items-center gap-1 ms-2 hover:text-black">
               Start Free Trial
               <span className="text-2xl ms-1">
                 <MdPersonAddAlt1 />

@@ -9,8 +9,31 @@ import LandingNavbar from '../components/user/layout/landingNavbar';
 import FeatureSession from '../components/user/home/FeatureSession';
 import DetailFeature from '../components/user/home/DetailFeature';
 import TrialComponent from '../components/user/home/TrialComponent';
+import FAQComponent from '../components/user/home/FAQComponent';
+
+
 
 const LandingPage :React.FC = () => {
+
+  const faqData =[
+    {
+      question: "How this UI Kit is different from others in market?",
+      answer:"This UI Kit offers a seamless user experience with unique components, easy-to-use designs, and high flexibility.",
+    },
+    {
+      question: "How long do you provide support?",
+      answer: "We provide lifetime support for all our customers after purchase.",
+    },
+    {
+      question: "Do I need any experience to work with this kit?",
+      answer:"No, you can use this kit without prior design or development experience.",
+    },
+    {
+      question: "What kind of files are included?",
+      answer:"The kit includes Figma, Sketch, and Adobe XD files for all components.",
+    },
+  ]
+
   return (
     <div>
 
@@ -69,6 +92,8 @@ const LandingPage :React.FC = () => {
         />
 
         <TrialComponent/>
+
+        <FAQComponent faqs={faqData} />
 
     </div>
   )
