@@ -1,15 +1,11 @@
-import './App.css'
-//import LandingNavbar from './components/user/layout/landingNavbar'
-import LandingPage from './pages/LandingPage'
+import React from 'react'
+import AppRoutes from './routes'
 
-
-function App() {
-
+const App :React.FC = () => {
   return (
-    
-   // <LandingNavbar/>
-   <LandingPage/>
-   
+    <div>
+      <AppRoutes/>
+    </div>
   )
 }
 

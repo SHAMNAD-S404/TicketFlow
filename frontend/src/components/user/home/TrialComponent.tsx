@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
+import SignUpModal from "../../UI/signUpModal";
 
 const TrialComponent: React.FC = () => {
+   const [showModal, setShowModal] = useState<boolean>(false);
+
   return (
     <section className="bg-blue-100 py-8 px-6 lg:px-16 flex flex-col lg:flex-row items-center justify-between gap-6">
       {/* Left Text Section */}
@@ -22,7 +25,9 @@ const TrialComponent: React.FC = () => {
           your organization's ticket management.
         </p>
         <div className="flex  justify-center gap-3 py-4">
-          <button className="bg-black text-white  py-2 px-6 rounded-md hover:bg-blue-700 transition duration-300">
+          <button
+             onClick={() => setShowModal(true)}
+             className="bg-black text-white  py-2 px-6 rounded-md hover:bg-blue-700 transition duration-300">
             Sign Up
           </button>
           <button className="bg-transparent border-2 border-black text-black py-2 px-6 rounded-md hover:bg-black hover:text-white transition ">
@@ -30,6 +35,9 @@ const TrialComponent: React.FC = () => {
           </button>
         </div>
       </div>
+
+         {/* Modal Component */}
+      <SignUpModal isOpen={showModal} onClose={() => setShowModal(false)} />
     </section>
   );
 };

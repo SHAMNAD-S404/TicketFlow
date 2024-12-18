@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { MdLogin, MdPersonAddAlt1 } from "react-icons/md";
+import SignUpModal from "../../UI/signUpModal";
 
 const LandingNavbar: React.FC = () => {
   // State to toggle mobile menu
   const [isOpen, setIsOpen] = useState(false);
-
+  const [showModal, setShowModal] = useState<boolean>(false);
   // Navbar menu list
   const navmenuList: string[] = ["Features", "Customers", "Pricing", "About"];
 
@@ -12,8 +13,10 @@ const LandingNavbar: React.FC = () => {
     <nav className="bg-blue-200 shadow-md ">
       <div className="container  gap-2  px-6 py-4 flex justify-between items-center">
         {/* Logo */}
-        <div className="text-2xl font-bold text-black">
-          <span className="text-blue-700 font-extrabold">Ticket</span>
+        <div className="text-2xl font-bold text-black hover:bg-gradient-to-l hover:from-purple-500 hover:via-orange-500 hover:to-yellow-500 hover:text-transparent hover:bg-clip-text transition-all duration-300">
+          <span className="text-blue-700 font-extrabold  hover:bg-gradient-to-l hover:from-purple-500 hover:via-orange-500 hover:to-yellow-500 hover:text-transparent hover:bg-clip-text transition-all duration-300">
+            Ticket
+          </span>
           Flow
         </div>
 
@@ -85,7 +88,8 @@ const LandingNavbar: React.FC = () => {
 
           <button
             className="bg-gradient-to-r from-purple-500 to-blue-600 p-2 rounded-full w-44 
-          hover:bg-gradient-to-r hover:from-yellow-500 hover:to-red-500  "
+                 hover:bg-gradient-to-r hover:from-yellow-500 hover:to-red-500  "
+            onClick={() => setShowModal(true)}
           >
             <span className="font-semibold text-white  flex items-center gap-1 ms-2 hover:text-black">
               Start Free Trial
@@ -114,12 +118,16 @@ const LandingNavbar: React.FC = () => {
             <button className="block w-full px-4 py-2 font-semibold text-blue-600 border-2 border-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition duration-300">
               Sign In
             </button>
-            <button className="block w-full px-4 py-2 font-semibold bg-blue-600 text-white rounded-full hover:bg-blue-900 transition duration-300">
+            <button 
+              onClick={() => setShowModal(true)}
+              className="block w-full px-4 py-2 font-semibold bg-blue-600 text-white rounded-full hover:bg-blue-900 transition duration-300">
               Start Free Trial
             </button>
           </div>
         </div>
       )}
+      {/* Modal Component */}
+      <SignUpModal isOpen={showModal} onClose={() => setShowModal(false)} />
     </nav>
   );
 };

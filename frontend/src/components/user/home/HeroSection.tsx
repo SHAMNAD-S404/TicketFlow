@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import SignUpModal from "../../UI/signUpModal";
 
 interface HeroSectionProps {
   heading: string;
@@ -15,6 +16,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 }) => {
   //state to store displayed text for the type effect
   const [displayedText, setDisplayedText] = useState<string>("");
+  const [showModal, setShowModal] = useState<boolean>(false); //signup modal
 
   useEffect(() => {
     let currentIndex = 0;
@@ -46,7 +48,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <button className="bg-black text-white px-6  py-3 rounded-full shadow-md hover:bg-gray-600 transition">
               Learn More
             </button>
-            <button className="border-2 border-black text-black px-6 py-3 rounded-full shadow-md hover:bg-blue-600 hover:text-white hover:border-blue-600 transition">
+            <button 
+               onClick={() => setShowModal(true)}
+              className="border-2 border-black text-black px-6 py-3 rounded-full shadow-md hover:bg-blue-600 hover:text-white hover:border-none ">
               Sign Up
             </button>
           </div>
@@ -61,6 +65,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           />
         </div>
       </div>
+
+                {/* Modal Component */}
+      <SignUpModal isOpen={showModal} onClose={() => setShowModal(false)} />
+
     </section>
   );
 };
