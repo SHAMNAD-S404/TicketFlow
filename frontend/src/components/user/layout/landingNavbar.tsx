@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import { MdLogin, MdPersonAddAlt1 } from "react-icons/md";
 import SignUpModal from "../../UI/signUpModal";
+import LoginModal from "../../UI/LoginModal";
 
 const LandingNavbar: React.FC = () => {
   // State to toggle mobile menu
   const [isOpen, setIsOpen] = useState(false);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [loginModal, setLoginModal] = useState<boolean>(false);
+
+  const openLoginModal = () => setLoginModal(true);
+  const closeLoginModal = () => setLoginModal(false);
+
   // Navbar menu list
   const navmenuList: string[] = ["Features", "Customers", "Pricing", "About"];
 
@@ -80,6 +86,7 @@ const LandingNavbar: React.FC = () => {
           <button
             className="bg-white shadow-xl p-2 rounded-full w-28 hover:bg-gradient-to-r from-red-500 to-yellow-600 
           hover:text-white"
+            onClick={openLoginModal}
           >
             <span className="font-semibold flex justify-center items-center">
               Sign In <MdLogin />
@@ -115,12 +122,16 @@ const LandingNavbar: React.FC = () => {
             ))}
           </ul>
           <div className="px-6 py-6 space-y-2 font-medium">
-            <button className="block w-full px-4 py-2 font-semibold text-blue-600 border-2 border-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition duration-300">
+            <button
+              className="block w-full px-4 py-2 font-semibold text-blue-600 border-2 border-blue-600 rounded-full hover:bg-blue-600 hover:text-white transition duration-300"
+              onClick={openLoginModal}
+            >
               Sign In
             </button>
-            <button 
+            <button
               onClick={() => setShowModal(true)}
-              className="block w-full px-4 py-2 font-semibold bg-blue-600 text-white rounded-full hover:bg-blue-900 transition duration-300">
+              className="block w-full px-4 py-2 font-semibold bg-blue-600 text-white rounded-full hover:bg-blue-900 transition duration-300"
+            >
               Start Free Trial
             </button>
           </div>
@@ -128,6 +139,8 @@ const LandingNavbar: React.FC = () => {
       )}
       {/* Modal Component */}
       <SignUpModal isOpen={showModal} onClose={() => setShowModal(false)} />
+      {/* Render Login modal */}
+      <LoginModal isOpen={loginModal} onClose={closeLoginModal} />
     </nav>
   );
 };

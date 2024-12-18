@@ -2,7 +2,11 @@ import React from "react";
 import { FaGoogle } from "react-icons/fa";
 import Register from "../../assets/images/register.png";
 
-const SignupForm: React.FC = () => {
+interface SignupFormProps {
+  onCreateAccount : ()=> void;
+}
+
+const SignupForm: React.FC<SignupFormProps> = ({onCreateAccount}) => {
   return (
     <div className="min-h-screen phone:bg-white md:bg-gray-50  flex items-center justify-center px-4 ">
       {/* container */}
@@ -113,7 +117,8 @@ const SignupForm: React.FC = () => {
             {/* Buttons */}
             <div className="mt-6">
               <button
-                type="submit"
+                type="button"
+                onClick={onCreateAccount}
                 className="w-full bg-purple-600 text-white py-2 rounded-md  hover:font-bold hover:bg-gradient-to-r from-blue-500 to-green-600 font-medium transition"
               >
                 Create account
