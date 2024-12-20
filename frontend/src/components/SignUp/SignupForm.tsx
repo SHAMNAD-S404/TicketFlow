@@ -1,6 +1,7 @@
 import React from "react";
 import { FaGoogle } from "react-icons/fa";
 import Register from "../../assets/images/register.png";
+import { Link } from "react-router-dom";
 
 interface SignupFormProps {
   onCreateAccount : ()=> void;
@@ -133,9 +134,12 @@ const SignupForm: React.FC<SignupFormProps> = ({onCreateAccount}) => {
 
               <p className="text-center text-gray-600 text-sm mt-4">
                 Already have an account?{" "}
-                <a href="/login" className="text-purple-500 hover:underline">
-                  Login
-                </a>
+                <Link
+                  to="/login?role=admin"
+                  className="text-purple-500 hover:underline font-medium hover:font-bold "
+                  >
+                Login
+                </Link>
               </p>
             </div>
           </form>

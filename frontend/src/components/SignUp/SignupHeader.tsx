@@ -1,6 +1,12 @@
 import React from "react";
 
-const SignupHeader: React.FC = () => {
+interface SignupHeaderProps {
+  showDescription?: boolean;
+}
+
+const SignupHeader: React.FC<SignupHeaderProps> = ({
+  showDescription = true,
+}) => {
   return (
     <nav className="w-full bg-blue-100 border-b  border-gray-200">
       <div className="max-w-7xl mx-5 px-4 sm:px-6 lg:px-6">
@@ -13,12 +19,15 @@ const SignupHeader: React.FC = () => {
                   Flow
                 </span>{" "}
               </h1>
-              <p className="text-sm text-gray-600 italic">
-                Welcome to TicketFlow .{" "}
-                <span className="hidden md:inline-block text-blue-500 font-medium ">
-                  Register to unlock the power of seamless IT ticket management.
-                </span>
-              </p>
+              {showDescription && (
+                <p className="text-sm text-gray-600 italic">
+                  Welcome to TicketFlow.{" "}
+                  <span className="hidden md:inline-block text-blue-500 font-medium">
+                    Register to unlock the power of seamless IT ticket
+                    management.
+                  </span>
+                </p>
+              )}
             </div>
           </div>
         </div>

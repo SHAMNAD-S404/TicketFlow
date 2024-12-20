@@ -3,7 +3,7 @@ import Verify from "../../assets/images/verify.png";
 import Swal from 'sweetalert2'
 import { useNavigate } from "react-router-dom";
 
-const OtpVerification: React.FC = () => {
+const VerifyOtp: React.FC = () => {
 
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [timer, setTimer] = useState(4 * 60 + 59); //initial countdown
@@ -139,4 +139,4 @@ const OtpVerification: React.FC = () => {
   );
 };
 
-export default OtpVerification;
+export default VerifyOtp;

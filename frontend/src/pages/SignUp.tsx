@@ -20,7 +20,7 @@ const SignUp :React.FC = () => {
   
   return (
     <div className='singup-page'>
-        <SignupHeader/>
+        <SignupHeader />
 
         {step === "signup" ? (
            <SignupForm onCreateAccount={handleCreateAccount} />
