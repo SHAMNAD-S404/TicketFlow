@@ -3,14 +3,16 @@ import AdminLoginImg from "../../assets/images/adminLogin.png";
 import { Link } from "react-router-dom";
 import ForgotPassEmail from "./ForgotPassEmail";
 import VerifyOtp from "./VerifyOtp";
+import NewPassword from "./NewPassword";
 
 const CoAdminLogin: React.FC = () => {
 
-  const [step , setStep] = useState<"login" | "forgotPassword" | "verifyCode">("login");
+  const [step , setStep] = useState<"login" | "forgotPassword" | "verifyCode" | "newPassword">("login");
 
   const handleForgotPassword = ()=> setStep("forgotPassword");
   const handleSubmitEmail = () => setStep("verifyCode");
   const handleBackToLogin = () => setStep("login");
+  const handleSetPassword = () => setStep("newPassword")
 
 
 
@@ -103,7 +105,8 @@ const CoAdminLogin: React.FC = () => {
     </div>
     )}
     {step === "forgotPassword" && <ForgotPassEmail onSubmitEmail={handleSubmitEmail} onBacktoLogin = {handleBackToLogin} /> }
-    {step === "verifyCode" && <VerifyOtp/> }
+    {step === "verifyCode" && <VerifyOtp  verifyHandler = {handleSetPassword}   /> }
+    {step === "newPassword"&& <NewPassword  loginHandler = {handleBackToLogin} /> }
 
 
     </div>

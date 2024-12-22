@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import Verify from "../../assets/images/verify.png";
-import Swal from 'sweetalert2'
 import { useNavigate } from "react-router-dom";
 
-const VerifyOtp: React.FC = () => {
+interface VerifyOtpProps {
+  verifyHandler  : () => void
+}
+
+const VerifyOtp: React.FC<VerifyOtpProps> = ({ verifyHandler }) => {
 
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [timer, setTimer] = useState(4 * 60 + 59); //initial countdown
@@ -49,28 +52,6 @@ const VerifyOtp: React.FC = () => {
     }
   }
 
-  //formate timer
-  // const formatTime = () => {
-  //   const minute = Math.floor(timer / 60);
-  //   const seconds = timer % 60;
-  //   return `${minute} : ${seconds < 10 ? `0${seconds}` : seconds}`;
-  // };
-
-  const handleOtpVerify = () => {
-    //otp verification logic will perform here
-
-    localStorage.removeItem("signupStep");
-    Swal.fire({
-      title: "OTP Verification Successfull",
-      text: "Kindly login with your credentials",
-      icon: "success",
-    }).then(() => {
-
-      navigate("/login?role=admin")
-    })
-    
-    console.log("otp state cleared")
-  }
 
   return (
     <div className="flex  items-center justify-center h-screen  bg-gray-50">
@@ -124,7 +105,7 @@ const VerifyOtp: React.FC = () => {
           <button
             type="button"
             className="w-full bg-blue-600 hover:bg-green-600 text-white py-2 rounded-lg text-lg font-medium"
-            onClick={handleOtpVerify}
+            onClick={verifyHandler}
           >
             Verify
           </button>
