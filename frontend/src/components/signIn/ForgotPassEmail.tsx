@@ -3,11 +3,13 @@ import ForgotImg from "../../assets/images/forgot2.png";
 import { IoMdArrowRoundBack } from "react-icons/io";
 
 interface ForgotPassEmailProps {
+  userType : "admin" | "user";
   onSubmitEmail: () => void;
   onBacktoLogin: () => void;
 }
 
 const ForgotPassEmail: React.FC<ForgotPassEmailProps> = ({
+  userType,
   onSubmitEmail,
   onBacktoLogin,
 }) => {

@@ -1,13 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
 import Register from "../../assets/images/register.png";
 import { Link } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import Tooltips from "../utility/Tooltips";
 
 interface SignupFormProps {
-  onCreateAccount : ()=> void;
+  onCreateAccount: () => void;
 }
 
-const SignupForm: React.FC<SignupFormProps> = ({onCreateAccount}) => {
+const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
+  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
   return (
     <div className="min-h-screen phone:bg-white md:bg-gray-50  flex items-center justify-center px-4 ">
       {/* container */}
@@ -29,9 +37,11 @@ const SignupForm: React.FC<SignupFormProps> = ({onCreateAccount}) => {
           <form className="space-y-4 ">
             <div className=" grid grid-cols-1 md:grid-cols-2 gap-2">
               <div>
-                <label className="text-sm font-semibold text-gray-600">
+                <label className="text-sm font-semibold text-gray-600 flex gap-1 items-center ">
                   Enter Company Name
+                  <Tooltips message="Only Contain Alphabates and numbers" />
                 </label>
+
                 <input
                   type="text"
                   placeholder=" Ticket India Ltd"
@@ -42,16 +52,26 @@ const SignupForm: React.FC<SignupFormProps> = ({onCreateAccount}) => {
                 <label className="text-sm font-semibold text-gray-600">
                   Choose company type
                 </label>
-                <input
-                  type="text"
-                  placeholder="Eg: IT Industry"
-                  className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
+                <select
+                  className="w-full p-2 mt-1  bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 "
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Select a company type
+                  </option>
+                  <option value="IT Industry">IT Industry</option>
+                  <option value="Healthcare">Healthcare</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Education">Education</option>
+                  <option value="Manufacturing">Manufacturing</option>
+                  <option value="Retail">Retail</option>
+                </select>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">
+                <label className="text-sm font-semibold text-gray-600 flex items-center gap-1  ">
                   Enter Phone number
+                  <Tooltips message="Numbers only allowed" />
                 </label>
                 <input
                   type="tel"
@@ -61,8 +81,9 @@ const SignupForm: React.FC<SignupFormProps> = ({onCreateAccount}) => {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">
+                <label className="text-sm font-semibold text-gray-600 flex items-center gap-1  ">
                   Enter Corporate Identification Number
+                  <Tooltips message="Numbers and alphabates only allowed" />
                 </label>
                 <input
                   type="text"
@@ -82,8 +103,9 @@ const SignupForm: React.FC<SignupFormProps> = ({onCreateAccount}) => {
                 />
               </div>
               <div>
-                <label className="text-sm font-semibold text-gray-600">
+                <label className="text-sm font-semibold text-gray-600 flex items-center gap-1 ">
                   Enter origin country
+                  <Tooltips message="Characters only allowed " />
                 </label>
                 <input
                   type="text"
@@ -93,25 +115,46 @@ const SignupForm: React.FC<SignupFormProps> = ({onCreateAccount}) => {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">
+                <label className="text-sm font-semibold text-gray-600 flex items-center gap-1 ">
                   Enter new password
+                  <Tooltips message="Length should be from 8 to 15 . Must be contain numbers and character" />
                 </label>
-                <input
-                  type="password"
-                  placeholder="********"
-                  className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
+                <div className="relative">
+                  <input
+                    type={passwordVisible ? "text" : "password"}
+                    placeholder="********"
+                    className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 pr-10"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className=" absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-blue-600 "
+                  >
+                    {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">
+                <label className="text-sm font-semibold text-gray-600 flex items-center gap-1 ">
                   Enter confirm password
+                  <Tooltips message="Length should be from 8 to 15 . Must be contain numbers and character" />
                 </label>
-                <input
-                  type="password"
-                  placeholder="********"
-                  className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
+                <div className="relative">
+                  <input
+                    type={passwordVisible ? "text" : "password"}
+                    placeholder="********"
+                    className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className=" absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-blue-600 "
+                  >
+                    {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -137,8 +180,8 @@ const SignupForm: React.FC<SignupFormProps> = ({onCreateAccount}) => {
                 <Link
                   to="/login?role=admin"
                   className="text-purple-500 hover:underline font-medium hover:font-bold "
-                  >
-                Login
+                >
+                  Login
                 </Link>
               </p>
             </div>

@@ -1,11 +1,13 @@
 import React from "react";
 import NewPasswordImg from "../../assets/images/setPass.png";
+import Tooltips from "../utility/Tooltips";
 
 interface NewPasswordProps {
+  userType: "admin" | "user";
   loginHandler: () => void;
 }
 
-const NewPassword: React.FC<NewPasswordProps> = ({ loginHandler }) => {
+const NewPassword: React.FC<NewPasswordProps> = ({ loginHandler,userType }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
   };
@@ -22,8 +24,9 @@ const NewPassword: React.FC<NewPasswordProps> = ({ loginHandler }) => {
           your account.
         </p>
         <form onSubmit={handleSubmit} className="mt-6 ">
-          <label className="block text-start text-base  font-medium text-gray-700 mt-4">
+          <label className="flex text-start text-base  font-medium text-gray-700 mt-4  items-center gap-1">
             Set a new strong password
+            <Tooltips message="Length should be from 8 to 15 . Must be contain numbers and character" />
           </label>
           <input
             type="password"
@@ -32,8 +35,9 @@ const NewPassword: React.FC<NewPasswordProps> = ({ loginHandler }) => {
             className="w-4/5 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
             required
           />
-          <label className="block text-base font-medium text-gray-700 mt-4">
+          <label className="flex text-base font-medium text-gray-700 mt-4  items-center gap-1">
             Confirm password
+            <Tooltips message="Length should be from 8 to 15 . Must be contain numbers and character" />
           </label>
           <input
             type="password"
