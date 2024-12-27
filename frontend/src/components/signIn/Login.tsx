@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import AdminLoginImg from "../../assets/images/adminLogin.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import axios from "axios";
 
 interface LoginProps {
   handleforgotPass: () => void;
@@ -9,9 +10,35 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
+  };
+
+  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      // const response = await axios.post('api/login' , {
+      //   username : "",
+      //   password : "pass",
+      // })
+
+      // if(response.status === 200){
+      //   //here navigation and other things will work
+      // }
+
+      navigate("/admin/dashboard");
+    } catch (error) {
+      setError("Login failed, Please check iteiiiiiiii");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,7 +62,7 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
             Fill the credentials to login to the company admin dashboard
           </p>
 
-          <form>
+          <form onSubmit={handleLogin}>
             <div className="mb-6">
               <label
                 htmlFor="email"
@@ -88,9 +115,11 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
             <button
               type="submit"
               className="w-full bg-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              disabled={loading}
             >
-              Log in
+              {loading ? "Loggin in..." : "Log in"}
             </button>
+            {error && <p className="text-red-500 mt-2">{error}</p>}
           </form>
 
           <p className="mt-6 text-center text-gray-600">

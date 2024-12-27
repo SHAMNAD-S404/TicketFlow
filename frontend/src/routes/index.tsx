@@ -1,32 +1,31 @@
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LandingPage from "../pages/LandingPage";
+import AuthRoutes from "./AuthRoutes";
+import SuperAdminRoutes from "./SuperAdminRoutes";
+import CompanyAdminRoutes from "./CompanyAdminRoutes";
 
-import React from 'react'
-import { BrowserRouter as Router , Routes , Route } from 'react-router-dom';
-import LandingPage from '../pages/LandingPage';
-import AuthRoutes from './AuthRoutes';
-import SuperAdminRoutes from './SuperAdminRoutes';
-
-const AppRoutes : React.FC = () => {
+const AppRoutes: React.FC = () => {
   return (
-    
     <Router>
-        <Routes>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<LandingPage />} />
 
-            {/* Public Routes */}
-            <Route path='/' element = { <LandingPage/> } />
+        {/* Authentication Routes */}
+        <Route path="/*" element={<AuthRoutes />} />
 
-            {/* Authentication Routes */}
-            <Route path='/*' element = { <AuthRoutes/> } />
+        {/* Super Admin Routes */}
+        <Route path="/sudo/*" element={<SuperAdminRoutes />} />
 
-            {/* Super Admin Routes */}
-            <Route path='/superadmin' element = { <SuperAdminRoutes/> } />
+        {/* Company Admin Routes */}
+        <Route path="/admin/*" element={<CompanyAdminRoutes />} />
 
-            {/* Fallback Route */}
-            <Route path='*' element={<h1> 404 - Page Not Found </h1>} />
-
-        </Routes>
-
+        {/* Fallback Route */}
+        <Route path="*" element={<h1> 404 - Page Not Found </h1>} />
+      </Routes>
     </Router>
-  )
-}
+  );
+};
 
-export default AppRoutes
+export default AppRoutes;

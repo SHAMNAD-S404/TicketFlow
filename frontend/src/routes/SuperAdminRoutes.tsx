@@ -1,8 +1,15 @@
 import React from 'react'
+import { Route, Routes } from 'react-router-dom'
+import SuperAdminLogin from '../components/admin/SuperAdminLogin'
 
-const SuperAdminRoutes = () => {
+const SuperAdminRoutes : React.FC = () => {
   return (
-    <div>SuperAdminRoutes</div>
+    
+    <Routes>
+      <Route path="login" element={ <SuperAdminLogin/> } />
+    </Routes>
+
+
   )
 }
 
