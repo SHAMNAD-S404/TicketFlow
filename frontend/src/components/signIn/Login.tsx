@@ -42,18 +42,18 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
   };
 
   return (
-    <div className="flex phone:h-screen md:max-h-screen phone:p-2 md:p-10  bg-white">
+    <div className="flex phone:h-screen md:max-h-screen phone:p-2 md:p-10 gap-  bg-white">
       {/* Left Side: Image */}
-      <div className="hidden md:flex w-1/2  rounded-2xl shadow-xl items-center justify-center bg-blue-100">
+      <div className="hidden md:flex w-1/2  rounded-2xl shadow-xl items-center justify-center bg-blue-200">
         <img
           src={AdminLoginImg}
           alt="Admin Illustration"
-          className="object-cover w-3/4 h-5/5"
+          className="object-cover w-4/4 h-4/4 rounded-2xl"
         />
       </div>
 
       {/* Right Side: Login Form */}
-      <div className="w-full md:w-1/2 flex items-center rounded-2xl shadow-2xl justify-center px-6 md:px-16 ">
+      <div className="w-full md:w-1/2 bg-blue-100 flex items-center rounded-2xl shadow-2xl justify-center px-6 md:px-16 ">
         <div className="w-full max-w-md">
           <h1 className="text-3xl font-extrabold text-gray-900 mb-2">
             Welcome back Admin
@@ -122,11 +122,11 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
             {error && <p className="text-red-500 mt-2">{error}</p>}
           </form>
 
-          <p className="mt-6 text-center text-gray-600">
+          <p className="mt-6 text-center text-gray-600  ">
             Don't have an account?{" "}
             <Link
               to="/signup"
-              className="text-red-500 font-semibold hover:underline"
+              className="text-red-500 font-semibold hover:underline hover:text-blue-500"
             >
               Register
             </Link>

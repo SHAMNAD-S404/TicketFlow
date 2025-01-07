@@ -64,7 +64,7 @@ const SuperAdminLogin: React.FC = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-8 text-gray-400 hover:text-white"
               >
-                {showPassword ? "👁" : "🙈"}
+                {showPassword ? "🙉" : "🙈"}
               </button>
             </div>
 
