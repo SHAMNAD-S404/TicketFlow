@@ -4,17 +4,45 @@ import Register from "../../assets/images/register.png";
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Tooltips from "../utility/Tooltips";
+import { useForm } from "react-hook-form";
 
 interface SignupFormProps {
   onCreateAccount: () => void;
 }
 
+interface FormData {
+  companyName: string;
+  companyType: string;
+  phoneNumber: string;
+  corporatedId: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  originCountry: string;
+}
+
 const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
+  
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm<FormData>();
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
+
+  const formSubmit = (data: FormData) => {
+    console.log("Form Data :", data);
+    alert("data receiveee");
+    onCreateAccount();
+  };
+
+  //watch password for matching with confirm password
+  const password = watch("password");
 
   return (
     <div className="min-h-screen phone:bg-white md:bg-gray-50  flex items-center justify-center px-4 ">
@@ -34,7 +62,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
             account.
           </p>
           {/*Form*/}
-          <form className="space-y-4 ">
+          <form className="space-y-4 " onSubmit={handleSubmit(formSubmit)}>
             <div className=" grid grid-cols-1 md:grid-cols-2 gap-2">
               <div>
                 <label className="text-sm font-semibold text-gray-600 flex gap-1 items-center ">
@@ -46,7 +74,19 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                   type="text"
                   placeholder=" Ticket India Ltd"
                   className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  {...register("companyName", {
+                    required: "Company name is required",
+                    pattern: {
+                      value: /^[a-zA-Z0-9 ]+$/,
+                      message: "Only alphabets and numbers allowed",
+                    },
+                  })}
                 />
+                {errors.companyName && (
+                  <p className="text-red-500 text-sm">
+                    {errors.companyName.message}
+                  </p>
+                )}
               </div>
               <div>
                 <label className="text-sm font-semibold text-gray-600">
@@ -55,6 +95,9 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                 <select
                   className="w-full p-2 mt-1  bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 "
                   defaultValue=""
+                  {...register("companyType", {
+                    required: "Please select a company type",
+                  })}
                 >
                   <option value="" disabled>
                     Select a company type
@@ -66,6 +109,11 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                   <option value="Manufacturing">Manufacturing</option>
                   <option value="Retail">Retail</option>
                 </select>
+                {errors.companyType && (
+                  <p className="text-red-500 text-sm">
+                    {errors.companyType.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -77,7 +125,20 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                   type="tel"
                   placeholder="+91 234 567 890"
                   className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  {...register("phoneNumber", {
+                    required: "Phone number is required",
+                    pattern: {
+                      value: /^[0-9]+$/,
+                      message: "Only number are allowed",
+                    },
+                  })}
                 />
+                {errors.phoneNumber && (
+                  <p className="text-red-500 text-sm">
+                    {" "}
+                    {errors.phoneNumber.message}{" "}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -89,7 +150,19 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                   type="text"
                   placeholder="L01631KA2010PTC096843"
                   className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  {...register("corporatedId", {
+                    required: "CIN is required",
+                    pattern: {
+                      value: /^[a-zA-Z0-9]+$/,
+                      message: "Only alphabated and numbers are allowed ",
+                    },
+                  })}
                 />
+                {errors.corporatedId && (
+                  <p className="text-red-500 text-sm">
+                    {errors.corporatedId.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -100,8 +173,19 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                   type="email"
                   placeholder="name@company.com"
                   className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                      message: "Invalid email formate",
+                    },
+                  })}
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-sm">{errors.email.message}</p>
+                )}
               </div>
+
               <div>
                 <label className="text-sm font-semibold text-gray-600 flex items-center gap-1 ">
                   Enter origin country
@@ -111,7 +195,19 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                   type="text"
                   placeholder="Eg: India"
                   className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  {...register("originCountry", {
+                    required: "Origin of Country is required",
+                    pattern: {
+                      value: /^[a-zA-Z\s]+$/,
+                      message: "Only characters are allowed",
+                    },
+                  })}
                 />
+                {errors.originCountry && (
+                  <p className="text-red-500 text-sm">
+                    {errors.originCountry.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -124,6 +220,22 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                     type={passwordVisible ? "text" : "password"}
                     placeholder="********"
                     className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 pr-10"
+                    {...register("password", {
+                      required: "Password is required",
+                      minLength: {
+                        value: 8,
+                        message: "Password must be at least 8 characters",
+                      },
+                      maxLength: {
+                        value: 15,
+                        message: "Password must be no more than 15 characters",
+                      },
+                      pattern: {
+                        value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
+                        message:
+                          "Password must contain both letters and numbers",
+                      },
+                    })}
                   />
 
                   <button
@@ -134,6 +246,12 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                     {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
+                {errors.password && (
+                  <p className="text-red-500 text-sm">
+                    {" "}
+                    {errors.password.message}{" "}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -146,6 +264,11 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                     type={passwordVisible ? "text" : "password"}
                     placeholder="********"
                     className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    {...register("confirmPassword", {
+                      required: "Confirm password is required ",
+                      validate: (value) =>
+                        value === password || "Passwords do not match",
+                    })}
                   />
                   <button
                     type="button"
@@ -155,14 +278,18 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                     {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-sm">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
               </div>
             </div>
 
             {/* Buttons */}
             <div className="mt-6">
               <button
-                type="button"
-                onClick={onCreateAccount}
+                type="submit"         
                 className="w-full bg-purple-600 text-white py-2 rounded-md  hover:font-bold hover:bg-gradient-to-r from-blue-500 to-green-600 font-medium transition"
               >
                 Create account
