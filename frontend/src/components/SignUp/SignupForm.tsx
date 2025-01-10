@@ -5,40 +5,37 @@ import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Tooltips from "../utility/Tooltips";
 import { useForm } from "react-hook-form";
+import regexPatterns from "../../utils/regexPattern";
+import { IsignupForm } from "../../types/auth";
+import { signupUser } from "../../api/services/authService";
 
 interface SignupFormProps {
   onCreateAccount: () => void;
 }
 
-interface FormData {
-  companyName: string;
-  companyType: string;
-  phoneNumber: string;
-  corporatedId: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  originCountry: string;
-}
-
 const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
-  
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<FormData>();
+  } = useForm<IsignupForm>();
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const formSubmit = (data: FormData) => {
+  const formSubmit = async (data: IsignupForm) => {
     console.log("Form Data :", data);
-    alert("data receiveee");
-    onCreateAccount();
+
+    try {
+      const response = await signupUser(data);
+      console.log("response data from server , ", response);
+      onCreateAccount();
+    } catch (error) {
+      alert("Error creating account. Please try again.");
+    }
   };
 
   //watch password for matching with confirm password
@@ -77,7 +74,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                   {...register("companyName", {
                     required: "Company name is required",
                     pattern: {
-                      value: /^[a-zA-Z0-9 ]+$/,
+                      value: regexPatterns.nameAndNumber,
                       message: "Only alphabets and numbers allowed",
                     },
                   })}
@@ -128,7 +125,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                   {...register("phoneNumber", {
                     required: "Phone number is required",
                     pattern: {
-                      value: /^[0-9]+$/,
+                      value: regexPatterns.phoneNumber,
                       message: "Only number are allowed",
                     },
                   })}
@@ -153,7 +150,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                   {...register("corporatedId", {
                     required: "CIN is required",
                     pattern: {
-                      value: /^[a-zA-Z0-9]+$/,
+                      value: regexPatterns.nameAndNumber,
                       message: "Only alphabated and numbers are allowed ",
                     },
                   })}
@@ -176,7 +173,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
-                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                      value: regexPatterns.email,
                       message: "Invalid email formate",
                     },
                   })}
@@ -198,7 +195,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                   {...register("originCountry", {
                     required: "Origin of Country is required",
                     pattern: {
-                      value: /^[a-zA-Z\s]+$/,
+                      value: regexPatterns.name,
                       message: "Only characters are allowed",
                     },
                   })}
@@ -231,7 +228,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                         message: "Password must be no more than 15 characters",
                       },
                       pattern: {
-                        value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
+                        value: regexPatterns.password,
                         message:
                           "Password must contain both letters and numbers",
                       },
@@ -289,7 +286,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
             {/* Buttons */}
             <div className="mt-6">
               <button
-                type="submit"         
+                type="submit"
                 className="w-full bg-purple-600 text-white py-2 rounded-md  hover:font-bold hover:bg-gradient-to-r from-blue-500 to-green-600 font-medium transition"
               >
                 Create account
