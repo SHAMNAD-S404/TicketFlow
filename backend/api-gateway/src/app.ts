@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-import { createProxyMiddleware } from "http-proxy-middleware";
+import proxy from "express-http-proxy"; // Import express-http-proxy
 import { config } from "./config/index";
 import { logger } from "./middleware/logger";
 import { validateEnvVariables } from "./util/validateEnv";
@@ -11,11 +11,9 @@ validateEnvVariables();
 
 const app = express();
 
-// Set up body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Log requests
 app.use(logger);
 
 // Set up CORS
@@ -27,8 +25,8 @@ app.use(
   })
 );
 
-// Proxy paths
-app.use("/auth", createProxyMiddleware({ target: config.authServiceUrl, changeOrigin: true }));
-app.use("/company", createProxyMiddleware({ target: config.companyServiceUrl, changeOrigin: true }));
+app.use('/auth',proxy(config.authServiceUrl));
+app.use('/company',proxy(config.companyServiceUrl))
+
 
 export default app;
