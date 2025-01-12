@@ -27,12 +27,13 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
   };
 
   const formSubmit = async (data: IsignupForm) => {
+    
     console.log("Form Data :", data);
 
     try {
       const response = await signupUser(data);
       console.log("response data from server , ", response);
-      onCreateAccount();
+      // onCreateAccount();        //modal for otp verification
     } catch (error) {
       alert("Error creating account. Please try again.");
     }

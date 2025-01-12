@@ -9,8 +9,13 @@ export class UserRepository extends BaseRepository<UserDocument> implements IUse
     super(User); 
   }
 
-  async findByEmail(email: string): Promise<IUser | null> {
-    return await this.findByEmail(email);
+  async findByEmail(email: string): Promise<IUser | null | string> {
+    try {
+      return await this.findUserByEmail(email);
+    } catch (error) {
+      return 'there was an error in finding the user';
+    }
+    
   }
   async createUser(email:string,password:string,name:string):Promise<IUser|undefined>{
     try {

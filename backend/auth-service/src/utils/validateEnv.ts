@@ -9,5 +9,11 @@ export function validateEnvVariables(): void {
     if (!process.env.PORT) {
       console.warn("PORT is not defined, defaulting to 3001.");
     }
+    if (!process.env.REDIS_HOST) {
+      console.warn("REDIS_HOST is not defined, .");
+    }
+    if (!process.env.REDIS_PORT) {
+      console.warn("REDIS_PORT is not defined,");
+    }
   }
   

@@ -13,8 +13,9 @@ export class AuthController implements IAuthController {
     try {
 
       console.log("hiiiii im inside controll")
-      const { email, password, companyName } = req.body;
-      const message = await this.authService.registerUser({email,password,companyName});
+      const registerData = req.body;
+      delete registerData.confirmPassword;
+      const message = await this.authService.registerUser(registerData);
 
       console.log(message);
       res.status(201).json({ message });
