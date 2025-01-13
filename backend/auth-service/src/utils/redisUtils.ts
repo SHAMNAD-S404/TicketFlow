@@ -5,7 +5,7 @@ import redisClient from "../config/redis";
 export const setRedisData = async (key: string,value: any,ttlSeconds: number) => {
   
   try {
-    const data = await redisClient.set(key,JSON.stringify(value), "EX",ttlSeconds);    
+    const data = await redisClient.setex(key,ttlSeconds ,JSON.stringify(value));    
     console.log(data);
 
   } catch (error) {

@@ -3,6 +3,11 @@ import { RegisterUserDTO } from "../dtos/registerUserDTO";
 import { IAuthService } from "../interfaces/IAuthService";
 import { hashPassword } from "../../utils/hashUtils";
 import {deleteRedisData, getRedisData, setRedisData} from "../../utils/redisUtils"
+import { generateOTP } from '../../utils/otpUtils';
+import { RabbitMQConfig } from "../../config/rabbitmq";
+import { publishToQueue } from "../../queues/publisher";
+
+
 
 
 export class AuthService implements IAuthService {
@@ -39,14 +44,30 @@ export class AuthService implements IAuthService {
             const hashedPassword = await hashPassword(password);
 
             //store user data in Redis for 15 minutes
-            await setRedisData(email,{...data,password:hashedPassword},900)
+            await setRedisData(`user:${email}`,{...data,password:hashedPassword},900)
 
-            return {message:`User data saved in Redis`,success:true}
+            //generate OTP
+            const otp =  generateOTP();
+            //store otp in Redis for 4 minutes
+            await setRedisData(`otp:${email}`,{otp,email},240);
+
+            //send OTP and user data to notification queue using RabbitMQ
+            const notificationPayload = {
+                email,
+                otp,
+                message : `Dear ${companyName}, your OTP for registration is ${otp}.`,
+            }
+            console.log("1111 in service before the rabiit mq que name",RabbitMQConfig.notificationQueue)
+            await publishToQueue(RabbitMQConfig.notificationQueue,notificationPayload);
 
 
-            // const passHash = bcrypt.hash(password,10)
-            const  UserData = await this.userRepository.createUser(email,password,companyName);
-            return {message:`uesr saved ${UserData}`,success:true}
+
+            return {message:`User data saved in Redis and OTP sent to notification service`,success:true}
+
+            
+
+
+      
         } catch (error) {
             return {message:String(error),success:false}
         }

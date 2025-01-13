@@ -27,8 +27,11 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
   };
 
   const formSubmit = async (data: IsignupForm) => {
+
+    localStorage.setItem("email",data.email);
     
     console.log("Form Data :", data);
+    console.log("data.email : ",localStorage.getItem("email"));
 
     try {
       const response = await signupUser(data);
