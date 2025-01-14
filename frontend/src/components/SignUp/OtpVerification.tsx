@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import Verify from "../../assets/images/verify.png";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { otpVerification } from "../../api/services/authService";
+import {toast} from 'react-toastify'
 
 const OtpVerification: React.FC = () => {
-
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [timer, setTimer] = useState(4 * 60 + 59); //initial countdown
-  const [isResending , setIsResending] = useState<boolean>(false);
+  const [isResending, setIsResending] = useState<boolean>(false);
   const inputRef = useRef<(HTMLInputElement | null)[]>([]);
 
   const navigate = useNavigate();
@@ -26,10 +27,10 @@ const OtpVerification: React.FC = () => {
   };
 
   useEffect(() => {
-    let interval : NodeJS.Timeout;
-    if(timer > 0) {
+    let interval: NodeJS.Timeout;
+    if (timer > 0) {
       interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
-    } 
+    }
     return () => clearInterval(interval);
   }, [timer]);
 
@@ -38,46 +39,64 @@ const OtpVerification: React.FC = () => {
     try {
       setIsResending(true);
       //axios req is here
-      setTimer( 4*60 + 59);
-      alert("OTP SENDED")
+      setTimer(4 * 60 + 59);
+      alert("OTP SENDED");
     } catch (error) {
-      console.log("failed to send otp",error);
-      alert("Failed to send otp")
-      
+      console.log("failed to send otp", error);
+      alert("Failed to send otp");
     } finally {
-      setIsResending(false)
+      setIsResending(false);
     }
-  }
+  };
 
-  //formate timer
-  // const formatTime = () => {
-  //   const minute = Math.floor(timer / 60);
-  //   const seconds = timer % 60;
-  //   return `${minute} : ${seconds < 10 ? `0${seconds}` : seconds}`;
-  // };
+  const handleOtpVerify = async() => {
+   try {
+     
+     const otpValue = otp.join("");
+     if(otpValue.length !== 4){
+       toast.error("Please enter valid OTP");
+     }
+     const email = localStorage.getItem("email");
+     if(email === null){
+        toast.error("Registration failed kindly try again", {
+          onClose: () => {
+            localStorage.removeItem("signupStep");
+          }
+        });
+     }
+     console.log("otp verification", otpValue, email);
+     const response = await otpVerification(otpValue,email as string);
 
-  const handleOtpVerify = () => {
-    //otp verification logic will perform here
+     if(response.success){
 
-    localStorage.removeItem("signupStep");
-    Swal.fire({
-      title: "OTP Verification Successfull",
-      text: "Kindly login with your credentials",
-      icon: "success",
-    }).then(() => {
-
-      navigate("/login?role=admin")
-    })
+        localStorage.removeItem("signupStep");
+        localStorage.removeItem("email");
+        Swal.fire({
+          title: "OTP Verification Successfull",
+          text: "Kindly login with your credentials",
+          icon: "success",
+        }).then(() => {
+          navigate("/login?role=admin");
+        });
+        console.log("otp state cleared");
+     }else{
+        toast.error(response.message);
+     }
+ 
+  
+   } catch (error) {
     
-    console.log("otp state cleared")
-  }
+   }
+  };
 
   return (
     <div className="flex  items-center justify-center h-screen  bg-gray-50">
       <div className="bg-blue-50 phone:p-8 md:p-24 rounded-2xl shadow-2xl  grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
         {/*Left section*/}
         <div className="flex flex-col justify-center">
-          <h1 className="text-4xl text-center font-bold mb-4 text-gray-800">Verify code</h1>
+          <h1 className="text-4xl text-center font-bold mb-4 text-gray-800">
+            Verify code
+          </h1>
           <p className="text-gray-600 mb-6 text-center">
             An authentication code has been sent to your email.
           </p>
@@ -98,27 +117,26 @@ const OtpVerification: React.FC = () => {
           </div>
 
           <div>
-      {/* Timer and Resend */}
-      <p className="text-sm text-gray-600 mb-4">
-        Didn’t receive a code?{" "}
-        {timer === 0 ? (
-          <span
-            onClick={handleResendOtp}
-            className={`text-blue-500 cursor-pointer ${
-              isResending ? "opacity-50" : ""
-            }`}
-          >
-            {isResending ? "Resending..." : "Resend OTP"}
-          </span>
-        ) : (
-          <span className="text-red-500">
-            Resend OTP in {Math.floor(timer / 60)}:{(timer % 60)
-              .toString()
-              .padStart(2, "0")}
-          </span>
-        )}
-      </p>
-    </div>
+            {/* Timer and Resend */}
+            <p className="text-sm text-gray-600 mb-4">
+              Didn’t receive a code?{" "}
+              {timer === 0 ? (
+                <span
+                  onClick={handleResendOtp}
+                  className={`text-blue-500 cursor-pointer ${
+                    isResending ? "opacity-50" : ""
+                  }`}
+                >
+                  {isResending ? "Resending..." : "Resend OTP"}
+                </span>
+              ) : (
+                <span className="text-red-500">
+                  Resend OTP in {Math.floor(timer / 60)}:
+                  {(timer % 60).toString().padStart(2, "0")}
+                </span>
+              )}
+            </p>
+          </div>
 
           {/* Verify Button */}
           <button

@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import regexPatterns from "../../utils/regexPattern";
 import { IsignupForm } from "../../types/auth";
 import { signupUser } from "../../api/services/authService";
+import { toast } from 'react-toastify';
 
 interface SignupFormProps {
   onCreateAccount: () => void;
@@ -35,8 +36,14 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
 
     try {
       const response = await signupUser(data);
-      console.log("response data from server , ", response);
-      // onCreateAccount();        //modal for otp verification
+      if(response.success){
+        toast.success(response.message , {
+          onClose: () =>onCreateAccount() //modal for otp verification
+        });
+      }else if(!response.success){
+        toast.error(response.message);
+      }
+      console.log("response data from server , ", response);     
     } catch (error) {
       alert("Error creating account. Please try again.");
     }

@@ -1,5 +1,6 @@
 import amqplib from "amqplib";
 import { RabbitMQConfig } from "../config/rabbitmqConfig";
+import { sendEmail } from "../utils/sendEmail";
 
 export const startConsumer = async () => {
   try {
@@ -14,13 +15,14 @@ export const startConsumer = async () => {
     //consume the message from the queue
     channel.consume(
       RabbitMQConfig.notificationQueue,
-      (message) => {
+      async (message) => {
         if (message) {
           const input = JSON.parse(message.content.toString());
           console.log("Recieved message in notifiction queue, mssg : ", input);
 
           //send mail functionality
-          sendMail(input.email, input.message);
+          const { email, otp, content, subject, template } = input;
+          await sendEmail(email, subject, template, { otp, content });
 
           //acknowledge the message
           channel.ack(message);
@@ -30,10 +32,5 @@ export const startConsumer = async () => {
     );
   } catch (error) {
     console.error("Error in notification consumer", error);
-    
   }
 };
-
-const sendMail = (email:string,message:string) => {
-    console.log("sending mail to : ",email,"the message is : ",message);
-}

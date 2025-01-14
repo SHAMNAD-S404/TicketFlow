@@ -12,16 +12,34 @@ export class AuthController implements IAuthController {
   public registerUser = async(req: Request, res: Response): Promise<void> => {
     try {
 
-      console.log("hiiiii im inside controll")
       const registerData = req.body;
       delete registerData.confirmPassword;
-      const message = await this.authService.registerUser(registerData);
+      const response = await this.authService.registerUser(registerData);
+      const { message, success } = response;
+      const statusCode = success ? 201 : 400;
 
-      console.log(message);
-      res.status(201).json({ message });
+      console.log(response);
+      res.status(statusCode).json({ message,success });
 
     } catch (error) {
-      res.status(400).json({ error });
+      res.status(400).json({ message:String(error), success:false });
     }
+  }
+
+  public verifyOTP = async(req: Request, res: Response): Promise<void> => {
+    try {
+      const { email, otp} = req.body;
+      const response = await this.authService.verifyOTP(email,otp);
+      const { message, success } = response;
+      const statusCode = success ? 200 : 400;
+
+      res.status(statusCode).json({message,success})
+      
+    } catch (error) {
+      res.status(400).json({message:String(error),success:false});
+    }
+
+    
+    
   }
 }

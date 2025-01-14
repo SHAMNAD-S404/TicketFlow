@@ -7,10 +7,10 @@ export class BaseRepository<T extends Document> {
     this.model = model; 
   }
 
-  async create(data: Partial<T>): Promise<T> {
+  async create(email:string,password:string): Promise<T> {
     try {
-      const document = new this.model(data);
-      console.log("hiiiii im inside base repo");
+      const userData = { email, password} ;
+      const document = new this.model(userData);
       return await document.save();
     } catch (error) {
       console.error("Error creating document:", error);

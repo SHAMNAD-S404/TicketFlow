@@ -1,12 +1,17 @@
-import React from 'react'
-import AppRoutes from './routes'
+import React from "react";
+import AppRoutes from "./routes";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { toastConfig } from "./utils/toastConfig";
 
-const App :React.FC = () => {
+const App: React.FC = () => {
   return (
     <div>
-      <AppRoutes/>
-    </div>
-  )
-}
+      <AppRoutes />
 
-export default App
+      <ToastContainer {...toastConfig} />
+    </div>
+  );
+};
+
+export default App;

@@ -10,3 +10,15 @@ export const signupUser = async (data: IsignupForm) => {
     throw error;
   }
 };
+
+export const otpVerification = async (otp:string,email:string) => {
+  try {
+      const response = await axiosInstance.post("/auth/verify-otp", {otp,email});
+      return response.data;
+  } catch (error) {
+      console.error("Error during otp verification", error);
+      throw error;
+  }
+}
+
+
