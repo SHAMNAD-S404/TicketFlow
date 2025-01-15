@@ -6,4 +6,10 @@ export function validateEnvVariables(): void {
   if (!process.env.PORT) {
     console.warn("PORT is not defined, defaulting to 3001.");
   }
+  if (!process.env.RABBITMQ_URL) {
+    console.warn("RABBITMQ_URL is not defined,");
+  }
+  if (!process.env.COMPANY_RPC_QUEUE) {
+    console.warn("COMPANY_RPC_QUEUE is not defined,");
+  }
 }

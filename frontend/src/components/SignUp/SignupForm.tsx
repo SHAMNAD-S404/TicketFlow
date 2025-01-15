@@ -40,12 +40,16 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
         toast.success(response.message , {
           onClose: () =>onCreateAccount() //modal for otp verification
         });
-      }else if(!response.success){
+      }else {
         toast.error(response.message);
       }
       console.log("response data from server , ", response);     
-    } catch (error) {
-      alert("Error creating account. Please try again.");
+    } catch (error : any) {
+      if(error.response && error.response.data){
+        toast.error(error.response.data.message);
+      }else{
+              alert("Error creating account. Please try again.");
+      }
     }
   };
 

@@ -14,7 +14,7 @@ const authController = new AuthController(authService);
 
 //Route
 router.post("/signup",authController.registerUser)
-      .post("/verify-otp",authController.registerUser)
+      .post("/verify-otp",authController.verifyOTP)
 
 
 export default router;

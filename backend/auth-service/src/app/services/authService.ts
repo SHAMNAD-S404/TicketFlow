@@ -70,6 +70,8 @@ export class AuthService implements IAuthService {
 
     async verifyOTP(email: string, otp: string): Promise<{ message: string; success: boolean; }> {
         try {
+            console.log(" hiiii im inside service verifyOtp dataa" ,email,otp)
+            console.log("=====================================");
 
             if(!email || !otp){
                 return {message:'please provide email and otp',success:false}
@@ -105,7 +107,7 @@ export class AuthService implements IAuthService {
                 deleteRedisData(`otp:${email}`)
             ]);
 
-            //save company data in db
+            //sending data to company-service to store in DB.
             const response = await publishToQueueWithRPCAndRetry( RabbitMQConfig.companyRPCQueue,companyData,3);
             console.log("response from company service",response);
 
@@ -113,7 +115,7 @@ export class AuthService implements IAuthService {
                 return{message:"User registered successfully",success:true};
             }else{
                 await this.userRepository.deleteById(user._id as string);
-                return{message:" Failed to save data in CS DB, user rollbacked  ",success:false}
+                return{message:" Failed to save data in CS DB, user data rollbacked  ",success:false}
             }
             
             

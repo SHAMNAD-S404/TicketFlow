@@ -13,12 +13,7 @@ export const publishToQueue = async(queueName: string, message: object): Promise
         channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)), {persistent: true});
 
         console.log(`message sent to ${queueName} queue`);
-        
-        if (channel && connection) {
-            await channel.close();
-            await connection.close();
-        }
-        
+
     } catch (error) {
         console.error("Error in publishing the message", error);
     }
