@@ -5,9 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { otpVerification } from "../../api/services/authService";
 import {toast} from 'react-toastify'
 
-const OtpVerification: React.FC = () => {
+interface OtpVerificationProps {
+  onSignupForm : ()=> void;
+}
+
+const OtpVerification: React.FC <OtpVerificationProps>= ({onSignupForm}) => {
   const [otp, setOtp] = useState(["", "", "", ""]);
-  const [timer, setTimer] = useState(4 * 60 + 59); //initial countdown
+  const [timer, setTimer] = useState(3 * 60 + 59); //initial countdown
   const [isResending, setIsResending] = useState<boolean>(false);
   const inputRef = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -61,6 +65,7 @@ const OtpVerification: React.FC = () => {
         toast.error("Registration failed kindly try again", {
           onClose: () => {
             localStorage.removeItem("signupStep");
+            localStorage.removeItem("email")
           }
         });
      }
@@ -69,31 +74,29 @@ const OtpVerification: React.FC = () => {
 
      if(response.success){
 
-        localStorage.removeItem("signupStep");
-        localStorage.removeItem("email");
-        Swal.fire({
-          title: "OTP Verification Successfull",
-          text: "Kindly login with your credentials",
-          icon: "success",
-        }).then(() => {
-          navigate("/login?role=admin");
-        });
-        console.log("otp state cleared");
-     }else{
-        toast.error(response.message);
-     }
- 
+            toast.success(response.message,{
+              onClose : ()=> onSignupForm()
+            });
+      }else{
+        toast.error(response.message)
+      }
+
+      //navigate("/login?role=admin");
   
-   } catch (error) {
-    
+   } catch (error : any) {
+      if(error.response && error.response.data){
+        toast.error(error.response.data.message);
+      }else{
+        alert("Error creating account . Please try again later")
+      }
    }
   };
 
   return (
-    <div className="flex  items-center justify-center h-screen  bg-gray-50">
-      <div className="bg-blue-50 phone:p-8 md:p-24 rounded-2xl shadow-2xl  grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+    <div className="flex  items-center justify-center h-screen  bg-gray-100">
+      <div className="bg-blue-50 phone:p-8 md:p-11 min-h-[600px] rounded-2xl shadow-2xl  grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl">
         {/*Left section*/}
-        <div className="flex flex-col justify-center">
+        <div className="flex flex-col justify-center ">
           <h1 className="text-4xl text-center font-bold mb-4 text-gray-800">
             Verify code
           </h1>
@@ -149,8 +152,8 @@ const OtpVerification: React.FC = () => {
         </div>
 
         {/* Right Section: Image */}
-        <div className="hidden md:flex items-center justify-center">
-          <img src={Verify} alt="OTP Verification" className="w-80 h-auto" />
+        <div className="hidden md:flex items-center justify-center bg-blue-100 rounded-2xl shadow-2xl ">
+          <img src={Verify} alt="OTP Verification" className="w-full object-cover" />
         </div>
       </div>
     </div>

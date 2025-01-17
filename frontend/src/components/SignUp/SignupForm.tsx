@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
 import Register from "../../assets/images/register.png";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Tooltips from "../utility/Tooltips";
 import { useForm } from "react-hook-form";
@@ -10,11 +10,8 @@ import { IsignupForm } from "../../types/auth";
 import { signupUser } from "../../api/services/authService";
 import { toast } from 'react-toastify';
 
-interface SignupFormProps {
-  onCreateAccount: () => void;
-}
 
-const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
+const SignupForm: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const {
     register,
@@ -27,23 +24,23 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const formSubmit = async (data: IsignupForm) => {
+  //fetching stored email from local storage
+  const verifiedEmail = localStorage.getItem("email")?.toString();
+  const navigate = useNavigate();
 
-    localStorage.setItem("email",data.email);
+  const formSubmit = async (data: IsignupForm) => {
     
     console.log("Form Data :", data);
-    console.log("data.email : ",localStorage.getItem("email"));
 
     try {
       const response = await signupUser(data);
       if(response.success){
-        toast.success(response.message , {
-          onClose: () =>onCreateAccount() //modal for otp verification
-        });
+        toast.success(response.message );
+        navigate("/login?role=admin");
       }else {
         toast.error(response.message);
       }
-      console.log("response data from server , ", response);     
+          
     } catch (error : any) {
       if(error.response && error.response.data){
         toast.error(error.response.data.message);
@@ -67,7 +64,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
         {/* Right Section - Form */}
         <div className="w-full md:w-1/2 px-6 py-10 bg-blue-50 ">
           <h2 className="text-3xl font-bold text-gray-800 mb-2 text-center ">
-            Register Your Company
+           <span className="text-blue-500"> Register</span> Your Company
           </h2>
           <p className="text-gray-600 text-sm mb-6 text-center">
             Let’s get you all set up so you can start creating your company
@@ -178,13 +175,14 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">
-                  Enter company email
+                <label className="text-sm text-green-600 font-semibold">
+                  Verified  email
                 </label>
                 <input
                   type="email"
-                  placeholder="name@company.com"
-                  className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  value={verifiedEmail}
+                  readOnly
+                  className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-not-allowed"
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
@@ -307,12 +305,6 @@ const SignupForm: React.FC<SignupFormProps> = ({ onCreateAccount }) => {
                 Create account
               </button>
               <hr className="my-3 " />
-              <h4 className="text-center">OR</h4>
-              {/*Google sign up session*/}
-              <button className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-gradient-to-r from-red-500 to-yellow-400 font-medium transition duration-300 hover:font-bold hover:text-black flex justify-center items-center gap-2 ">
-                <FaGoogle />
-                Signup with Google
-              </button>
 
               <p className="text-center text-gray-600 text-sm mt-4">
                 Already have an account?{" "}

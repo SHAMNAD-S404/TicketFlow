@@ -8,3 +8,7 @@ export interface IsignupForm {
   confirmPassword: string;
   originCountry: string;
 }
+
+export interface IVerifyEmail {
+  email : string
+}

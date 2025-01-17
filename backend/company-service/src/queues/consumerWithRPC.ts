@@ -1,14 +1,16 @@
 import { RabbitMQConfig } from "../config/rabbitMQ";
 import { channel } from "./rabbitConnection";
+import CompanyService from "../app/services/implements/companyService";
+
+const companyService = new CompanyService();
 
 export const consumeRPCRequest = async (): Promise<void> => {
   try {
-  
     await channel.assertQueue(RabbitMQConfig.compnayRPCQueue, {
       durable: true,
     });
     console.log("🐇 Company RPC consumer queue created");
-    
+
     console.log(`Waiting for messages in ${RabbitMQConfig.compnayRPCQueue}`);
 
     // Consume messages from the queue
@@ -23,8 +25,8 @@ export const consumeRPCRequest = async (): Promise<void> => {
           const requestData = JSON.parse(content.toString());
           console.log("Received message in company RPC queue:", requestData);
 
-          // Store data in company service
-          const result = await storeCompanyData(requestData);
+          // Store data in company database using company service
+          const result = await companyService.createCompany(requestData);
 
           // Send a response to the reply queue
           if (properties.replyTo && properties.correlationId) {
@@ -59,24 +61,3 @@ export const consumeRPCRequest = async (): Promise<void> => {
     console.error("Error setting up consumer:", error);
   }
 };
-
-// Simulates storing company data in the database
-const storeCompanyData = async (data: any): Promise<any> => {
-  try {
-    console.log("Processing company data:", data);
-
-    // TODO: Replace this with actual database logic
-    const savedData = { id: "12345", ...data };
-
-    return {
-      success: true,
-      data: savedData,
-      message: "Company data saved successfully",
-    };
-  } catch (error) {
-    console.error("Error saving company data:", error);
-    throw new Error("Failed to save company data");
-  }
-};
-
-

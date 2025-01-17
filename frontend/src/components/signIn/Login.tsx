@@ -2,10 +2,18 @@ import React, { useState } from "react";
 import AdminLoginImg from "../../assets/images/adminLogin.png";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import axios from "axios";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import regexPatterns from "../../utils/regexPattern";
+import { loginUser } from "../../api/services/authService";
 
 interface LoginProps {
   handleforgotPass: () => void;
+}
+
+interface LoginFormData {
+  email: string;
+  password: string;
 }
 
 const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
@@ -18,24 +26,34 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
     setPasswordVisible(!passwordVisible);
   };
 
-  const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>();
+
+  const handleLogin = async (data: LoginFormData) => {
     setLoading(true);
     setError("");
 
     try {
-      // const response = await axios.post('api/login' , {
-      //   username : "",
-      //   password : "pass",
-      // })
-
-      // if(response.status === 200){
-      //   //here navigation and other things will work
-      // }
-
-      navigate("/admin/dashboard");
-    } catch (error) {
-      setError("Login failed, Please check iteiiiiiiii");
+      console.log("login data", data);
+      const response = await loginUser(data.email,data.password);
+      if(response.success){
+        toast.success(response.message, {
+          onClose: () => navigate("/admin/dashboard")
+        })
+      }else{
+        toast.error(response.message);
+      }
+     
+       navigate("/admin/dashboard")
+    } catch (error : any) {
+        if(error.response && error.response.data){
+          toast.error(error.response.data.message);
+        }else{
+          alert("Error logging in account. Please try again.");
+        }
     } finally {
       setLoading(false);
     }
@@ -62,7 +80,7 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
             Fill the credentials to login to the company admin dashboard
           </p>
 
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleSubmit(handleLogin)}>
             <div className="mb-6">
               <label
                 htmlFor="email"
@@ -74,8 +92,22 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
                 type="email"
                 id="email"
                 placeholder="flip2@gmail.com"
-                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.email ? "border-red-500" : ""
+                }`}
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: regexPatterns.email,
+                    message: "Invalid email format",
+                  },
+                })}
               />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             {/* Password Input */}
@@ -91,8 +123,27 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
                   type={passwordVisible ? "text" : "password"}
                   id="password"
                   placeholder="****************"
-                  className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                  className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10 ${
+                    errors.password ? "border-red-500" : ""
+                  }`}
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters",
+                    },
+                    maxLength: {
+                      value: 15,
+                      message: "Password must be at most 15 characters",
+                    },
+                    pattern: {
+                      value: regexPatterns.password,
+                      message:
+                        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+                    },
+                  })}
                 />
+
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
@@ -102,6 +153,11 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
                 </button>
               </div>
             </div>
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
 
             <div className="text-right mb-6">
               <button
@@ -114,7 +170,7 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
 
             <button
               type="submit"
-              className="w-full bg-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full bg-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:bg-green-600 hover:text-black focus:outline-none focus:ring-2 focus:ring-indigo-500"
               disabled={loading}
             >
               {loading ? "Loggin in..." : "Log in"}

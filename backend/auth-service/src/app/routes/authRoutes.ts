@@ -1,6 +1,6 @@
 import {  Router  } from "express";
-import { AuthController } from "../controllers/AuthController";
-import { AuthService } from "../services/authService";
+import { AuthController } from "../controllers/implementations/AuthController";
+import { AuthService } from "../services/implementations/authService";
 import { UserRepository } from "../repositories/userRepository";
 
 
@@ -15,6 +15,8 @@ const authController = new AuthController(authService);
 //Route
 router.post("/signup",authController.registerUser)
       .post("/verify-otp",authController.verifyOTP)
+      .post("/login",authController.verifyLogin)
+      .post("/verify-email",authController.verifyEmail)
 
 
 export default router;
