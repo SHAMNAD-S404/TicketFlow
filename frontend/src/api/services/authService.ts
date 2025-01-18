@@ -21,9 +21,9 @@ export const otpVerification = async (otp:string,email:string) => {
   }
 }
 
-export const loginUser = async (email:string,passwrod: string) => {
+export const loginUser = async (email:string,password: string) => {
   try {
-    const response = await axiosInstance.post("/auth/login",{email,passwrod});
+    const response = await axiosInstance.post("/auth/login",{email,password});
     return response.data;
     
   } catch (error) {

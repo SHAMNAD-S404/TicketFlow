@@ -39,8 +39,11 @@ export class AuthController implements IAuthController {
 
   public verifyLogin = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { email, passwrod } = req.body;
-      const response = await this.authService.verifyLogin(email, passwrod);
+      console.log(req.body)
+      const { email, password } = req.body;
+      const response = await this.authService.verifyLogin(email, password);
+
+      console.log("from controlelr 11 resp :" , response)
 
       if (!response.success) {
         res.status(401).json({ message: response.message, success: false });
@@ -50,25 +53,19 @@ export class AuthController implements IAuthController {
       const { message, success, tockens } = response;
       if (tockens) {
         const { accessToken, refreshToken } = tockens;
-        console.log(
-          "Accesstoken:- ",
-          accessToken,
-          "refreshtokens :-",
-          refreshToken
-        );
 
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
           secure: false,
           maxAge: 90 * 60 * 1000, //for 90 min
-          sameSite: "none",
+          sameSite: "lax",
         });
 
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
           secure: false,
           maxAge: 9 * 24 * 60 * 60 * 1000, //for 9 days
-          sameSite: "none",
+          sameSite: "lax",
         });
 
         res.status(200).json({ message, success });
