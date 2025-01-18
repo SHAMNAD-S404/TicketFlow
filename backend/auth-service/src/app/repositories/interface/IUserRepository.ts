@@ -1,4 +1,4 @@
-import { IUser } from "./IUser";
+import { IUser } from "../../models/interface/IUser";
 
 
 export interface IUserRepository {

@@ -1,7 +1,7 @@
-import { UserDocument } from "../models/User";
-import User from "../models/User";
-import { IUser } from "../interfaces/IUser";
-import { IUserRepository } from "../interfaces/IUserRepository";
+import { UserDocument } from "../../models/implements/User";
+import User from "../../models/implements/User";
+import { IUser } from "../../models/interface/IUser";
+import { IUserRepository } from "../interface/IUserRepository";
 import { BaseRepository } from "./baseRespository";
 
 

@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-import proxy from "express-http-proxy"; // Import express-http-proxy
+import proxy from "express-http-proxy";
 import { config } from "./config/index";
 import { logger } from "./middleware/logger";
 import { validateEnvVariables } from "./util/validateEnv";
@@ -26,7 +26,7 @@ app.use(
 );
 
 app.use('/auth',proxy(config.authServiceUrl));
-app.use('/company',proxy(config.companyServiceUrl))
+app.use('/company',proxy(config.companyServiceUrl));
 
 
 export default app;

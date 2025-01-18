@@ -1,4 +1,4 @@
-import { UserRepository } from "../../repositories/userRepository";
+import { UserRepository } from "../../repositories/implements/userRepository";
 import { RegisterUserDTO } from "../../dtos/registerUserDTO";
 import { IAuthService } from "../../services/interface/IAuthService";
 import { hashPassword , comparePassword } from "../../../utils/hashUtils";
