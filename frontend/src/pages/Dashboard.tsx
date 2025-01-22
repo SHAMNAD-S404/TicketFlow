@@ -41,6 +41,8 @@ const Dashboard: React.FC = () => {
         try {
           const response = await fetchUserData();
           setUser(response.data);
+          localStorage.removeItem("currentStep");
+          localStorage.removeItem("email");
         } catch (error) {
           console.log("Error while fetching user data :",error);
         }

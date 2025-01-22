@@ -25,8 +25,13 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
         }
 
         const decoded = jwt.verify(token, config.jwtSecret) as JwtPayload;
+        const userInfo = {userId:decoded.userId , role:decoded.role};
         req.user = decoded; // Attach the decoded token payload to the `req.user`
         console.log("req.user:", req.user);
+
+        //Forward the user data in custom header
+        req.headers['x-user-data'] = JSON.stringify(userInfo)
+
         next(); // Proceed to the next middleware or route handler
     } catch (error) {
         console.error("Authentication Error:", error);

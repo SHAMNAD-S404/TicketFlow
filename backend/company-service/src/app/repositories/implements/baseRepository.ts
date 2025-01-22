@@ -1,102 +1,61 @@
-// import {Model , Document} from "mongoose";
-// import { IBaseRepository } from "../interface/IBaseRepository";
-
-// export class BaseRepository<T> implements IBaseRepository<T> {
-//     private readonly model: Model<T>;
-
-//     constructor(model: Model<T>) {
-//         this.model = model;
-//     }
-
-//     async create(item: T):Promise<T> {
-//         try {
-//             const createDocument = new this.model(item);
-//             return await createDocument.save() as T;
-//         } catch (error) {
-//             throw new Error("failed to create document");
-//         }
-//     }
-
-//     async findOne(filter: Partial<T>): Promise<T | null> {
-//         try {
-//             return await this.model.findOne(filter);
-//         } catch (error) {
-//             throw new Error("failed to find document");
-//         }
-
-//     }
-
-//     async findAll(): Promise<T[]> {
-//         try {
-//             return await this.model.find();
-//         } catch (error) {
-//             throw new Error("failed to find document");
-//         }
-//     }
-
-//     async update(filter: Partial<T>, updates: Partial<T>): Promise<T | null> {
-//         try {
-//             return await this.model.findOneAndUpdate(filter,updates,{new:true}).exec()
-            
-//         } catch (error) {
-//             throw new Error("failed to update document");
-//         }
-//     }
-
-//     async findById(id: string): Promise<T | null> {
-//         try {
-//             return await this.model.findById(id).exec();
-//         } catch (error) {
-//             throw new Error("failed to find document by id");
-//         }
-//     }
-
-//     async delete(filter: Partial<T>): Promise<T | null> {
-//         try {
-//             const result = await this.model.findOneAndDelete(filter);
-//             return result;
-//         } catch (error) {
-//             throw new Error("failed to delete document");
-//         }
-//     }
-
-
-// }
-
-import { Model ,Document} from "mongoose";
+import { Model, Document } from "mongoose";
 import { IBaseRepository } from "../interface/IBaseRepository";
 
-
 export class BaseRepository<T extends Document> implements IBaseRepository<T> {
-    
-    /**
-     * Constructor for the BaseRepository class
-     * @param model The mongoose model for the collection
-     */
-    constructor( protected readonly model: Model<T>) { }
+  /**
+   * Constructor for the BaseRepository class
+   * @param model The mongoose model for the collection
+   */
+  constructor(protected readonly model: Model<T>) {}
 
-    /**
-     * Create a new document in the database
-     * @param item The data to create the document with
-     * @returns The created document
-     */
-    async create(item: Partial<T>): Promise<T> {
-        try {
-            // Create a new document using the provided data
-            const createdDocument = new this.model(item);
-            return await createdDocument.save();
-        } catch (error) {
-            // If there is an error, throw a specific error message
-            throw error;
-        }
+  
+  /**
+   * Create a new document in the database
+   * @param item The data to create the document with
+   * @returns The created document
+   */
+  async create(item: Partial<T>): Promise<T> {
+    try {
+      // Create a new document using the provided data
+      const createdDocument = new this.model(item);
+      return await createdDocument.save();
+    } catch (error) {
+      // If there is an error, throw a specific error message
+      throw error;
     }
+  }
 
-    async findOne(email: string): Promise<T | null> {
-        try {
-            const result = await this.model.findOne({email});
-            return result;
-        } catch (error) {
-            throw error;
-        }
+
+  /**
+   * Finds a document by email.
+   * @param email The email of the document to find.
+   * @returns The document or null if no document is found.
+   */
+  async findOneWithEmail(email: string): Promise<T | null> {
+    try {
+      // Find one document by email
+      const result = await this.model.findOne({ email });
+      return result;
+    } catch (error) {
+      // If an error occurs, throw it
+      throw error;
     }
+  }
+
+
+  /**
+   * Finds a document by user ID.
+   * @param authUser The user ID of the document to find.
+   * @returns The document or null if no document is found.
+   */
+  async findOneById(authUser: string): Promise<T | null> {
+    try {
+      // Find one document by user ID
+      const result = await this.model.findOne({ authUser });
+      return result;
+    } catch (error) {
+      // If an error occurs, throw it
+      throw error;
+    }
+  }
 }

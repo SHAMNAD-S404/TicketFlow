@@ -3,5 +3,6 @@ import { IBaseRepository } from './IBaseRepository';
 
 export interface ICompanyRepository extends IBaseRepository<ICompany> {
     createCompany(company: ICompany): Promise<ICompany>;
-    //findCompanyByEmail(email:string): Promise<ICompany | null>
+    findByAuthUserId(userId: string): Promise<ICompany | null>;
+    findOneByEmail(email: string): Promise<ICompany | null>;
 }
