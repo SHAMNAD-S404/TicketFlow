@@ -10,30 +10,48 @@ export class UserRepository extends BaseRepository<UserDocument> implements IUse
     super(User); 
   }
 
+  /**
+   * Finds a user by their email address.
+   * @param email The email address to search for.
+   * @returns The user document, or null if no user is found.
+   */
   async findByEmail(email: string): Promise<UserDocument | null> {
     try {
+      // Attempt to find the user by email
       return await this.findUserByEmail(email);
-    } catch (error) {
+    } catch (error: unknown) {
+      // Log and rethrow the error if finding fails
+      console.error(error instanceof Error ? error.message : String(error), 'error in findByEmail');
       return null;
     }
-    
   }
-  async createUser(email:string,password:string,role:string):Promise<IUser|undefined>{
+
+
+  /**
+   * Creates a new user document.
+   * @param email The email address of the user.
+   * @param password The password of the user.
+   * @param role The role of the user.
+   * @returns The new user document, or undefined if creation fails.
+   */
+  async createUser(email: string, password: string, role: string): Promise<IUser | undefined> {
     try {
-      console.log("hiiiii im inside user repo")
-      return await this.create(email,password,role);
-    } catch (error:unknown) {
-      console.log(error instanceof Error? error.message : String(error),'error in create user');
-
+      return await this.create(email, password, role);
+    } catch (error: unknown) {
+      // Log the error
+      console.error(error instanceof Error ? error.message : String(error), 'error in create user');
+      // Return undefined if creation fails
+      return undefined;
+    }
   }
-}
- async deleteUser(UserId:string):Promise<any>{
-   try {
-     return await this.deleteById(UserId)
-   } catch (error:unknown) {
-     console.log(error instanceof Error? error.message : String(error),'error in delete user');
-   }
- }
+  
 
+  async deleteUser(UserId: string): Promise<any> {
+    try {
+      return await this.deleteById(UserId);
+    } catch (error: unknown) {
+      console.error(error instanceof Error ? error.message : String(error), 'error in delete user');
+    }
+  }
 }
 

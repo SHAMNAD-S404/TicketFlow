@@ -6,4 +6,7 @@ export function validateEnvVariables(): void {
   if (!process.env.COMPANY_SERVICE_URL) {
     console.error("compnay service url not defined");
   }
+  if(!process.env.JWT_SECRET){
+    console.error("jwtsecret not defined");
+  }
 }
