@@ -10,8 +10,8 @@ export const extractUserData = (req:Request,res:Response,next:NextFunction) =>  
         res.locals.userData = parsedUserInfo;
 
         // Add userId to query params if it doesn't exist
-        if(!req.query.userId && parsedUserInfo.userId){
-            req.query.userId = parsedUserInfo.userId;
+        if(!req.query.authUserUUID && parsedUserInfo.authUserUUID){
+            req.query.authUserUUID = parsedUserInfo.authUserUUID;
         }
     }
 

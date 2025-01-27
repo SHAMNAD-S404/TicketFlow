@@ -51,11 +51,11 @@ class CompanyRepository
    * @param authUser The id of the authenticated user id of the auth-service database.
    * @returns The company document or null if no company is found.
    */
-  async findByAuthUserId(authUser: string): Promise<ICompany | null> {
+  async findByAuthUserUUID(authUserUUID: string): Promise<ICompany | null> {
     try {
       // Use the findOneById method from the BaseRepository to find the company
       // document by the id of the authenticated user.
-      return await this.findOneById(authUser);
+      return await this.findOneByUUID(authUserUUID);
     } catch (error) {
       // Rethrow the error if finding fails
       throw error;

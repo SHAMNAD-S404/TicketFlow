@@ -25,7 +25,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
         }
 
         const decoded = jwt.verify(token, config.jwtSecret) as JwtPayload;
-        const userInfo = {userId:decoded.userId , role:decoded.role};
+        const userInfo = {authUserUUID:decoded.authUserUUID , role:decoded.role};
         req.user = decoded; // Attach the decoded token payload to the `req.user`
         console.log("req.user:", req.user);
 

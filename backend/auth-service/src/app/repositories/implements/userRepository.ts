@@ -34,9 +34,9 @@ export class UserRepository extends BaseRepository<UserDocument> implements IUse
    * @param role The role of the user.
    * @returns The new user document, or undefined if creation fails.
    */
-  async createUser(email: string, password: string, role: string): Promise<IUser | undefined> {
+  async createUser(email: string, password: string, role: string,authUserUUID:string): Promise<IUser | undefined> {
     try {
-      return await this.create(email, password, role);
+      return await this.create(email, password, role,authUserUUID);
     } catch (error: unknown) {
       // Log the error
       console.error(error instanceof Error ? error.message : String(error), 'error in create user');

@@ -56,18 +56,20 @@ export default class CompanyService implements ICompanyService {
    *              success: true if successful, false otherwise
    */
   async fetchCompanyData(
-    userId: string
+    authUserUUID: string
   ): Promise <{
      message: string;
      data?: ICompany;
      success: boolean }> {
     try {
       // Find the company data by user ID
-      const fetchCompanyData = await CompanyRepository.findOneById(userId);
+      const fetchCompanyData = await CompanyRepository.findByAuthUserUUID(authUserUUID);
       if (!fetchCompanyData) {
+
         // Return an error if company data is not found
         return { message: "Comapny data not found !", success: false };
       } else {
+
         // Return the fetched company data if successful
         return {
           message: `Welcome ${fetchCompanyData.companyName}`,
@@ -80,6 +82,23 @@ export default class CompanyService implements ICompanyService {
       return { message: String(error), success: false };
     }
   }
+
+  async getCompanyIdWithAuthUserUUID(userUUID: string): Promise<string> {
+    try {
+
+      const companyId = await CompanyRepository.findByAuthUserUUID(userUUID);
+      if(!companyId){
+        throw new Error("Company not found")
+      }
+      return String(companyId._id) ;
+      
+    } catch (error) {
+      throw new Error(`Failed to get company by authUserUUID: ${error}`);
+
+    }
+  }
+
+  
 
 
 }

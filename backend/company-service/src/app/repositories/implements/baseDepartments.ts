@@ -40,4 +40,13 @@ export class DepartmentBase<T extends Document> implements IDepartmentBaseRepo<T
             throw error
         }
     }
+
+    async findCompanyWithUUID(userUUID: string): Promise<T | null> {
+        try {
+            const result = await this.model.findOne({authUserUUID:userUUID});
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

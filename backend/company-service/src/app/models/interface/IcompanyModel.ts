@@ -8,5 +8,5 @@ export interface ICompany extends Document {
   corporatedId: string;
   email: string;
   originCountry: string;
-  authUser: mongoose.Schema.Types.ObjectId;
+  authUserUUID : string;
 }

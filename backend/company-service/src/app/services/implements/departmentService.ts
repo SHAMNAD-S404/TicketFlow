@@ -14,19 +14,18 @@ export default class DepartmentService implements IDepartmentService {
             if(existingDept){
                 return{message:"Departement already exist",success:false}
             }
-
-            
-
+           
             const result = await DepartmentRepository.createDepartment(departmentData);
             if(result){
                 return {message:`${result.departmentName} is created !`,success:true}
             }else{
                 return {message:"failed to store . try again later",success:false}
             }
-
             
         } catch (error) {
             return {message:String(error),success:false}
         }
     }
+
+  
 }

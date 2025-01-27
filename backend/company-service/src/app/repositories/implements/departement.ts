@@ -48,7 +48,6 @@ class DepartmentRepository extends DepartmentBase<IDepartment> implements IDepar
     }
 
 
-
 }
 
 export default new DepartmentRepository();

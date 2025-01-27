@@ -8,7 +8,7 @@ const companySchema : Schema = new Schema<ICompany> ({
     corporatedId: { type: String, required: true },
     email: { type: String, required: true },
     originCountry: { type: String, required: true },
-    authUser: { type: mongoose.Schema.Types.ObjectId, required: true }
+    authUserUUID: { type: String, required: true }
 
 },
 {timestamps: true});

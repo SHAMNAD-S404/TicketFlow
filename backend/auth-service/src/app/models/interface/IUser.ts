@@ -1,5 +1,8 @@
+import { UserRoles } from "../../types/roles"
+
 export interface IUser {
     email:string,
     password:string,
-    role : 'employee' | 'compnay' | 'deptHead' | 'sudo'
+    role : UserRoles,
+    authUserUUID: string,
 }

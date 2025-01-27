@@ -16,6 +16,7 @@ import {
   generateRefreshToken,
 } from "../../../utils/jwtUtils";
 import { UserRoles } from "../../types/roles";
+import { v4 as uuidv4 } from 'uuid';
 
 export class AuthService implements IAuthService {
   constructor(private userRepository: UserRepository) {}
@@ -65,19 +66,23 @@ export class AuthService implements IAuthService {
       //hash password
       const hashedPassword = await hashPassword(password);
 
+      //Generate a UUID V4
+      const authUserUUID = uuidv4();
+
       //store user data in auth-service db.
       const role = UserRoles.Company;
       const storeUser = await this.userRepository.create(
         email,
         hashedPassword,
-        role
+        role,
+        authUserUUID
       );
       if (!storeUser) {
         return { message: "Failed to save user try again", success: false };
       }
 
       const companyData = {
-        authUser: storeUser._id,
+        authUserUUID: storeUser.authUserUUID,
         email,
         companyName,
         companyType,
@@ -190,7 +195,7 @@ export class AuthService implements IAuthService {
       }
 
       // Generate access and refresh tokens
-      const payload = { userId: findUser._id, role: findUser.role };
+      const payload = { authUserUUID: findUser.authUserUUID, role: findUser.role };
       const accessToken = await generateAccessToken(payload);
       const refreshToken = await generateRefreshToken(payload);
 

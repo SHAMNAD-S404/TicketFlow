@@ -11,13 +11,13 @@ import { ICompanyService } from "../../services/interface/ICompanyService";
 
     public getUserData = async(req: Request, res: Response): Promise<void> =>{
         try {
-            const userId = req.query.userId;
-            if(!userId){
+            const authUserUUID = req.query.authUserUUID;
+            if(!authUserUUID){
                 res.status(400).json({message:"user id dont found",succeess:false})
                 return;
             }
 
-            const response = await this.comapanyService.fetchCompanyData(userId.toString());
+            const response = await this.comapanyService.fetchCompanyData(authUserUUID.toString());
             const {message, success,data} = response;
             const statusCode = success ? 200:400;
 
@@ -29,28 +29,7 @@ import { ICompanyService } from "../../services/interface/ICompanyService";
         }
     }
 
-    // public addDepartment = async(req: Request, res: Response): Promise<void> => {
-    //     try {
-    //             const userId = req.query.userId;
-    //             const {departmentName , responsibilities} = req.body;
-    //             if(userId || departmentName || responsibilities) {
-    //                 res.status(400).json({message:"Provide all neccessary data",success:false})
-    //                 return;
-    //             }
-    //             const departmentData = {
-    //                 comapanyId:userId,
-    //                 departmentName,
-    //                 responsibilities
-    //             }
-
-    //             const response = await this.comapanyService.
-
-
-    //     } catch (error) {
-            
-    //     }
-        
-    // }
+ 
 
 
 

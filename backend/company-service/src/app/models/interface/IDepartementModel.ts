@@ -4,4 +4,5 @@ export interface IDepartment extends Document {
     companyId:mongoose.Types.ObjectId;
     departmentName:string;
     responsibilities:string;
+    authUserUUID : string;
 }

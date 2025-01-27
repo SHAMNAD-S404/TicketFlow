@@ -2,5 +2,6 @@
 export const enum UserRoles {
     Company ="company",
     Employee = "employee",
-    SuperAdmin = "superAdmin"
+    SuperAdmin = "superAdmin",
+    DepartmentHead ="departmentHead"
 }

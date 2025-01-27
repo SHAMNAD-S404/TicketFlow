@@ -48,10 +48,10 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
    * @param authUser The user ID of the document to find.
    * @returns The document or null if no document is found.
    */
-  async findOneById(authUser: string): Promise<T | null> {
+  async findOneByUUID(authUserUUID: string): Promise<T | null> {
     try {
       // Find one document by user ID
-      const result = await this.model.findOne({ authUser });
+      const result = await this.model.findOne({ authUserUUID:authUserUUID });
       return result;
     } catch (error) {
       // If an error occurs, throw it
