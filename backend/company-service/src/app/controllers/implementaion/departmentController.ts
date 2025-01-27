@@ -4,6 +4,7 @@ import { IDepartmentService } from "../../services/interface/IDepartmentService"
 import { ICompanyService } from "../../services/interface/ICompanyService";
 import mongoose from "mongoose";
 
+//new codes
 export class DepartmentController implements IDepartmentController {
   private readonly departmentService: IDepartmentService;
   private readonly companyService: ICompanyService;
@@ -15,6 +16,7 @@ export class DepartmentController implements IDepartmentController {
     this.departmentService = DepartmentService;
     this.companyService = CompanyService;
   }
+
 
   public createDepartment = async (
     req: Request,

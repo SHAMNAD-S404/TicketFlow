@@ -4,11 +4,11 @@ import { extractUserData } from "../middlewares/extractUserData";
 import DepartmentService from "../services/implements/departmentService";
 import CompanyService from "../services/implements/companyService";
 
-
 const departementServices = new DepartmentService();
 const companyService = new CompanyService();
 const departmentController = new DepartmentController(departementServices, companyService);
 
+//route setup
 const router = Router();
 
 
