@@ -43,8 +43,6 @@ export class AuthController implements IAuthController {
       const { email, password } = req.body;
       const response = await this.authService.verifyLogin(email, password);
 
-      console.log("from controlelr 11 resp :" , response)
-
       if (!response.success) {
         res.status(401).json({ message: response.message, success: false });
         return;

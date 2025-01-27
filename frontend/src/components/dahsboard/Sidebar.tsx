@@ -1,6 +1,9 @@
-import React from "react";
-import { FaHome, FaUsers, FaCog, FaHospitalUser } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaHome, FaUsers, FaHospitalUser, FaChevronLeft } from "react-icons/fa";
 import { MdOutlineAccountCircle } from "react-icons/md";
+import { RiDashboardFill } from "react-icons/ri";
+import { FaUserTie } from "react-icons/fa";
+import { TiTicket } from "react-icons/ti";
 
 interface SidebarProps {
   role: string;
@@ -10,40 +13,80 @@ interface SidebarProps {
 const menuConfig: { [key: string]: { name: string; icon: React.ReactNode }[] } =
   {
     superAdmin: [
-      { name: "Dashbord", icon: <FaHome /> },
-      { name: "Client Mangement", icon: <FaUsers /> },
-      { name: "Profile", icon: <FaCog /> },
+      { name: "Dashboard", icon: <FaHome /> },
+      { name: "Client Management", icon: <FaUsers /> },
+      { name: "Profile", icon: <FaUserTie /> },
     ],
     companyAdmin: [
       { name: "Dashboard", icon: <FaHome /> },
-      { name: "Department Mangement", icon: <FaHospitalUser /> },
+      { name: "Department Management", icon: <FaHospitalUser /> },
       { name: "Employee Management", icon: <FaUsers /> },
-      { name: "Profile", icon: <MdOutlineAccountCircle /> },
+      { name: "Profile", icon: <FaUserTie /> },
+      { name: "Tickets", icon: <TiTicket /> },
     ],
     user: [
-      { name: "dahsborad", icon: <FaHome /> },
+      { name: "Dashboard", icon: <FaHome /> },
       { name: "Profile", icon: <MdOutlineAccountCircle /> },
     ],
   };
 
 const Sidebar: React.FC<SidebarProps> = ({ role, onMenuSelect }) => {
   const menuItems = menuConfig[role] || [];
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   return (
-    <div className="bg-gray-900 text-white w-64 h-screen">
-      <div className="p-4 text-2xl font-bold"> TicketFlow </div>
-      <p className="px-4 text-sm text-gray-400">Everything in one place</p>
-      <ul className="mt-6 space-y-2">
-        {menuItems.map((item, index) => (
-          <li
-            key={index}
-            className="flex items-center gap-4 p-3 cursor-pointer hover:bg-gray-700"
-            onClick={() => onMenuSelect(item.name)}
-          >
-            {item.icon}
-            <span>{item.name}</span>
-          </li>
-        ))}
-      </ul>
+    <div
+      className={`relative min-h-screen bg-white border-r border-gray-200 shadow-lg rounded-2xl transition-all duration-300 ease-in-out
+      ${isCollapsed ? "w-24" : "w-72"}`}
+    >
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b rounded-xl border-gray-200 shadow-lg">
+        {!isCollapsed && (
+          <h1 className="text-2xl font-semibold text-gray-800  tracking-tight">
+            Ticket
+            <span className="bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500 text-transparent bg-clip-text">
+              Flow
+            </span>
+          </h1>
+        )}
+
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className={`p-2 rounded-lg hover:bg-gray-100 transition-colors ${
+            isCollapsed ? "mx-auto" : ""
+          }`}
+        >
+          {isCollapsed ? (
+            <RiDashboardFill size={20} className="text-gray-600" />
+          ) : (
+            <FaChevronLeft size={20} className="text-gray-600" />
+          )}
+        </button>
+      </div>
+
+      {/* Menu items */}
+      <nav className="p-4 ">
+        <ul className="space-y-2">
+          {menuItems.map((item, index) => (
+            <li key={index}>
+              <button
+                onClick={() => onMenuSelect(item.name)}
+                className={`flex items-center space-x-3 p-4 rounded-xl ease-in-out duration-300 bg-gray-100 shadow-xl shadow-gray-300 hover:shadow-blue-200  hover:scale-105 w-full transition-all
+                           ${isCollapsed ? "justify-center " : ""}`}
+              >
+                <div className="text-blue-700 text-xl hover:text-red-700 transition-colors duration-300 ease-in-out">
+                  {item.icon}
+                </div>
+                {!isCollapsed && (
+                  <span className="text-black font-semibold -tracking-wider  transition-colors duration-300 ease-in-out">
+                    {item.name}
+                  </span>
+                )}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </div>
   );
 };

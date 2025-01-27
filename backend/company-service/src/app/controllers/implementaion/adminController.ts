@@ -19,7 +19,6 @@ import { ICompanyService } from "../../services/interface/ICompanyService";
 
             const response = await this.comapanyService.fetchCompanyData(userId.toString());
             const {message, success,data} = response;
-            console.log("hi im inside the compnay service , response :", response)
             const statusCode = success ? 200:400;
 
             res.status(statusCode).json({message,success,data});
@@ -29,6 +28,29 @@ import { ICompanyService } from "../../services/interface/ICompanyService";
             res.status(400).json({message:String(error),success:false})
         }
     }
+
+    // public addDepartment = async(req: Request, res: Response): Promise<void> => {
+    //     try {
+    //             const userId = req.query.userId;
+    //             const {departmentName , responsibilities} = req.body;
+    //             if(userId || departmentName || responsibilities) {
+    //                 res.status(400).json({message:"Provide all neccessary data",success:false})
+    //                 return;
+    //             }
+    //             const departmentData = {
+    //                 comapanyId:userId,
+    //                 departmentName,
+    //                 responsibilities
+    //             }
+
+    //             const response = await this.comapanyService.
+
+
+    //     } catch (error) {
+            
+    //     }
+        
+    // }
 
 
 

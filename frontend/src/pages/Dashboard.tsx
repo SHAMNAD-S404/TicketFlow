@@ -16,7 +16,6 @@ enum UserRole {
 
 //create a context for the user
 const UserContext = createContext<IAdminContext | null >(null);
-
 /**
  * Custom hook to access the UserContext
  * @returns The current user context value
@@ -55,10 +54,10 @@ const Dashboard: React.FC = () => {
 
   return (
     <UserContext.Provider value={user} >
-      <div className="flex h-screen">
+      <div className="flex h-screen w-full">
         <Sidebar role={role} onMenuSelect={handleMenuSelect} />
 
-        <div className="flext-1 flex flex-col ">
+        <div className="flex-1 flex flex-col w-full">
           <DashboardHeader />
 
           <MainContent activeMenu={activeMenu} />

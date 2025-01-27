@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express,{Request,Response,NextFunction} from "express";
 import { validateEnvVariables } from "./utils/validateEnv";
 import companyRoutes from './app/routes/companyRoutes'
+import departmentRoutes from './app/routes/departmentRoutes'
 // import {UserData} from './app/interfaces/userTokenData'
 
 dotenv.config();
@@ -26,7 +27,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next();
 });
 
-app.use("/",companyRoutes)
+app.use("/comp/",companyRoutes)
+app.use("/dept/",departmentRoutes)
 
 
 export default app;

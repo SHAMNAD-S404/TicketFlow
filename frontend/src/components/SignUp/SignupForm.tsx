@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { FaGoogle } from "react-icons/fa";
 import Register from "../../assets/images/register.png";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Tooltips from "../utility/Tooltips";
 import { useForm } from "react-hook-form";

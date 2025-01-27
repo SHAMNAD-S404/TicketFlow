@@ -80,4 +80,6 @@ export default class CompanyService implements ICompanyService {
       return { message: String(error), success: false };
     }
   }
+
+
 }
