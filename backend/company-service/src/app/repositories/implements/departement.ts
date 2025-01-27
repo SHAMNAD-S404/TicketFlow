@@ -1,5 +1,4 @@
 import { DepartmentBase } from "./baseDepartments";
-import { IDepartmentBaseRepo } from "../interface/baseDepartmentRepo";
 import { IDepartment } from "../../models/interface/IDepartementModel";
 import DepartmentModel from "../../models/implements/department";
 import { IDepartmentRepo } from "../interface/IDepartmentRepo";
