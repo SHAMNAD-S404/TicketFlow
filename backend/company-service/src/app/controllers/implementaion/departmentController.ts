@@ -60,4 +60,32 @@ export class DepartmentController implements IDepartmentController {
       res.status(400).json({ message: String(error), success: false });
     }
   };
+
+  public getAllDepartmentList  = async (req : Request, res: Response) : Promise<void> => {
+    try {
+
+      const authUserUUID = req.query.authUserUUID as string;
+      if(!authUserUUID) {
+        res.status(401).json({message: "unauthorised",success:false});
+        return
+      }
+
+      const company = await this.companyService.getCompanyIdWithAuthUserUUID(authUserUUID);
+      if(!company){
+        res.status(401).json({message:"unauthorised! company not found",success:false})
+      }
+
+      const departmentList = await this.departmentService.getAllDepartmentNameList(company)
+
+      const {success,message , data} = departmentList;
+      const statusCode = success ? 200 : 400;
+      res.status(statusCode).json({success,message,data})
+      return;
+      
+    } catch (error) {
+      res.status(400).json({message : String(error) , success:false})
+    }
+  }
+
+
 }

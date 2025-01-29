@@ -2,6 +2,7 @@ import {  Router  } from "express";
 import { AuthController } from "../controllers/implementations/AuthController";
 import { AuthService } from "../services/implementations/authService";
 import { UserRepository } from "../repositories/implements/userRepository";
+import { authenticateToken } from "../middlewares/authenticateToken";
 
 
 const router = Router();
@@ -17,6 +18,7 @@ router.post("/signup",authController.registerUser)
       .post("/verify-otp",authController.verifyOTP)
       .post("/login",authController.verifyLogin)
       .post("/verify-email",authController.verifyEmail)
+      .patch("/reset-password",authenticateToken,authController.updateUserPassword)
 
 
 export default router;

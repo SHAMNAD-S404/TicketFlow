@@ -46,6 +46,14 @@ class DepartmentRepository extends DepartmentBase<IDepartment> implements IDepar
         }
     }
 
+    async fetchAllDepartmentsByCompanyId (companyId : string) : Promise<{_id:string ,name:string} []  > {
+        try {
+                return await this.findDepartmentsListByCompanyId(companyId) 
+        } catch (error) {
+            throw error;
+        }
+    }
+
 
 }
 

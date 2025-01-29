@@ -56,7 +56,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
           {/* User Section */}
           <div className="border border-purple-300 rounded-lg p-4 flex flex-col items-center text-center cursor-pointer hover:border hover:border-b-green-500 hover:border-b-4 hover:border-blue-500 hover:border-x-4 transition"
-              onClick={()=> handleLogin("user")}>
+              onClick={()=> handleLogin("employee")}>
             <h3 className="text-2xl font-semibold text-gray-800">User</h3>
             <p className="text-gray-600 text-sm mb-2">
               Click here to login to user panel

@@ -43,10 +43,10 @@ const UserLogin: React.FC = () => {
         />
       )}
       {step === Steps.VerifyCode && (
-        <VerifyOtp userType="user" verifyHandler={goToNewPassword} />
+        <VerifyOtp userType="employee" verifyHandler={goToNewPassword} />
       )}
       {step === Steps.NewPassword && (
-        <NewPassword userType="user" loginHandler={goToLogin} />
+        <NewPassword userType="employee" loginHandler={goToLogin} />
       )}
     </div>
   );

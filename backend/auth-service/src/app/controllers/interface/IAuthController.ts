@@ -5,4 +5,5 @@ export interface IAuthController {
     verifyOTP(req:Request,res:Response) : Promise<void>;
     verifyLogin(req:Request,res:Response) : Promise<void>
     verifyEmail(req:Request,res:Response) : Promise<void>
+    updateUserPassword(req:Request,res:Response) : Promise<void>;
 }

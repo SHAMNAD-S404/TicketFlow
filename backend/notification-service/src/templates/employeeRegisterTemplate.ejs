@@ -1,19 +1,3 @@
-<!-- <!DOCTYPE html>
-<html>
-  <body style="font-family: Arial, sans-serif; margin: 20px">
-    <h2>OTP Verification</h2>
-    <p>Hi there,</p>
-    <p>Your OTP for verification is:</p>
-    <h1 style="color: #4caf50"><%= otp %></h1>
-    <p>
-      Please use this OTP to complete your registration. It will expire in 4
-      minutes.
-    </p>
-    <p>Thank you,<br />The TicketFlow Team</p>
-  </body>
-</html> -->
-
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -50,18 +34,16 @@
         margin: 10px 0;
         line-height: 1.6;
       }
-      .email-body .otp-box {
+      .email-body .credentials {
         margin: 20px 0;
         padding: 15px;
         background-color: #f3f3f3;
         border-radius: 8px;
-        text-align: center;
       }
-      .email-body .otp-box h2 {
-        margin: 0;
-        font-size: 36px;
-        color: #4caf50;
+      .email-body .credentials p {
+        margin: 5px 0;
         font-weight: bold;
+        color: #4caf50;
       }
       .email-footer {
         background-color: #f3f3f3;
@@ -81,34 +63,35 @@
     <div class="email-container">
       <!-- Header Section -->
       <div class="email-header">
-        <h1>OTP Verification</h1>
+        <h1>Welcome to TicketFlow!</h1>
       </div>
 
       <!-- Body Section -->
       <div class="email-body">
         <p>Hi there,</p>
-        <p>We received a request to verify your email address.</p>
+        <p>Welcome to TicketFlow! We're excited to have you onboard.</p>
         <p>
-          Use the one-time password (OTP) below to complete your verification.
-          Please note that the OTP is valid for only <strong>4 minutes</strong>:
+          Here are your one-time credentials to log in to your account. Please
+          make sure to change your password after logging in:
         </p>
-        <div class="otp-box">
-          <h2><%= otp %></h2>
+        <div class="credentials">
+          <p>Email: <%= email %></p>
+          <p>Password: <%= password %></p>
         </div>
         <p>
-          If you didn't request this, please ignore this email 
+          For any assistance, feel free to reach out to our support team at any
+          time.
         </p>
-        <p>Thank you,<br />The TicketFlow Team</p>
+        <p>Happy ticketing!<br />The TicketFlow Team</p>
       </div>
 
       <!-- Footer Section -->
       <div class="email-footer">
         <p>
-          Need help?
+          Need help?Visit our support center or reply to this email.
         </p>
         <p>&copy; <%= new Date().getFullYear() %> TicketFlow. All rights reserved.</p>
       </div>
     </div>
   </body>
 </html>
-

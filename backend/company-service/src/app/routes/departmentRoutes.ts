@@ -1,4 +1,4 @@
-import { Router ,Request,Response,NextFunction } from "express";
+import { Router  } from "express";
 import { DepartmentController } from "../controllers/implementaion/departmentController";
 import { extractUserData } from "../middlewares/extractUserData";
 import DepartmentService from "../services/implements/departmentService";
@@ -12,7 +12,8 @@ const departmentController = new DepartmentController(departementServices, compa
 const router = Router();
 
 
-router.post("/add-department",extractUserData,departmentController.createDepartment);
+router.post("/add-department",extractUserData,departmentController.createDepartment)
+      .get("/get-departments",extractUserData,departmentController.getAllDepartmentList)
 
 
 export default router;

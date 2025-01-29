@@ -40,11 +40,7 @@ const SignUp :React.FC = () => {
           <SignupForm/>
         ) }
 
-        {/* {step === SignupSteps.Signup_Form ? (
-           <SignupForm onCreateAccount={handleCreateAccount} />
-        ) : (
-          <OtpVerification/>
-        )  } */}
+
        
     </div>
        

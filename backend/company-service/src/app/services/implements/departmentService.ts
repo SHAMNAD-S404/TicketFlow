@@ -27,5 +27,24 @@ export default class DepartmentService implements IDepartmentService {
         }
     }
 
+    async getAllDepartmentNameList(companyID : string) : Promise<{message : string,success:boolean, data?: {_id:string , name:string}[] }> {
+        try {
+
+            const departmentList = await DepartmentRepository.fetchAllDepartmentsByCompanyId(companyID);
+            if(departmentList.length === 0) {
+                return {message: "departments not found! Add  departments first. then try again !", success : false}
+            }
+
+            return {
+                message : "data fetched successfully",
+                success : true,
+                data : departmentList
+            }
+
+        } catch (error) {
+                return {message:String(error),success:false}
+        }
+    }
+
   
 }

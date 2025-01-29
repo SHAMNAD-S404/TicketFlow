@@ -1,16 +1,63 @@
 import React, { useState } from "react";
 import UserLoginImg from "../../assets/images/userLoginPage.png";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { loginUser } from "../../api/services/authService";
+import { useNavigate } from "react-router-dom";
+import regexPatterns, { RegexMessages } from "../../utils/regexPattern";
 
 interface UserLoginProps {
   forgotPassword: () => void;
 }
 
+export interface IemployeeLoginFormData {
+  email: string;
+  password: string;
+}
+
 const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
+  const navigate = useNavigate();
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IemployeeLoginFormData>();
+
+  const handleLogin = async (data: IemployeeLoginFormData) => {
+    setLoading(true);
+    try {
+      console.log("logindata", data);
+      const response = await loginUser(data.email, data.password);
+      if (response.success && response.isFirst) {
+        
+        localStorage.setItem("resetEmail",data.email);
+        toast.success(response.message, {
+          onClose: () => navigate("/employee/resetPassword"),
+        });
+      } else if (response.success) {
+        toast.success(response.message, {
+          onClose: () => navigate("/empoloyee/dashboard"),
+        });
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message);
+      } else {
+        alert("Error logging in account. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -25,7 +72,7 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
             Fill the credentials to login to the user dashboard
           </p>
 
-          <form>
+          <form onSubmit={handleSubmit(handleLogin)}>
             <div className="mb-6">
               <label
                 htmlFor="email"
@@ -38,7 +85,19 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
                 id="email"
                 placeholder="flip2@gmail.com"
                 className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                {...register("email", {
+                  required: "this field is required",
+                  pattern: {
+                    value: regexPatterns.email,
+                    message: RegexMessages.emailRegexMessage,
+                  },
+                })}
               />
+              {errors.email && (
+                <p className="text-sm text-red-500 font-medium">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             {/* Password Input */}
@@ -50,19 +109,26 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
                 Enter password
               </label>
               <div className="relative">
-              <input
-                type={passwordVisible ? "text" : "password"}
-                id="password"
-                placeholder="****************"
-                className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                type="button"
-                onClick={togglePasswordVisibility}
-                className=" absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-blue-600"
-              >
-                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
-              </button>
+                <input
+                  type={passwordVisible ? "text" : "password"}
+                  id="password"
+                  placeholder="****************"
+                  className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  {...register("password", {
+                    required: "this field is required",
+                    pattern: {
+                      value: regexPatterns.password,
+                      message: RegexMessages.passwordRegexMessage,
+                    },
+                  })}
+                />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className=" absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-blue-600"
+                >
+                  {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
             </div>
 

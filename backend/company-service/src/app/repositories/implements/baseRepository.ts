@@ -58,4 +58,16 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
       throw error;
     }
   }
+
+  async  isUserExistByEmail(email: string): Promise<T | null> {
+    try {
+
+      const result = await this.model.findOne({email}).select('_id');
+      return result;
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }

@@ -5,4 +5,5 @@ export interface IDepartmentBaseRepo<T> {
     findByName(departmentName:string) : Promise<T | null>
     findWithTwoFields(field1:string,field2:string) : Promise<T | null>
     findCompanyWithUUID(userUUID:string) : Promise <T | null>
+    findDepartmentsListByCompanyId(companyId:string) : Promise<{ _id: string; name: string }[]> ;
 }

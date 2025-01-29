@@ -16,7 +16,7 @@ import {
   generateRefreshToken,
 } from "../../../utils/jwtUtils";
 import { UserRoles } from "../../types/roles";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export class AuthService implements IAuthService {
   constructor(private userRepository: UserRepository) {}
@@ -175,6 +175,7 @@ export class AuthService implements IAuthService {
     message: string;
     success: boolean;
     tockens?: { refreshToken: string; accessToken: string };
+    isFirst?: boolean;
   }> {
     try {
       // Check if email and password are provided
@@ -190,14 +191,27 @@ export class AuthService implements IAuthService {
 
       // Compare the provided password with the hashed password stored in the database
       const isMatch = await comparePassword(password, findUser.password);
-      if (!isMatch) {
+      if (!isMatch) {       
+        
         return { message: "Invalid Credentials", success: false };
       }
 
       // Generate access and refresh tokens
-      const payload = { authUserUUID: findUser.authUserUUID, role: findUser.role };
+      const payload = {
+        authUserUUID: findUser.authUserUUID,
+        role: findUser.role,
+      };
       const accessToken = await generateAccessToken(payload);
       const refreshToken = await generateRefreshToken(payload);
+
+      if (findUser.isFirstLogin === true) {
+        return {
+          message: "Login successfull. Reset your password and continue !",
+          success: true,
+          tockens: { accessToken, refreshToken },
+          isFirst: true,
+        };
+      }
 
       return {
         message: "Login Successfull",
@@ -247,6 +261,7 @@ export class AuthService implements IAuthService {
       // Send OTP and user data to notification queue using RabbitMQ
       const notificationPayload = {
         email,
+        type: "registration",
         otp: OTP,
         subject: `OTP for Registration`,
         message: `Hi , your OTP for registration is ${OTP}`,
@@ -264,4 +279,26 @@ export class AuthService implements IAuthService {
       return { message: String(error), success: false };
     }
   }
+
+  async updateUserPassword(email: string, password: string): Promise<{ message: string; success: boolean; }> {
+    try {
+
+      const userExist  = await this.userRepository.findByEmail(email)
+      if(!userExist){
+        return {message : "user didn't exist",success : false}
+      }
+      const hashedPassword = await hashPassword(password);
+      const updatePassword = await this.userRepository.resetPassword(email,hashedPassword);
+      if(!updatePassword){
+        return {message:"update password was failed ! retry again",success:false}
+      }
+      return {message:"successfully updated password ! kindly login with new credentials" ,  success:true}
+      
+    } catch (error) {
+      return { message: String(error), success: false };
+    }
+  }
+
+
+
 }

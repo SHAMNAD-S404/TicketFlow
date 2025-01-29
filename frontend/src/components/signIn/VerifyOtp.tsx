@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Verify from "../../assets/images/verify.png";
 
 interface VerifyOtpProps {
-  userType: "admin" | "user";
+  userType: "admin" | "employee";
   verifyHandler: () => void;
 }
 

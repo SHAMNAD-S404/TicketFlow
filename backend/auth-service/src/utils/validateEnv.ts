@@ -21,6 +21,9 @@ export function validateEnvVariables(): void {
     if (!process.env.NOTIFICATION_QUEUE) {
       console.warn("NOTIFICATION_QUEUE is not defined,");
     }
+    if (! process.env.AUTH_CONSUMER_QUEUE) {
+      console.warn("AUTH_CONSUMER_QUEUE is not defined,");
+    }
 
   }
   

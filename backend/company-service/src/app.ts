@@ -3,6 +3,7 @@ import express,{Request,Response,NextFunction} from "express";
 import { validateEnvVariables } from "./utils/validateEnv";
 import companyRoutes from './app/routes/companyRoutes'
 import departmentRoutes from './app/routes/departmentRoutes'
+import employeeRoutes from './app/routes/employeeRoutes'
 
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 app.use("/comp/",companyRoutes)
 app.use("/dept/",departmentRoutes)
+app.use("/emp/",employeeRoutes)
 
 
 export default app;

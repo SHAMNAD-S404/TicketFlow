@@ -16,7 +16,7 @@ const SignIn : React.FC = () => {
     <SignupHeader showDescription={false} />
     {role === "admin" ? (
       <CoAdminLogin/>
-    ) : role === "user" ? (
+    ) : role === "employee" ? (
       <UserLogin/>
     ) : (
       <div >

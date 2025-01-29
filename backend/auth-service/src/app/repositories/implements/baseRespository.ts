@@ -123,4 +123,13 @@ export class BaseRepository<T extends Document> {
       throw error;
     }
   }
+
+
+  async findByAuthUserUUID(authUserUUID : string) : Promise<T | null>{
+    try {
+      return await this.model.findOne({authUserUUID: authUserUUID});
+    } catch (error) {
+      throw error;
+    }
+  }
 }

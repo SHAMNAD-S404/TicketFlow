@@ -5,4 +5,5 @@ export interface IUser {
     password:string,
     role : UserRoles,
     authUserUUID: string,
+    isFirstLogin:boolean,
 }

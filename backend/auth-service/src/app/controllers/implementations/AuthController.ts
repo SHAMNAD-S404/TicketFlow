@@ -9,49 +9,92 @@ export class AuthController implements IAuthController {
     this.authService = authService;
   }
 
+
+  /**
+   * Registers a new user
+   * @param req The request object
+   * @param res The response object
+   */
   public registerUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const registerData = req.body;
+      // Remove confirmPassword from the req.body
       delete registerData.confirmPassword;
       const response = await this.authService.registerUser(registerData);
       const { message, success } = response;
       const statusCode = success ? 201 : 400;
 
+      // Log the response for debugging purposes
       console.log(response);
       res.status(statusCode).json({ message, success });
     } catch (error) {
+      // Return a 400 status with an error message if the registration fails
       res.status(400).json({ message: String(error), success: false });
     }
   };
 
+
+
+
+  /**
+   * Verifies the OTP sent to the user's email
+   * @param req The request object
+   * @param res The response object
+   */
   public verifyOTP = async (req: Request, res: Response): Promise<void> => {
     try {
+      // Extract the email and OTP from the request body
       const { email, otp } = req.body;
+
+      // Call the verify OTP method of the Auth service
       const response = await this.authService.verifyOTP(email, otp);
+
+      // Extract the message and success status from the response
       const { message, success } = response;
+
+      // Set the status code based on the success status
       const statusCode = success ? 200 : 400;
 
+      // Return the response with the message and success status
       res.status(statusCode).json({ message, success });
     } catch (error) {
+      // Catch any errors and return a 400 status with an error message
       res.status(400).json({ message: String(error), success: false });
     }
   };
 
+
+
+  /**
+   * Verifies the user's login credentials
+   * @param req The request object
+   * @param res The response object
+   */
   public verifyLogin = async (req: Request, res: Response): Promise<void> => {
     try {
-      console.log(req.body)
+      // Extract the email and password from the request body
+      console.log(req.body);
       const { email, password } = req.body;
+
+      // Call the verifyLogin method of the Auth service
       const response = await this.authService.verifyLogin(email, password);
 
+      // Check if the login was successful
       if (!response.success) {
+        // Return a 401 status with an error message if the login fails
         res.status(401).json({ message: response.message, success: false });
         return;
       }
 
-      const { message, success, tockens } = response;
+      // Extract the message, success status, tokens and isFirst from the response
+      const { message, success, tockens, isFirst } = response;
+
+      // Check if the tokens are present
       if (tockens) {
+        // Extract the accessToken and refreshToken from the tokens
         const { accessToken, refreshToken } = tockens;
 
+        // Set the accessToken and refreshToken cookies with the appropriate options
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
           secure: false,
@@ -66,34 +109,81 @@ export class AuthController implements IAuthController {
           sameSite: "lax",
         });
 
-        res.status(200).json({ message, success });
+        // Return a 200 status with the message, success status and isFirst
+        res.status(200).json({ message, success, isFirst });
         return;
       } else {
+        // Return a 500 status with an error message if the tokens are not present
         res
           .status(500)
           .json({ message: "failed to assign tokens", success: false });
         return;
       }
     } catch (error) {
+      // Catch any errors and return a 400 status with an error message
       res.status(400).json({ message: String(error), success: false });
     }
   };
 
+
+
+  /**
+   * Verify email address by sending an OTP to the user
+   * @param req The request object
+   * @param res The response object
+   */
   public verifyEmail = async (req: Request, res: Response): Promise<void> => {
     try {
-      console.log("inside verify controller",req.body)
+      // Extract the email from the request body
+      console.log("inside verify controller", req.body);
       const { email } = req.body;
 
+      // Check if the email is provided
       if (!email) {
+        // Return a 400 status with an error message if the email is not provided
         res.status(400).json({ message: "Enter the email", success: false });
         return;
       }
 
-      const response = await this.authService.verifyEmail( email.toLowerCase() );
-      console.log("inside fverify emal controller resp:",response)
+      // Call the verifyEmail method of the Auth service
+      const response = await this.authService.verifyEmail(email.toLowerCase());
+      console.log("inside fverify emal controller resp:", response);
+      // Extract the message and success status from the response
       const { message, success } = response;
+
+      // Check if the response was successful
       const statusCode = success ? 200 : 400;
+      // Return the response with the appropriate status code
       res.status(statusCode).json({ message, success });
+    } catch (error) {
+      // Catch any errors and return a 400 status with an error message
+      res.status(400).json({ message: String(error), success: false });
+    }
+  };
+
+
+  public updateUserPassword = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    try {
+      console.log("im inside controlere");
+      
+    
+      const {password,email} = req.body;
+      if (!email && !password) {
+        console.log("req.body",req.body);
+        
+        res.status(400).json({ message: "user id or password is missing !",success:false });
+        return;
+      }
+
+      const updatePassword = await this.authService.updateUserPassword(email as string,password);
+      const {message,success} = updatePassword;
+      const statusCode = success ? 200 : 400;
+      res.status(statusCode).json({message,success})
+    
+
     } catch (error) {
       res.status(400).json({ message: String(error), success: false });
     }

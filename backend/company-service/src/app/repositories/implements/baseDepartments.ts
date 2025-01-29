@@ -49,4 +49,21 @@ export class DepartmentBase<T extends Document> implements IDepartmentBaseRepo<T
             throw error;
         }
     }
+
+    async findDepartmentsListByCompanyId(companyId: string): Promise<{ _id: string; name: string }[]> {
+        try {
+          // Fetch only the `name` and `_id` fields and return plain JavaScript objects
+          const departments = await this.model.find(
+            { companyId }, // Filter by companyId
+            { departmentName: 1 } // Select only the `name` and `_id` fields
+          )
+            .lean() 
+            .exec();
+    
+          return departments as { _id: string; name: string }[];
+        } catch (error) {
+          console.error('Error fetching departments by companyId:', error);
+          throw new Error('Could not fetch departments.');
+        }
+      }
 }

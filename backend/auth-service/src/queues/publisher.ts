@@ -1,13 +1,11 @@
-import amqplib from "amqplib";
-import { RabbitMQConfig } from "../config/rabbitmq";
-import { channel, connection } from "./connection";
+import { channel } from "./connection";
 
 export const publishToQueue = async(queueName: string, message: object): Promise<void> => {
     try {
         if(!channel){
             throw new Error("Channel is not available");
         }     
-        await channel.assertQueue(RabbitMQConfig.notificationQueue, {durable: true});
+        await channel.assertQueue(queueName, {durable: true});
 
         //send message to the queue
         channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)), {persistent: true});

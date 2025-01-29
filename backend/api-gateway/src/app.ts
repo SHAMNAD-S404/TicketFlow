@@ -7,6 +7,7 @@ import { logger } from "./middleware/logger";
 import { validateEnvVariables } from "./util/validateEnv";
 import cookieParser from "cookie-parser";
 import { authenticateToken } from "./middleware/authenticateToken";
+import morgan from 'morgan'
 
 
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(logger);
+app.use(morgan("dev"))
 
 
 // Set up CORS

@@ -12,4 +12,8 @@ export function validateEnvVariables(): void {
   if (!process.env.COMPANY_RPC_QUEUE) {
     console.warn("COMPANY_RPC_QUEUE is not defined,");
   }
+  if (!process.env.AUTH_CONSUMER_QUEUE) {
+    console.warn("AUTH_CONSUMER_QUEUE is not defined,");
+  }
+
 }
