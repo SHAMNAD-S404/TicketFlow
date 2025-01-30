@@ -58,4 +58,49 @@ export class EmployeeController implements IEmployeeController {
             res.status(400).json({message:String(error),success:false})
         }
     }
+
+    public getEmployeeData = async(req: Request, res: Response): Promise<void> => {
+        try {
+
+            const email = req.query.email;
+            if(!email){
+                res.status(401).json({message:"email id not found",success:false})
+                return;
+            }
+            const userData = await this.employeeService.fetchEmployeeData(email as string);
+            const {success,message,data} = userData;
+            const statusCode = success ? 200 : 400;
+            res.status(statusCode).json({message,success,data});
+            return;
+            
+        } catch (error) {
+            res.status(400).json({message:String(error),success:false});
+            return;
+        }
+    }
+
+    public updateEmployee = async(req: Request, res: Response): Promise<void> =>{
+
+        try {
+
+            if(!req.body){
+                res.status(401).json({message:"provide neccessory data",success:false})
+                return;
+            }
+
+            const { email, ...updateData } = req.body; 
+
+            const updatedData = await this.employeeService.updateEmployeeProfile(email,updateData);
+            const {success,message,data} = updatedData;
+            const statusCode = success ? 200 : 400;
+            res.status(statusCode).json({message,success,data});
+            return;
+
+            
+        } catch (error) {
+            res.status(400).json({message:String(error),success:false});
+            return;
+        }
+        
+    }
 }

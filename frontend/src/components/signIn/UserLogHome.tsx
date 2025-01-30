@@ -34,17 +34,17 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
   const handleLogin = async (data: IemployeeLoginFormData) => {
     setLoading(true);
     try {
-      console.log("logindata", data);
       const response = await loginUser(data.email, data.password);
+
       if (response.success && response.isFirst) {
-        
-        localStorage.setItem("resetEmail",data.email);
+        localStorage.setItem("resetEmail", data.email);
         toast.success(response.message, {
           onClose: () => navigate("/employee/resetPassword"),
         });
       } else if (response.success) {
+        localStorage.setItem("userRole", response.role);
         toast.success(response.message, {
-          onClose: () => navigate("/empoloyee/dashboard"),
+          onClose: () => navigate("/employee/dashboard"),
         });
       } else {
         toast.error(response.message);

@@ -12,6 +12,7 @@ export const extractUserData = (req:Request,res:Response,next:NextFunction) =>  
         // Add userId to query params if it doesn't exist
         if(!req.query.authUserUUID && parsedUserInfo.authUserUUID){
             req.query.authUserUUID = parsedUserInfo.authUserUUID;
+            req.query.email = parsedUserInfo.email;
         }
     }
 

@@ -1,5 +1,7 @@
 import EmployeeManagement from "./employeeMenu/mainMenu/EmployeeManagement";
 import DepartmentManagement from "./departmentMenu/mainMenu/DepartmentManagement";
+import ProfileUI from "./profileMenu/mainMenu/ProfileUI";
+import ProfilePage from "./profileMenu/mainMenu/ProfilePage";
 
 interface MenuConfig {
     [key:string] : React.FC;
@@ -10,4 +12,5 @@ interface MenuConfig {
 export const menuComponents : MenuConfig = {
     "Employee Management" : EmployeeManagement,
     "Department Management" : DepartmentManagement,
+    "Profile"               : ProfilePage,
 } 

@@ -73,11 +73,12 @@ export class AuthController implements IAuthController {
   public verifyLogin = async (req: Request, res: Response): Promise<void> => {
     try {
       // Extract the email and password from the request body
-      console.log(req.body);
+   
       const { email, password } = req.body;
 
       // Call the verifyLogin method of the Auth service
       const response = await this.authService.verifyLogin(email, password);
+      console.log(response)
 
       // Check if the login was successful
       if (!response.success) {
@@ -87,7 +88,7 @@ export class AuthController implements IAuthController {
       }
 
       // Extract the message, success status, tokens and isFirst from the response
-      const { message, success, tockens, isFirst } = response;
+      const { message, success, tockens, isFirst , role } = response;
 
       // Check if the tokens are present
       if (tockens) {
@@ -110,7 +111,7 @@ export class AuthController implements IAuthController {
         });
 
         // Return a 200 status with the message, success status and isFirst
-        res.status(200).json({ message, success, isFirst });
+        res.status(200).json({ message, success, isFirst , role });
         return;
       } else {
         // Return a 500 status with an error message if the tokens are not present
@@ -188,4 +189,25 @@ export class AuthController implements IAuthController {
       res.status(400).json({ message: String(error), success: false });
     }
   };
+
+  public fetchUserRole  = async (req: Request, res: Response): Promise<void> => {
+      try {
+
+        const userEmail = req.query.email;
+        if(!userEmail){
+          res.status(400).json({message:"user detail not found",success:false});
+          return;
+        }
+
+        const getRole = await this.authService.getUserRole(userEmail as string);
+        const {message , role , success} = getRole;
+        const statusCode = success ? 200 : 400;
+        res.status(statusCode).json({message,success,role})
+        return;
+      } catch (error) {
+        res.status(400).json({ message: String(error), success: false });
+      }
+  }
+
+
 }

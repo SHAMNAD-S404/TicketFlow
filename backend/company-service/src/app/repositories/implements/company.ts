@@ -61,6 +61,19 @@ class CompanyRepository
       throw error;
     }
   }
+
+  async updateProfileByEmail(email: string, updateData: Partial<ICompany>): Promise<ICompany | null> {
+    try {
+
+      const updateCompany = await this.updatByEmail(email,updateData);
+      return updateCompany;
+      
+    } catch (error) {
+      throw error
+    }
+  }
+
+
 }
 
 export default new CompanyRepository();

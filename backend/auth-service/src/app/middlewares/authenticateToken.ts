@@ -6,6 +6,7 @@ import { config } from "../../config/index";
 interface JwtPayload {
     userId ?: string,
     role ?: string,
+    email? : string,
     [key:string] :any,
 }
 
@@ -26,7 +27,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
 
 
         const decoded = jwt.verify(token, config.jwtSecret) as JwtPayload;
-        const userInfo = {authUserUUID:decoded.authUserUUID , role:decoded.role};
+        const userInfo = {authUserUUID:decoded.authUserUUID , role:decoded.role,email:decoded.email };
 
         //Forward the user data in custom header
         req.headers['x-user-data'] = JSON.stringify(userInfo)

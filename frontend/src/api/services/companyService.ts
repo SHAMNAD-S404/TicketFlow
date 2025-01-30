@@ -1,17 +1,46 @@
 import axiosInstance from "../axiosInstance";
 import { DepartemntForm } from "../../components/dahsboard/menu/departmentMenu/subMenu/CreateDepartment";
 import { IEmployeeForm } from "../../types/IEmployeeForm";
-import { data } from "react-router-dom";
+import { AxiosResponse } from "axios";
+import { EmployeeEditForm } from "../../components/dahsboard/menu/profileMenu/subMenu/EmployeeProfileEdit";
+import { IcompanyEditForm } from "../../components/dahsboard/menu/profileMenu/subMenu/EditProfile";
 
 //fetch user data from the company service.
 export const fetchUserData = async () => {
     try {
-      const response = await axiosInstance.get("/company/comp/get-user");
-      return response.data;
+
+      let role = localStorage.getItem("userRole");
+
+      if(!role) {
+        const roleResponse = await axiosInstance.get("/auth/get-user-role");
+        role = roleResponse.data.role;
+        localStorage.setItem("userRole",role as string);
+      }
+
+      let userResponse : AxiosResponse<any>;
+      if(role === "company"){
+        userResponse = await axiosInstance.get("/company/comp/get-user");
+      }else if (role === "employee"){
+        userResponse = await axiosInstance.get("/company/emp/get-user");
+      }else if (role === "sudo") {
+        userResponse = await axiosInstance.get("/auth/get-user");
+      }else{
+        throw new Error("Invalid role ")
+      }
+
+      return {...userResponse.data,role};
+
+      // const response = await axiosInstance.get("/company/comp/get-user");
+      // return response.data;
     } catch (error) {
       throw error;
     }
   }
+
+
+
+
+
 
 
   //create deaprtment 
@@ -48,4 +77,32 @@ export const fetchUserData = async () => {
       console.log("Error during fetch departments",error);
       throw error;
     }
-  }
+
+    
+    }
+
+    export const udpateEmployeeProfile = async (data :EmployeeEditForm) => {
+      try {
+
+        const response = await axiosInstance.patch('/company/emp/update-profile',data);
+        return response.data
+        
+      } catch (error) {
+        console.log("Error during fetch departments",error);
+      throw error;
+      }
+
+    }
+
+    export const updateCompanyProfile = async(data:IcompanyEditForm) => {
+      try {
+        const response = await axiosInstance.patch("/company/comp/update-profile",data);
+        return response.data;
+        
+      } catch (error) {
+        console.log("Error during fetch departments",error);
+      throw error;
+      }
+    }
+
+  

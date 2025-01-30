@@ -6,6 +6,7 @@ const companySchema : Schema = new Schema<ICompany> ({
     companyType: { type: String, required: true },
     phoneNumber: { type: String, required: true },
     corporatedId: { type: String, required: true },
+    role : {type: String,required : true , default:"comapny"}, 
     email: { type: String, required: true },
     originCountry: { type: String, required: true },
     authUserUUID: { type: String, required: true }

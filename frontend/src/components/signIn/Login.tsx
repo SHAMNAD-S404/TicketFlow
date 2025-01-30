@@ -37,17 +37,17 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
     setError("");
 
     try {
-      console.log("login data", data);
+     
       const response = await loginUser(data.email,data.password);
       if(response.success){
+          localStorage.setItem("userRole",response.role)
         toast.success(response.message, {
-          onClose: () => navigate("/admin/dashboard")
+          onClose: () => navigate("/company/dashboard")
         })
       }else{
         toast.error(response.message);
       }
      
-       navigate("/admin/dashboard")
     } catch (error : any) {
         if(error.response && error.response.data){
           toast.error(error.response.data.message);

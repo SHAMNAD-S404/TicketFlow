@@ -11,6 +11,7 @@ const adminController = new AdminController(companyService);
 const router = Router();
 
 router.get("/get-user",extractUserData,adminController.getUserData)
+      .patch("/update-profile",adminController.updateCompany)
      
 
 

@@ -174,6 +174,7 @@ export class AuthService implements IAuthService {
   ): Promise<{
     message: string;
     success: boolean;
+    role ?: string;
     tockens?: { refreshToken: string; accessToken: string };
     isFirst?: boolean;
   }> {
@@ -199,6 +200,7 @@ export class AuthService implements IAuthService {
       // Generate access and refresh tokens
       const payload = {
         authUserUUID: findUser.authUserUUID,
+        email : findUser.email,
         role: findUser.role,
       };
       const accessToken = await generateAccessToken(payload);
@@ -217,6 +219,7 @@ export class AuthService implements IAuthService {
         message: "Login Successfull",
         success: true,
         tockens: { accessToken, refreshToken },
+        role : findUser.role as string,
       };
     } catch (error) {
       return { message: String(error), success: false };
@@ -297,6 +300,22 @@ export class AuthService implements IAuthService {
     } catch (error) {
       return { message: String(error), success: false };
     }
+  }
+
+
+  async getUserRole(email: string): Promise<{ message: string; success: boolean; role?: string; }> {
+     try {
+
+        const userRole = await this.userRepository.findByEmail(email);
+        if(!userRole){
+          return {message: "user not found", success : false}
+        }
+
+        return {message : "user data fetched success",success:true , role:userRole.role}
+      
+     } catch (error) {
+      return { message: String(error), success: false };
+     }
   }
 
 

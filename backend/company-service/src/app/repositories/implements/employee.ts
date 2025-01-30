@@ -27,6 +27,24 @@ class EmployeeRepository extends BaseRepository<IEmployee> implements IEmployeeR
             throw error;
         }
     }
+
+    async getEmployeeData(email: string): Promise<IEmployee | null> {
+        try {
+            const employeeData = await this.findOneWithEmail(email)
+            return employeeData;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getUpdatedEmployee(email: string, updateData: Partial<IEmployee>): Promise<IEmployee | null> {
+        try {
+            const updatedEmployee = await this.updatByEmail(email,updateData )
+            return updatedEmployee;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default new EmployeeRepository();

@@ -46,4 +46,40 @@ export default class EmployeeService implements IEmployeeService {
       return { message: String(error), success: false };
     }
   }
+
+  async fetchEmployeeData(email: string): Promise<{ message: string; success: boolean; data?: IEmployee; }> {
+    try {
+
+      const getUserData = await EmployeeRepository.getEmployeeData(email);
+      if(!getUserData){
+        return {message: "employee data not found",success: false}
+      }
+
+      return {message : "fetched successfully",success:true,data:getUserData}
+      
+    } catch (error) {
+      return { message: String(error), success: false };
+
+    }
+  }
+
+  async updateEmployeeProfile(email: string, updateData: Partial<IEmployee>): Promise<{ message: string; success: boolean; data?: IEmployee; }> {
+    try {
+
+      const isExist = await EmployeeRepository.findOneWithEmail(email)
+      if(!isExist){
+        return {message: "user not found",success:false}
+      }
+      const updatedEmployee = await EmployeeRepository.getUpdatedEmployee(email,updateData);
+      if(!updatedEmployee){
+        return {message: "failed to update try agian",success:false}
+      }
+
+      return {message : "user profile updated successfull",success:true}
+      
+    } catch (error) {
+      return { message: String(error), success: false };
+    }
+  }
+
 }

@@ -98,6 +98,25 @@ export default class CompanyService implements ICompanyService {
     }
   }
 
+  async getCompanyUpdateProfile(email: string, upateData: Partial<ICompany>): Promise<{ message: string; success: boolean; data?: ICompany; }> {
+    try {
+
+      const isExist = await CompanyRepository.findOneByEmail(email)
+      if(!isExist){
+        return {message: "user not found",success:false}
+      }
+      const updateCompany = await CompanyRepository.updateProfileByEmail(email,upateData)
+      if(!updateCompany){
+        return {message: "failed to update try agian",success:false}
+      }
+
+      return {message : "user profile updated successfull",success:true}
+    } catch (error) {
+      return { message: String(error), success: false };
+
+    }
+  }
+
   
 
 

@@ -70,4 +70,14 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
     }
   }
 
+  async updatByEmail(email: string, updateData: Partial<T>): Promise<T | null> {
+    try {
+
+      return await this.model.findOneAndUpdate({email},updateData,{new:true});
+      
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }

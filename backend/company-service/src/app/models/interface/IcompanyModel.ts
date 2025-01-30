@@ -9,4 +9,5 @@ export interface ICompany extends Document {
   email: string;
   originCountry: string;
   authUserUUID : string;
+  role : string ;
 }

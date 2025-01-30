@@ -1,33 +1,11 @@
-// import React from "react";
-// import { useUser } from "../../pages/Dashboard";
-
-// const DashboardHeader: React.FC = () => {
-
-//   //get user data from the custome hooks
-//   const userData = useUser();
-
-//   if(!userData) return <div>Loading.....</div>
-
-//   return (
-//     <div className="bg-white shadow px-6 py-4  flex  justify-between items-center">
-//       <h1 className="text-lg font-bold"> Hello, {userData.companyName} </h1>
-//       <img
-//         src="https://via.placeholder.com/40"
-//         alt="user avatar"
-//         className="rounded-full w-10 h-10"
-//       />
-//     </div>
-//   );
-// };
-
-// export default DashboardHeader;
 
 import React from "react";
-import { FaBell, FaSearch } from "react-icons/fa";
+import { FaBell, FaSearch,FaPowerOff } from "react-icons/fa";
+import { FaPowerOff as FaPow } from "react-icons/fa6";
 import { useUser } from "../../pages/Dashboard";
 
 const DashboardHeader: React.FC = () => {
-  const userData = useUser();
+  const userData = useUser().user;
   if (!userData) return <div>Loading...</div>;
 
   return (
@@ -36,7 +14,7 @@ const DashboardHeader: React.FC = () => {
         {/* Left side - Greeting */}
         <div className="  ">
           <h1 className="text-xl italic font-medium  text-gray-800">
-            <span className="text-blue-500">Hello,</span> {userData.companyName}
+            <span className="text-blue-500">Hello,</span> {"companyName" in userData ? userData.companyName : userData.name}
           </h1>
           <p className="text-sm font-medium text-pink-400 mt-1 font-inter">
             Have a good day!
@@ -66,19 +44,25 @@ const DashboardHeader: React.FC = () => {
           </div>
 
           {/* User Profile */}
-          <div className="flex items-center space-x-6 bg-gray-100 rounded-xl shadow-xl p-2 ">
+          <div className="flex items-center  bg-gray-100 rounded-xl shadow-2xl shadow-gray-600 ">
             <div className="flex flex-col items-end  ">
-              <span className="text-sm font-medium text-gray-700">
-                Anna Alekseeva
-              </span>
-              <span className="text-xs text-gray-500">Kyiv</span>
             </div>
             <img
               src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100&h=100"
               alt="Profile"
-              className="h-10 w-10 rounded-full object-cover ring-2 ring-white "
+              className="h-10 w-10 rounded-full object-cover ring-2 ring-white shadow-xl shadow-gray-500 "
             />
+            
           </div>
+          {/* logout section */}
+          <div className="flex items-center  rounded-xl shadow-2xl shadow-gray-600 ">
+            <div className="flex flex-col shadow-2xl shadow-gray-400 items-end  ">
+            </div>
+            <FaPow
+              className="h-10 w-10 rounded-full object-cover text-black shadow-xl shadow-gray-500 hover:shadow-blue-500 cursor-pointer "
+              />
+          </div>
+
         </div>
       </div>
     </header>

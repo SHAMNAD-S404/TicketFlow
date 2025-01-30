@@ -14,7 +14,7 @@ const employeeSchema: Schema = new Schema<IEmployee>(
       ref: "departments",
     },
     name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, lowercase: true, unique: true },
+    email: { type: String, required: true, lowercase: true },
     phone: { type: String, required: true },
     departmentName: { type: String, required: true, trim: true },
     role: {
@@ -31,7 +31,7 @@ const employeeSchema: Schema = new Schema<IEmployee>(
 );
 
 employeeSchema.index({ companyId: 1, departmentId: 1 });
-employeeSchema.index({email:1},{unique:true});
+employeeSchema.index({ email: 1 }, { unique: true });
 
 const EmployeeModel = mongoose.model<IEmployee & Document>(
   "employees",

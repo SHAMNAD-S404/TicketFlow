@@ -4,6 +4,10 @@ import LandingPage from "../pages/LandingPage";
 import AuthRoutes from "./AuthRoutes";
 import SuperAdminRoutes from "./SuperAdminRoutes";
 import CompanyAdminRoutes from "./CompanyAdminRoutes";
+import EmployeeRoutes from "./EmployeeRoutes";
+import NotFound from "../pages/404";
+
+
 
 const AppRoutes: React.FC = () => {
   return (
@@ -19,10 +23,15 @@ const AppRoutes: React.FC = () => {
         <Route path="/sudo/*" element={<SuperAdminRoutes />} />
 
         {/* Company Admin Routes */}
-        <Route path="/admin/*" element={<CompanyAdminRoutes />} />
+        <Route path="/company/*" element={<CompanyAdminRoutes />} />
+
+         {/* Employee Routes */}
+         <Route path="/employee/*" element={<EmployeeRoutes />} />
+
+      
 
         {/* Fallback Route */}
-        <Route path="*" element={<h1> 404 - Page Not Found </h1>} />
+        <Route path="*" element={<NotFound/>} />
       </Routes>
     </Router>
   );

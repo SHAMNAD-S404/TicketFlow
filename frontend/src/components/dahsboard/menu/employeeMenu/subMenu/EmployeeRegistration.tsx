@@ -20,7 +20,7 @@ const EmployeeRegistration: React.FC = () => {
   const [departments, setDepartments] = useState<Departement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const userData = useUser();
+  const userData = useUser().user;
 
   console.log("im userdata : ", userData)
 

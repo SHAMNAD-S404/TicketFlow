@@ -12,19 +12,19 @@ interface SidebarProps {
 
 const menuConfig: { [key: string]: { name: string; icon: React.ReactNode }[] } =
   {
-    superAdmin: [
+    sudo: [
       { name: "Dashboard", icon: <FaHome /> },
       { name: "Client Management", icon: <FaUsers /> },
       { name: "Profile", icon: <FaUserTie /> },
     ],
-    companyAdmin: [
-      { name: "Dashboard", icon: <FaHome /> },
+    company: [
+      { name: "Dashboard", icon: <FaHome />  },
       { name: "Department Management", icon: <FaHospitalUser /> },
       { name: "Employee Management", icon: <FaUsers /> },
       { name: "Profile", icon: <FaUserTie /> },
       { name: "Tickets", icon: <TiTicket /> },
     ],
-    user: [
+    employee: [
       { name: "Dashboard", icon: <FaHome /> },
       { name: "Profile", icon: <MdOutlineAccountCircle /> },
     ],
