@@ -1,12 +1,14 @@
 
 import React from "react";
-import { FaBell, FaSearch,FaPowerOff } from "react-icons/fa";
+import { FaBell, FaSearch } from "react-icons/fa";
 import { FaPowerOff as FaPow } from "react-icons/fa6";
-import { useUser } from "../../pages/Dashboard";
 
-const DashboardHeader: React.FC = () => {
-  const userData = useUser().user;
-  if (!userData) return <div>Loading...</div>;
+interface DashboardHeaderProps {
+  name : string;
+}
+
+const DashboardHeader: React.FC<DashboardHeaderProps> = ({name}) => {
+ 
 
   return (
     <header className="bg-gradient-to-r from-gray-100 via-gray-200 to-gray-200 border-b border-gray-200 px-6 py-2 rounded-xl w-full ">
@@ -14,7 +16,7 @@ const DashboardHeader: React.FC = () => {
         {/* Left side - Greeting */}
         <div className="  ">
           <h1 className="text-xl italic font-medium  text-gray-800">
-            <span className="text-blue-500">Hello,</span> {"companyName" in userData ? userData.companyName : userData.name}
+            <span className="text-blue-500">Hello,</span> {name}
           </h1>
           <p className="text-sm font-medium text-pink-400 mt-1 font-inter">
             Have a good day!

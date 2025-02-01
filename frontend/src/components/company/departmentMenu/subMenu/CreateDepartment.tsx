@@ -1,10 +1,9 @@
 import React from "react";
-import Tooltips from "../../../../utility/Tooltips";
+import Tooltips from "../../../utility/Tooltips";
 import { useForm } from "react-hook-form";
-import regexPatterns from "../../../../../utils/regexPattern";
+import regexPatterns from "../../../../utils/regexPattern";
 import { toast } from "react-toastify";
-import { createDepartment } from "../../../../../api/services/companyService";
-
+import { createDepartment } from "../../../../api/services/companyService";
 interface CreateDepartmentProps {
     setActiveSubMenu : ()=> void;
 }
@@ -87,7 +86,7 @@ const CreateDepartment: React.FC<CreateDepartmentProps> = ({setActiveSubMenu}) =
                 placeholder="bills management and finance accounting"
                 {...register("responsibilities", {
                   required: "This field is required !!",
-                  maxLength: 40,
+                  maxLength: 60,
                   min: 5,
                   pattern: {
                     value: regexPatterns.textWithSpaceAndCommas,
@@ -105,17 +104,17 @@ const CreateDepartment: React.FC<CreateDepartmentProps> = ({setActiveSubMenu}) =
             <div className= "flex  items-center gap-8">
 
              <button
-                className="bg-gray-100 hover:text-white font-bold p-2 rounded-2xl w-32 shadow-xl shadow-gray-400 text-lg  mt-4 mb-8 transition-transform duration-300 hover:bg-gradient-to-r from-yellow-500 to-red-500 hover:shadow-xl hover:shadow-gray-600 "
+                className="bg-gray-100 hover:text-white font-bold p-2 rounded-2xl w-32 shadow-xl shadow-gray-400 text-lg  mt-4 mb-8 transition-transform duration-300 hover:bg-lime-500 hover:shadow-xl hover:shadow-gray-600 "
                 type="submit"
                 >
                 Create
                 </button>
                 <button
                 onClick={()=> setActiveSubMenu()}
-                className="bg-blue-500 text-white hover:text-white font-bold p-2 rounded-2xl w-32 shadow-2xl shadow-black text-lg mt-4 mb-8 transition-transform duration-300 hover:bg-orange-600 hover:shadow-xl hover:shadow-gray-600 "
+                className="bg-red-500 text-white hover:text-white font-bold p-2 rounded-2xl w-32 shadow-2xl shadow-black text-lg mt-4 mb-8 transition-transform duration-300 hover:bg-red-700 hover:shadow-xl hover:shadow-gray-600 "
                 type="button"
                 >
-                Done
+                Cancel
              </button>
 
             </div>

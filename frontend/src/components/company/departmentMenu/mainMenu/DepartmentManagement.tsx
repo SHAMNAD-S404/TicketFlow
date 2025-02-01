@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import DynamicCard from "../../../../utility/DynamicCard";
-import CardImage from "../../../../../assets/images/register.png";
-import CardImage2 from "../../../../../assets/images/userlogin.png";
+import DynamicCard from "../../../utility/DynamicCard";
+import CardImage from "../../../../assets/images/register.png";
+import CardImage2 from "../../../../assets/images/userlogin.png";
 import CreateDepartment from "../subMenu/CreateDepartment";
 
 const DepartmentManagement: React.FC = () => {

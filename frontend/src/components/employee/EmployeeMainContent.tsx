@@ -1,15 +1,15 @@
 import React from 'react'
-import { useUser } from '../../pages/Dashboard';
-import { menuComponents } from './menu/menuComponents';
-import { DefaultComponent } from './menu/DefaultComponent';
+import { menuComponents } from './menuComponents';
+import { DefaultComponent } from '../common/DefaultComponent';
+import { useEmployeeData } from '../../pages/dashboards/EmployeeDashboard';
 
 interface MainContentProps {
   activeMenu : string;
 }
 
-const MainContent : React.FC <MainContentProps> = ({activeMenu}) => {
+const EmployeeMainContent : React.FC <MainContentProps> = ({activeMenu}) => {
 
-  const userData = useUser();
+  const userData = useEmployeeData();
   if(!userData) return <div>loading....</div>
 
   const ActiveComponent = menuComponents[activeMenu] || DefaultComponent;
@@ -22,4 +22,4 @@ const MainContent : React.FC <MainContentProps> = ({activeMenu}) => {
   )
 }
 
-export default MainContent
+export default EmployeeMainContent;

@@ -1,15 +1,14 @@
 import { useForm } from "react-hook-form";
-import React, { useContext } from "react";
-import { useUser } from "../../../../../pages/Dashboard";
-import { IEmployeeContext } from "../../../../../types/IEmployeeContext";
-import regexPatterns, { RegexMessages } from "../../../../../utils/regexPattern";
-import { udpateEmployeeProfile } from "../../../../../api/services/companyService";
+import React from "react";
+import { useEmployeeData } from "../../../../pages/dashboards/EmployeeDashboard";
+import regexPatterns, { RegexMessages } from "../../../../utils/regexPattern";
+import { udpateEmployeeProfile } from "../../../../api/services/companyService";
 import { toast } from "react-toastify";
 
 export interface EmployeeEditForm {
   name: string;
   phone: string;
-  email : string;
+  email: string;
 }
 
 interface EmployeeEditFormProps {
@@ -17,8 +16,8 @@ interface EmployeeEditFormProps {
 }
 
 const EmployeeProfileEdit: React.FC<EmployeeEditFormProps> = ({ onCancel }) => {
-  const employeeContext = useUser().user;
-  const refreshUser = useUser().refreshUser;
+  const employeeContext = useEmployeeData().user;
+  const refreshUser = useEmployeeData().refreshUser;
 
   const {
     register,
@@ -26,44 +25,32 @@ const EmployeeProfileEdit: React.FC<EmployeeEditFormProps> = ({ onCancel }) => {
     formState: { errors },
   } = useForm<EmployeeEditForm>({
     defaultValues: {
-      name:
-        "name" in (employeeContext ?? {})
-          ? (employeeContext as IEmployeeContext).name
-          : "",
-      phone:
-        "phone" in (employeeContext ?? {})
-          ? (employeeContext as IEmployeeContext).phone
-          : "",
+      name: employeeContext?.name,
+      phone: employeeContext?.phone,
     },
   });
 
   const onSubmit = async (data: EmployeeEditForm) => {
-   try {
-    
-    data.email = employeeContext?.email as string;
-    console.log("Updated Employee Data:", data);
-    // API call
-    const response = await udpateEmployeeProfile(data);
-    if(response.success) {
-        toast.success(response.message)
+    try {
+      data.email = employeeContext?.email as string;
+      console.log("Updated Employee Data:", data);
+      // API call
+      const response = await udpateEmployeeProfile(data);
+      if (response.success) {
+        toast.success(response.message);
         //refresh the context after successful updation
         await refreshUser();
         onCancel();
-    }else{
-        toast.error(response.message)
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message);
+      } else {
+        alert("Error on register employee. Please try again later.");
+      }
     }
-
-   } catch (error : any) {
-
-    if (error.response && error.response.data) {
-            toast.error(error.response.data.message);
-          } else {
-            alert('Error on register employee. Please try again later.');
-          }
-    
-   }
-
-
   };
 
   return (
@@ -72,26 +59,24 @@ const EmployeeProfileEdit: React.FC<EmployeeEditFormProps> = ({ onCancel }) => {
       className="max-w-md mx-auto p-4 bg-white shadow-md rounded-md"
     >
       <h2 className="text-lg font-semibold mb-4">Edit Employee Profile</h2>
-
       {/* Name Field */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-600">Name</label>
         <input
           type="text"
-          {...register("name", { 
+          {...register("name", {
             required: "Name is required",
-            pattern : {
-                value : regexPatterns.name,
-                message : RegexMessages.nameRegexMessage
-            }
-        })}
+            pattern: {
+              value: regexPatterns.name,
+              message: RegexMessages.nameRegexMessage,
+            },
+          })}
           className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         {errors.name && (
           <p className="text-red-500 text-sm">{errors.name.message}</p>
         )}
       </div>
-
       {/* Phone Field */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-600">Phone</label>
@@ -110,8 +95,7 @@ const EmployeeProfileEdit: React.FC<EmployeeEditFormProps> = ({ onCancel }) => {
           <p className="text-red-500 text-sm">{errors.phone.message}</p>
         )}
       </div>
-
-      {/* Submit Button */}
+       {/* Submit Button */}
       <button
         type="submit"
         className="w-full p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"

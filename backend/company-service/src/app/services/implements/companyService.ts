@@ -56,14 +56,14 @@ export default class CompanyService implements ICompanyService {
    *              success: true if successful, false otherwise
    */
   async fetchCompanyData(
-    authUserUUID: string
+    email: string
   ): Promise <{
      message: string;
      data?: ICompany;
      success: boolean }> {
     try {
       // Find the company data by user ID
-      const fetchCompanyData = await CompanyRepository.findByAuthUserUUID(authUserUUID);
+      const fetchCompanyData = await CompanyRepository.findOneByEmail(email)
       if (!fetchCompanyData) {
 
         // Return an error if company data is not found

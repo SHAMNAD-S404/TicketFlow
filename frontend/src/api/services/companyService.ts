@@ -1,45 +1,26 @@
 import axiosInstance from "../axiosInstance";
-import { DepartemntForm } from "../../components/dahsboard/menu/departmentMenu/subMenu/CreateDepartment";
+import { DepartemntForm } from "../../components/company/departmentMenu/subMenu/CreateDepartment";
 import { IEmployeeForm } from "../../types/IEmployeeForm";
-import { AxiosResponse } from "axios";
-import { EmployeeEditForm } from "../../components/dahsboard/menu/profileMenu/subMenu/EmployeeProfileEdit";
-import { IcompanyEditForm } from "../../components/dahsboard/menu/profileMenu/subMenu/EditProfile";
-
+import { EmployeeEditForm } from "../../components/company/profileMenu/subMenu/EmployeeProfileEdit";
+import { IcompanyEditForm } from "../../components/company/profileMenu/subMenu/ProfileEdit";
 //fetch user data from the company service.
 export const fetchUserData = async () => {
     try {
-
-      let role = localStorage.getItem("userRole");
-
-      if(!role) {
-        const roleResponse = await axiosInstance.get("/auth/get-user-role");
-        role = roleResponse.data.role;
-        localStorage.setItem("userRole",role as string);
-      }
-
-      let userResponse : AxiosResponse<any>;
-      if(role === "company"){
-        userResponse = await axiosInstance.get("/company/comp/get-user");
-      }else if (role === "employee"){
-        userResponse = await axiosInstance.get("/company/emp/get-user");
-      }else if (role === "sudo") {
-        userResponse = await axiosInstance.get("/auth/get-user");
-      }else{
-        throw new Error("Invalid role ")
-      }
-
-      return {...userResponse.data,role};
-
-      // const response = await axiosInstance.get("/company/comp/get-user");
-      // return response.data;
+      const response = await axiosInstance.get("/company/comp/get-user");
+      return response.data;
     } catch (error) {
       throw error;
     }
   }
 
-
-
-
+export const fetchEmployeeData = async () => {
+  try {
+    const response = await axiosInstance.get("/company/emp/get-user");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
 
 
 

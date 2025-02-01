@@ -1,20 +1,14 @@
 import React, { createContext ,useContext, useEffect, useState } from "react";
-import Sidebar from "../components/dahsboard/Sidebar";
-import DashboardHeader from "../components/dahsboard/DashboardHeader";
-import MainContent from "../components/dahsboard/MainContent";
-import {fetchUserData} from '../api/services/companyService'
-import {IAdminContext} from "../types/IAdminContext"
-import { IEmployeeContext } from "../types/IEmployeeContext";
+import Sidebar from "../../components/common/Sidebar";
+import DashboardHeader from "../../components/common/DashboardHeader";
+import EmployeeMainContent from "../../components/employee/EmployeeMainContent";
+import {fetchEmployeeData} from '../../api/services/companyService'
+import { IEmployeeContext } from "../../types/IEmployeeContext";
 
 
-enum UserRole {
-  SuperAdmin = "sudo",
-  CompanyAdmin = "company",
-  User = "employee",
-}
 
 interface IUserContext {
-  user : IAdminContext | IEmployeeContext | null ;
+  user : IEmployeeContext | null ;
   refreshUser : ()=> Promise<void>;
 }
 
@@ -24,16 +18,16 @@ const UserContext = createContext<IUserContext | null >(null);
  * Custom hook to access the UserContext
  * @returns The current user context value
  */
-export const useUser = () => {
+export const useEmployeeData = () => {
   // Access the UserContext using useContext hook
   return useContext(UserContext) as IUserContext;
 };
 
 
-const Dashboard: React.FC = () => {
-  const [user,setUser] = useState<IAdminContext | IEmployeeContext | null>(null);
-  const [role, setRole] = useState<UserRole>(UserRole.CompanyAdmin);
-  const [activeMenu, setActiveMenu] = useState("Dashboard");
+const EmployeeDashboard: React.FC = () => {
+  const [user,setUser] = useState<IEmployeeContext | null>(null);
+  const [role, setRole] = useState<string>("");
+  const [activeMenu, setActiveMenu] = useState("Profile");
 
 
   const handleMenuSelect = (menu: string) => setActiveMenu(menu);
@@ -41,14 +35,15 @@ const Dashboard: React.FC = () => {
    // Function to fetch user data
    const fetchUser = async () => {
     try {
-      const response = await fetchUserData();
-      setUser(response.data);
-      setRole(response.role as UserRole);
+      const response = await fetchEmployeeData();
       
+      setUser(response.data);
+      setRole(response.data.role);
+
       localStorage.removeItem("currentStep");
       localStorage.removeItem("email");
     } catch (error) {
-      console.log("Error while fetching user data:", error);
+      console.log("Error while fetching employee data:", error);
     }
   };
 
@@ -62,23 +57,22 @@ const Dashboard: React.FC = () => {
     await fetchUser();
   };
 
-  if(!user || !role )  return <div>Loading......</div>
-  console.log(user);
+  if(!user )  return <div>Loading......</div>
   
-
   return (
     <UserContext.Provider value={{user,refreshUser}} >
       <div className="flex h-screen w-full">
         <Sidebar role={role} onMenuSelect={handleMenuSelect} />
+      
 
         <div className="flex-1 flex flex-col w-full ">
-          <DashboardHeader />
+          <DashboardHeader name={user.name} />
 
-          <MainContent activeMenu={activeMenu} />
+          <EmployeeMainContent activeMenu={activeMenu} />
         </div>
       </div>
     </UserContext.Provider>
   );
 };
 
-export default Dashboard;
+export default EmployeeDashboard;

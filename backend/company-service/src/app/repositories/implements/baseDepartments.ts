@@ -34,7 +34,7 @@ export class DepartmentBase<T extends Document> implements IDepartmentBaseRepo<T
 
     async findWithTwoFields(field1: string, field2: string): Promise<T | null> {
         try {
-            const result = await this.model.findOne({companyId:field1,departmentName:field2});
+            const result = await this.model.findOne({companyId:field1,departmentNameNormalized:field2});
             return result ;
         } catch (error) {
             throw error

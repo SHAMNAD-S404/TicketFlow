@@ -3,14 +3,15 @@ import  DepartmentRepository from '../../repositories/implements/departement';
 import { IDepartmentService } from "../interface/IDepartmentService";
 
 
+
 export default class DepartmentService implements IDepartmentService {
     
 
     async createDepartment(departmentData: IDepartment): Promise<{ message: string; success: boolean }> {
         try {
 
-            const {companyId,departmentName,responsibilities} = departmentData;
-            const existingDept = await DepartmentRepository.getDepartmentWithTwoFields(companyId.toString(),departmentName);
+            const {companyId,departmentNameNormalized} = departmentData;
+            const existingDept = await DepartmentRepository.getDepartmentWithTwoFields(companyId.toString(),departmentNameNormalized);
             if(existingDept){
                 return{message:"Departement already exist",success:false}
             }

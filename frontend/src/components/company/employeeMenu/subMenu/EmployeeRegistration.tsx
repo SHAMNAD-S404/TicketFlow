@@ -1,44 +1,56 @@
 import React, { useEffect, useState } from "react";
-import Tooltips from "../../../../utility/Tooltips";
+import Tooltips from "../../../utility/Tooltips";
 import { useForm } from "react-hook-form";
-import regexPatterns from "../../../../../utils/regexPattern";
-import { RegexMessages } from "../../../../../utils/regexPattern";
+import regexPatterns from "../../../../utils/regexPattern";
+import { RegexMessages } from "../../../../utils/regexPattern";
 import { toast } from "react-toastify";
-import { IEmployeeForm } from "../../../../../types/IEmployeeForm";
-import { fetchAllDepartemts } from "../../../../../api/services/companyService";
+import { IEmployeeForm } from "../../../../types/IEmployeeForm";
+import { fetchAllDepartemts } from "../../../../api/services/companyService";
 import { RiUserSharedFill } from "react-icons/ri";
-import RegisterImage from "../../../../../assets/images/hero2.png";
-import { useUser } from "../../../../../pages/Dashboard";
-import { createEmployee } from "../../../../../api/services/companyService";
-
+import RegisterImage from "../../../../assets/images/hero2.png";
+import { useUser } from "../../../../pages/dashboards/CompanyDashboard";
+import { createEmployee } from "../../../../api/services/companyService";
+import Swal from "sweetalert2";
 interface Departement {
   _id: string;
   departmentName: string;
 }
 
-const EmployeeRegistration: React.FC = () => {
+interface EmployeeRegistrationProps {
+  handleCancel: () => void;
+}
+
+const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
+  handleCancel,
+}) => {
   const [departments, setDepartments] = useState<Departement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const userData = useUser().user;
 
-  console.log("im userdata : ", userData)
-
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
         const response = await fetchAllDepartemts();
-        console.log("res from fronde",response)
         if (response && response.data) {
           setDepartments(response.data);
-        } else  {
-          toast.error(response.message)
+        } else {
+          toast.error(response.message);         
         }
-      } catch (error : any ) {
-        if(error.response && error.response.data){
-          toast.error(error.response.data.message)
-        }else{
-          alert("Error while fetching departments")
+      } catch (error: any) {
+        if (error.response && error.response.data) {
+          Swal.fire({
+            title: "oops",
+            text: error.response.data.message,
+            icon: "error",
+          }).then((result) => {
+            if(result.isConfirmed){
+              handleCancel();
+            }
+          })
+          
+        } else {
+          alert("Error while fetching departments");
         }
       } finally {
         setIsLoading(false);
@@ -47,8 +59,6 @@ const EmployeeRegistration: React.FC = () => {
 
     fetchDepartments();
   }, []);
-
-
 
   const {
     register,
@@ -59,9 +69,10 @@ const EmployeeRegistration: React.FC = () => {
 
   const onSubmit = async (data: IEmployeeForm) => {
     try {
-     
-      const selectedDepartment = departments.find((dept) => dept._id === data.departmentId);
-      if(selectedDepartment && userData){
+      const selectedDepartment = departments.find(
+        (dept) => dept._id === data.departmentId
+      );
+      if (selectedDepartment && userData) {
         data.departmentName = selectedDepartment.departmentName;
         data.companyId = userData._id;
       }
@@ -70,21 +81,21 @@ const EmployeeRegistration: React.FC = () => {
       if (response.success) {
         toast.success(response.message);
         reset(); //Reset the form fields
-      } else {
-        toast.error(response.message);
+      } else {      
+        toast.error(response.message);     
       }
-    } catch (error : any) {
+    } catch (error: any) {
       if (error.response && error.response.data) {
         toast.error(error.response.data.message);
       } else {
-        alert('Error on register employee. Please try again later.');
+        alert("Error on register employee. Please try again later.");
       }
     }
   };
 
   return (
-    <div className="bg-gray-50 flex items-center justify-center p-8 rounded-2xl shadow-2xl">
-      <div className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-4xl w-full">
+    <div className="bg-gray-50  md:h-[750px] flex items-center justify-center p-8 rounded-2xl shadow-2xl">
+      <div className="bg-white  rounded-2xl shadow-xl overflow-hidden max-w-4xl w-full">
         <div className="flex flex-col md:flex-row">
           {/* Left Section */}
           <div className="bg-gray-200 p-8 md:w-5/12">
@@ -251,10 +262,11 @@ const EmployeeRegistration: React.FC = () => {
                   Select employee department
                 </label>
                 <select
-                  {...register('departmentId',{
-                    required : "this field is required"
+                  {...register("departmentId", {
+                    required: "this field is required",
                   })}
-                 className="w-full px-4 py-2 rounded-md bg-gray-100 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                  className="w-full px-4 py-2 rounded-md bg-gray-100 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
                   <option value="">Select</option>
                   {departments.map((dept) => (
                     <option key={dept._id} value={dept._id}>
@@ -262,12 +274,11 @@ const EmployeeRegistration: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                {errors.departmentId &&(
+                {errors.departmentId && (
                   <p className="text-sm text-red-500 font-medium">
                     {errors.departmentId.message}
                   </p>
                 )}
-                
               </div>
 
               {/* Buttons */}
@@ -280,6 +291,7 @@ const EmployeeRegistration: React.FC = () => {
                 </button>
                 <button
                   type="button"
+                  onClick={handleCancel}
                   className="flex-1 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-colors duration-200"
                 >
                   Cancel

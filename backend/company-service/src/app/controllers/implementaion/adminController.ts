@@ -11,13 +11,13 @@ import { ICompanyService } from "../../services/interface/ICompanyService";
 
     public getUserData = async(req: Request, res: Response): Promise<void> =>{
         try {
-            const authUserUUID = req.query.authUserUUID;
-            if(!authUserUUID){
+            const email = req.query.email;
+            if(!email){
                 res.status(400).json({message:"user id dont found",succeess:false})
                 return;
             }
 
-            const response = await this.comapanyService.fetchCompanyData(authUserUUID.toString());
+            const response = await this.comapanyService.fetchCompanyData(email.toString());
             const {message, success,data} = response;
             const statusCode = success ? 200:400;
 

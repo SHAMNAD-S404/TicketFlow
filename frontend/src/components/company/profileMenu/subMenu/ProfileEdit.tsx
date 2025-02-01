@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
-import { IAdminContext } from "../../../../../types/IAdminContext";
-import { useUser } from "../../../../../pages/Dashboard";
-import { updateCompanyProfile } from "../../../../../api/services/companyService";
+import { IAdminContext } from "../../../../types/IAdminContext";
+import { useUser } from "../../../../pages/dashboards/CompanyDashboard";
+import { updateCompanyProfile } from "../../../../api/services/companyService";
 import { toast } from "react-toastify";
 
 interface ProfileEditProps {

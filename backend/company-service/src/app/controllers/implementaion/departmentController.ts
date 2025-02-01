@@ -3,6 +3,7 @@ import { IDepartmentController } from "../interface/IDepartmentController";
 import { IDepartmentService } from "../../services/interface/IDepartmentService";
 import { ICompanyService } from "../../services/interface/ICompanyService";
 import mongoose from "mongoose";
+import { normalizeDepartmentName } from "../../../utils/normalizeName";
 
 //new codes
 export class DepartmentController implements IDepartmentController {
@@ -45,6 +46,7 @@ export class DepartmentController implements IDepartmentController {
       const departmentData = {
         companyId,
         departmentName,
+        departmentNameNormalized: normalizeDepartmentName(departmentName),
         responsibilities,
         authUserUUID,
       };
