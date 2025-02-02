@@ -1,26 +1,28 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
-import { IAdminContext } from "../../../../types/IAdminContext";
-import { useUser } from "../../../../pages/dashboards/CompanyDashboard";
 import { updateCompanyProfile } from "../../../../api/services/companyService";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { Rootstate ,AppDispatch } from "../../../../redux/store";
+import { useDispatch } from "react-redux";
+import { fetchCompany } from "../../../../redux/userSlice";
 
 interface ProfileEditProps {
   onCancel: () => void;
 }
 
-export interface IcompanyEditForm{
-    companyName : string,
-    companyType : string,
-    phoneNumber : string,
-    corporatedId : string,
-    originCountry : string,
-    email : string,
+export interface IcompanyEditForm {
+  companyName: string;
+  companyType: string;
+  phoneNumber: string;
+  corporatedId: string;
+  originCountry: string;
+  email: string;
 }
 
 const ProfileEdit: React.FC<ProfileEditProps> = ({ onCancel }) => {
-  const userData = useUser().user;
-  const refreshUser = useUser().refreshUser;
+  const company = useSelector((state: Rootstate) => state.company.company);
+  const dispatch = useDispatch<AppDispatch>();
 
   const {
     register,
@@ -28,53 +30,35 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ onCancel }) => {
     formState: { errors },
   } = useForm<IcompanyEditForm>({
     defaultValues: {
-      companyName:
-        "companyName" in (userData ?? {})
-          ? (userData as IAdminContext).companyName
-          : "",
-      companyType:
-        "companyType" in (userData ?? {})
-          ? (userData as IAdminContext).companyType
-          : "",
-      phoneNumber:
-        "phoneNumber" in (userData ?? {})
-          ? (userData as IAdminContext).phoneNumber
-          : "",
-          corporatedId:
-        "corporatedId" in (userData ?? {})
-          ? (userData as IAdminContext).corporatedId
-          : "",
-      originCountry:
-        "originCountry" in (userData ?? {})
-          ? (userData as IAdminContext).originCountry
-          : "",
+      companyName: company?.companyName,
+      companyType: company?.companyType,
+      phoneNumber: company?.phoneNumber,
+      corporatedId: company?.corporatedId,
+      originCountry: company?.originCountry,
     },
   });
 
-  const onSubmit = async(data: IcompanyEditForm) => {
-       try {
-        data.email = userData?.email as string;
-        console.log("Updated Profile Data:", data);
-    
-    
-        // API call  to update profile
-        const response = await updateCompanyProfile(data);
-         if(response.success) {
-                toast.success(response.message)
-                //refresh the context after successful updation
-                await refreshUser();
-                onCancel();
-            }else{
-                toast.error(response.message)
-            }
-       } catch (error : any) {
-         if (error.response && error.response.data) {
-                    toast.error(error.response.data.message);
-                  } else {
-                    alert('Error on register employee. Please try again later.');
-                  }
-       }
+  const onSubmit = async (data: IcompanyEditForm) => {
+    try {
+      data.email = company?.email as string;
 
+      // API call  to update profile
+      const response = await updateCompanyProfile(data);
+      if (response.success) {
+        toast.success(response.message);
+        //update the context to store latest date
+        dispatch(fetchCompany())
+        onCancel();
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message);
+      } else {
+        alert("Error on register employee. Please try again later.");
+      }
+    }
   };
 
   return (

@@ -7,14 +7,13 @@ import CreateDepartment from "../subMenu/CreateDepartment";
 const DepartmentManagement: React.FC = () => {
   const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
 
-  const handleActiveSubMenu = ()=>{
+  const handleActiveSubMenu = () => {
     setActiveSubMenu(null);
-  }
+  };
 
   const renderSubContent = () => {
-
-    switch (activeSubMenu){
-      case "Add Department" :
+    switch (activeSubMenu) {
+      case "Add Department":
         return <CreateDepartment setActiveSubMenu={handleActiveSubMenu} />;
       default:
         return (
@@ -26,7 +25,7 @@ const DepartmentManagement: React.FC = () => {
               onButtonClick={() => setActiveSubMenu("Add Department")}
               image={CardImage}
             />
-      
+
             <DynamicCard
               header="Departments management"
               description="View and manage departments and their details"
@@ -34,7 +33,7 @@ const DepartmentManagement: React.FC = () => {
               onButtonClick={() => setActiveSubMenu("Manage Department")}
               image={CardImage2}
             />
-      
+
             <DynamicCard
               header="Departmen analytics"
               description="View department performance "
@@ -45,12 +44,9 @@ const DepartmentManagement: React.FC = () => {
           </div>
         );
     }
+  };
 
-  }
-
-  return <div>{ renderSubContent() }</div>
-
-  
+  return <div>{renderSubContent()}</div>;
 };
 
 export default DepartmentManagement;

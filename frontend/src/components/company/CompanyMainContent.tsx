@@ -1,5 +1,4 @@
 import React from 'react'
-import { useUser } from '../../pages/dashboards/CompanyDashboard';
 import { menuComponents } from './menuComponents';
 import { DefaultComponent } from '../common/DefaultComponent';
 
@@ -9,8 +8,6 @@ interface MainContentProps {
 
 const CompanyMainContent : React.FC <MainContentProps> = ({activeMenu}) => {
 
-  const userData = useUser();
-  if(!userData) return <div>loading....</div>
 
   const ActiveComponent = menuComponents[activeMenu] || DefaultComponent;
 

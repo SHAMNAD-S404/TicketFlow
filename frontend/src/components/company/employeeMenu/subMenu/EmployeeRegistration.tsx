@@ -8,9 +8,11 @@ import { IEmployeeForm } from "../../../../types/IEmployeeForm";
 import { fetchAllDepartemts } from "../../../../api/services/companyService";
 import { RiUserSharedFill } from "react-icons/ri";
 import RegisterImage from "../../../../assets/images/hero2.png";
-import { useUser } from "../../../../pages/dashboards/CompanyDashboard";
 import { createEmployee } from "../../../../api/services/companyService";
 import Swal from "sweetalert2";
+import { useSelector } from "react-redux";
+import { Rootstate } from "../../../../redux/store";
+
 interface Departement {
   _id: string;
   departmentName: string;
@@ -26,7 +28,8 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
   const [departments, setDepartments] = useState<Departement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const userData = useUser().user;
+  const company = useSelector((state:Rootstate) => state.company.company);
+
 
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -35,7 +38,7 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
         if (response && response.data) {
           setDepartments(response.data);
         } else {
-          toast.error(response.message);         
+          toast.error(response.message);
         }
       } catch (error: any) {
         if (error.response && error.response.data) {
@@ -44,11 +47,10 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
             text: error.response.data.message,
             icon: "error",
           }).then((result) => {
-            if(result.isConfirmed){
+            if (result.isConfirmed) {
               handleCancel();
             }
-          })
-          
+          });
         } else {
           alert("Error while fetching departments");
         }
@@ -72,17 +74,17 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
       const selectedDepartment = departments.find(
         (dept) => dept._id === data.departmentId
       );
-      if (selectedDepartment && userData) {
+      if (selectedDepartment && company) {
         data.departmentName = selectedDepartment.departmentName;
-        data.companyId = userData._id;
+        data.companyId = company._id;
       }
 
       const response = await createEmployee(data);
       if (response.success) {
         toast.success(response.message);
         reset(); //Reset the form fields
-      } else {      
-        toast.error(response.message);     
+      } else {
+        toast.error(response.message);
       }
     } catch (error: any) {
       if (error.response && error.response.data) {

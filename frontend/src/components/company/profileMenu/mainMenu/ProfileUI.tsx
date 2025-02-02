@@ -3,17 +3,17 @@ import { FaArrowLeft, FaMapMarkerAlt, FaGlobeAmericas ,FaRegCalendarAlt } from "
 import { MdEdit } from "react-icons/md";
 import { IoIosMail } from "react-icons/io";
 import { FaPhone, FaBriefcase } from "react-icons/fa6";
-import { useUser } from "../../../../pages/dashboards/CompanyDashboard";
 import ProfileEdit from "../subMenu/ProfileEdit";
-
+import { useSelector } from "react-redux";
+import { Rootstate } from "../../../../redux/store";
 
 
 const ProfileUI: React.FC = () => {
-  const userData = useUser().user;
 
   const [currentView , setCurrentView] = useState<'view' | 'edit'>('view');
+  const company = useSelector((state:Rootstate) => state.company.company)
 
-  if (!userData) return <div>Loading...</div>;
+  if (!company) return <div>Loading...</div>;
 
   const handleEditClick = () => {
     setCurrentView("edit")
@@ -71,10 +71,10 @@ const ProfileUI: React.FC = () => {
               <div className="text-center md:text-left mb-6">
                 <h1 className="text-2xl font-bold text-gray-800 mb-1">
                   {" "}
-                  {userData.companyName}
+                  {company.companyName}
                 </h1>
                 <p className="text-purple-600 font-medium">
-                  {userData.companyType}
+                  {company.companyType}
                 </p>
               </div>
 
@@ -87,7 +87,7 @@ const ProfileUI: React.FC = () => {
                   <div>
                     <p className="text-sm text-gray-500">Email Address</p>
                     <p className="text-gray-700 font-medium">
-                      {userData.email}
+                      {company.email}
                     </p>
                   </div>
                 </div>
@@ -100,7 +100,7 @@ const ProfileUI: React.FC = () => {
                     <p className="text-sm text-gray-500">Phone Number</p>
                     <p className="text-gray-700 font-medium">
                       {" "}
-                      {userData.phoneNumber}{" "}
+                      {company.phoneNumber}{" "}
                     </p>
                   </div>
                 </div>
@@ -112,7 +112,7 @@ const ProfileUI: React.FC = () => {
                   <div>
                     <p className="text-sm text-gray-500">Location</p>
                     <p className="text-gray-700 font-medium">
-                      {userData.originCountry}
+                      {company.originCountry}
                     </p>
                   </div>
                 </div>
@@ -124,7 +124,7 @@ const ProfileUI: React.FC = () => {
                   <div>
                     <p className="text-sm text-gray-500">Corporate id</p>
                     <p className="text-gray-700 font-medium">
-                      {userData .corporatedId}
+                      {company .corporatedId}
                     </p>
                   </div>
                 </div>
@@ -136,7 +136,7 @@ const ProfileUI: React.FC = () => {
                   <div>
                     <p className="text-sm text-gray-500">Company Type</p>
                     <p className="text-gray-700 font-medium">
-                      {userData.companyType}
+                      {company.companyType}
                     </p>
                   </div>
                 </div>
@@ -148,7 +148,7 @@ const ProfileUI: React.FC = () => {
                   <div>
                     <p className="text-sm text-gray-500">Joined Date</p>
                     <p className="text-gray-700 font-medium">
-                      {new Date(userData.createdAt).toLocaleDateString(
+                      {new Date(company.createdAt).toLocaleDateString(
                         "en-GB",
                         {
                           day: "2-digit",

@@ -1,7 +1,7 @@
 import axiosInstance from "../axiosInstance";
 import { DepartemntForm } from "../../components/company/departmentMenu/subMenu/CreateDepartment";
 import { IEmployeeForm } from "../../types/IEmployeeForm";
-import { EmployeeEditForm } from "../../components/company/profileMenu/subMenu/EmployeeProfileEdit";
+import { EmployeeEditForm } from "../../components/employee/profileMenu/subMenu/EmployeeProfileEdit";
 import { IcompanyEditForm } from "../../components/company/profileMenu/subMenu/ProfileEdit";
 //fetch user data from the company service.
 export const fetchUserData = async () => {

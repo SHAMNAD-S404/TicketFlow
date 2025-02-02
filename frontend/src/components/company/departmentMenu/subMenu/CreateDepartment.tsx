@@ -5,7 +5,7 @@ import regexPatterns from "../../../../utils/regexPattern";
 import { toast } from "react-toastify";
 import { createDepartment } from "../../../../api/services/companyService";
 interface CreateDepartmentProps {
-    setActiveSubMenu : ()=> void;
+  setActiveSubMenu: () => void;
 }
 
 export interface DepartemntForm {
@@ -13,7 +13,9 @@ export interface DepartemntForm {
   responsibilities: string;
 }
 
-const CreateDepartment: React.FC<CreateDepartmentProps> = ({setActiveSubMenu}) => {
+const CreateDepartment: React.FC<CreateDepartmentProps> = ({
+  setActiveSubMenu,
+}) => {
   const {
     register,
     handleSubmit,
@@ -21,7 +23,6 @@ const CreateDepartment: React.FC<CreateDepartmentProps> = ({setActiveSubMenu}) =
   } = useForm<DepartemntForm>();
 
   const onSubmit = async (data: DepartemntForm) => {
-   
     try {
       const response = await createDepartment(data);
       if (response.success) {
@@ -40,7 +41,6 @@ const CreateDepartment: React.FC<CreateDepartmentProps> = ({setActiveSubMenu}) =
 
   return (
     <div className="flex justify-center items-center px-4 mt-8">
-       
       <div className=" bg-gradient-to-b from-violet-200 to-blue-300 w-2/4 rounded-xl shadow-xl shadow-gray-500 overflow-hidden p-4 ">
         <h2 className="text-center text-2xl text-black  font-semibold ">
           Add Departments
@@ -101,24 +101,21 @@ const CreateDepartment: React.FC<CreateDepartmentProps> = ({setActiveSubMenu}) =
               )}
             </div>
 
-            <div className= "flex  items-center gap-8">
-
-             <button
+            <div className="flex  items-center gap-8">
+              <button
                 className="bg-gray-100 hover:text-white font-bold p-2 rounded-2xl w-32 shadow-xl shadow-gray-400 text-lg  mt-4 mb-8 transition-transform duration-300 hover:bg-lime-500 hover:shadow-xl hover:shadow-gray-600 "
                 type="submit"
-                >
+              >
                 Create
-                </button>
-                <button
-                onClick={()=> setActiveSubMenu()}
+              </button>
+              <button
+                onClick={() => setActiveSubMenu()}
                 className="bg-red-500 text-white hover:text-white font-bold p-2 rounded-2xl w-32 shadow-2xl shadow-black text-lg mt-4 mb-8 transition-transform duration-300 hover:bg-red-700 hover:shadow-xl hover:shadow-gray-600 "
                 type="button"
-                >
+              >
                 Cancel
-             </button>
-
+              </button>
             </div>
-
           </div>
         </form>
       </div>
