@@ -7,4 +7,5 @@ export interface IAuthController {
     verifyEmail(req:Request,res:Response) : Promise<void>
     updateUserPassword(req:Request,res:Response) : Promise<void>;
     fetchUserRole(req:Request,res:Response) : Promise<void>
+    logoutUser(req:Request , res: Response) : Promise<void>;
 }

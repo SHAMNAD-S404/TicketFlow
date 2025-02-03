@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { IAdminContext } from "../types/IAdminContext";
 import { fetchUserData } from "../api/services/companyService";
 
+
 //state interface
 interface CompanyState {
   company: IAdminContext | null;
@@ -23,6 +24,9 @@ export const fetchCompany =  createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await fetchUserData();
+      localStorage.removeItem("currentStep");
+      localStorage.removeItem("email");
+      localStorage.removeItem("signupStep")
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -37,6 +41,13 @@ const companySlice = createSlice({
     setUser(state, action: PayloadAction<IAdminContext>) {
       state.company = action.payload;
       state.role = action.payload.role;
+    },
+    clearUserData(state) {
+        state.company = null;
+        state.role = null;
+        state.error = null;
+        state.loading = false;
+        localStorage.clear();
     },
   },
   extraReducers: (builder) => {
@@ -60,5 +71,5 @@ const companySlice = createSlice({
   },
 });
 
-export const { setUser } = companySlice.actions;
+export const { setUser , clearUserData} = companySlice.actions;
 export default companySlice.reducer;

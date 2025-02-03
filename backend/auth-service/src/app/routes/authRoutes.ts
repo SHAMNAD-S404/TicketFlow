@@ -21,6 +21,7 @@ router.post("/signup",authController.registerUser)
       .post("/verify-email",authController.verifyEmail)
       .patch("/reset-password",authenticateToken,authController.updateUserPassword)
       .get("/get-user-role",authenticateToken,extractUserData,authController.fetchUserRole)
+      .post("/logout",authenticateToken,extractUserData,authController.logoutUser)
 
 
 export default router;

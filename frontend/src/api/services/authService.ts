@@ -57,3 +57,13 @@ export const resetPassword = async (password: string, email: string) => {
     throw error;
   }
 };
+
+//function to logout user
+export const logoutUser = async () => {
+  try {
+      const response = await axiosInstance.post("/auth/logout");
+      return response.data;
+  } catch (error) {
+    throw error;
+  }
+}

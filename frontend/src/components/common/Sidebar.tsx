@@ -6,7 +6,7 @@ import { FaUserTie } from "react-icons/fa";
 import { TiTicket } from "react-icons/ti";
 
 interface SidebarProps {
-  role: string;
+  role: string ;
   onMenuSelect: (menu: string) => void;
 }
 

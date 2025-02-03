@@ -9,6 +9,7 @@ export class AuthController implements IAuthController {
     this.authService = authService;
   }
 
+  //create user ================================================================================
 
   /**
    * Registers a new user
@@ -33,8 +34,7 @@ export class AuthController implements IAuthController {
     }
   };
 
-
-
+  //verify otp =====================================================================================
 
   /**
    * Verifies the OTP sent to the user's email
@@ -63,7 +63,7 @@ export class AuthController implements IAuthController {
     }
   };
 
-
+  //verify login ==============================================================================
 
   /**
    * Verifies the user's login credentials
@@ -73,12 +73,11 @@ export class AuthController implements IAuthController {
   public verifyLogin = async (req: Request, res: Response): Promise<void> => {
     try {
       // Extract the email and password from the request body
-   
+
       const { email, password } = req.body;
 
       // Call the verifyLogin method of the Auth service
       const response = await this.authService.verifyLogin(email, password);
-      console.log(response)
 
       // Check if the login was successful
       if (!response.success) {
@@ -88,7 +87,7 @@ export class AuthController implements IAuthController {
       }
 
       // Extract the message, success status, tokens and isFirst from the response
-      const { message, success, tockens, isFirst , role } = response;
+      const { message, success, tockens, isFirst, role } = response;
 
       // Check if the tokens are present
       if (tockens) {
@@ -111,7 +110,7 @@ export class AuthController implements IAuthController {
         });
 
         // Return a 200 status with the message, success status and isFirst
-        res.status(200).json({ message, success, isFirst , role });
+        res.status(200).json({ message, success, isFirst, role });
         return;
       } else {
         // Return a 500 status with an error message if the tokens are not present
@@ -126,7 +125,7 @@ export class AuthController implements IAuthController {
     }
   };
 
-
+  //verify email ===================================================================================
 
   /**
    * Verify email address by sending an OTP to the user
@@ -162,6 +161,7 @@ export class AuthController implements IAuthController {
     }
   };
 
+  // update password =========================================================================================
 
   public updateUserPassword = async (
     req: Request,
@@ -169,45 +169,81 @@ export class AuthController implements IAuthController {
   ): Promise<void> => {
     try {
       console.log("im inside controlere");
-      
-    
-      const {password,email} = req.body;
+
+      const { password, email } = req.body;
       if (!email && !password) {
-        console.log("req.body",req.body);
-        
-        res.status(400).json({ message: "user id or password is missing !",success:false });
+        console.log("req.body", req.body);
+
+        res
+          .status(400)
+          .json({
+            message: "user id or password is missing !",
+            success: false,
+          });
         return;
       }
 
-      const updatePassword = await this.authService.updateUserPassword(email as string,password);
-      const {message,success} = updatePassword;
+      const updatePassword = await this.authService.updateUserPassword(
+        email as string,
+        password
+      );
+      const { message, success } = updatePassword;
       const statusCode = success ? 200 : 400;
-      res.status(statusCode).json({message,success})
-    
-
+      res.status(statusCode).json({ message, success });
     } catch (error) {
       res.status(400).json({ message: String(error), success: false });
     }
   };
 
-  public fetchUserRole  = async (req: Request, res: Response): Promise<void> => {
-      try {
+  //fetch user role =====================================================================================
 
-        const userEmail = req.query.email;
-        if(!userEmail){
-          res.status(400).json({message:"user detail not found",success:false});
-          return;
-        }
-
-        const getRole = await this.authService.getUserRole(userEmail as string);
-        const {message , role , success} = getRole;
-        const statusCode = success ? 200 : 400;
-        res.status(statusCode).json({message,success,role})
+  public fetchUserRole = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userEmail = req.query.email;
+      if (!userEmail) {
+        res
+          .status(400)
+          .json({ message: "user detail not found", success: false });
         return;
-      } catch (error) {
-        res.status(400).json({ message: String(error), success: false });
       }
-  }
 
+      const getRole = await this.authService.getUserRole(userEmail as string);
+      const { message, role, success } = getRole;
+      const statusCode = success ? 200 : 400;
+      res.status(statusCode).json({ message, success, role });
+      return;
+    } catch (error) {
+      res.status(400).json({ message: String(error), success: false });
+    }
+  };
 
+  //logout==================================================================================================
+
+  public logoutUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const authUserUUID = req.query.authUserUUID;
+      if (!authUserUUID) {
+        res
+          .status(401)
+          .json({ message: "user not authenticated", success: false });
+        return;
+      }
+
+      res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      });
+
+      res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      });
+
+      res.status(200).json({ success: true, message: "logout successfully!" });
+    } catch (error) {
+      res.status(400).json({ message: String(error), success: false });
+    }
+  };
 }

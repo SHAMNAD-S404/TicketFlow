@@ -1,9 +1,11 @@
 import { useForm } from "react-hook-form";
 import React from "react";
-import { useEmployeeData } from "../../../../pages/dashboards/EmployeeDashboard";
 import regexPatterns, { RegexMessages } from "../../../../utils/regexPattern";
 import { udpateEmployeeProfile } from "../../../../api/services/companyService";
 import { toast } from "react-toastify";
+import { useSelector , useDispatch } from "react-redux";
+import { Rootstate ,AppDispatch } from "../../../../redux/store";
+import { fetchEmployee } from "../../../../redux/employeeSlice";
 
 export interface EmployeeEditForm {
   name: string;
@@ -16,8 +18,9 @@ interface EmployeeEditFormProps {
 }
 
 const EmployeeProfileEdit: React.FC<EmployeeEditFormProps> = ({ onCancel }) => {
-  const employeeContext = useEmployeeData().user;
-  const refreshUser = useEmployeeData().refreshUser;
+
+  const employee = useSelector((state:Rootstate) => state.employee.employee)
+  const dispatch = useDispatch<AppDispatch>();
 
   const {
     register,
@@ -25,21 +28,21 @@ const EmployeeProfileEdit: React.FC<EmployeeEditFormProps> = ({ onCancel }) => {
     formState: { errors },
   } = useForm<EmployeeEditForm>({
     defaultValues: {
-      name: employeeContext?.name,
-      phone: employeeContext?.phone,
+      name : employee?.name,
+      phone : employee?.phone,
     },
   });
 
   const onSubmit = async (data: EmployeeEditForm) => {
     try {
-      data.email = employeeContext?.email as string;
-      console.log("Updated Employee Data:", data);
+      data.email = employee?.email as string;
       // API call
       const response = await udpateEmployeeProfile(data);
       if (response.success) {
         toast.success(response.message);
         //refresh the context after successful updation
-        await refreshUser();
+        dispatch(fetchEmployee());
+
         onCancel();
       } else {
         toast.error(response.message);

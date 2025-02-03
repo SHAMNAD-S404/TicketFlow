@@ -1,34 +1,32 @@
 import React, { useState } from "react";
-import { FaArrowLeft ,FaRegCalendarAlt } from "react-icons/fa";
+import { FaArrowLeft, FaRegCalendarAlt } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { IoIosMail } from "react-icons/io";
 import { FaPhone, FaBriefcase } from "react-icons/fa6";
-import { useEmployeeData } from "../../../../pages/dashboards/EmployeeDashboard";
 import ProfileEdit from "../subMenu/EmployeeProfileEdit";
-
-
+import { useSelector } from "react-redux";
+import { Rootstate } from "../../../../redux/store";
 
 const ProfileUI: React.FC = () => {
-  const userData = useEmployeeData().user;
+  const [currentView, setCurrentView] = useState<"view" | "edit">("view");
+  const employee = useSelector((state: Rootstate) => state.employee.employee);
 
-  const [currentView , setCurrentView] = useState<'view' | 'edit'>('view');
-
-  if (!userData) return <div>Loading...</div>;
+  if (!employee) return <div>Loading...</div>;
 
   const handleEditClick = () => {
-    setCurrentView("edit")
+    setCurrentView("edit");
   };
 
   const handleCancel = () => {
-    setCurrentView("view")
-  }
+    setCurrentView("view");
+  };
 
-  if(currentView === 'edit'){
-    return <ProfileEdit onCancel={handleCancel} />
+  if (currentView === "edit") {
+    return <ProfileEdit onCancel={handleCancel} />;
   }
 
   return (
-    <div className="flex flex-1 lg:h-[700px] bg-gradient-to-b from-purple-100 to-purple-50 justify-center p-8 rounded-2xl shadow-xl "> 
+    <div className="flex flex-1 lg:h-[700px] bg-gradient-to-b from-purple-100 to-purple-50 justify-center p-8 rounded-2xl shadow-xl ">
       <div className="w-full h-fit p-6">
         {/* Main Container */}
         <div className="bg-white    lg:h-[500px] rounded-3xl shadow-2xl p-12 lg:mt-8`">
@@ -39,11 +37,11 @@ const ProfileUI: React.FC = () => {
             </button>
             <button
               className="text-green-500 hover:text-green-600 font-medium flex items-center gap-1"
-              onClick={ ()=>handleEditClick()}
+              onClick={() => handleEditClick()}
             >
               <div className="flex items-center hover:text-red-500 transition-transform duration-200 ease-in">
-              <MdEdit className="w-7 h-7 " />
-              <span className="text-xl font-medium">edit</span>
+                <MdEdit className="w-7 h-7 " />
+                <span className="text-xl font-medium">edit</span>
               </div>
             </button>
           </div>
@@ -71,10 +69,10 @@ const ProfileUI: React.FC = () => {
               <div className="text-center md:text-left mb-6">
                 <h1 className="text-2xl font-bold text-gray-800 mb-1">
                   {" "}
-                  {userData.name}
+                  {employee.name}
                 </h1>
                 <p className="text-purple-600 font-medium">
-                  {userData.departmentName}
+                  {employee.departmentName}
                 </p>
               </div>
 
@@ -87,7 +85,7 @@ const ProfileUI: React.FC = () => {
                   <div>
                     <p className="text-sm text-gray-500">Email Address</p>
                     <p className="text-gray-700 font-medium">
-                      {userData.email}
+                      {employee.email}
                     </p>
                   </div>
                 </div>
@@ -100,11 +98,11 @@ const ProfileUI: React.FC = () => {
                     <p className="text-sm text-gray-500">Phone Number</p>
                     <p className="text-gray-700 font-medium">
                       {" "}
-                      {userData.phone}{" "}
+                      {employee.phone}{" "}
                     </p>
                   </div>
                 </div>
-                       
+
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
                     <FaBriefcase className="w-5 h-5 text-purple-600" />
@@ -112,11 +110,10 @@ const ProfileUI: React.FC = () => {
                   <div>
                     <p className="text-sm text-gray-500">Department Name</p>
                     <p className="text-gray-700 font-medium">
-                      {userData.departmentName}
+                      {employee.departmentName}
                     </p>
                   </div>
                 </div>
-
 
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
@@ -125,7 +122,7 @@ const ProfileUI: React.FC = () => {
                   <div>
                     <p className="text-sm text-gray-500">Joined Date</p>
                     <p className="text-gray-700 font-medium">
-                      {new Date(userData.createdAt).toLocaleDateString(
+                      {new Date(employee.createdAt).toLocaleDateString(
                         "en-GB",
                         {
                           day: "2-digit",
