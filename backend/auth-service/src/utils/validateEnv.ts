@@ -24,6 +24,10 @@ export function validateEnvVariables(): void {
     if (! process.env.AUTH_CONSUMER_QUEUE) {
       console.warn("AUTH_CONSUMER_QUEUE is not defined,");
     }
+    if (! process.env.OAUTH_CLIENT_ID) {
+      console.warn("OAUTH_CLIENT_ID is not defined,");
+    }
+
 
   }
   

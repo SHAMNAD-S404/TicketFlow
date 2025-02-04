@@ -1,12 +1,12 @@
-import React from "react";
-import { FaGoogle } from "react-icons/fa";
+import React, { useState } from "react";
 import VerifyEmail from "../../assets/images/verifyemail .png";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import regexPatterns from "../../utils/regexPattern";
 import { IVerifyEmail } from "../../types/auth";
-import {  verifyEmail } from "../../api/services/authService";
+import { verifyEmail } from "../../api/services/authService";
 import { toast } from "react-toastify";
+import GoogleSignIn from "../google/GoogleSignIn";
 
 interface SignupFormProps {
   onVerifyEmail: () => void;
@@ -24,7 +24,7 @@ const Singup_Email: React.FC<SignupFormProps> = ({ onVerifyEmail }) => {
     const email = data.email;
 
     try {
-      const response = await verifyEmail(email)  ;
+      const response = await verifyEmail(email);
       if (response.success) {
         toast.success(response.message, {
           onClose: () => onVerifyEmail(), //modal for otp verification
@@ -47,7 +47,11 @@ const Singup_Email: React.FC<SignupFormProps> = ({ onVerifyEmail }) => {
       <div className="bg-white  min-h-[600px] shadow-2xl my-20  phone:mt-4 rounded-xl flex  max-w-7xl w-full  overflow-hidden ">
         {/* Left section - Image */}
         <div className="hidden md:flex items-center justify-center bg-blue-100 w-1/2 ">
-          <img src={VerifyEmail} alt="Signup Illustration" className="h-full object-contain" />
+          <img
+            src={VerifyEmail}
+            alt="Signup Illustration"
+            className="h-full object-contain"
+          />
         </div>
         {/* Right Section - Form */}
         <div className="w-full md:w-1/2 phone:px-8 md:px-14 py-10 bg-blue-50 lex flex-col justify-between">
@@ -59,8 +63,10 @@ const Singup_Email: React.FC<SignupFormProps> = ({ onVerifyEmail }) => {
             Let’s get you all set up so you can start creating your company
             account.
           </p>
-          <h4 className="text-center phone:text-lg md:text-xl font-semibold text-blue-600">Verify your email</h4>
-          
+          <h4 className="text-center phone:text-lg md:text-xl font-semibold text-blue-600">
+            Verify your email
+          </h4>
+
           {/*Form*/}
           <form className="space-y-6 mt-4 " onSubmit={handleSubmit(formSubmit)}>
             <div className=" grid grid-cols-1 gap-2">
@@ -97,10 +103,8 @@ const Singup_Email: React.FC<SignupFormProps> = ({ onVerifyEmail }) => {
               <hr className="my-3 " />
               <h4 className="text-center">OR</h4>
               {/*Google sign up session*/}
-              <button className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-gradient-to-r from-red-500 to-yellow-400 font-medium transition duration-300 hover:font-bold hover:text-black flex justify-center items-center gap-2 ">
-                <FaGoogle />
-                Signup with Google
-              </button>
+
+              <GoogleSignIn />
 
               <p className="text-center text-gray-600 text-sm mt-4">
                 Already have an account?{" "}

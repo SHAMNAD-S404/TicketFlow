@@ -147,7 +147,6 @@ export class AuthController implements IAuthController {
 
       // Call the verifyEmail method of the Auth service
       const response = await this.authService.verifyEmail(email.toLowerCase());
-      console.log("inside fverify emal controller resp:", response);
       // Extract the message and success status from the response
       const { message, success } = response;
 
@@ -246,4 +245,43 @@ export class AuthController implements IAuthController {
       res.status(400).json({ message: String(error), success: false });
     }
   };
+
+  //google sign in ===================================================================================================
+
+  public googleSignIn = async (req: Request, res: Response): Promise<void> => {
+    try {
+
+        const token = req.body.token;
+        if(!token){
+          res.status(400).json({message:"token missing",success:false})
+          return;
+        }
+
+        const verifySignIn = await this.authService.verifyGoogleSignIn(token)
+        const {message,email,success} = verifySignIn;
+        res.status(200).json({message,email,success});
+        return;
+
+    } catch (error) {
+      res.status(400).json({ message: String(error), success: false });
+    }
+  }
+
+  // resend otp =============================================================================================================
+    public resendOtp = async (req: Request, res: Response): Promise<void> => {
+      try {
+        const email = req.body.email;
+        if(!email){
+          res.status(400).json({success:false,message: "email id missing"})
+          return;
+        }
+        const response = await this.authService.getResendOTP(email);
+        const {success,message} = response;
+        res.status(200).json({success,message});
+        
+      } catch (error) {
+        res.status(400).json({ message: String(error), success: false });
+      }
+    }
+
 }

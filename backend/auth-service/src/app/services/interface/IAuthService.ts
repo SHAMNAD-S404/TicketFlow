@@ -7,5 +7,7 @@ export interface IAuthService {
     verifyEmail(email:string) : Promise<{message:string,success:boolean}>
     updateUserPassword(email:string,password:string) : Promise<{message:string,success:boolean} >
     getUserRole(email:string) : Promise<{message:string,success:boolean,role?:string}>
+    verifyGoogleSignIn(token:string) : Promise<{message:string , success: boolean,email?:string}>
+    getResendOTP(email : string) : Promise<{message:string , success:boolean}>;
 }
 

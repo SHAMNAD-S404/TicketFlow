@@ -2,24 +2,28 @@ import { UserRepository } from "../../repositories/implements/userRepository";
 import { RegisterUserDTO } from "../../dtos/registerUserDTO";
 import { IAuthService } from "../../services/interface/IAuthService";
 import { hashPassword, comparePassword } from "../../../utils/hashUtils";
+import { generateOTP } from "../../../utils/otpUtils";
+import { RabbitMQConfig } from "../../../config/rabbitmq";
+import { publishToQueue } from "../../../queues/publisher";
+import { publishToQueueWithRPCAndRetry } from "../../../queues/publisherWithRPCAndRetry";
+import { UserRoles } from "../../types/roles";
+import { v4 as uuidv4 } from "uuid";
+import { OAuth2Client } from "google-auth-library";
+import { config } from "../../../config";
 import {
   deleteRedisData,
   getRedisData,
   setRedisData,
 } from "../../../utils/redisUtils";
-import { generateOTP } from "../../../utils/otpUtils";
-import { RabbitMQConfig } from "../../../config/rabbitmq";
-import { publishToQueue } from "../../../queues/publisher";
-import { publishToQueueWithRPCAndRetry } from "../../../queues/publisherWithRPCAndRetry";
 import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../../utils/jwtUtils";
-import { UserRoles } from "../../types/roles";
-import { v4 as uuidv4 } from "uuid";
 
 export class AuthService implements IAuthService {
   constructor(private userRepository: UserRepository) {}
+
+  // user registraction ===================================================================================================
 
   /**
    * Registers a new user with the provided data
@@ -89,6 +93,7 @@ export class AuthService implements IAuthService {
         phoneNumber,
         corporatedId,
         originCountry,
+        role,
       };
 
       //delete user data from reddis
@@ -115,6 +120,8 @@ export class AuthService implements IAuthService {
       return { message: String(error), success: false };
     }
   }
+
+  //=====================================================================================================================
 
   /**
    * Verifies the OTP for the given email
@@ -161,6 +168,8 @@ export class AuthService implements IAuthService {
     }
   }
 
+  //====================================================================================================================
+
   /**
    * Verifies the user's login credentials
    * @param email The user's email id
@@ -174,7 +183,7 @@ export class AuthService implements IAuthService {
   ): Promise<{
     message: string;
     success: boolean;
-    role ?: string;
+    role?: string;
     tockens?: { refreshToken: string; accessToken: string };
     isFirst?: boolean;
   }> {
@@ -192,15 +201,14 @@ export class AuthService implements IAuthService {
 
       // Compare the provided password with the hashed password stored in the database
       const isMatch = await comparePassword(password, findUser.password);
-      if (!isMatch) {       
-        
+      if (!isMatch) {
         return { message: "Invalid Credentials", success: false };
       }
 
       // Generate access and refresh tokens
       const payload = {
         authUserUUID: findUser.authUserUUID,
-        email : findUser.email,
+        email: findUser.email,
         role: findUser.role,
       };
       const accessToken = await generateAccessToken(payload);
@@ -219,12 +227,14 @@ export class AuthService implements IAuthService {
         message: "Login Successfull",
         success: true,
         tockens: { accessToken, refreshToken },
-        role : findUser.role as string,
+        role: findUser.role as string,
       };
     } catch (error) {
       return { message: String(error), success: false };
     }
   }
+
+  // verify email =====================================================================================================
 
   /**
    * Verify email address by sending an OTP to the user
@@ -283,43 +293,156 @@ export class AuthService implements IAuthService {
     }
   }
 
-  async updateUserPassword(email: string, password: string): Promise<{ message: string; success: boolean; }> {
-    try {
+  //password updation ===========================================================================================
 
-      const userExist  = await this.userRepository.findByEmail(email)
-      if(!userExist){
-        return {message : "user didn't exist",success : false}
+  /**
+   * Update the user's password in the database
+   * @param email The user's email address
+   * @param password The new password
+   * @returns A promise that resolves to an object containing a message and a boolean indicating success or failure
+   */
+  async updateUserPassword(
+    email: string,
+    password: string
+  ): Promise<{ message: string; success: boolean }> {
+    try {
+      // Check if user exists in the database
+      const userExist = await this.userRepository.findByEmail(email);
+      if (!userExist) {
+        return { message: "user didn't exist", success: false };
       }
+
+      // Hash the new password
       const hashedPassword = await hashPassword(password);
-      const updatePassword = await this.userRepository.resetPassword(email,hashedPassword);
-      if(!updatePassword){
-        return {message:"update password was failed ! retry again",success:false}
+
+      // Update the user's password in the database
+      const updatePassword = await this.userRepository.resetPassword(
+        email,
+        hashedPassword
+      );
+
+      // Check if password update was successful
+      if (!updatePassword) {
+        return {
+          message: "update password was failed ! retry again",
+          success: false,
+        };
       }
-      return {message:"successfully updated password ! kindly login with new credentials" ,  success:true}
-      
+
+      // Return success message
+      return {
+        message:
+          "successfully updated password ! kindly login with new credentials",
+        success: true,
+      };
     } catch (error) {
+      // Return error message if something goes wrong
       return { message: String(error), success: false };
     }
   }
 
+  //user role fetching ======================================================================================
 
-  async getUserRole(email: string): Promise<{ message: string; success: boolean; role?: string; }> {
-     try {
+  async getUserRole(
+    email: string
+  ): Promise<{ message: string; success: boolean; role?: string }> {
+    try {
+      const userRole = await this.userRepository.findByEmail(email);
+      if (!userRole) {
+        return { message: "user not found", success: false };
+      }
 
-        const userRole = await this.userRepository.findByEmail(email);
-        if(!userRole){
-          return {message: "user not found", success : false}
-        }
-
-        return {message : "user data fetched success",success:true , role:userRole.role}
-      
-     } catch (error) {
+      return {
+        message: "user data fetched success",
+        success: true,
+        role: userRole.role,
+      };
+    } catch (error) {
       return { message: String(error), success: false };
-     }
+    }
+  }
+  //============================================================================================================================
+
+  /**
+   * Verify the Google sign-in token and return the user's email if successful.
+   * Store the user's email in Redis with a TTL of 20 minutes.
+   * @param token The Google sign-in token
+   * @returns An object containing the message, success status, and the user's email if successful
+   */
+  async verifyGoogleSignIn(
+    token: string
+  ): Promise<{ message: string; success: boolean; email?: string }> {
+    try {
+      // Verify the token with the Google OAuth2 client
+      const CLIENT_ID = config.OAuthClientId;
+      const client = new OAuth2Client(CLIENT_ID);
+
+      const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: CLIENT_ID,
+      });
+
+      // Get the payload from the verified token
+      const payload = ticket.getPayload();
+      if (!payload) {
+        return { message: "payload data not found!", success: false };
+      }
+
+      // Extract the user's email from the payload
+      const email = payload?.email;
+
+      const userExist = await this.userRepository.findByEmail(String(email));
+      if (userExist) {
+        return { message: "User already exist . Try to login", success: false };
+      }
+
+      // Store the user's email in Redis
+      await setRedisData(`tempEmail:${email}`, email, 1200);
+
+      // Return the success message and the user's email
+      return {
+        message: "successfull, fill the form to continue",
+        success: true,
+        email,
+      };
+    } catch (error) {
+      // Return an error message if something goes wrong
+      return { message: String(error), success: false };
+    }
   }
 
+  //======================================================================================================
 
+  async getResendOTP(
+    email: string
+  ): Promise<{ message: string; success: boolean }> {
+    try {
+      const verifyEmail = await getRedisData(`verifyEmail:${email}`);
+      if (!verifyEmail) {
+        return { message: "user data not found", success: false };
+      }
+      await deleteRedisData(`verifyEmail:${email}`);
+      const otp = generateOTP();
+      await setRedisData(`verifyEmail:${email}`, { otp, email }, 240);
 
+      const notificationPayload = {
+        email,
+        type: "registration",
+        otp,
+        subject: `OTP for Registration`,
+        message: `Hi , your OTP for registration is ${otp}`,
+        template: "otpTemplate",
+      };
 
+      //send to notification queue
+      await publishToQueue(
+        RabbitMQConfig.notificationQueue,
+        notificationPayload
+      );
 
+      return { message: "Resend otp sended to email", success: true };
+    } catch (error) {
+      return { message: String(error), success: false };
+    }
+  }
 }

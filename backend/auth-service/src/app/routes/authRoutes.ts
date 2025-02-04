@@ -22,6 +22,8 @@ router.post("/signup",authController.registerUser)
       .patch("/reset-password",authenticateToken,authController.updateUserPassword)
       .get("/get-user-role",authenticateToken,extractUserData,authController.fetchUserRole)
       .post("/logout",authenticateToken,extractUserData,authController.logoutUser)
+      .post("/google",authController.googleSignIn)
+      .post("/resend-otp",authController.resendOtp)
 
 
 export default router;

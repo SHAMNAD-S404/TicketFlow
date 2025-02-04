@@ -61,9 +61,9 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
   };
 
   return (
-    <div className="flex phone:h-screen md:max-h-screen phone:p-2 md:p-10  bg-white">
+    <div className="flex phone:h-screen md:max-h-screen phone:p-2 md:p-16  ">
       {/* Right Side: Login Form */}
-      <div className="w-full md:w-1/2 flex items-center rounded-2xl shadow-2xl justify-center px-6 md:px-16 ">
+      <div className="w-full md:w-1/2 h-5/6 flex items-center   rounded-2xl shadow-2xl shadow-gray-500 justify-center px-6 md:px-16 ">
         <div className="w-full max-w-md">
           <h1 className="text-3xl font-extrabold text-gray-900 mb-2">
             Welcome back...
@@ -151,11 +151,11 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
         </div>
       </div>
       {/* Left Side: Image */}
-      <div className="hidden md:flex w-1/2  rounded-2xl shadow-xl items-center justify-center bg-blue-100">
+      <div className="hidden md:flex w-1/2 h-5/6  rounded-2xl shadow-xl shadow-gray-400 items-center justify-center bg-blue-100">
         <img
           src={UserLoginImg}
           alt="Admin Illustration"
-          className="object-cover w-3/4 h-5/5"
+          className="object-cover w-3/4 h-5/5 "
         />
       </div>
     </div>

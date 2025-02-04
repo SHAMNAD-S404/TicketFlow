@@ -44,7 +44,7 @@ const SignupForm: React.FC = () => {
       if(error.response && error.response.data){
         toast.error(error.response.data.message);
       }else{
-              alert("Error creating account. Please try again.");
+         alert("Error creating account. Please try again.");
       }
     }
   };

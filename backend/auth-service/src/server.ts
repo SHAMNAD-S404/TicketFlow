@@ -18,8 +18,8 @@ const startServer = async () => {
         console.log(`✅ Auth service is running at http://localhost:${config.port}`);
     });
   } catch (error) {
-    console.error("❌ Error starting server:", error);
-    process.exit(1);
+      console.error("❌ Error starting server:", error);
+      process.exit(1);
   }
 };
 

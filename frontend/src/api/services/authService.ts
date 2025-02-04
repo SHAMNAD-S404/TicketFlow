@@ -67,3 +67,23 @@ export const logoutUser = async () => {
     throw error;
   }
 }
+
+//google sign in api call ===============================================
+export const googleSignIn = async (token : string) => {
+  try {
+    const response = await axiosInstance.post("/auth/google",{token});
+    return response.data;
+  } catch (error) {
+    throw error
+  }
+}
+
+//resend OTP API CALL ==========================================================================
+export const resendOTP = async (email:string) => {
+  try {
+    const response = await axiosInstance.post("/auth/resend-otp",{email});
+    return response.data;
+  } catch (error) {
+    throw error
+  }
+}

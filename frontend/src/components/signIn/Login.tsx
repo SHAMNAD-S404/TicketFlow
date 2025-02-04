@@ -37,41 +37,39 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
     setError("");
 
     try {
-     
-      const response = await loginUser(data.email,data.password);
-      if(response.success){
-          localStorage.setItem("userRole",response.role)
-        toast.success(response.message, {
-          onClose: () => navigate("/company/dashboard")
-        })
-      }else{
+      const response = await loginUser(data.email, data.password);
+      if (response.success) {
+        localStorage.setItem("userRole", response.role);
+        toast.success(response.message)
+        navigate("/company/dashboard")
+      } else {
         toast.error(response.message);
       }
-     
-    } catch (error : any) {
-        if(error.response && error.response.data){
-          toast.error(error.response.data.message);
-        }else{
-          alert("Error logging in account. Please try again.");
-        }
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message);
+      } else {
+        alert("Error logging in account. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex phone:h-screen md:max-h-screen phone:p-2 md:p-10 gap-  bg-white">
+    <div className="flex phone:h-screen md:max-h-max phone:p-2 md:p-10 overflow-h  phone:bg-blue-50  bg-white ">
       {/* Left Side: Image */}
-      <div className="hidden md:flex w-1/2  rounded-2xl shadow-xl items-center justify-center bg-blue-200">
+      <div className="flex flex-1 justify-center items-center ">
+      <div className="hidden md:flex w-2/6 h-3/4  rounded-2xl shadow-2xl shadow-gray-400 items-center justify-center bg-blue-200">
         <img
           src={AdminLoginImg}
           alt="Admin Illustration"
-          className="object-cover w-4/4 h-4/4 rounded-2xl"
+          className="object-cover w-4/4 h-3/4 rounded-2xl"
         />
       </div>
 
       {/* Right Side: Login Form */}
-      <div className="w-full md:w-1/2 bg-blue-100 flex items-center rounded-2xl shadow-2xl justify-center px-6 md:px-16 ">
+      <div className="w-full md:w-2/6 h-3/4 bg-blue-100 flex items-center rounded-2xl shadow-2xl shadow-gray-400 justify-center px-6 md:px-16 ">
         <div className="w-full max-w-md">
           <h1 className="text-3xl font-extrabold text-gray-900 mb-2">
             Welcome back Admin
@@ -162,7 +160,7 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
             <div className="text-right mb-6">
               <button
                 onClick={handleforgotPass}
-                className="text-blue-600 hover:underline"
+                className="text-blue-600 hover:underline hover:font-medium hover:text-orange-600"
               >
                 Forgot Password?
               </button>
@@ -170,7 +168,7 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
 
             <button
               type="submit"
-              className="w-full bg-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:bg-green-600 hover:text-black focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full bg-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:bg-gradient-to-t from-lime-500 to-green-500 hover:text-black hover:font-semibold  focus:outline-none focus:ring-2 focus:ring-indigo-500"
               disabled={loading}
             >
               {loading ? "Loggin in..." : "Log in"}
@@ -188,6 +186,7 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
             </Link>
           </p>
         </div>
+      </div>
       </div>
     </div>
   );

@@ -1,21 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import Verify from "../../assets/images/verify.png";
-import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
-import { otpVerification } from "../../api/services/authService";
-import {toast} from 'react-toastify'
+import { otpVerification, resendOTP } from "../../api/services/authService";
+import { toast } from "react-toastify";
 
 interface OtpVerificationProps {
-  onSignupForm : ()=> void;
+  onSignupForm: () => void;
 }
 
-const OtpVerification: React.FC <OtpVerificationProps>= ({onSignupForm}) => {
+const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignupForm }) => {
   const [otp, setOtp] = useState(["", "", "", ""]);
-  const [timer, setTimer] = useState(3 * 60 + 59); //initial countdown
+  const [timer, setTimer] = useState(1 * 60 + 59); //initial countdown
   const [isResending, setIsResending] = useState<boolean>(false);
   const inputRef = useRef<(HTMLInputElement | null)[]>([]);
-
-  const navigate = useNavigate();
 
   //Handle OTP input change
   const handleInputChange = (index: number, value: string) => {
@@ -42,54 +38,62 @@ const OtpVerification: React.FC <OtpVerificationProps>= ({onSignupForm}) => {
   const handleResendOtp = async () => {
     try {
       setIsResending(true);
-      //axios req is here
-      setTimer(4 * 60 + 59);
-      alert("OTP SENDED");
-    } catch (error) {
-      console.log("failed to send otp", error);
-      alert("Failed to send otp");
+      const email = localStorage.getItem("email");
+      if (!email) {
+        toast.error("something went wrong try again later!");
+      }
+      const response = await resendOTP(String(email));
+      if (response.success) {
+        setTimer(3 * 60 + 59);
+        toast.success(response.message);
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message);
+      } else {
+        alert("error while resend otp!");
+      }
     } finally {
       setIsResending(false);
     }
   };
 
-  const handleOtpVerify = async() => {
-   try {
-     
-     const otpValue = otp.join("");
-     if(otpValue.length !== 4){
-       toast.error("Please enter valid OTP");
-     }
-     const email = localStorage.getItem("email");
-     if(email === null){
+  const handleOtpVerify = async () => {
+    try {
+      const otpValue = otp.join("");
+      if (otpValue.length !== 4) {
+        toast.error("Please enter valid OTP");
+      }
+      const email = localStorage.getItem("email");
+      if (email === null) {
         toast.error("Registration failed kindly try again", {
           onClose: () => {
             localStorage.removeItem("signupStep");
-            localStorage.removeItem("email")
-          }
+            localStorage.removeItem("email");
+          },
         });
-     }
-     console.log("otp verification", otpValue, email);
-     const response = await otpVerification(otpValue,email as string);
+      }
+      console.log("otp verification", otpValue, email);
+      const response = await otpVerification(otpValue, email as string);
 
-     if(response.success){
-
-            toast.success(response.message,{
-              onClose : ()=> onSignupForm()
-            });
-      }else{
-        toast.error(response.message)
+      if (response.success) {
+        toast.success(response.message, {
+          onClose: () => onSignupForm(),
+        });
+      } else {
+        toast.error(response.message);
       }
 
       //navigate("/login?role=admin");
-  
-   } catch (error : any) {
-      if(error.response && error.response.data){
+    } catch (error: any) {
+      if (error.response && error.response.data) {
         toast.error(error.response.data.message);
-      }else{
-        alert("Error creating account . Please try again later")
+      } else {
+        alert("Error creating account . Please try again later");
       }
-   }
+    }
   };
 
   return (
@@ -153,7 +157,11 @@ const OtpVerification: React.FC <OtpVerificationProps>= ({onSignupForm}) => {
 
         {/* Right Section: Image */}
         <div className="hidden md:flex items-center justify-center bg-blue-100 rounded-2xl shadow-2xl ">
-          <img src={Verify} alt="OTP Verification" className="w-full object-cover" />
+          <img
+            src={Verify}
+            alt="OTP Verification"
+            className="w-full object-cover"
+          />
         </div>
       </div>
     </div>

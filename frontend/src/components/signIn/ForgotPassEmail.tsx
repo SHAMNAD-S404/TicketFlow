@@ -9,14 +9,13 @@ interface ForgotPassEmailProps {
 }
 
 const ForgotPassEmail: React.FC<ForgotPassEmailProps> = ({
-  userType,
   onSubmitEmail,
   onBacktoLogin,
 }) => {
   return (
-    <div className="flex flex-col md:flex-row justify-center items-center h-screen bg-gray-50">
+    <div className="flex flex-col md:flex-row justify-center items-center h-screen bg-blue-50">
       {/* Left Side: Form */}
-      <div className="bg-blue-50 rounded-lg shadow-md p-6 w-full max-w-xl h-3/4">
+      <div className="bg-blue-100 rounded-lg shadow-md p-6 w-full max-w-xl h-3/4">
         <button
           onClick={onBacktoLogin}
           className="text-blue-600 hover:no-underline flex items-center mb-4"
