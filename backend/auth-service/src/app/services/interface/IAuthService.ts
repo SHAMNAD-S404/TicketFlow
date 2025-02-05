@@ -1,7 +1,7 @@
 import { RegisterUserDTO } from "../../dtos/registerUserDTO";
 
 export interface IAuthService {
-    registerUser(data:RegisterUserDTO) : Promise<{message:string,success:boolean}>
+    registerUser(data:RegisterUserDTO) : Promise<{message:string,success:boolean,statusCode:number}>
     verifyOTP(email:string,otp:string) : Promise<{message:string,success:boolean}>
     verifyLogin(email:string,password:string) : Promise<{message:string,success:boolean,tockens?:{accessToken:string,refreshToken:string},isFirst?:boolean,role?:string}>
     verifyEmail(email:string) : Promise<{message:string,success:boolean}>

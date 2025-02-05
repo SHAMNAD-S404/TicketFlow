@@ -24,9 +24,7 @@ export class AuthController implements IAuthController {
       const response = await this.authService.registerUser(registerData);
       const { message, success } = response;
       const statusCode = success ? 201 : 400;
-
-      // Log the response for debugging purposes
-      console.log(response);
+      
       res.status(statusCode).json({ message, success });
     } catch (error) {
       // Return a 400 status with an error message if the registration fails

@@ -35,7 +35,7 @@ const SignupForm: React.FC = () => {
       const response = await signupUser(data);
       if(response.success){
         toast.success(response.message );
-        navigate("/login?role=admin");
+        navigate("/auth/login?role=admin");
       }else {
         toast.error(response.message);
       }
@@ -308,7 +308,7 @@ const SignupForm: React.FC = () => {
               <p className="text-center text-gray-600 text-sm mt-4">
                 Already have an account?{" "}
                 <Link
-                  to="/login?role=admin"
+                  to="/auth/login?role=admin"
                   className="text-purple-500 hover:underline font-medium hover:font-bold "
                 >
                   Login

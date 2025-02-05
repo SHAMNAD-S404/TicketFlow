@@ -6,6 +6,9 @@ import { toast } from "react-toastify";
 import { loginUser } from "../../api/services/authService";
 import { useNavigate } from "react-router-dom";
 import regexPatterns, { RegexMessages } from "../../utils/regexPattern";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store";
+import { fetchEmployee } from "../../redux/employeeSlice";
 
 interface UserLoginProps {
   forgotPassword: () => void;
@@ -19,6 +22,7 @@ export interface IemployeeLoginFormData {
 const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const dispatch = useDispatch<AppDispatch>();
 
   const navigate = useNavigate();
   const togglePasswordVisibility = () => {
@@ -43,9 +47,9 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
         });
       } else if (response.success) {
         localStorage.setItem("userRole", response.role);
-        toast.success(response.message, {
-          onClose: () => navigate("/employee/dashboard"),
-        });
+        await dispatch(fetchEmployee()).unwrap();
+        toast.success(response.message);
+        navigate("/employee/dashboard");
       } else {
         toast.error(response.message);
       }
@@ -53,7 +57,8 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
       if (error.response && error.response.data) {
         toast.error(error.response.data.message);
       } else {
-        alert("Error logging in account. Please try again.");
+        toast.error("Failed to load user data. Please try again.");
+        navigate("/auth/login?role=employee");
       }
     } finally {
       setLoading(false);

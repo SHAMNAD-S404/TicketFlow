@@ -39,7 +39,7 @@ const NewPassword: React.FC<NewPasswordProps> = ({
         if(response.success){
           localStorage.removeItem("resetEmail")
           toast.success(response.message,{
-            onClose : ()=> navigate(`/login?role=${userType}`)
+            onClose : ()=> navigate(`/auth/login?role=${userType}`)
           });
         }else{
           toast.error(response.message)

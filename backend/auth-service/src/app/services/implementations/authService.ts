@@ -10,6 +10,8 @@ import { UserRoles } from "../../types/roles";
 import { v4 as uuidv4 } from "uuid";
 import { OAuth2Client } from "google-auth-library";
 import { config } from "../../../config";
+import { Messages } from "../../../constants/messageConstants";
+import { HttpStatus } from "../../../constants/httpStatus";
 import {
   deleteRedisData,
   getRedisData,
@@ -32,7 +34,7 @@ export class AuthService implements IAuthService {
    */
   async registerUser(
     data: RegisterUserDTO
-  ): Promise<{ message: string; success: boolean }> {
+  ): Promise<{ message: string; success: boolean; statusCode: number }> {
     try {
       const {
         email,
@@ -54,18 +56,31 @@ export class AuthService implements IAuthService {
         !corporatedId ||
         !originCountry
       ) {
-        return { message: "please provide all the details", success: false };
+        return {
+          message: Messages.ALL_FILED_REQUIRED_ERR,
+          success: false,
+          statusCode: HttpStatus.BAD_REQUEST,
+        };
       }
 
       //check if user already exists in Redis
       const isEmailVerified = await getRedisData(`tempEmail:${email}`);
       if (!isEmailVerified) {
-        return { message: `Provide verified email id `, success: false };
+        return {
+          message: Messages.VERIFIED_EMAIL_ERR,
+          success: false,
+          statusCode: HttpStatus.FORBIDDEN,
+        };
       }
 
       //check if user already exists in DB
       const exists = await this.userRepository.findByEmail(email as string);
-      if (exists) return { message: `User already exists  `, success: false };
+      if (exists)
+        return {
+          message: Messages.USER_EXIST,
+          success: false,
+          statusCode: HttpStatus.BAD_REQUEST,
+        };
 
       //hash password
       const hashedPassword = await hashPassword(password);
@@ -82,7 +97,11 @@ export class AuthService implements IAuthService {
         authUserUUID
       );
       if (!storeUser) {
-        return { message: "Failed to save user try again", success: false };
+        return {
+          message: Messages.FAIL_TRY_AGAIN,
+          success: false,
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        };
       }
 
       const companyData = {
@@ -105,19 +124,27 @@ export class AuthService implements IAuthService {
         companyData,
         3
       );
-      console.log("response from company service", response);
 
       if (response.success) {
-        return { message: "Company registration successfull", success: true };
+        return {
+          message: Messages.REGISTER_SUCCESS,
+          success: true,
+          statusCode: HttpStatus.CREATED,
+        };
       } else {
         await this.userRepository.deleteById(storeUser._id as string);
         return {
           message: "Failed to save data in CS DB, user data rollbacked ",
           success: false,
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         };
       }
     } catch (error) {
-      return { message: String(error), success: false };
+      return {
+        message: String(error),
+        success: false,
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      };
     }
   }
 
@@ -136,24 +163,24 @@ export class AuthService implements IAuthService {
     try {
       // Check if email and OTP are provided
       if (!email || !otp) {
-        return { message: "please provide email and otp", success: false };
+        return { message: Messages.EMAIL_AND_OTP, success: false };
       }
 
       // Check if user exists in Redis
       const existingTempUser = await getRedisData(`verifyEmail:${email}`);
       if (!existingTempUser) {
-        return { message: "User not found", success: false };
+        return { message: Messages.USER_NOT_FOUND, success: false };
       }
 
       // Check if user already verified data exists in Redis
       const existingTempEmail = await getRedisData(`tempEmail:${email}`);
       if (existingTempEmail) {
-        return { message: "OTP Verification successfull ", success: true };
+        return { message: Messages.OTP_VERIFIED, success: true };
       }
 
       // Compare the provided OTP with the OTP stored in Redis
       if (existingTempUser.otp !== otp) {
-        return { message: "Invalid OTP", success: false };
+        return { message: Messages.INCORRECT_OTP, success: false };
       }
 
       // Store user email in reddis and delete verifyemail data from reddis
@@ -162,7 +189,7 @@ export class AuthService implements IAuthService {
         deleteRedisData(`verifyEmail:${email}`),
       ]);
 
-      return { message: "OTP verification successful", success: true };
+      return { message: Messages.OTP_VERIFIED, success: true };
     } catch (error) {
       return { message: String(error), success: false };
     }

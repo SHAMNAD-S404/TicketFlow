@@ -45,10 +45,11 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ onCancel }) => {
       // API call  to update profile
       const response = await updateCompanyProfile(data);
       if (response.success) {
+        onCancel();
         toast.success(response.message);
         //update the context to store latest date
         dispatch(fetchCompany())
-        onCancel();
+        
       } else {
         toast.error(response.message);
       }

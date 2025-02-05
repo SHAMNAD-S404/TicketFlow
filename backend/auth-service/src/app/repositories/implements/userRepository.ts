@@ -21,13 +21,8 @@ export class UserRepository
     try {
       // Attempt to find the user by email
       return await this.findUserByEmail(email);
-    } catch (error: unknown) {
-      // Log and rethrow the error if finding fails
-      console.error(
-        error instanceof Error ? error.message : String(error),
-        "error in findByEmail"
-      );
-      return null;
+    } catch (error) {
+      throw error
     }
   }
 
@@ -46,14 +41,8 @@ export class UserRepository
   ): Promise<IUser | undefined> {
     try {
       return await this.create(email, password, role, authUserUUID);
-    } catch (error: unknown) {
-      // Log the error
-      console.error(
-        error instanceof Error ? error.message : String(error),
-        "error in create user"
-      );
-      // Return undefined if creation fails
-      return undefined;
+    } catch (error) {
+      throw error
     }
   }
 
@@ -67,13 +56,8 @@ export class UserRepository
     try {
       // Attempt to delete the user by their ID
       await this.deleteById(UserId);
-    } catch (error: unknown) {
-      // Log and rethrow the error if deletion fails
-      console.error(
-        error instanceof Error ? error.message : String(error),
-        "error in delete user"
-      );
-      throw error;
+    } catch (error) {
+      throw error
     }
   }
 
@@ -99,12 +83,6 @@ export class UserRepository
       // Return the updated user document, or null if no user was found
       return updatedUser;
     } catch (error) {
-      // Log the error
-      console.error(
-        error instanceof Error ? error.message : String(error),
-        "error in  update password"
-      );
-      // Rethrow the error
       throw error;
     }
   }

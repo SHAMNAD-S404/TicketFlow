@@ -13,7 +13,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
   const navigate = useNavigate();
   const handleLogin = (role:string) => {
-    navigate(`/login?role=${role}`)
+    navigate(`/auth/login?role=${role}`)
   }
 
 

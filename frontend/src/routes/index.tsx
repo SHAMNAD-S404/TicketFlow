@@ -6,32 +6,78 @@ import SuperAdminRoutes from "./SuperAdminRoutes";
 import CompanyAdminRoutes from "./CompanyAdminRoutes";
 import EmployeeRoutes from "./EmployeeRoutes";
 import NotFound from "../pages/404";
-
-
+import Unauthorized from "../pages/Unauthorized";
+import ProtoctedRoutes from "./ProtectedRoutes";
+import RestrictionRoute from "./RestrictionRoute";
 
 const AppRoutes: React.FC = () => {
   return (
     <Router>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<LandingPage />} />
+        <Route
+          path="/"
+          element={
+            <RestrictionRoute>
+              <LandingPage />
+            </RestrictionRoute>
+          }
+        />
+
+        {/* Unauthorized Routes */}
+        <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/* Authentication Routes */}
-        <Route path="/*" element={<AuthRoutes />} />
+        <Route
+          path="/auth/*"
+          element={
+            <RestrictionRoute>
+              <AuthRoutes />
+            </RestrictionRoute>
+          }
+        />
 
         {/* Super Admin Routes */}
-        <Route path="/sudo/*" element={<SuperAdminRoutes />} />
+        <Route
+          path="/sudo/*"
+          element={
+            <ProtoctedRoutes allowedRoles={["sudo"]}>
+              <SuperAdminRoutes />
+            </ProtoctedRoutes>
+          }
+        />
 
         {/* Company Admin Routes */}
-        <Route path="/company/*" element={<CompanyAdminRoutes />} />
+        <Route
+          path="/company/*"
+          element={
+            <ProtoctedRoutes allowedRoles={["company"]}>
+              <CompanyAdminRoutes />
+            </ProtoctedRoutes>
+          }
+        />
 
-         {/* Employee Routes */}
-         <Route path="/employee/*" element={<EmployeeRoutes />} />
+        {/* Employee Routes */}
+        <Route
+          path="/employee/*"
+          element={
+            <ProtoctedRoutes allowedRoles={["employee"]}>
+              <EmployeeRoutes />
+            </ProtoctedRoutes>
+          }
+        />
 
-      
+{/* <Route
+          path="/employee/*"
+          element={
+           
+              <EmployeeRoutes />
+          
+          }
+        /> */}
 
         {/* Fallback Route */}
-        <Route path="*" element={<NotFound/>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

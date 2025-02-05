@@ -16,14 +16,14 @@ const EmployeeDashboard: React.FC = () => {
 
   const { employee, role } = useSelector((state: Rootstate) => state.employee);
   const dispatch = useDispatch<AppDispatch>();
-  const [activeMenu, setActiveMenu] = useState("Profile");
+  const [activeMenu, setActiveMenu] = useState("dashboard");
 
   const handleMenuSelect = (menu: string) => setActiveMenu(menu);
 
-  // Fetch user data on mount
-  useEffect(() => {
-    dispatch(fetchEmployee());
-  }, [dispatch]);
+  // // Fetch user data on mount
+  // useEffect(() => {
+  //   dispatch(fetchEmployee());
+  // }, [dispatch]);
 
   //user logout
   const handleLogout = async () => {

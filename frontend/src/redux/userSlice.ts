@@ -23,7 +23,9 @@ export const fetchCompany =  createAsyncThunk(
   "company/fetchUser",
   async (_, { rejectWithValue }) => {
     try {
+      console.log(11111111111)
       const response = await fetchUserData();
+      console.log(222222222222222)
       localStorage.removeItem("currentStep");
       localStorage.removeItem("email");
       localStorage.removeItem("signupStep")

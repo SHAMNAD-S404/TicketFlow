@@ -109,7 +109,7 @@ const Singup_Email: React.FC<SignupFormProps> = ({ onVerifyEmail }) => {
               <p className="text-center text-gray-600 text-sm mt-4">
                 Already have an account?{" "}
                 <Link
-                  to="/login?role=admin"
+                  to="/auth/login?role=admin"
                   className="text-purple-500 hover:underline font-medium hover:font-bold hover:text-blue-600 "
                 >
                   Login

@@ -1,4 +1,5 @@
 import { Model, Document } from "mongoose";
+import { Messages } from "../../../constants/messageConstants";
 
 export class BaseRepository<T extends Document> {
   protected readonly model: Model<T>;
@@ -14,7 +15,7 @@ export class BaseRepository<T extends Document> {
     this.model = model;
   }
 
-
+  //========================================================================================================================
 
   /**
    * Creates a new user in the database.
@@ -32,13 +33,13 @@ export class BaseRepository<T extends Document> {
       // Save the user document
       return await document.save();
     } catch (error) {
-      console.error("Error creating document:", error);
+      console.error(Messages.SERVER_ERROR, error);
       throw error;
     }
   }
 
 
-  
+  //========================================================================================================================
   /**
    * Find a user by email.
    * @param email The email of the user.
@@ -54,7 +55,7 @@ export class BaseRepository<T extends Document> {
     }
   }
 
-
+  //========================================================================================================================
 
   /**
    * Finds a document by its ID.
@@ -67,12 +68,12 @@ export class BaseRepository<T extends Document> {
       return await this.model.findById(id);
     } catch (error) {
       // Log and rethrow the error if finding fails
-      console.error("Error finding document by ID:", error);
+      console.error(Messages.SERVER_ERROR, error);
       throw error;
     }
   }
 
-
+  //========================================================================================================================
   /**
    * Retrieves all documents from the database.
    * @returns An array of documents.
@@ -83,12 +84,12 @@ export class BaseRepository<T extends Document> {
       return await this.model.find();
     } catch (error) {
       // Log the error and rethrow it
-      console.error("Error finding all documents:", error);
+      console.error(Messages.SERVER_ERROR, error);
       throw error;
     }
   }
 
-
+  //========================================================================================================================
   /**
    * Updates a document by its ID.
    * @param id The ID of the document to update.
@@ -101,13 +102,13 @@ export class BaseRepository<T extends Document> {
       return await this.model.findByIdAndUpdate(id, updateData, { new: true });
     } catch (error) {
       // Log and rethrow the error if finding fails
-      console.error("Error updating document by ID:", error);
+      console.error(Messages.SERVER_ERROR, error);
       throw error;
     }
   }
 
 
-
+  //========================================================================================================================
   /**
    * Deletes a document by its ID.
    * @param id The ID of the document to delete.
@@ -119,12 +120,12 @@ export class BaseRepository<T extends Document> {
       return await this.model.findByIdAndDelete(id);
     } catch (error) {
       // Log and rethrow the error if deletion fails
-      console.error("Error deleting document by ID:", error);
+      console.error(Messages.SERVER_ERROR, error);
       throw error;
     }
   }
 
-
+  //========================================================================================================================
   async findByAuthUserUUID(authUserUUID : string) : Promise<T | null>{
     try {
       return await this.model.findOne({authUserUUID: authUserUUID});

@@ -12,7 +12,7 @@ const SignUpModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
   const handleRegisterClick = () => {
     onClose();
-    navigate("/signup");
+    navigate("/auth/signup");
   }
 
   if (!isOpen) return null;

@@ -24,9 +24,10 @@ const CompanyDashboard: React.FC = () => {
   const handleMenuSelect = (menu: string) => setActiveMenu(menu);
 
   // Fetch user data on mount
-  useEffect(() => {
-    dispatch(fetchCompany());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   console.log("heloooooooooooooooo")
+  //   dispatch(fetchCompany());
+  // }, [dispatch]);
 
   const handleLogout = async () => {
     try {

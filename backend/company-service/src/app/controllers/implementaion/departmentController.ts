@@ -19,6 +19,7 @@ export class DepartmentController implements IDepartmentController {
   }
 
 
+
   public createDepartment = async (
     req: Request,
     res: Response
