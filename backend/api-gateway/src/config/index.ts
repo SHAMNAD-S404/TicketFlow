@@ -6,6 +6,7 @@ export interface Iconfig {
   authServiceUrl: string;
   companyServiceUrl: string;
   jwtSecret: string
+  frontend_URL : string;
 }
 
 export const config: Iconfig = {
@@ -13,4 +14,5 @@ export const config: Iconfig = {
   authServiceUrl: process.env.AUTH_SERVICE_URL as string,
   companyServiceUrl: process.env.COMPANY_SERVICE_URL as string,
   jwtSecret: process.env.JWT_SECRET as string,
+  frontend_URL: process.env.FRONTEND_URL as string,
 };

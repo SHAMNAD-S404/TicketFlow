@@ -17,6 +17,7 @@ const ProtoctedRoutes :React.FC<ProtoctedRoutesProps> = ({allowedRoles, children
 
     const employeeUser = useSelector((state:Rootstate) => state.employee.employee);
     const companyUser = useSelector((state:Rootstate) => state.company.company);
+    const superAdmin = useSelector((state:Rootstate) => state.sudo.sudo)
     //balance roles come here
 
     let currentUser : any = null;
@@ -28,7 +29,13 @@ const ProtoctedRoutes :React.FC<ProtoctedRoutesProps> = ({allowedRoles, children
     }else if (companyUser){
         currentUser = companyUser;
         currentRole = userRoles.Company;
-    } //balance will come here
+    }else if(superAdmin) {
+        currentUser = superAdmin;
+        currentRole = userRoles.Sudo
+    }
+    
+    
+    //balance will come here
 
     if(!currentUser){
         return <Navigate to="/" replace />;
@@ -41,6 +48,22 @@ const ProtoctedRoutes :React.FC<ProtoctedRoutesProps> = ({allowedRoles, children
 
     // If checks pass, render the requested route.
     return children;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // const {employee ,loading : employeeLoading} = useSelector((state:Rootstate) => state.employee);
     // const {company , loading : companyLoading} = useSelector((state:Rootstate) => state.company);

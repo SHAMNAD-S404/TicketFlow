@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaHome, FaUsers, FaHospitalUser, FaChevronLeft } from "react-icons/fa";
+import { FaHandHoldingDollar } from "react-icons/fa6";
 import { MdOutlineAccountCircle } from "react-icons/md";
 import { RiDashboardFill } from "react-icons/ri";
 import { FaUserTie } from "react-icons/fa";
@@ -14,8 +15,9 @@ const menuConfig: { [key: string]: { name: string; icon: React.ReactNode }[] } =
   {
     sudo: [
       { name: "Dashboard", icon: <FaHome /> },
-      { name: "Client Management", icon: <FaUsers /> },
-      { name: "Profile", icon: <FaUserTie /> },
+      { name: "Company Management", icon: <FaUsers /> },
+      { name: "Subscription" , icon: <FaHandHoldingDollar /> }
+      
     ],
     company: [
       { name: "Dashboard", icon: <FaHome />  },
@@ -32,7 +34,7 @@ const menuConfig: { [key: string]: { name: string; icon: React.ReactNode }[] } =
 
 const Sidebar: React.FC<SidebarProps> = ({ role, onMenuSelect }) => {
   const menuItems = menuConfig[role] || [];
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
 
   return (
     <div

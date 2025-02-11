@@ -9,4 +9,8 @@ export function validateEnvVariables(): void {
   if(!process.env.JWT_SECRET){
     console.error("jwtsecret not defined");
   }
+  if(!process.env.FRONTEND_URL){
+    console.error("FRONTEND_URL not defined");
+  }
 }
+

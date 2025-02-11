@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { IAuthService } from "../../services/interface/IAuthService";
 import { IAuthController } from "../interface/IAuthController";
+import { HttpStatus } from "../../../constants/httpStatus";
+import { Messages } from "../../../constants/messageConstants";
 
 export class AuthController implements IAuthController {
   private authService: IAuthService;
@@ -279,6 +281,58 @@ export class AuthController implements IAuthController {
         
       } catch (error) {
         res.status(400).json({ message: String(error), success: false });
+      }
+    }
+
+    // verify super admin login================================================================================================
+
+    public verifySudoLogin = async(req: Request, res: Response): Promise<void> => {
+      try {
+
+          const {email , password} = req.body;
+          if(!email || !password) {
+            res.status(HttpStatus.FORBIDDEN).json({message:Messages.ALL_FILED_REQUIRED_ERR,succeess:false})
+            return;
+          }
+
+          const response = await this.authService.verifySuperAdminLogin(email,password);
+          if(!response.success){
+            res.status(response.statusCode).json({message:response.message,success:response.success});
+            return;
+          }
+
+          const {message , statusCode ,success,role,tockens} = response;
+
+          if (tockens) {
+            // Extract the accessToken and refreshToken from the tokens
+            const { accessToken, refreshToken } = tockens;
+    
+            res.cookie("accessToken", accessToken, {
+              httpOnly: true,
+              secure: false,
+              maxAge: 90 * 60 * 1000, //for 90 min
+              sameSite: "lax",
+            });
+    
+            res.cookie("refreshToken", refreshToken, {
+              httpOnly: true,
+              secure: false,
+              maxAge: 9 * 24 * 60 * 60 * 1000, //for 9 days
+              sameSite: "lax",
+            });
+    
+            res.status(statusCode).json({ message, success,role });
+            return;
+          } else {
+            // Return a 500 status with an error message if the tokens are not present
+            res
+              .status(500)
+              .json({ message: "failed to assign tokens", success: false });
+            return;
+          }
+        
+      } catch (error) {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({success:false,message:String(error)})
       }
     }
 

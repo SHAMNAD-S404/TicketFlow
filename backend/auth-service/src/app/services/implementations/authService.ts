@@ -472,4 +472,43 @@ export class AuthService implements IAuthService {
       return { message: String(error), success: false };
     }
   }
+
+  // super admin login verification ==========================================================================================
+
+  async verifySuperAdminLogin(email: string, password: string): Promise<{ message: string; success: boolean; statusCode: number; tockens?: { accessToken: string; refreshToken: string; }; role?: string; }> {
+    try {
+
+        const findUser = await this.userRepository.findByEmail(email);
+        if(!findUser){
+          return {message:Messages.USER_NOT_FOUND,statusCode:HttpStatus.FORBIDDEN,success:false}        
+        }
+
+        if(findUser.email !== config.superAdminEmail){
+          return{message:Messages.NO_ACCESS , success:false,statusCode:HttpStatus.FORBIDDEN}
+        }
+
+        const passwordMatch = await comparePassword(password,findUser.password);
+        if(!passwordMatch){
+          return {message:Messages.INVALID_CREDENTIALS , success:false,statusCode:HttpStatus.FORBIDDEN}
+        }
+
+        const payload = {
+          authUserUUID : findUser.authUserUUID,
+          email : findUser.email,
+          role : findUser.role
+        };
+        
+        const accessToken = await generateAccessToken(payload);
+        const refreshToken = await generateRefreshToken(payload);
+
+        return {message:Messages.LOGIN_SUCCESS,statusCode:HttpStatus.OK,success:true,tockens:{accessToken,refreshToken},role:findUser.role}
+      
+    } catch (error) {
+      return {message:String(error),success:false,statusCode:HttpStatus.INTERNAL_SERVER_ERROR}
+    }
+  }
+
+
 }
+
+

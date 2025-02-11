@@ -37,6 +37,16 @@ export const loginUser = async (email: string, password: string) => {
   }
 };
 
+//super admin login
+export const loginSuperAdmin = async (email:string,password:string) => {
+  try {
+    const response = await axiosInstance.post("/auth/sudo-login",{email,password});
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export const verifyEmail = async (email: string) => {
   try {
     const response = await axiosInstance.post("/auth/verify-email", { email });

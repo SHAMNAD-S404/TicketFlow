@@ -27,7 +27,10 @@ export function validateEnvVariables(): void {
     if (! process.env.OAUTH_CLIENT_ID) {
       console.warn("OAUTH_CLIENT_ID is not defined,");
     }
+    if (! process.env.SUDO_EMAIL_ID) {
+      console.warn("SUDO_EMAIL_ID is not defined,");
+    }
 
 
-  }
+  } 
   

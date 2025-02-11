@@ -4,6 +4,7 @@ export interface Iconfig {
   mongoUri: string;
   jwtSecret: string;
   OAuthClientId : string;
+  superAdminEmail:string;
 }
 
 export const config: Iconfig = {
@@ -11,4 +12,5 @@ export const config: Iconfig = {
   mongoUri: process.env.MONGOURL as string,
   jwtSecret: process.env.JWT_SECRET as string,
   OAuthClientId : process.env.OAUTH_CLIENT_ID as string,
+  superAdminEmail: process.env.SUDO_EMAIL_ID as string,
 };

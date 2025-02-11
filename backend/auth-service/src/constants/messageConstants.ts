@@ -11,10 +11,13 @@ export const Messages = {
     EMAIL_AND_OTP : "Provide Email and OTP to Continue !",
     NO_ACCESS: "Unauthorized Access",
     INVALID_REQUEST: "Invalid request",
+    INVALID_CREDENTIALS: "Invalid Credentials",
     ALL_FILED_REQUIRED_ERR : "Provide all required fields",
     VERIFIED_EMAIL_ERR : "Provide Verified Email ID",
     FAIL_TRY_AGAIN : "Operation failed Try again !",
     REGISTER_SUCCESS: "Registraction successfull !",
+    LOGIN_SUCCESS : "Login was successfull !",
+    
     
 
 
