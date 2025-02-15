@@ -1,6 +1,8 @@
 import { Request ,Response } from "express";
 import { IAdminController } from "../interface/IAdminController";
 import { ICompanyService } from "../../services/interface/ICompanyService";
+import { HttpStatus } from "../../../constants/httpStatus";
+import { Messages } from "../../../constants/messageConstants";
 
  export class AdminController implements IAdminController {
     private readonly comapanyService : ICompanyService ;
@@ -46,6 +48,24 @@ import { ICompanyService } from "../../services/interface/ICompanyService";
         } catch (error) {
             res.status(400).json({message:String(error),success:false});
             return;
+        }
+    }
+
+    public fetchAllCompany = async(req: Request, res: Response): Promise<void> => {
+        try {
+
+            if(req.query.role !== "sudo"){
+                res.status(HttpStatus.UNAUTHORIZED).json({message:Messages.NO_ACCESS,success:false});
+                return;
+            }
+
+            const response = await this.comapanyService.getAllCompany();
+            res.status(response.statusCode).json({message:response.message,success:response.successs,data:response.data});
+            return;
+
+            
+        } catch (error) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:String(error),success:false})
         }
     }
 

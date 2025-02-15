@@ -1,4 +1,5 @@
 export const Messages = {
+    OK : "OK",
     SERVER_ERROR: "Internel server error",
     USER_EXIST: "User already exist",
     USER_BLOCKED: "Your are blocked from TicketFlow, Please contact support",
@@ -17,11 +18,14 @@ export const Messages = {
     FAIL_TRY_AGAIN : "Operation failed Try again !",
     REGISTER_SUCCESS: "Registraction successfull !",
     LOGIN_SUCCESS : "Login was successfull !",
+    TOKEN_NOT_FOUND : "Token not found ! Please Try to login again!",
+    TOKEN_INVALID : "Token invalid or not found !",
+    EMAIL_MISSING :  "Provide email",
+    USER_UPDATE_FAILED : "User update failed ! Please Try again",
+    USER_UPDATE_SUCCESS : "User status update successfully",
+
     
-    
-
-
-
+  
 
 
   };

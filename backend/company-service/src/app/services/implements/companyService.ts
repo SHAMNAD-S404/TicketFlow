@@ -1,6 +1,8 @@
 import { ICompany } from "../../models/interface/IcompanyModel";
 import CompanyRepository from "../../repositories/implements/company";
 import { ICompanyService } from "../interface/ICompanyService";
+import { HttpStatus } from "../../../constants/httpStatus";
+import { Messages } from "../../../constants/messageConstants";
 
 export default class CompanyService implements ICompanyService {
   /**
@@ -114,6 +116,22 @@ export default class CompanyService implements ICompanyService {
     } catch (error) {
       return { message: String(error), success: false };
 
+    }
+  }
+
+  async getAllCompany(): Promise<{ message: string; successs: boolean; data?: ICompany[];statusCode:number }> {
+    try {
+
+        const result = await CompanyRepository.findAll();
+        if (result) {
+          return {message : Messages.FETCH_SUCCESS , successs:true,data:result,statusCode:HttpStatus.OK}
+        }else{
+          return {message :Messages.DATA_NOT_FOUND,successs:false,statusCode:HttpStatus.BAD_REQUEST }
+        }
+      
+      
+    } catch (error) {
+      return {message : String(error),successs:false,statusCode:HttpStatus.INTERNAL_SERVER_ERROR}
     }
   }
 

@@ -28,7 +28,6 @@ class CompanyRepository
     }
   }
 
-
   /**
    * Find a company by its email.
    * @param email The email of the company to find.
@@ -43,8 +42,6 @@ class CompanyRepository
       throw error;
     }
   }
-  
-
 
   /**
    * Finds a company by the id of the authenticated user.
@@ -62,18 +59,32 @@ class CompanyRepository
     }
   }
 
-  async updateProfileByEmail(email: string, updateData: Partial<ICompany>): Promise<ICompany | null> {
+  async updateProfileByEmail(
+    email: string,
+    updateData: Partial<ICompany>
+  ): Promise<ICompany | null> {
     try {
-
-      const updateCompany = await this.updatByEmail(email,updateData);
+      const updateCompany = await this.updatByEmail(email, updateData);
       return updateCompany;
-      
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
-
+  async findAllCompany(): Promise<ICompany[] | null> {
+    try {
+      const result = await this.findAll();
+      if(!result){
+        return null;
+      }else if(result.length > 0){
+        return result;
+      }else{
+        return null;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default new CompanyRepository();

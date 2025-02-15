@@ -9,7 +9,8 @@ export default {
     extend: {
       screens: {
         'phone' : "380px"
-      }
+      },
+      
     },
   },
   plugins: [],

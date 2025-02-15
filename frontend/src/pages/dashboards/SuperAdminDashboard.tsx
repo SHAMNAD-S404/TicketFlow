@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Sidebar from "../../components/common/Sidebar";
 import DashboardHeader from "../../components/common/DashboardHeader";
-import MainContent from "../../components/company/CompanyMainContent";
+import SAdminMainContent from "../../components/superAdmin/SuperAdminMainContent";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUserData } from "../../redux/sudoSlice";
 import { Rootstate, AppDispatch } from "../../redux/store";
@@ -64,7 +64,7 @@ const SuperAdminDashboard: React.FC = () => {
       <div className="flex-1 flex flex-col w-full ">
         <DashboardHeader name={"ADMIN"} onLogout={handleLogout} />
 
-        <MainContent activeMenu={activeMenu} />
+        <SAdminMainContent activeMenu={activeMenu} />
       </div>
     </div>
   );

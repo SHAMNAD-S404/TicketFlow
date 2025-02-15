@@ -10,8 +10,12 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials : true, //to include cookies in req
+  withCredentials : true, 
 });
+
+console.log("heloo")
+
+setupResponseInterceptor(axiosInstance);
 
 const enableInterceptors = false;
 

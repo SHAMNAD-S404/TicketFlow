@@ -1,4 +1,4 @@
-import mongoose, { Document } from "mongoose";
+import  { Document } from "mongoose";
 
 // Interface for the company document
 export interface ICompany extends Document {
@@ -10,4 +10,6 @@ export interface ICompany extends Document {
   originCountry: string;
   authUserUUID : string;
   role : string ;
+  subscriptionPlan:string;
+  isBlock : boolean;
 }

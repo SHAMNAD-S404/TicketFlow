@@ -5,7 +5,9 @@ export interface IRabbitMQConfig{
     url:string;
     notificationQueue:string;
     companyRPCQueue:string;
+    companyMainConsumer : string;
     authConsumerQueue : string;
+
 }
 
 export const RabbitMQConfig:IRabbitMQConfig = {
@@ -13,4 +15,5 @@ export const RabbitMQConfig:IRabbitMQConfig = {
     notificationQueue:process.env.NOTIFICATION_QUEUE as string,
     companyRPCQueue: process.env.COMPANY_RPC_QUEUE as string,
     authConsumerQueue : process.env.AUTH_CONSUMER_QUEUE as string,
+    companyMainConsumer : process.env.COMPNAY_MAIN_QUEUE as string,
 }

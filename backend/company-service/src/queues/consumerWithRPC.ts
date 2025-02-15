@@ -11,7 +11,7 @@ export const consumeRPCRequest = async (): Promise<void> => {
     });
     console.log("🐇 Company RPC consumer queue created");
 
-    console.log(`Waiting for messages in ${RabbitMQConfig.compnayRPCQueue}`);
+    //console.log(`Waiting for messages in ${RabbitMQConfig.compnayRPCQueue}`);
 
     // Consume messages from the queue
     channel.consume(

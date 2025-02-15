@@ -17,7 +17,13 @@ const companySchema : Schema = new Schema<ICompany> ({
     originCountry: {
          type: String, required: true },
     authUserUUID: {
-         type: String, required: true }
+         type: String, required: true },
+     subscriptionPlan : {
+          type:String , default : "Free tier"
+     },
+     isBlock : {
+          type:Boolean , default : false
+     },
 
 },
 {timestamps: true});

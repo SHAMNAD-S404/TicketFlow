@@ -3,6 +3,7 @@ import { DepartemntForm } from "../../components/company/departmentMenu/subMenu/
 import { IEmployeeForm } from "../../types/IEmployeeForm";
 import { EmployeeEditForm } from "../../components/employee/profileMenu/subMenu/EmployeeProfileEdit";
 import { IcompanyEditForm } from "../../components/company/profileMenu/subMenu/ProfileEdit";
+import { MessageConst } from "../../utils/constants/messageConstants";
 //fetch user data from the company service.
 export const fetchUserData = async () => {
     try {
@@ -82,7 +83,17 @@ export const fetchEmployeeData = async () => {
         
       } catch (error) {
         console.log("Error during fetch departments",error);
-      throw error;
+        throw error;
+      }
+    }
+
+    export const fetchAllCompanies = async () => {
+      try {
+        const response = await axiosInstance.get("/company/comp/get-all-companies");
+        return response.data;
+      } catch (error) {
+        console.log(MessageConst.FETCH_ERROR_AXIOX,error);
+        throw error;
       }
     }
 

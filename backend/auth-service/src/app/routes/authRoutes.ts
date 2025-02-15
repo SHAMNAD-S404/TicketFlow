@@ -4,6 +4,7 @@ import { AuthService } from "../services/implementations/authService";
 import { UserRepository } from "../repositories/implements/userRepository";
 import { authenticateToken } from "../middlewares/authenticateToken";
 import { extractUserData } from "../middlewares/extractUserData";
+import { verifyRefreshToken } from "../middlewares/authenticateRefreshToken";
 
 
 const router = Router();
@@ -25,6 +26,8 @@ router.post("/signup",authController.registerUser)
       .post("/logout",authenticateToken,extractUserData,authController.logoutUser)
       .post("/google",authController.googleSignIn)
       .post("/resend-otp",authController.resendOtp)
+      .post("/refreshToken",verifyRefreshToken,extractUserData,authController.verifyRefreshToken)
+      .patch("/block-company",authenticateToken,extractUserData,authController.handleCompanyBlockStatus)
 
 
 export default router;

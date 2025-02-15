@@ -6,4 +6,5 @@ export interface IUser {
     role : UserRoles,
     authUserUUID: string,
     isFirstLogin:boolean,
+    isBlock:boolean;
 }

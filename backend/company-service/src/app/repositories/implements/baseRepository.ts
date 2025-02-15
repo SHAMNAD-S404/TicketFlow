@@ -80,4 +80,13 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
     }
   }
 
+  async findAll(): Promise<T[] | null> {
+    try {
+      return await this.model.find().select('-updatedAt -__v')
+      
+    } catch (error) {
+      throw error
+    }
+  }
+
 }

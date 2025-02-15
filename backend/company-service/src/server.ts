@@ -3,6 +3,7 @@ import app from "./app";
 import { config } from "./config";
 import { connectRabbitMQ } from "./queues/rabbitConnection";
 import {consumeRPCRequest} from "./queues/consumerWithRPC"
+import { mainConsumer } from "./queues/consumer/mainConsumer";
 
 
 const startServer = async () => {
@@ -13,8 +14,13 @@ const startServer = async () => {
       connectRabbitMQ().then(() => console.log("🐇 Company-service connected to RabbitMQ!"))
       
     ]);
+
+    await Promise.all([
+      consumeRPCRequest(),
+      mainConsumer(),
+    ])
     
-    await consumeRPCRequest();
+    //await consumeRPCRequest();
     
     app.listen(config.port, () => {
       console.log(

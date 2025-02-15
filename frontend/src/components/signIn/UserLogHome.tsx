@@ -43,7 +43,7 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
       if (response.success && response.isFirst) {
         localStorage.setItem("resetEmail", data.email);
         toast.success(response.message, {
-          onClose: () => navigate("/employee/resetPassword"),
+          onClose: () => navigate("/auth/employee/resetPassword"),
         });
       } else if (response.success) {
         localStorage.setItem("userRole", response.role);

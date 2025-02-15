@@ -19,7 +19,7 @@ export const authenticateToken = (
       req.cookies.accessToken || req.headers.authorization?.split(" ")[1];
 
     if (!token) {
-      res.status(401).json({ message: "Unauthorized: Token not found" });
+      res.status(403).json({ message: "Unauthorized: Token not found" });
       return;
     }
 

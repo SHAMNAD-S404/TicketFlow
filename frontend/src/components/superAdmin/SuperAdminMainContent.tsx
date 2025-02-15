@@ -1,15 +1,16 @@
 import React from 'react'
 import { DefaultComponent } from '../common/DefaultComponent';
+import { superAdminMenuComponents } from './superAdminMenuComponents';
 
 interface MainContentProps {
   activeMenu : string;
 }
 
+
 const CompanyMainContent : React.FC <MainContentProps> = ({activeMenu}) => {
 
-
 //   const ActiveComponent = menuComponents[activeMenu] || DefaultComponent;
-  const ActiveComponent = DefaultComponent;
+  const ActiveComponent =  superAdminMenuComponents[activeMenu] || DefaultComponent;
 
 
   return (

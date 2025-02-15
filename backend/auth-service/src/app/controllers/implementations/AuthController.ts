@@ -3,6 +3,10 @@ import { IAuthService } from "../../services/interface/IAuthService";
 import { IAuthController } from "../interface/IAuthController";
 import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
+import { EventType } from "../../../constants/queueEventType";
+import { publishToQueue } from "../../../queues/publisher";
+import { config } from "../../../config";
+import { RabbitMQConfig } from "../../../config/rabbitmq";
 
 export class AuthController implements IAuthController {
   private authService: IAuthService;
@@ -26,7 +30,7 @@ export class AuthController implements IAuthController {
       const response = await this.authService.registerUser(registerData);
       const { message, success } = response;
       const statusCode = success ? 201 : 400;
-      
+
       res.status(statusCode).json({ message, success });
     } catch (error) {
       // Return a 400 status with an error message if the registration fails
@@ -86,26 +90,23 @@ export class AuthController implements IAuthController {
         return;
       }
 
-      // Extract the message, success status, tokens and isFirst from the response
       const { message, success, tockens, isFirst, role } = response;
 
       // Check if the tokens are present
       if (tockens) {
-        // Extract the accessToken and refreshToken from the tokens
         const { accessToken, refreshToken } = tockens;
 
-        // Set the accessToken and refreshToken cookies with the appropriate options
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
           secure: false,
-          maxAge: 90 * 60 * 1000, //for 90 min
+          maxAge: 1 * 60 * 1000, //for 1 min
           sameSite: "lax",
         });
 
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
           secure: false,
-          maxAge: 9 * 24 * 60 * 60 * 1000, //for 9 days
+          maxAge: 7 * 24 * 60 * 60 * 1000, //for 9 days
           sameSite: "lax",
         });
 
@@ -173,12 +174,10 @@ export class AuthController implements IAuthController {
       if (!email && !password) {
         console.log("req.body", req.body);
 
-        res
-          .status(400)
-          .json({
-            message: "user id or password is missing !",
-            success: false,
-          });
+        res.status(400).json({
+          message: "user id or password is missing !",
+          success: false,
+        });
         return;
       }
 
@@ -250,90 +249,170 @@ export class AuthController implements IAuthController {
 
   public googleSignIn = async (req: Request, res: Response): Promise<void> => {
     try {
-
-        const token = req.body.token;
-        if(!token){
-          res.status(400).json({message:"token missing",success:false})
-          return;
-        }
-
-        const verifySignIn = await this.authService.verifyGoogleSignIn(token)
-        const {message,email,success} = verifySignIn;
-        res.status(200).json({message,email,success});
+      const token = req.body.token;
+      if (!token) {
+        res.status(400).json({ message: "token missing", success: false });
         return;
+      }
 
+      const verifySignIn = await this.authService.verifyGoogleSignIn(token);
+      const { message, email, success } = verifySignIn;
+      res.status(200).json({ message, email, success });
+      return;
     } catch (error) {
       res.status(400).json({ message: String(error), success: false });
     }
-  }
+  };
 
   // resend otp =============================================================================================================
-    public resendOtp = async (req: Request, res: Response): Promise<void> => {
-      try {
-        const email = req.body.email;
-        if(!email){
-          res.status(400).json({success:false,message: "email id missing"})
-          return;
-        }
-        const response = await this.authService.getResendOTP(email);
-        const {success,message} = response;
-        res.status(200).json({success,message});
-        
-      } catch (error) {
-        res.status(400).json({ message: String(error), success: false });
+  public resendOtp = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const email = req.body.email;
+      if (!email) {
+        res.status(400).json({ success: false, message: "email id missing" });
+        return;
       }
+      const response = await this.authService.getResendOTP(email);
+      const { success, message } = response;
+      res.status(200).json({ success, message });
+    } catch (error) {
+      res.status(400).json({ message: String(error), success: false });
     }
+  };
 
-    // verify super admin login================================================================================================
+  // verify super admin login================================================================================================
 
-    public verifySudoLogin = async(req: Request, res: Response): Promise<void> => {
-      try {
-
-          const {email , password} = req.body;
-          if(!email || !password) {
-            res.status(HttpStatus.FORBIDDEN).json({message:Messages.ALL_FILED_REQUIRED_ERR,succeess:false})
-            return;
-          }
-
-          const response = await this.authService.verifySuperAdminLogin(email,password);
-          if(!response.success){
-            res.status(response.statusCode).json({message:response.message,success:response.success});
-            return;
-          }
-
-          const {message , statusCode ,success,role,tockens} = response;
-
-          if (tockens) {
-            // Extract the accessToken and refreshToken from the tokens
-            const { accessToken, refreshToken } = tockens;
-    
-            res.cookie("accessToken", accessToken, {
-              httpOnly: true,
-              secure: false,
-              maxAge: 90 * 60 * 1000, //for 90 min
-              sameSite: "lax",
-            });
-    
-            res.cookie("refreshToken", refreshToken, {
-              httpOnly: true,
-              secure: false,
-              maxAge: 9 * 24 * 60 * 60 * 1000, //for 9 days
-              sameSite: "lax",
-            });
-    
-            res.status(statusCode).json({ message, success,role });
-            return;
-          } else {
-            // Return a 500 status with an error message if the tokens are not present
-            res
-              .status(500)
-              .json({ message: "failed to assign tokens", success: false });
-            return;
-          }
-        
-      } catch (error) {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({success:false,message:String(error)})
+  public verifySudoLogin = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+        res
+          .status(HttpStatus.FORBIDDEN)
+          .json({ message: Messages.ALL_FILED_REQUIRED_ERR, succeess: false });
+        return;
       }
-    }
 
+      const response = await this.authService.verifySuperAdminLogin(
+        email,
+        password
+      );
+      if (!response.success) {
+        res
+          .status(response.statusCode)
+          .json({ message: response.message, success: response.success });
+        return;
+      }
+
+      const { message, statusCode, success, role, tockens } = response;
+
+      if (tockens) {
+        // Extract the accessToken and refreshToken from the tokens
+        const { accessToken, refreshToken } = tockens;
+
+        res.cookie("accessToken", accessToken, {
+          httpOnly: true,
+          secure: false,
+          maxAge: 90 * 60 * 1000, //for 90 min
+          sameSite: "lax",
+        });
+
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: false,
+          maxAge: 9 * 24 * 60 * 60 * 1000, //for 9 days
+          sameSite: "lax",
+        });
+
+        res.status(statusCode).json({ message, success, role });
+        return;
+      } else {
+        // Return a 500 status with an error message if the tokens are not present
+        res
+          .status(500)
+          .json({ message: "failed to assign tokens", success: false });
+        return;
+      }
+    } catch (error) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ success: false, message: String(error) });
+    }
+  };
+
+  // verify refrsh Toekn ================================================================================================
+
+  public verifyRefreshToken = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    try {
+      const { email } = req.query;
+
+      const response = await this.authService.verifyUser(String(email));
+      const { message, success, statusCode, accessToken } = response;
+
+      if (accessToken) {
+        res.cookie("accessToken", accessToken, {
+          httpOnly: true,
+          secure: false,
+          maxAge: 1 * 60 * 1000,
+          sameSite: "lax",
+        });
+      }
+
+      res.status(statusCode).json({ message, success });
+      return;
+    } catch (error) {
+      console.error("error in verifyRefreshToken", error);
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: Messages.SERVER_ERROR });
+    }
+  };
+
+  // handle company block status refrsh Toekn ================================================================
+
+  public handleCompanyBlockStatus = async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    try {
+      if (req.query.role !== "sudo") {
+        res
+          .status(HttpStatus.UNAUTHORIZED)
+          .json({ message: Messages.NO_ACCESS, success: false });
+        return;
+      }
+
+      const { email } = req.body;
+      if (!email) {
+        res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ messages: Messages.EMAIL_MISSING, success: false });
+        return;
+      }
+
+      const updateCompany = await this.authService.updateUserBlockStatus(email);
+      const { message, statusCode, success, userDataPayload } = updateCompany;
+
+      //sending to company service queue
+      if (success && userDataPayload) {
+        await publishToQueue(RabbitMQConfig.companyMainConsumer, {
+          ...userDataPayload,
+          eventType: EventType.COMPANY_STATUS_UPDATE,
+        });
+      }
+
+      res.status(statusCode).json({ message, success });
+    } catch (error) {
+      console.error("error in block company procedure", error);
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: Messages.SERVER_ERROR, success: false });
+      return;
+    }
+  };
 }

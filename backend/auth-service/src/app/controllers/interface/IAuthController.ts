@@ -11,4 +11,6 @@ export interface IAuthController {
   logoutUser(req: Request, res: Response): Promise<void>;
   googleSignIn(req: Request, res: Response): Promise<void>;
   resendOtp(req: Request, res: Response): Promise<void>;
+  verifyRefreshToken ( req:Request,res:Response) : Promise<void>;
+  handleCompanyBlockStatus ( req: Request , res : Response) : Promise<void>;
 }

@@ -96,5 +96,13 @@ export class UserRepository
     }
   }
 
+  async userBlockStatusUpdate(email: string, status: boolean): Promise<IUser | null> {
+    try {
+       return await this.blockAndUnblockUserWithEmail(email,status);
+    } catch (error) {
+      throw error
+    }
+  }
+
 
 }

@@ -97,3 +97,13 @@ export const resendOTP = async (email:string) => {
     throw error
   }
 }
+
+  //block user OTP API CALL ==========================================================================
+  export const handleblockCompany = async (email : string) => {
+    try {
+      const response = await axiosInstance.patch("/auth/block-company",{email});
+      return response.data;
+    } catch (error) {
+      throw error
+    }
+  }

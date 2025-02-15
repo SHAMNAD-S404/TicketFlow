@@ -133,4 +133,13 @@ export class BaseRepository<T extends Document> {
       throw error;
     }
   }
+
+  async blockAndUnblockUserWithEmail(email : string , status:boolean) : Promise<T | null> {
+    try {
+      return await  this.model.findOneAndUpdate({email:email},{isBlock:status},{new:true});
+    } catch (error) {
+      throw error
+    }
+  }
+  
 }

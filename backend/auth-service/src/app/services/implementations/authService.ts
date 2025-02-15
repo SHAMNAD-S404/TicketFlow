@@ -12,6 +12,7 @@ import { OAuth2Client } from "google-auth-library";
 import { config } from "../../../config";
 import { Messages } from "../../../constants/messageConstants";
 import { HttpStatus } from "../../../constants/httpStatus";
+import { UserData } from "../../middlewares/extractUserData";
 import {
   deleteRedisData,
   getRedisData,
@@ -21,6 +22,7 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../../utils/jwtUtils";
+import { EventType } from "../../../constants/queueEventType";
 
 export class AuthService implements IAuthService {
   constructor(private userRepository: UserRepository) {}
@@ -475,40 +477,144 @@ export class AuthService implements IAuthService {
 
   // super admin login verification ==========================================================================================
 
-  async verifySuperAdminLogin(email: string, password: string): Promise<{ message: string; success: boolean; statusCode: number; tockens?: { accessToken: string; refreshToken: string; }; role?: string; }> {
+  async verifySuperAdminLogin(
+    email: string,
+    password: string
+  ): Promise<{
+    message: string;
+    success: boolean;
+    statusCode: number;
+    tockens?: { accessToken: string; refreshToken: string };
+    role?: string;
+  }> {
     try {
-
-        const findUser = await this.userRepository.findByEmail(email);
-        if(!findUser){
-          return {message:Messages.USER_NOT_FOUND,statusCode:HttpStatus.FORBIDDEN,success:false}        
-        }
-
-        if(findUser.email !== config.superAdminEmail){
-          return{message:Messages.NO_ACCESS , success:false,statusCode:HttpStatus.FORBIDDEN}
-        }
-
-        const passwordMatch = await comparePassword(password,findUser.password);
-        if(!passwordMatch){
-          return {message:Messages.INVALID_CREDENTIALS , success:false,statusCode:HttpStatus.FORBIDDEN}
-        }
-
-        const payload = {
-          authUserUUID : findUser.authUserUUID,
-          email : findUser.email,
-          role : findUser.role
+      const findUser = await this.userRepository.findByEmail(email);
+      if (!findUser) {
+        return {
+          message: Messages.USER_NOT_FOUND,
+          statusCode: HttpStatus.FORBIDDEN,
+          success: false,
         };
-        
-        const accessToken = await generateAccessToken(payload);
-        const refreshToken = await generateRefreshToken(payload);
+      }
 
-        return {message:Messages.LOGIN_SUCCESS,statusCode:HttpStatus.OK,success:true,tockens:{accessToken,refreshToken},role:findUser.role}
-      
+      if (findUser.email !== config.superAdminEmail) {
+        return {
+          message: Messages.NO_ACCESS,
+          success: false,
+          statusCode: HttpStatus.FORBIDDEN,
+        };
+      }
+
+      const passwordMatch = await comparePassword(password, findUser.password);
+      if (!passwordMatch) {
+        return {
+          message: Messages.INVALID_CREDENTIALS,
+          success: false,
+          statusCode: HttpStatus.FORBIDDEN,
+        };
+      }
+
+      const payload = {
+        authUserUUID: findUser.authUserUUID,
+        email: findUser.email,
+        role: findUser.role,
+      };
+
+      const accessToken = await generateAccessToken(payload);
+      const refreshToken = await generateRefreshToken(payload);
+
+      return {
+        message: Messages.LOGIN_SUCCESS,
+        statusCode: HttpStatus.OK,
+        success: true,
+        tockens: { accessToken, refreshToken },
+        role: findUser.role,
+      };
     } catch (error) {
-      return {message:String(error),success:false,statusCode:HttpStatus.INTERNAL_SERVER_ERROR}
+      return {
+        message: String(error),
+        success: false,
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      };
     }
   }
 
+  //====================================================================================================================
+
+  async verifyUser(
+    email: string
+  ): Promise<{
+    message: string;
+    success: boolean;
+    statusCode: number;
+    accessToken?: string;
+  }> {
+    try {
+      const getUser = await this.userRepository.findByEmail(email);
+      if (!getUser) {
+        return {
+          message: Messages.USER_NOT_FOUND,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
+      }
+      if (getUser.isBlock) {
+        return {
+          message: Messages.USER_BLOCKED,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
+      }
+
+      const payload: UserData = {
+        authUserUUID: getUser.authUserUUID,
+        email: getUser.email,
+        role: getUser.role,
+      };
+
+      const accessToken = await generateAccessToken(payload);
+
+      return {
+        message: Messages.OK,
+        statusCode: HttpStatus.OK,
+        success: true,
+        accessToken,
+      };
+    } catch (error) {
+      console.error("error while verifyUser", error);
+      return {
+        message: Messages.SERVER_ERROR,
+        success: false,
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      };
+    }
+  }
+
+  async updateUserBlockStatus(email: string): Promise<{ message: string; success: boolean; statusCode: number;userDataPayload?:object }> {
+    try {
+        const findUser = await this.userRepository.findByEmail(email);
+        if(!findUser) {
+          return {message : Messages.USER_NOT_FOUND ,statusCode : HttpStatus.NOT_FOUND , success : false}
+        }
+        const getStatus : boolean = !findUser.isBlock;
+
+        const updateUser = await this.userRepository.userBlockStatusUpdate(email,getStatus);
+        if(!updateUser){
+          return {message : Messages.USER_UPDATE_FAILED, statusCode:HttpStatus.BAD_REQUEST , success : false}
+        }
+
+        const userDataPayload = {
+          email : updateUser.email,
+          isBlock : updateUser.isBlock,
+        }
+
+        return {message : Messages.USER_UPDATE_SUCCESS , statusCode:HttpStatus.OK,success:true,userDataPayload}
+
+    } catch (error) {
+      console.error("error while udpate user status",error);
+      return {message: Messages.SERVER_ERROR, statusCode:HttpStatus.INTERNAL_SERVER_ERROR,success:false}
+      
+    }
+  }
 
 }
-
-
