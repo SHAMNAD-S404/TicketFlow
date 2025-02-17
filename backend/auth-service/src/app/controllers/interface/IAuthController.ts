@@ -13,4 +13,6 @@ export interface IAuthController {
   resendOtp(req: Request, res: Response): Promise<void>;
   verifyRefreshToken ( req:Request,res:Response) : Promise<void>;
   handleCompanyBlockStatus ( req: Request , res : Response) : Promise<void>;
+  handleEmployeeBlockStatus (req : Request , res : Response) : Promise<void>;
+  
 }

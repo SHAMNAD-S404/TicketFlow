@@ -7,19 +7,10 @@ class CompanyRepository
   extends BaseRepository<ICompany>
   implements ICompanyRepository
 {
-  /**
-   * Initializes a new instance of the CompanyRepository class.
-   * Extends the BaseRepository with the CompanyModel.
-   */
   constructor() {
     super(CompanyModel); // Pass the CompanyModel to the BaseRepository constructor
   }
 
-  /**
-   * Create a new company in the database
-   * @param company The company data to be created
-   * @returns The created company data
-   */
   async createCompany(company: ICompany): Promise<ICompany> {
     try {
       return await this.create(company);
@@ -28,33 +19,18 @@ class CompanyRepository
     }
   }
 
-  /**
-   * Find a company by its email.
-   * @param email The email of the company to find.
-   * @returns The company document or null if no company is found.
-   */
   async findOneByEmail(email: string): Promise<ICompany | null> {
     try {
-      // Call the findOneWithEmail method from the BaseRepository
       return await this.findOneWithEmail(email);
     } catch (error) {
-      // Rethrow the error if finding fails
       throw error;
     }
   }
 
-  /**
-   * Finds a company by the id of the authenticated user.
-   * @param authUser The id of the authenticated user id of the auth-service database.
-   * @returns The company document or null if no company is found.
-   */
   async findByAuthUserUUID(authUserUUID: string): Promise<ICompany | null> {
     try {
-      // Use the findOneById method from the BaseRepository to find the company
-      // document by the id of the authenticated user.
       return await this.findOneByUUID(authUserUUID);
     } catch (error) {
-      // Rethrow the error if finding fails
       throw error;
     }
   }
@@ -71,16 +47,50 @@ class CompanyRepository
     }
   }
 
-  async findAllCompany(): Promise<ICompany[] | null> {
+  async findAllCompany(
+    page: number,
+    sort: string,
+    searchKey: string
+  ): Promise<{ companies: ICompany[] | null; totalPages: number }> {
     try {
-      const result = await this.findAll();
-      if(!result){
-        return null;
-      }else if(result.length > 0){
-        return result;
-      }else{
-        return null;
-      }
+      const limit = 2;
+      const pageNumber = Math.max(1, page);
+      const filter: Record<string, 1 | -1> = {
+        [sort]: sort === "createdAt" ? -1 : 1,
+      };
+      const serchFilter =
+        searchKey.trim() === ""
+          ? {}
+          : {
+              $or: [
+                { companyName: { $regex: searchKey, $options: "i" } },
+                { email: { $regex: searchKey, $options: "i" } },
+              ],
+            };
+
+      const fetchAllDocument = await this.model
+        .find(serchFilter)
+        .sort(filter)
+        .skip((pageNumber - 1) * limit)
+        .limit(limit);
+
+      const totalFilteredDocuments = await this.model.countDocuments(
+        serchFilter
+      );
+      const totalPages = Math.ceil(totalFilteredDocuments / limit);
+      return { companies: fetchAllDocument, totalPages };
+    } catch (error) {
+      console.error("error while fetching company data : ", error);
+      throw error;
+    }
+  }
+
+  async updateCompanyStatus(
+    email: string,
+    isBlock: boolean
+  ): Promise<ICompany | null> {
+    try {
+      return await this.updateUserStatus(email, isBlock);
     } catch (error) {
       throw error;
     }

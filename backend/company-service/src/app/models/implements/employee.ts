@@ -13,17 +13,30 @@ const employeeSchema: Schema = new Schema<IEmployee>(
       required: true,
       ref: "departments",
     },
-    name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, lowercase: true },
-    phone: { type: String, required: true },
-    departmentName: { type: String, required: true, trim: true },
+    name: {
+       type: String, required: true, trim: true
+    },
+    email: { 
+      type: String, required: true, lowercase: true 
+    },
+    phone: { 
+      type: String, required: true 
+    },
+    departmentName: { 
+      type: String, required: true, trim: true 
+    },
     role: {
       type: String,
       required: true,
       default: "employee",
       enum: ["employee", "departmentHead"],
     },
-    authUserUUID: { type: String, required: true },
+    authUserUUID: { 
+      type: String, required: true 
+    },
+    isBlock : {
+      type:Boolean , default : false
+    }
   },
   {
     timestamps: true,

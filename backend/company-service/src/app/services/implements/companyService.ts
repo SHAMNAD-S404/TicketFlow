@@ -14,7 +14,6 @@ export default class CompanyService implements ICompanyService {
    *              success: true if successful, false otherwise
    */
 
-
   async createCompany(
     companyData: ICompany
   ): Promise<{ message: string; data?: ICompany; success: boolean }> {
@@ -25,7 +24,7 @@ export default class CompanyService implements ICompanyService {
       );
       if (existingCompany) {
         return {
-          message: "company with this email id already exists",
+          message: Messages.USER_ALREADY_EXIST,
           success: false,
         };
       }
@@ -46,9 +45,6 @@ export default class CompanyService implements ICompanyService {
     }
   }
 
-
-
-
   /**
    * Fetch a company data by user ID
    * @param userId The user ID to find the company data
@@ -57,21 +53,18 @@ export default class CompanyService implements ICompanyService {
    *              data: fetched company data if successful
    *              success: true if successful, false otherwise
    */
-  async fetchCompanyData(
-    email: string
-  ): Promise <{
-     message: string;
-     data?: ICompany;
-     success: boolean }> {
+  async fetchCompanyData(email: string): Promise<{
+    message: string;
+    data?: ICompany;
+    success: boolean;
+  }> {
     try {
       // Find the company data by user ID
-      const fetchCompanyData = await CompanyRepository.findOneByEmail(email)
+      const fetchCompanyData = await CompanyRepository.findOneByEmail(email);
       if (!fetchCompanyData) {
-
         // Return an error if company data is not found
         return { message: "Comapny data not found !", success: false };
       } else {
-
         // Return the fetched company data if successful
         return {
           message: `Welcome ${fetchCompanyData.companyName}`,
@@ -87,55 +80,113 @@ export default class CompanyService implements ICompanyService {
 
   async getCompanyIdWithAuthUserUUID(userUUID: string): Promise<string> {
     try {
-
       const companyId = await CompanyRepository.findByAuthUserUUID(userUUID);
-      if(!companyId){
-        throw new Error("Company not found")
+      if (!companyId) {
+        throw new Error("Company not found");
       }
-      return String(companyId._id) ;
-      
+      return String(companyId._id);
     } catch (error) {
       throw new Error(`Failed to get company by authUserUUID: ${error}`);
-
     }
   }
 
-  async getCompanyUpdateProfile(email: string, upateData: Partial<ICompany>): Promise<{ message: string; success: boolean; data?: ICompany; }> {
+  async getCompanyUpdateProfile(
+    email: string,
+    upateData: Partial<ICompany>
+  ): Promise<{ message: string; success: boolean; data?: ICompany }> {
     try {
-
-      const isExist = await CompanyRepository.findOneByEmail(email)
-      if(!isExist){
-        return {message: "user not found",success:false}
+      const isExist = await CompanyRepository.findOneByEmail(email);
+      if (!isExist) {
+        return { message:Messages.USER_NOT_FOUND, success: false };
       }
-      const updateCompany = await CompanyRepository.updateProfileByEmail(email,upateData)
-      if(!updateCompany){
-        return {message: "failed to update try agian",success:false}
+      const updateCompany = await CompanyRepository.updateProfileByEmail(
+        email,
+        upateData
+      );
+      if (!updateCompany) {
+        return { message:Messages.FAIL_TRY_AGAIN, success: false };
       }
 
-      return {message : "user profile updated successfull",success:true}
+      return { message:Messages.USER_STATUS_UPDATED, success: true };
     } catch (error) {
       return { message: String(error), success: false };
-
     }
   }
 
-  async getAllCompany(): Promise<{ message: string; successs: boolean; data?: ICompany[];statusCode:number }> {
+  async getAllCompany(page:number,sort:string,searchKey:string): Promise<{
+    message: string;
+    successs: boolean;
+    data?: {companies:ICompany[] | null,totalPages:number}
+    statusCode: number;
+  }> {
     try {
-
-        const result = await CompanyRepository.findAll();
-        if (result) {
-          return {message : Messages.FETCH_SUCCESS , successs:true,data:result,statusCode:HttpStatus.OK}
-        }else{
-          return {message :Messages.DATA_NOT_FOUND,successs:false,statusCode:HttpStatus.BAD_REQUEST }
-        }
-      
-      
+      const result = await CompanyRepository.findAllCompany(page,sort,searchKey);
+      if (result) {
+        return {
+          message: Messages.FETCH_SUCCESS,
+          successs: true,
+          data: result,
+          statusCode: HttpStatus.OK,
+        };
+      } else {
+        return {
+          message: Messages.DATA_NOT_FOUND,
+          successs: false,
+          statusCode: HttpStatus.BAD_REQUEST,
+        };
+      }
     } catch (error) {
-      return {message : String(error),successs:false,statusCode:HttpStatus.INTERNAL_SERVER_ERROR}
+      return {
+        message: Messages.SERVER_ERROR,
+        successs: false,
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      };
     }
   }
 
-  
-
-
+  async companyStatusChange(
+    email: string,
+    isBlock: boolean
+  ): Promise<{ message: string; success: boolean; statusCode: number }> {
+    try {
+      if (!email || typeof isBlock !== "boolean") {
+        return {
+          message: Messages.ALL_FILED_REQUIRED_ERR,
+          success: false,
+          statusCode: HttpStatus.BAD_REQUEST,
+        };
+      }
+      const findCompany = await CompanyRepository.findOneByEmail(email);
+      if (!findCompany) {
+        return {
+          message: Messages.USER_NOT_FOUND,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
+      }
+      const updateStatus = await CompanyRepository.updateCompanyStatus(
+        email,
+        isBlock
+      );
+      if (!updateStatus) {
+        return {
+          message: Messages.FAIL_TRY_AGAIN,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
+      }
+      return {
+        message: Messages.USER_STATUS_UPDATED,
+        statusCode: HttpStatus.OK,
+        success: true,
+      };
+    } catch (error) {
+      console.log("error while performing company block operation ", error);
+      return {
+        message: Messages.SERVER_ERROR,
+        success: false,
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      };
+    }
+  }
 }

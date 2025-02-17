@@ -9,5 +9,6 @@ export interface IEmployee extends Document {
     role? : string;
     phone : string;
     authUserUUID : string;
+    isBlock : boolean;
 
 }

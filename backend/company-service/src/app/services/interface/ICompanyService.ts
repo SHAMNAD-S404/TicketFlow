@@ -6,5 +6,6 @@ export interface ICompanyService  {
     fetchCompanyData(email : string) : Promise<{message : string, data?:ICompany,success:boolean}>
     getCompanyIdWithAuthUserUUID(userUUID:string) : Promise<string>;
     getCompanyUpdateProfile(email:string, upateData : Partial<ICompany>) : Promise<{message : string , success : boolean , data ? : ICompany}>
-    getAllCompany() : Promise<{message:string , successs:boolean , data ? : ICompany[] , statusCode : number}>
+    getAllCompany(page:number,sort:string,searchKey:string) : Promise<{message:string , successs:boolean , data ? : {companies:ICompany[] | null,totalPages:number} , statusCode : number}>
+    companyStatusChange(email : string ,isBlock : boolean)  : Promise<{message : string , success : boolean , statusCode: number}>
 }

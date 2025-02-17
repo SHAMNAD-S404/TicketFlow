@@ -5,7 +5,6 @@ import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
 import { EventType } from "../../../constants/queueEventType";
 import { publishToQueue } from "../../../queues/publisher";
-import { config } from "../../../config";
 import { RabbitMQConfig } from "../../../config/rabbitmq";
 
 export class AuthController implements IAuthController {
@@ -415,4 +414,38 @@ export class AuthController implements IAuthController {
       return;
     }
   };
+
+
+  public handleEmployeeBlockStatus = async(req: Request, res: Response): Promise<void> => {
+    try {
+
+       const {role} = req.query;
+       const permittedRole = ["company","departmentHead"];
+       if( !permittedRole.includes(String(role))  ){
+        res.status(HttpStatus.UNAUTHORIZED).json({message:Messages.NO_ACCESS, success:false});
+        return
+       }
+
+       const email = req.body.email;
+       if(!email){
+        res.status(HttpStatus.BAD_REQUEST).json({message:Messages.EMAIL_MISSING,success:false})
+        return;
+       }
+
+       const updateEmployee = await this.authService.updateUserBlockStatus(email);
+       const {message,statusCode,success,userDataPayload} = updateEmployee;
+       //sending to company service queue
+       if(success && userDataPayload){
+          await publishToQueue(RabbitMQConfig.companyMainConsumer , {
+            ...userDataPayload,
+            eventType : EventType.EMPLOYEE_STATUS_UPDATE
+          });
+       }
+       res.status(statusCode).json({message,success})
+      
+    } catch (error) {
+      console.log("error in block company procedure : ",error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:Messages.SERVER_ERROR,success:false})
+    }
+  }
 }

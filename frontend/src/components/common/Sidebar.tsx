@@ -34,7 +34,7 @@ const menuConfig: { [key: string]: { name: string; icon: React.ReactNode }[] } =
 
 const Sidebar: React.FC<SidebarProps> = ({ role, onMenuSelect }) => {
   const menuItems = menuConfig[role] || [];
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
 
   return (
     <div

@@ -8,7 +8,6 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
    */
   constructor(protected readonly model: Model<T>) {}
 
-  
   /**
    * Create a new document in the database
    * @param item The data to create the document with
@@ -24,7 +23,6 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
       throw error;
     }
   }
-
 
   /**
    * Finds a document by email.
@@ -42,7 +40,6 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
     }
   }
 
-
   /**
    * Finds a document by user ID.
    * @param authUser The user ID of the document to find.
@@ -51,7 +48,7 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
   async findOneByUUID(authUserUUID: string): Promise<T | null> {
     try {
       // Find one document by user ID
-      const result = await this.model.findOne({ authUserUUID:authUserUUID });
+      const result = await this.model.findOne({ authUserUUID: authUserUUID });
       return result;
     } catch (error) {
       // If an error occurs, throw it
@@ -59,12 +56,10 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
     }
   }
 
-  async  isUserExistByEmail(email: string): Promise<T | null> {
+  async isUserExistByEmail(email: string): Promise<T | null> {
     try {
-
-      const result = await this.model.findOne({email}).select('_id');
+      const result = await this.model.findOne({ email }).select("_id");
       return result;
-
     } catch (error) {
       throw error;
     }
@@ -72,9 +67,9 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
 
   async updatByEmail(email: string, updateData: Partial<T>): Promise<T | null> {
     try {
-
-      return await this.model.findOneAndUpdate({email},updateData,{new:true});
-      
+      return await this.model.findOneAndUpdate({ email }, updateData, {
+        new: true,
+      });
     } catch (error) {
       throw error;
     }
@@ -82,11 +77,25 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
 
   async findAll(): Promise<T[] | null> {
     try {
-      return await this.model.find().select('-updatedAt -__v')
-      
+      return await this.model.find().select("-updatedAt -__v");
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
+  async updateUserStatus(
+    email: string,
+    blockStatus: boolean
+  ): Promise<T | null> {
+    try {
+      return await this.model.findOneAndUpdate(
+        { email: email },
+        { $set: { isBlock: blockStatus } },
+        { new: true }
+      );
+    } catch (error) {
+      console.error("error in base repo update user : ", error);
+      throw error;
+    }
+  }
 }

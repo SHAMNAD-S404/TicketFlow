@@ -107,3 +107,12 @@ export const resendOTP = async (email:string) => {
       throw error
     }
   }
+
+  export const handleBlockEmployee = async(email:string) => {
+     try {
+        const response = await axiosInstance.patch("/auth/block-employee",{email});
+        return response.data;
+     } catch (error) {
+      throw error;
+     }
+  }

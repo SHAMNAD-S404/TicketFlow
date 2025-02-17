@@ -1,14 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { ICompanyData } from "../../types/ICompanyData";
-import { fetchAllCompanies } from "../../api/services/companyService";
 import { toast } from "react-toastify";
-import { MessageConst } from "../../utils/constants/messageConstants";
 import { MdWorkspacePremium, MdOutlineEmail } from "react-icons/md";
 import { GrMapLocation } from "react-icons/gr";
 import { debounce } from "lodash";
-import { handleblockCompany } from "../../api/services/authService";
-import { Messages } from "../../enums/Messages";
-import { showCustomeAlert } from "../utility/swalAlertHelper";
+import { showCustomeAlert } from "../../../utility/swalAlertHelper";
+import { IEmployeeContext } from "../../../../types/IEmployeeContext";
+import { useSelector } from "react-redux";
+import { Rootstate } from "../../../../redux/store";
 
 import {
   FaEye,
@@ -23,56 +21,60 @@ import {
   SheetHeader,
   SheetTitle,
   SheetDescription,
-} from "../common/Sheet";
-import { searchInputValidate } from "../utility/searchInputValidateNameEmail";
+} from "../../../common/Sheet";
+import { searchInputValidate } from "../../../utility/searchInputValidateNameEmail";
+import { fetchAllEmployees } from "../../../../api/services/companyService";
+import { Messages } from "../../../../enums/Messages";
+import { handleBlockEmployee } from "../../../../api/services/authService";
 
 const tempLogo =
   "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=50&h=50&fit=crop";
 
-const CompanyManagement: React.FC = () => {
-  const [sort, setSortBy] = useState<string>("recent");
-  const [SearchKey, setSearchKey] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState(1);
+const AllEmployeeManagement: React.FC = () => {
+  const [sortBy, setSortBy] = useState<string>("createdAt");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [employeeData, setEmployeeData] = useState<IEmployeeContext[]>([]);
 
-  const [companyData, setCompanyData] = useState<ICompanyData[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const company = useSelector((state: Rootstate) => state.company.company);
 
-  // const filterData = companyData.filter(
-  //   (company) =>
-  //     company.companyName
-  //       .toLocaleLowerCase()
-  //       .includes(SearchKey.toLocaleLowerCase()) ||
-  //     company.email.toLocaleLowerCase().includes(SearchKey.toLocaleLowerCase())
-  // );
+  const handleSearchQuery = useCallback(
+    debounce((searchValue: string) => {
+      const validateInput = searchInputValidate(searchValue);
+      if (validateInput) {
+        setSearchQuery(String(searchValue));
+      }
+    }, 1000),
+    []
+  );
 
   const handleBlockUser = useCallback(
     debounce(
       async (email: string) => {
         try {
           const result = await showCustomeAlert({
-            title: "Are you sure ",
-            text: "Did you want to update the company status",
+            title: "Are you sure ?",
+            text: "Did you want to change the employee status ?",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonText: "Yes,Confirm",
-            cancelButtonText: "No,Cancel",
+            confirmButtonText: "Yes,Proced",
+            cancelButtonText: "No, Cancel",
             reverseButtons: true,
           });
           if (result.isConfirmed) {
-            const response = await handleblockCompany(email);
+            const response = await handleBlockEmployee(email);
             if (response.success) {
               toast.success(response.message);
-              //updating ui
-
-              setCompanyData((prevCompany) =>
-                prevCompany.map((company) =>
-                  company.email === email
-                    ? { ...company, isBlock: !company.isBlock }
-                    : company
+              //update ui
+              setEmployeeData((prevData) =>
+                prevData.map((employee) =>
+                  employee.email === email
+                    ? { ...employee, isBlock: !employee.isBlock }
+                    : employee
                 )
               );
-            } 
+            }
           }
         } catch (error: any) {
           if (error.response && error.response.data) {
@@ -85,39 +87,36 @@ const CompanyManagement: React.FC = () => {
       4000,
       { leading: true, trailing: false }
     ),
-    []
-  );
 
-  const handleSerch = useCallback(
-    debounce((searchValue: string) => {
-      const validateInput = searchInputValidate(searchValue);
-      if (validateInput) {
-        setSearchKey(String(searchValue));
-      }
-    }, 1000),
     []
   );
 
   useEffect(() => {
-    const getAllCompanies = async () => {
+    const getAllEmployees = async () => {
       try {
-        const response = await fetchAllCompanies(currentPage, sort, SearchKey);
+        const companyId = company?._id as string;
+        const response = await fetchAllEmployees(
+          companyId,
+          currentPage,
+          sortBy,
+          searchQuery
+        );
         if (response && response.data) {
-          setCompanyData(response.data.companies);
+          setEmployeeData(response.data.employees);
           setTotalPages(response.data.totalPages);
-          setIsLoading(false);
         }
       } catch (error: any) {
         if (error.response && error.response.data) {
           toast.error(error.response.data.message);
         } else {
-          alert(MessageConst.FETCH_ERROR_AXIOX);
+          toast.error(Messages.SOMETHING_TRY_AGAIN);
         }
       }
     };
 
-    getAllCompanies();
-  }, [currentPage, sort, SearchKey]);
+    getAllEmployees();
+  }, [currentPage, sortBy, searchQuery]);
+  console.log(searchQuery);
 
   return (
     <div className="p-6  space-y-6 ">
@@ -129,10 +128,10 @@ const CompanyManagement: React.FC = () => {
             onChange={(e) => setSortBy(e.target.value)}
           >
             <option value="createdAt">Recent</option>
-            <option value="companyName">Name</option>
+            <option value="name">Name</option>
             <option value="email">Email</option>
-            <option value="companyType">Company Type</option>
-            <option value="subscriptionPlan">Plan</option>
+            <option value="departmentName">Department</option>
+            <option value="role">Role</option>
             <option value="isBlock">Status</option>
           </select>
 
@@ -144,7 +143,7 @@ const CompanyManagement: React.FC = () => {
             type="text"
             placeholder="Search by name or email"
             className="ms-1 pl-4 pr-10 py-2 rounded-full shadow-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 "
-            onChange={(e) => handleSerch(e.target.value)}
+            onChange={(e) => handleSearchQuery(e.target.value)}
           />
           <svg
             className="absolute right-3 top-2.5 w-5 h-5 text-gray-600"
@@ -168,31 +167,29 @@ const CompanyManagement: React.FC = () => {
           {/* Header session */}
           <div className="bg-blue-100 rounded-2xl px-6 py-6 grid grid-cols-7 gap-4 mb-4">
             <div className="text-sm font-semibold">No:</div>
-            <div className="text-sm font-semibold">Company name</div>
-            <div className="text-sm font-semibold">Company type</div>
+            <div className="text-sm font-semibold">Employee name</div>
+            <div className="text-sm font-semibold">Department</div>
             <div className="text-sm font-semibold ">Email ID</div>
-            <div className="text-sm font-semibold text-center">
-              Subscription plan
-            </div>
+            <div className="text-sm font-semibold text-center">Role</div>
             <div className="text-sm font-semibold text-center">View</div>
             <div className="text-sm font-semibold text-center">Status</div>
           </div>
 
           {/* Rows */}
           <div className="space-y-4 ">
-            {companyData.map((company, index) => (
+            {employeeData.map((employee, index) => (
               <div
-                key={company._id || index}
+                key={employee._id || index}
                 className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-7 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 "
               >
                 <div>{0 + index + 1}</div>
                 <div className="flex items-center gap-3">
                   <img src={tempLogo} alt="" className="w-8 h-8 rounded-full" />
-                  {company.companyName}
+                  {employee.name}
                 </div>
-                <div>{company.companyType}</div>
+                <div>{employee.departmentName}</div>
                 <div>
-                  <a className="underline text-blue-600">{company.email}</a>
+                  <a className="underline text-blue-600">{employee.email}</a>
                 </div>
                 <div className="text-center">
                   <span className="flex justify-center items-center gap-2">
@@ -209,8 +206,7 @@ const CompanyManagement: React.FC = () => {
                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    {/* {company.subscriptionPlan} */}
-                    Free tier
+                    {employee.role}
                   </span>
                 </div>
                 <div className="flex justify-center">
@@ -220,14 +216,14 @@ const CompanyManagement: React.FC = () => {
                         <FaEye className="w-5 h-5 text-gray-600" />
                       </button>
                     </SheetTrigger>
-                    <SheetContent className="bg-gray-700 border-none text-center text-white ">
+                    <SheetContent className="bg-gray-600 border-none text-center text-white ">
                       <SheetHeader>
                         <SheetTitle className="text-center mt-8">
                           {" "}
-                          Company Details
+                          Employee Details
                         </SheetTitle>
                         <SheetDescription className="text-center">
-                          View company information
+                          View employee information
                         </SheetDescription>
                       </SheetHeader>
 
@@ -238,18 +234,18 @@ const CompanyManagement: React.FC = () => {
                           className="rounded-full w-20 h-20"
                         />
                         <h3 className="text-lg font-bold mt-1">
-                          {company.companyName.toUpperCase()}
+                          {employee.name.toUpperCase()}
                         </h3>
                         <p className="text-sm font-medium">
-                          {company.companyType}
+                          {employee.departmentName}
                         </p>
                         {/*  company information */}
                         <div className="mt-3 space-y-4">
                           <div>
                             <label className="text-sm font-semibold">
-                              Company corporate id :
+                              working as :
                             </label>
-                            <p className="mt-1"> {company.corporatedId}</p>
+                            <p className="mt-1"> {employee.role}</p>
                           </div>
                           <div>
                             <label className="text-sm font-semibold underlin">
@@ -258,36 +254,18 @@ const CompanyManagement: React.FC = () => {
                             <div className="flex justify-center items-center gap-2">
                               <MdOutlineEmail />
                               <p className="mt-1 text-blue-500 underline">
-                                {company.email}
+                                {employee.email}
                               </p>
                             </div>
-                            <p className="mt-1">
-                              Phone : {company.phoneNumber}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-sm font-semibold underlin">
-                              Subscription plan
-                            </label>
-                            <div className="flex  items-center justify-center gap-2">
-                              <MdWorkspacePremium />
-                              <p className="mt-1 ">
-                                {" "}
-                                {company.subscriptionPlan}
-                              </p>
-                            </div>
-                          </div>
-                          <div className=" flex items-center justify-center gap-2">
-                            <GrMapLocation />
-                            <label className="text-sm font-semibold">
-                              Location - {company.originCountry.toUpperCase()}
-                            </label>
+                            <p className="mt-1">Phone : {employee.phone}</p>
                           </div>
 
                           <div>
                             <p className="mt-1">
                               Joined on :
-                              {new Date(company.createdAt).toLocaleDateString()}
+                              {new Date(
+                                employee.createdAt
+                              ).toLocaleDateString()}
                             </p>
                           </div>
                         </div>
@@ -298,13 +276,13 @@ const CompanyManagement: React.FC = () => {
                 <div className="flex justify-center">
                   <button
                     className={`px-4 py-1 text-sm font-semibold rounded-full transition-colors text-white ${
-                      company.isBlock
+                      employee.isBlock
                         ? "bg-lime-500 hover:bg-green-500"
                         : " bg-orange-600  hover:bg-violet-600"
                     }   `}
-                    onClick={() => handleBlockUser(company.email)}
+                    onClick={() => handleBlockUser(employee.email)}
                   >
-                    {company.isBlock ? "Unblock" : "Block"}
+                    {employee.isBlock ? "Unblock" : "Block"}
                   </button>
                 </div>
               </div>
@@ -354,4 +332,4 @@ const CompanyManagement: React.FC = () => {
   );
 };
 
-export default CompanyManagement;
+export default AllEmployeeManagement;

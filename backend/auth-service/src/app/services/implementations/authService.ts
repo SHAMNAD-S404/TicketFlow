@@ -228,6 +228,10 @@ export class AuthService implements IAuthService {
         return { message: "User not found", success: false };
       }
 
+      if(findUser.isBlock){
+        return {message : Messages.USER_BLOCKED , success:false}
+      }
+
       // Compare the provided password with the hashed password stored in the database
       const isMatch = await comparePassword(password, findUser.password);
       if (!isMatch) {

@@ -28,6 +28,7 @@ router.post("/signup",authController.registerUser)
       .post("/resend-otp",authController.resendOtp)
       .post("/refreshToken",verifyRefreshToken,extractUserData,authController.verifyRefreshToken)
       .patch("/block-company",authenticateToken,extractUserData,authController.handleCompanyBlockStatus)
+      .patch("/block-employee",authenticateToken,extractUserData,authController.handleEmployeeBlockStatus)
 
 
 export default router;

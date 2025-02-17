@@ -5,6 +5,9 @@ import EmployeeModel from "../../models/implements/employee";
 import mongoose from "mongoose";
 import { publishToQueue } from "../../../queues/publisher";
 import { RabbitMQConfig } from "../../../config/rabbitMQ";
+import { HttpStatus } from "../../../constants/httpStatus";
+import { Messages } from "../../../constants/messageConstants";
+import { json } from "stream/consumers";
 
 export class EmployeeController implements IEmployeeController {
     private readonly employeeService : IEmployeeService;
@@ -87,20 +90,36 @@ export class EmployeeController implements IEmployeeController {
                 res.status(401).json({message:"provide neccessory data",success:false})
                 return;
             }
-
             const { email, ...updateData } = req.body; 
-
             const updatedData = await this.employeeService.updateEmployeeProfile(email,updateData);
             const {success,message,data} = updatedData;
             const statusCode = success ? 200 : 400;
             res.status(statusCode).json({message,success,data});
             return;
-
             
         } catch (error) {
             res.status(400).json({message:String(error),success:false});
             return;
         }
         
+    }
+
+    public getAllEmployees =  async(req: Request, res: Response): Promise<void> => {
+            try {
+
+                const {role,page,sortBy,searchKey,companyId} = req.query;
+                console.log("emplooooo",role)
+                if(role !== "company"){
+                    res.status(HttpStatus.UNAUTHORIZED).json({message:Messages.NO_ACCESS,success:false});
+                    return;
+                }
+                const response = await this.employeeService.fetchAllEmployees(String(companyId),Number(page),String(sortBy),String(searchKey) );
+                const {message,statusCode,success,data} = response;
+                res.status(statusCode).json({message,success,data})
+                return;
+                              
+            } catch (error) {
+                res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({messages:Messages.SERVER_ERROR,status:false})
+            }        
     }
 }

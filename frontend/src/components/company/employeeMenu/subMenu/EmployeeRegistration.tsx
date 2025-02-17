@@ -37,8 +37,6 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
         const response = await fetchAllDepartemts();
         if (response && response.data) {
           setDepartments(response.data);
-        } else {
-          toast.error(response.message);
         }
       } catch (error: any) {
         if (error.response && error.response.data) {

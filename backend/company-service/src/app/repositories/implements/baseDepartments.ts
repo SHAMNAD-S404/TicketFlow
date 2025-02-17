@@ -66,4 +66,6 @@ export class DepartmentBase<T extends Document> implements IDepartmentBaseRepo<T
           throw new Error('Could not fetch departments.');
         }
       }
+
+     
 }

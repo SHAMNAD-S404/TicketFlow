@@ -9,6 +9,7 @@ export interface IEmployeeContext {
     phone : string;
     role : string;
     createdAt:string;
+    isBlock : boolean;
     
 
 }

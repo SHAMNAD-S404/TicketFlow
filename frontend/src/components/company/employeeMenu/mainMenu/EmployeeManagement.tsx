@@ -3,16 +3,19 @@ import DynamicCard from "../../../utility/DynamicCard";
 import CardImage from "../../../../assets/images/register.png";
 import CardImage2 from "../../../../assets/images/userlogin.png";
 import EmployeeRegistration from "../subMenu/EmployeeRegistration";
+import AllEmployeeManagement from "../subMenu/AllEmployeeManagement";
 
 const EmployeeManagement: React.FC = () => {
-  const [aciveSubMenu, setActiveSubMenu] = useState<string | null>(null);
+  const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
 
   const onCancel = () => setActiveSubMenu(null);
 
-  const renderSubContent = () => {
-    switch (aciveSubMenu) {
+  const renderSubContent = () => {   
+    switch (activeSubMenu) {
       case "Employee Registration":
         return <EmployeeRegistration handleCancel={onCancel} />;
+      case "Manage Employees" :
+        return <AllEmployeeManagement />;
       default:
         return (
           <div className="flex flex-wrap gap-12 justify-center p-6">
@@ -28,7 +31,7 @@ const EmployeeManagement: React.FC = () => {
               header="Manage Employees"
               description="Manage employees and theire details"
               buttonText="Manage"
-              onButtonClick={() => setActiveSubMenu("Mange Employees")}
+              onButtonClick={() => setActiveSubMenu("Manage Employees")}
               image={CardImage2}
             />
           </div>

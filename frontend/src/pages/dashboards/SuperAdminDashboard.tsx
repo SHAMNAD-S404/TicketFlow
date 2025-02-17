@@ -29,7 +29,7 @@ const SuperAdminDashboard: React.FC = () => {
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Yes,Confirm",
-        cancelButtonText: "No,Canel",
+        cancelButtonText: "No,Cancel",
         reverseButtons: true,
       });
       if (result.isConfirmed) {
@@ -39,8 +39,8 @@ const SuperAdminDashboard: React.FC = () => {
             text: response.message,
             icon: "success",
           }).then(() => {
-            dispatch(clearUserData());
-            navigate("/");
+              dispatch(clearUserData());
+              navigate("/");
           });
         } else {
           toast.error(response.message);

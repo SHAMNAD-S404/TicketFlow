@@ -59,8 +59,11 @@ import { Messages } from "../../../constants/messageConstants";
                 return;
             }
 
-            const response = await this.comapanyService.getAllCompany();
-            res.status(response.statusCode).json({message:response.message,success:response.successs,data:response.data});
+            const {page = '1',sort="createdAt" , searchKey} = req.query;
+
+            const response = await this.comapanyService.getAllCompany(Number(page),sort as string ,String(searchKey));
+            const {message,successs,data} = response;
+            res.status(response.statusCode).json({message,successs,data});
             return;
 
             
