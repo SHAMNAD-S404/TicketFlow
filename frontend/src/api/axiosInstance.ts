@@ -13,7 +13,6 @@ const axiosInstance = axios.create({
   withCredentials : true, 
 });
 
-console.log("heloo")
 
 setupResponseInterceptor(axiosInstance);
 

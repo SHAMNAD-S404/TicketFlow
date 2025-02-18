@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { toast } from "react-toastify";
-import { MdWorkspacePremium, MdOutlineEmail } from "react-icons/md";
-import { GrMapLocation } from "react-icons/gr";
+import { MdOutlineEmail } from "react-icons/md";
+import { IoMdArrowRoundBack } from "react-icons/io";
 import { debounce } from "lodash";
 import { showCustomeAlert } from "../../../utility/swalAlertHelper";
 import { IEmployeeContext } from "../../../../types/IEmployeeContext";
@@ -30,7 +30,12 @@ import { handleBlockEmployee } from "../../../../api/services/authService";
 const tempLogo =
   "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=50&h=50&fit=crop";
 
-const AllEmployeeManagement: React.FC = () => {
+
+interface AllEmployeeManagementProps {
+  handleCancel : () => void;
+}
+
+const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({handleCancel}) => {
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -48,6 +53,7 @@ const AllEmployeeManagement: React.FC = () => {
     }, 1000),
     []
   );
+
 
   const handleBlockUser = useCallback(
     debounce(
@@ -122,20 +128,27 @@ const AllEmployeeManagement: React.FC = () => {
     <div className="p-6  space-y-6 ">
       <div className="flex justify-between mb-6">
         <div className="relative ">
-          <select
-            className="appearance-none bg-white px-8 py-2 rounded-full  shadow-lg border border-gray-200 
+          <div className="flex justify-center items-center gap-2">
+            <div className="text-2xl bg-white p-2 rounded-2xl shadow-lg shadow-gray-400 hover:bg-blue-300"
+              onClick={()=> handleCancel()}
+            >
+              <IoMdArrowRoundBack />{" "}
+            </div>
+            <select
+              className="appearance-none bg-white px-8 py-2 rounded-full  shadow-lg border border-gray-200 
             focus:outline-none focus:ring-2 focus:ring-blue-400 font-medium "
-            onChange={(e) => setSortBy(e.target.value)}
-          >
-            <option value="createdAt">Recent</option>
-            <option value="name">Name</option>
-            <option value="email">Email</option>
-            <option value="departmentName">Department</option>
-            <option value="role">Role</option>
-            <option value="isBlock">Status</option>
-          </select>
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="createdAt">Recent</option>
+              <option value="name">Name</option>
+              <option value="email">Email</option>
+              <option value="departmentName">Department</option>
+              <option value="role">Role</option>
+              <option value="isBlock">Status</option>
+            </select>
 
-          <FaChevronDown className="absolute right-3 top-3 w-4 h-4 text-gray-400  " />
+            <FaChevronDown className="absolute right-3 top-3 w-4 h-4 text-gray-400  " />
+          </div>
         </div>
 
         <div className="relative">
@@ -193,19 +206,6 @@ const AllEmployeeManagement: React.FC = () => {
                 </div>
                 <div className="text-center">
                   <span className="flex justify-center items-center gap-2">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
                     {employee.role}
                   </span>
                 </div>

@@ -15,7 +15,7 @@ const EmployeeManagement: React.FC = () => {
       case "Employee Registration":
         return <EmployeeRegistration handleCancel={onCancel} />;
       case "Manage Employees" :
-        return <AllEmployeeManagement />;
+        return <AllEmployeeManagement handleCancel = {onCancel} />;
       default:
         return (
           <div className="flex flex-wrap gap-12 justify-center p-6">

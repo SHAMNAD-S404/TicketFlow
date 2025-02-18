@@ -9,7 +9,8 @@ export const Messages = {
     FAIL_TRY_AGAIN : "Operation failed Try again !",
     DATA_NOT_FOUND : "Requested data not found !",
     FETCH_SUCCESS : "Data fetched successfully !" ,
-    USER_STATUS_UPDATED : "Successfull user status got updated !"
+    USER_STATUS_UPDATED : "Successfull user status got updated !",
+    ENTER_VALID_INPUT : "Enter valid input !"
     
     
   
