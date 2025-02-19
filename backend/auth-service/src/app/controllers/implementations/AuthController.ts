@@ -91,6 +91,11 @@ export class AuthController implements IAuthController {
 
       const { message, success, tockens, isFirst, role } = response;
 
+      if(role === "sudo"){
+        res.status(HttpStatus.UNAUTHORIZED).json({message:Messages.NO_ACCESS,success:false});
+        return;
+      }
+
       // Check if the tokens are present
       if (tockens) {
         const { accessToken, refreshToken } = tockens;

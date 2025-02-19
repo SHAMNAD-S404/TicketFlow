@@ -1,5 +1,6 @@
 import { Model, Document } from "mongoose";
 import { IDepartmentBaseRepo } from "../interface/baseDepartmentRepo";
+import departement from "./departement";
 
 export class DepartmentBase<T extends Document> implements IDepartmentBaseRepo<T> {
 
@@ -50,21 +51,37 @@ export class DepartmentBase<T extends Document> implements IDepartmentBaseRepo<T
         }
     }
 
-    async findDepartmentsListByCompanyId(companyId: string): Promise<{ _id: string; name: string }[]> {
+    async findDepartmentsListByCompanyId(companyId: string): Promise<{ _id: string; name: string}[]> {
         try {
           // Fetch only the `name` and `_id` fields and return plain JavaScript objects
           const departments = await this.model.find(
             { companyId }, // Filter by companyId
-            { departmentName: 1 } // Select only the `name` and `_id` fields
+            { departmentName: 1, companyId : 1,responsibilities:1 } // Select only the `name` and `_id` fields
           )
             .lean() 
             .exec();
     
-          return departments as { _id: string; name: string }[];
+          return departments as { _id: string; name: string  }[];
         } catch (error) {
           console.error('Error fetching departments by companyId:', error);
           throw new Error('Could not fetch departments.');
         }
+      }
+
+      async findAllDepartmentData(authUserUUID: string): Promise<{ _id: string; departmentName: string; responsibilities: string; }[]> {
+          try {
+
+            const departmentData = await this.model
+                    .find({authUserUUID : authUserUUID})
+                    .select("_id departmentName responsibilities")
+                    .lean<{ _id:string , departmentName : string , responsibilities : string }[]>()
+                    
+            return departmentData;
+            
+
+          } catch (error) {
+            throw new Error ("failed to fetch data from db ")
+          }
       }
 
      

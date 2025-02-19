@@ -14,6 +14,7 @@ router.post("/add-employee",extractUserData,employeeController.createEmployee)
       .get("/get-user",extractUserData,employeeController.getEmployeeData)
       .patch("/update-profile",employeeController.updateEmployee)
       .get("/get-all-employees",extractUserData,employeeController.getAllEmployees)
+      .get("/get-department-employee",extractUserData,employeeController.getDepartmentWiseEmployees)
 
 
 export default router;

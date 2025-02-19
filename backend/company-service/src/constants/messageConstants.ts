@@ -10,7 +10,9 @@ export const Messages = {
     DATA_NOT_FOUND : "Requested data not found !",
     FETCH_SUCCESS : "Data fetched successfully !" ,
     USER_STATUS_UPDATED : "Successfull user status got updated !",
-    ENTER_VALID_INPUT : "Enter valid input !"
+    ENTER_VALID_INPUT : "Enter valid input !",
+    DEPARTMENT_NAME_EXIST : "Department Name is already exist !",
+    
     
     
   

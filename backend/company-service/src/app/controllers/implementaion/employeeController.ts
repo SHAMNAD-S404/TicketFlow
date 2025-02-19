@@ -7,7 +7,7 @@ import { publishToQueue } from "../../../queues/publisher";
 import { RabbitMQConfig } from "../../../config/rabbitMQ";
 import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
-import { searchInputSchema } from "../../dtos/searchInput.dto";
+import { departmentEmployeeSchema, searchInputSchema } from "../../dtos/searchInput.dto";
 export class EmployeeController implements IEmployeeController {
   private readonly employeeService: IEmployeeService;
 
@@ -163,4 +163,44 @@ export class EmployeeController implements IEmployeeController {
         .json({ messages: Messages.SERVER_ERROR, status: false });
     }
   };
+
+  public getDepartmentWiseEmployees  = async(req: Request, res: Response): Promise<void> => {
+      try {
+
+            console.log(req.query);
+            
+
+           const validateInput = departmentEmployeeSchema.safeParse(req.query);
+           if(!validateInput.success){
+              res.status(HttpStatus.BAD_REQUEST).json(
+              { message:Messages.ENTER_VALID_INPUT,
+                success:false});
+            return;              
+           }
+           if(validateInput.data?.role !== "company"){
+            res.status(HttpStatus.UNAUTHORIZED).json({message:Messages.NO_ACCESS,success:false});
+            return;
+           }
+
+           const {companyId , departmentId ,currentPage ,searchKey,sortBy} = validateInput.data;
+
+           const response = await this.employeeService.fetchDeptEmployees(
+              companyId,
+              departmentId,
+              currentPage,
+              sortBy,
+              searchKey
+           );
+           const { message , statusCode , success , data } = response;
+           res.status(statusCode).json({message,success,data})
+           return;
+        
+      } catch (error) {
+        console.error("error while fetching getDepartmentWiseEmployees:",error);
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:Messages.SERVER_ERROR,
+          success:false})
+      }
+  }
+
+
 }

@@ -12,8 +12,10 @@ const departmentController = new DepartmentController(departementServices, compa
 const router = Router();
 
 
-router.post("/add-department",extractUserData,departmentController.createDepartment)
-      .get("/get-departments",extractUserData,departmentController.getAllDepartmentList)
+router.post  ("/add-department",extractUserData,departmentController.createDepartment)
+      .get   ("/get-departments",extractUserData,departmentController.getAllDepartmentList)
+      .get   ("/get-departments-data",extractUserData,departmentController.getAllDepartmentData)
+      .patch ("/update-department",extractUserData,departmentController.updateDepartment)
 
 
 export default router;

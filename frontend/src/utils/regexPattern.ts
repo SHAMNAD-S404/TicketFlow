@@ -29,6 +29,9 @@ type regexPatternMessages = {
   passwordRegexMessage : string;
   corporateIdRegexMessage : string;
   textWithSpaceAndCommasRegexMessage : string;
+  FEILD_REQUIRED : string;
+  MAXIMUM_LIMIT_REACHED : string;
+  MINIMUM_LIMIT : string;
 }
 
 
@@ -42,7 +45,11 @@ export const RegexMessages : regexPatternMessages = {
   nameAndNumberRegexMessage : " alphabates , number  are only allowed .",
   passwordRegexMessage : "must contain letter and number length should we between 8-15 .",
   corporateIdRegexMessage: " Alphates and number only allowed",
-  textWithSpaceAndCommasRegexMessage : "Alphabates ,space and commas only allowed"
+  textWithSpaceAndCommasRegexMessage : "Alphabates ,space and commas only allowed",
+  FEILD_REQUIRED : "This is field is required",
+  MAXIMUM_LIMIT_REACHED : "Enter Input Maximun limit reached !",
+  MINIMUM_LIMIT : "Enter atleast minimum Limit",
+  
 
 }
 

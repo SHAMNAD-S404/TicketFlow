@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import SignUpModal from "../../UI/signUpModal";
+import SignUpModal from "../../customUI/signUpModal";
 
 interface HeroSectionProps {
   heading: string;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { MdLogin, MdPersonAddAlt1 } from "react-icons/md";
-import SignUpModal from "../../UI/signUpModal";
-import LoginModal from "../../UI/LoginModal";
+import SignUpModal from "../../customUI/signUpModal";
+import LoginModal from "../../customUI/LoginModal";
 
 const LandingNavbar: React.FC = () => {
   // State to toggle mobile menu

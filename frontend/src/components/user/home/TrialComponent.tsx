@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SignUpModal from "../../UI/signUpModal";
+import SignUpModal from "../../customUI/signUpModal";
 
 const TrialComponent: React.FC = () => {
    const [showModal, setShowModal] = useState<boolean>(false);

@@ -35,6 +35,7 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
     const fetchDepartments = async () => {
       try {
         const response = await fetchAllDepartemts();
+        console.log("Iam response :",response.data)
         if (response && response.data) {
           setDepartments(response.data);
         }

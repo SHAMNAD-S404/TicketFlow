@@ -12,9 +12,7 @@ export default class EmployeeService implements IEmployeeService {
     authData?: IEmployeeAuthData;
   }> {
     try {
-      const employeeExist = await EmployeeRepository.checkEmployeeExistByEmail(
-        employeeData.email
-      );
+      const employeeExist = await EmployeeRepository.checkEmployeeExistByEmail(employeeData.email);
 
       if (employeeExist) {
         return {
@@ -23,9 +21,7 @@ export default class EmployeeService implements IEmployeeService {
         };
       }
 
-      const storeEmployeeData = await EmployeeRepository.createEmployee(
-        employeeData
-      );
+      const storeEmployeeData = await EmployeeRepository.createEmployee(employeeData);
       if (!storeEmployeeData) {
         return { message: "failed to create employee", success: false };
       }
@@ -47,9 +43,7 @@ export default class EmployeeService implements IEmployeeService {
     }
   }
 
-  async fetchEmployeeData(
-    email: string
-  ): Promise<{ message: string; success: boolean; data?: IEmployee }> {
+  async fetchEmployeeData(email: string): Promise<{ message: string; success: boolean; data?: IEmployee }> {
     try {
       const getUserData = await EmployeeRepository.getEmployeeData(email);
       if (!getUserData) {
@@ -75,10 +69,7 @@ export default class EmployeeService implements IEmployeeService {
       if (!isExist) {
         return { message: "user not found", success: false };
       }
-      const updatedEmployee = await EmployeeRepository.getUpdatedEmployee(
-        email,
-        updateData
-      );
+      const updatedEmployee = await EmployeeRepository.getUpdatedEmployee(email, updateData);
       if (!updatedEmployee) {
         return { message: "failed to update try agian", success: false };
       }
@@ -101,12 +92,7 @@ export default class EmployeeService implements IEmployeeService {
     data?: { employees: IEmployee[] | null; totalPages: number };
   }> {
     try {
-      const result = await EmployeeRepository.findAllEmployees(
-        companyId,
-        page,
-        sort,
-        searchKey
-      );
+      const result = await EmployeeRepository.findAllEmployees(companyId, page, sort, searchKey);
       if (result) {
         return {
           message: Messages.FETCH_SUCCESS,
@@ -152,10 +138,7 @@ export default class EmployeeService implements IEmployeeService {
         };
       }
 
-      const updateStatus = await EmployeeRepository.updateEmployeeStatus(
-        email,
-        isBlock
-      );
+      const updateStatus = await EmployeeRepository.updateEmployeeStatus(email, isBlock);
       if (!updateStatus) {
         return {
           message: Messages.FAIL_TRY_AGAIN,
@@ -176,6 +159,40 @@ export default class EmployeeService implements IEmployeeService {
         success: false,
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       };
+    }
+  }
+
+  async fetchDeptEmployees(
+    companyId: string,
+    departementId: string,
+    page: number,
+    sort: string,
+    searchKey: string
+  ): Promise<{
+    message: string;
+    success: boolean;
+    statusCode: number;
+    data?: { employees: IEmployee[] | null; totalPages: number };
+  }> {
+    try {
+      const result = await EmployeeRepository.findEmployeeWithDept(companyId, departementId, page, sort, searchKey);
+
+      if (result) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: Messages.FETCH_SUCCESS,
+          success: true,
+          data: result,
+        };
+      } else {
+        return {
+          message: Messages.DATA_NOT_FOUND,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
+      }
+    } catch (error) {
+      throw error;
     }
   }
 }

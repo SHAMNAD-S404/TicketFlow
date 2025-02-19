@@ -7,6 +7,10 @@ import { showCustomeAlert } from "../../../utility/swalAlertHelper";
 import { IEmployeeContext } from "../../../../types/IEmployeeContext";
 import { useSelector } from "react-redux";
 import { Rootstate } from "../../../../redux/store";
+import { searchInputValidate } from "../../../utility/searchInputValidateNameEmail";
+import { fetchAllEmployees } from "../../../../api/services/companyService";
+import { Messages } from "../../../../enums/Messages";
+import { handleBlockEmployee } from "../../../../api/services/authService";
 
 import {
   FaEye,
@@ -22,10 +26,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from "../../../common/Sheet";
-import { searchInputValidate } from "../../../utility/searchInputValidateNameEmail";
-import { fetchAllEmployees } from "../../../../api/services/companyService";
-import { Messages } from "../../../../enums/Messages";
-import { handleBlockEmployee } from "../../../../api/services/authService";
+
 
 const tempLogo =
   "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=50&h=50&fit=crop";
@@ -122,7 +123,7 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({handleCanc
 
     getAllEmployees();
   }, [currentPage, sortBy, searchQuery]);
-  console.log(searchQuery);
+ 
 
   return (
     <div className="p-6  space-y-6 ">

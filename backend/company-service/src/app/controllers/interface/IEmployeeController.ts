@@ -5,4 +5,5 @@ export interface IEmployeeController {
   getEmployeeData(req: Request, res: Response): Promise<void>;
   updateEmployee(req: Request, res: Response): Promise<void>;
   getAllEmployees(req: Request, res: Response): Promise<void>;
+  getDepartmentWiseEmployees (req : Request , res : Response) : Promise<void> ;
 }
