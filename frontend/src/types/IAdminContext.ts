@@ -8,6 +8,7 @@ export interface IAdminContext   {
     authUser :string,
     _id : string;
     createdAt : string,
-    role : string
+    role : string,
+    imageUrl:string
     
   }

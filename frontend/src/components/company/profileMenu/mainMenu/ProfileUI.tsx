@@ -4,14 +4,82 @@ import { MdEdit } from "react-icons/md";
 import { IoIosMail } from "react-icons/io";
 import { FaPhone, FaBriefcase } from "react-icons/fa6";
 import ProfileEdit from "../subMenu/ProfileEdit";
-import { useSelector } from "react-redux";
-import { Rootstate } from "../../../../redux/store";
+import { useSelector , useDispatch } from "react-redux";
+import { Rootstate  , AppDispatch} from "../../../../redux/store";
+import { fetchCompany } from "@/redux/userSlice";
+import { toast } from "react-toastify";
+import { updateCompanyDp, } from "@/api/services/companyService";
+import { Messages } from "@/enums/Messages";
 
 
 const ProfileUI: React.FC = () => {
 
   const [currentView , setCurrentView] = useState<'view' | 'edit'>('view');
   const company = useSelector((state:Rootstate) => state.company.company)
+  const dispatch = useDispatch<AppDispatch>();
+
+  const [selectedFile , setSelectedFile] = useState<File | null>(null)
+  const [previewImage , setPreviewImage] = useState<string>(company?.imageUrl || "");
+  const [loading , setLoading] = useState<boolean>(false);
+  const allowedTypes = ["image/jpeg", "image/png", "image/gif" , "image/jpg"];
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if(!file){
+      toast.error("please select a file")
+      return;
+    }
+    if(!allowedTypes.includes(file.type)){
+      toast.error("Invalid file type. Only JPEG, PNG, and GIF are allowed.")
+      return;
+    }
+    if(file.size > 3 * 1024 * 1024) {
+      toast.error("Select file below 3 mb")
+      return
+    }
+    setSelectedFile(file);
+    setPreviewImage(URL.createObjectURL(file))
+  }
+
+  //handle image upload
+  const hanldeUpload = async ()=> {
+    if(!selectedFile) {
+      toast.error("Please select a image")
+      return
+    }
+
+    const formData = new FormData()
+    formData.append("file",selectedFile);
+
+    setLoading(true);
+
+    try {
+      console.log(selectedFile);
+      console.log("fromdata:",formData);
+      for (const [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+          
+      const response = await updateCompanyDp(formData);
+      if(response.success){     
+        setPreviewImage(response.imageUrl);
+        dispatch(fetchCompany());
+        toast.success(response.message)
+        setLoading(false)
+      }
+    } catch (error : any) {
+      
+      if(error.response && error.response.data){
+          toast.error(error.response.data.message)
+      }else{      
+        toast.error(Messages.SOMETHING_TRY_AGAIN)
+      }
+      setLoading(false)
+    }
+
+
+  }
 
   if (!company) return <div>Loading...</div>;
 
@@ -55,14 +123,42 @@ const ProfileUI: React.FC = () => {
               <div className="relative mx-auto md:mx-0">
                 <div className="w-36 h-36 rounded-full bg-gradient-to-br from-purple-200 to-purple-100 flex items-center justify-center">
                   <img
-                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80"
+                    src={previewImage}
                     alt="Profile"
                     className="w-36 h-36 p-2 rounded-full object-cover border-4 border-white"
                   />
                 </div>
-                <button className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-lg hover:bg-gray-50 transition-colors">
-                  <MdEdit className="w-4 h-4 text-purple-600" />
+                {/* upload button */}
+                <button className="absolute bottom-0 right-0 bg-white p-2 rounded-full shadow-lg hover:bg-lime-300  transition-colors"
+                  onClick={()=> document.getElementById("fileInput")?.click()} >
+                  <MdEdit className="w-4 h-4 text-purple-600 hover:text-black  hover:text-xl hover:w-6 hover:h-6 " />
                 </button>
+
+                {/* hidden file input */}
+                <input type="file" 
+                  id="fileInput"
+                  accept="image/jpeg , image/jpg , image/png , image/gif"
+                  className="hidden"
+                  onChange={handleFileChange}
+                
+                />
+
+                {/* upload button */}
+                {selectedFile && (
+                  <button
+                    onClick={hanldeUpload}
+                    disabled={loading}
+                    className={`mt-3 px-4 py-2 text-white rounded-lg ${
+                      loading ? "bg-gray-400 cursor-not-allowed "
+                       : "bg-blue-500 hover:bg-blue-700" }`}
+                  >
+                    {loading ? "Uploading..." : "Upload"}
+
+                  </button>
+                )}
+
+
+
               </div>
             </div>
 

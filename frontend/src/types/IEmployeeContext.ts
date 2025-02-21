@@ -10,6 +10,7 @@ export interface IEmployeeContext {
     role : string;
     createdAt:string;
     isBlock : boolean;
+    imageUrl : string;
     
 
 }

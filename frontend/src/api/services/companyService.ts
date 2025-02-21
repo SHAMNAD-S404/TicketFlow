@@ -136,3 +136,41 @@ export const updateDepartmentInfo = async (data: Partial<IDepartmentData>) => {
     throw error;
   }
 };
+
+export const updateCompanyDp = async (data : FormData) => {
+  try {
+      const response = await axiosInstance.post("/company/comp/upload-dp",data,{
+        headers : {
+          "Content-Type": "multipart/form-data",
+        }
+      });
+ 
+      
+      return response.data;
+  } catch (error) {
+    throw error
+  }
+}
+
+export const updateEmployeeDp = async (data : FormData) => {
+  try {
+      const response = await axiosInstance.post("/company/emp/upload-dp",data,{
+        headers : {
+          "Content-Type": "multipart/form-data",
+        }
+      });
+ 
+      return response.data;
+  } catch (error) {
+    throw error
+  }
+}
+
+export const fetchEmployeesByDepartment = async (id:string) => {
+    try {
+        const response = await axiosInstance.get(`/company/emp/get-employee-by-department?id=${id}`);
+        return response.data;
+    } catch (error) {
+      throw error
+    }
+}

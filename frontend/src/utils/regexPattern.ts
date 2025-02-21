@@ -6,6 +6,8 @@ type TregexPatterns = {
   password: RegExp;
   corporateId: RegExp;
   textWithSpaceAndCommas : RegExp;
+  textAreaValidation : RegExp;
+  textAndNumberWithoutSpace : RegExp,
 };
 
 const regexPatterns: TregexPatterns = {
@@ -16,6 +18,9 @@ const regexPatterns: TregexPatterns = {
   password: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,15}$/, // 8-15 chars, must contain letters and numbers
   corporateId: /^[A-Za-z0-9]+$/, // Alphanumeric
   textWithSpaceAndCommas: /^[a-zA-Z][a-zA-Z\s,]*$/,
+  textAreaValidation:/^[a-zA-Z0-9"'.(),/\-\s]+(?<![().])$/,
+  textAndNumberWithoutSpace : /^[a-zA-Z0-9]+$/,
+
 };
 
 
@@ -32,6 +37,7 @@ type regexPatternMessages = {
   FEILD_REQUIRED : string;
   MAXIMUM_LIMIT_REACHED : string;
   MINIMUM_LIMIT : string;
+  text_area_validation : string;
 }
 
 
@@ -49,6 +55,7 @@ export const RegexMessages : regexPatternMessages = {
   FEILD_REQUIRED : "This is field is required",
   MAXIMUM_LIMIT_REACHED : "Enter Input Maximun limit reached !",
   MINIMUM_LIMIT : "Enter atleast minimum Limit",
+  text_area_validation : "This field only allow alphabates , numbers , allowed symbols ',.(,), text end with ()  not allowed "
   
 
 }
