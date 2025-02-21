@@ -195,4 +195,52 @@ export default class EmployeeService implements IEmployeeService {
       throw error;
     }
   }
+
+    async updateProfileImage(email: string, imageUrl: string): Promise<{ message: string; success: boolean; statusCode: number; imageUrl?: string; }> {
+      try {
+  
+        const result = await EmployeeRepository.updateImageUrl(email,imageUrl);
+        if(result){
+          return {
+            message : Messages.IMAGE_UPDATED,
+            success : true,
+            statusCode : HttpStatus.OK,
+            imageUrl : result
+          }
+        }else{
+          return {
+            message : Messages.DATA_NOT_FOUND,
+            statusCode:HttpStatus.BAD_REQUEST,
+            success : false
+          }
+        }
+  
+      } catch (error) {
+        throw error
+      }
+    }
+
+     async getEmployeesDeptWise(id: string, authUserUUID: string): Promise<{ message: string; success: boolean; statusCode: number; data?: { _id: string; name: string; email: string; }[]; }> {
+      try {
+
+        const result = await EmployeeRepository.findEmployeesBasedOnDept(id,authUserUUID);
+        if(result){
+          return {
+            message: Messages.FETCH_SUCCESS,
+            statusCode:HttpStatus.OK,
+            success : true,
+            data:result
+          }
+        }else{
+          return {
+            message:Messages.DATA_NOT_FOUND,
+            success:false,
+            statusCode:HttpStatus.BAD_REQUEST
+          }
+        }
+
+      } catch (error) {
+        throw error
+      }
+    }
 }

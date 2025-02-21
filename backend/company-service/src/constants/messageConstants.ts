@@ -12,6 +12,9 @@ export const Messages = {
     USER_STATUS_UPDATED : "Successfull user status got updated !",
     ENTER_VALID_INPUT : "Enter valid input !",
     DEPARTMENT_NAME_EXIST : "Department Name is already exist !",
+    EMAIL_INVALID : "Email ID is invalid",
+    IMAGE_UPDATED : "Image updated successfully",
+    REQUIRED_FIELD_MISSING : "Required fields are missing",
     
     
     

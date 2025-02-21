@@ -10,5 +10,6 @@ export interface IEmployee extends Document {
     phone : string;
     authUserUUID : string;
     isBlock : boolean;
+    imageUrl : string;
 
 }

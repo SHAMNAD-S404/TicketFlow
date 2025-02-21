@@ -36,6 +36,9 @@ const employeeSchema: Schema = new Schema<IEmployee>(
     },
     isBlock : {
       type:Boolean , default : false
+    },
+    imageUrl : {
+      type : String , default : "https://imgs.search.brave.com/ibsp4i0oEn5e1aN9jF8mQKmYaRTUiLZ46rj_CKntFB8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAyLzg2LzQ3LzA5/LzM2MF9GXzI4NjQ3/MDk2NV92aWFITTZa/TmpyY3ZMRU5lMTR5/V1FGaTFqRW0yaktl/Vi5qcGc"
     }
   },
   {

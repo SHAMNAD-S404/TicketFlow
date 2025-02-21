@@ -3,6 +3,7 @@ import { IAdminController } from "../interface/IAdminController";
 import { ICompanyService } from "../../services/interface/ICompanyService";
 import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
+import { emailSchema } from "../../dtos/jwtQueryValidation";
 
  export class AdminController implements IAdminController {
     private readonly comapanyService : ICompanyService ;
@@ -69,6 +70,42 @@ import { Messages } from "../../../constants/messageConstants";
             
         } catch (error) {
             res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:String(error),success:false})
+        }
+    }
+
+    public uploadProfileImage = async (req: Request, res: Response): Promise<void> => {
+        try { 
+
+                if(!req.file){
+                    res.status(HttpStatus.BAD_REQUEST).json
+                    ({success:false,
+                    message:Messages.FAIL_TRY_AGAIN})
+                    return;
+                }
+
+                const email = emailSchema.safeParse(req.query.email);
+                if(!email.success){
+                    res.status(HttpStatus.UNAUTHORIZED).json({
+                        message:Messages.EMAIL_INVALID,
+                        success: false
+                    });
+                    return;
+                }
+                const emailId = String(req.query.email)
+
+                const updateData = await this.comapanyService.updateProfileImage(emailId,req.file.path);
+                const {message ,statusCode,success,imageUrl} = updateData;
+                console.log("im return url",imageUrl)
+                res.status(statusCode).json({
+                    message,
+                    success,
+                    imageUrl
+                })
+                console.log(req.file.path);
+                
+        } catch (error) {
+            console.log(error);
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({success:false,message:Messages.SERVER_ERROR})
         }
     }
 

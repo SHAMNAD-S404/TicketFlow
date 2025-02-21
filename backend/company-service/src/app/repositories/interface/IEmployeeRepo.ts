@@ -21,4 +21,7 @@ export interface IEmployeeRepo {
 
   
   updateEmployeeStatus(email: string, isBlock: boolean): Promise<IEmployee | null>;
+  updateImageUrl (email :string, imageUrl : string) : Promise< string | null>
+  findEmployeesBasedOnDept (id:string,authUserUUID:string) : Promise<{_id:string,name:string,email:string}[] | null>
+
 }

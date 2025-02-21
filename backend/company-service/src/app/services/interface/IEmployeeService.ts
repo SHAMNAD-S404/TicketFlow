@@ -35,4 +35,12 @@ export interface IEmployeeService {
     email: string,
     isBlock: boolean
   ): Promise<{ message: string; success: boolean; statusCode: number }>;
+
+  updateProfileImage (email : string , imageUrl : string) : Promise<{message : string , success : boolean , statusCode : number,imageUrl?:string}>
+  getEmployeesDeptWise ( id:string , authUserUUID : string ) : Promise<{message : string,success: boolean , statusCode : number , data?:{_id:string,name:string,email:string}[]}>
+
+
+
 }
+
+

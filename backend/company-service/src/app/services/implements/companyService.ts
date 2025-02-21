@@ -189,4 +189,30 @@ export default class CompanyService implements ICompanyService {
       };
     }
   }
+
+  async updateProfileImage(email: string, imageUrl: string): Promise<{ message: string; success: boolean; statusCode: number; imageUrl?: string; }> {
+    try {
+
+      const result = await CompanyRepository.updateImageUrl(email,imageUrl);
+      if(result){
+        return {
+          message : Messages.IMAGE_UPDATED,
+          success : true,
+          statusCode : HttpStatus.OK,
+          imageUrl : result
+        }
+      }else{
+        return {
+          message : Messages.DATA_NOT_FOUND,
+          statusCode:HttpStatus.BAD_REQUEST,
+          success : false
+        }
+      }
+
+    } catch (error) {
+      throw error
+    }
+  }
+
+
 }

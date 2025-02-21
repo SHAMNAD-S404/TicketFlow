@@ -116,6 +116,10 @@ export class DepartmentController implements IDepartmentController {
     public updateDepartment = async (req: Request, res: Response): Promise<void> =>  {
             try {
 
+                console.log("query : ", req.query);
+                console.log("body : " , req.body);
+                
+                
                 const {role,authUserUUID} = req.query;
                 if(role !== "company"){
                     res.status(HttpStatus.UNAUTHORIZED).json({

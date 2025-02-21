@@ -15,5 +15,15 @@ export function validateEnvVariables(): void {
   if (!process.env.AUTH_CONSUMER_QUEUE) {
     console.warn("AUTH_CONSUMER_QUEUE is not defined,");
   }
+  if (!process.env.CLOUDINARY_CLOUD_NAME) {
+    console.warn("CLOUDINARY_CLOUD_NAME is not defined,");
+  }
+  if (!process.env.CLOUDINARY_API_KEY) {
+    console.warn("CLOUDINARY_API_KEY is not defined,");
+  }
+  if (!process.env.CLOUDINARY_API_SECRET) {
+    console.warn("CLOUDINARY_API_SECRET is not defined,");
+  }
+
 
 }

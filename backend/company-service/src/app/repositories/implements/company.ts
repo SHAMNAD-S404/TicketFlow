@@ -95,6 +95,24 @@ class CompanyRepository
       throw error;
     }
   }
+
+  async updateImageUrl(email: string, imageUrl: string): Promise<string | null> {
+    try {
+
+      const result = await this.model.findOneAndUpdate(
+        {email },
+        {$set : {imageUrl : imageUrl}},
+        {upsert : true , new : true ,projection : {_id :0 , imageUrl:1}}
+    )
+
+    return result ? imageUrl : null;
+
+    } catch (error) {
+      throw error
+    }
+  }
+
+
 }
 
 export default new CompanyRepository();

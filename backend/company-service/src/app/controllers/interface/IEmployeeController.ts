@@ -6,4 +6,7 @@ export interface IEmployeeController {
   updateEmployee(req: Request, res: Response): Promise<void>;
   getAllEmployees(req: Request, res: Response): Promise<void>;
   getDepartmentWiseEmployees (req : Request , res : Response) : Promise<void> ;
+  uploadProfileImage (req : Request , res : Response) : Promise <void>;
+  getEmployeesByDept (req : Request , res : Response) : Promise <void>;
+
 }

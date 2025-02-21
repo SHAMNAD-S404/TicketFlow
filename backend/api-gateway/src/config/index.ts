@@ -7,6 +7,7 @@ export interface Iconfig {
   companyServiceUrl: string;
   jwtSecret: string
   frontend_URL : string;
+  ticketServiceUrl : string;
 }
 
 export const config: Iconfig = {
@@ -15,4 +16,5 @@ export const config: Iconfig = {
   companyServiceUrl: process.env.COMPANY_SERVICE_URL as string,
   jwtSecret: process.env.JWT_SECRET as string,
   frontend_URL: process.env.FRONTEND_URL as string,
+  ticketServiceUrl : process.env.TICKET_SERVICE_URL as string,
 };

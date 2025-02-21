@@ -14,8 +14,8 @@ validateEnvVariables();
 
 const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(logger);
@@ -31,6 +31,11 @@ app.use(
 );
 
 app.use("/auth", proxy(config.authServiceUrl));
-app.use("/company", authenticateToken, proxy(config.companyServiceUrl));
+app.use("/company", authenticateToken, proxy(config.companyServiceUrl,{
+  parseReqBody:false
+}));
+app.use("/tickets",authenticateToken,proxy(config.ticketServiceUrl,{
+  parseReqBody:false
+}))
 
 export default app;
