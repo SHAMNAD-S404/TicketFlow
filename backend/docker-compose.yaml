@@ -1,0 +1,149 @@
+version: '3.9'
+
+services:
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: ticketflow-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - ticketFlow-internal
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD","rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+  
+  redis:
+    image: redis:latest
+    container_name: ticketFlow-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server" , "--appendonly" , "yes"]
+    volumes:
+      - redis_data:/data
+    networks:
+      - ticketFlow-internal
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+  
+
+  api-gateway:
+    build: 
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./api-gateway/.env
+    container_name: ticketFlow-apiGateway
+    restart: unless-stopped
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+      ticket-service:
+        condition: service_started
+      company-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+     
+    networks:
+      - ticketFlow-internal
+      - ticketFlow-external
+
+  auth-service:
+    build: 
+      context: ./auth-service
+      dockerfile: Dockerfile
+    env_file:
+      - ./auth-service/.env
+    container_name: ticketFlow-authService
+    restart: unless-stopped
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ticketFlow-internal
+
+  company-service:   
+    build: 
+      context: ./company-service
+      dockerfile: Dockerfile
+    env_file:
+      - ./company-service/.env
+    container_name: ticketFlow-companyService
+    restart: unless-stopped
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ticketFlow-internal
+
+  ticket-service:
+    build: 
+      context: ./ticket-service
+      dockerfile: Dockerfile
+    env_file:
+      - ./ticket-service/.env
+    container_name: ticketFlow-ticketService
+    restart: unless-stopped
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ticketFlow-internal
+
+  
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    env_file:
+      - ./notification-service/.env
+    container_name: ticketFlow-notificationService
+    restart: unless-stopped
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ticketFlow-internal
+
+networks:
+  ticketFlow-internal:
+    driver: bridge
+  ticketFlow-external:
+    driver: bridge
+
+
+volumes:
+  rabbitmq_data:
+  redis_data:
+

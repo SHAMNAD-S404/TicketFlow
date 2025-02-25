@@ -12,6 +12,7 @@ import { createEmployee } from "../../../../api/services/companyService";
 import Swal from "sweetalert2";
 import { useSelector } from "react-redux";
 import { Rootstate } from "../../../../redux/store";
+import { Messages } from "@/enums/Messages";
 
 interface Departement {
   _id: string;
@@ -50,7 +51,7 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
             }
           });
         } else {
-          alert("Error while fetching departments");
+          toast.error(Messages.SOMETHING_TRY_AGAIN)
         }
       } finally {
         setIsLoading(false);
@@ -81,14 +82,12 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
       if (response.success) {
         toast.success(response.message);
         reset(); //Reset the form fields
-      } else {
-        toast.error(response.message);
-      }
+      } 
     } catch (error: any) {
       if (error.response && error.response.data) {
         toast.error(error.response.data.message);
       } else {
-        alert("Error on register employee. Please try again later.");
+        toast.error(Messages.SOMETHING_TRY_AGAIN)
       }
     }
   };

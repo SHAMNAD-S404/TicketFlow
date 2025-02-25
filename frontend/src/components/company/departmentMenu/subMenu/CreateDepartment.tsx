@@ -1,7 +1,7 @@
 import React from "react";
 import Tooltips from "../../../utility/Tooltips";
 import { useForm } from "react-hook-form";
-import regexPatterns from "../../../../utils/regexPattern";
+import regexPatterns, { RegexMessages } from "../../../../utils/regexPattern";
 import { toast } from "react-toastify";
 import { createDepartment } from "../../../../api/services/companyService";
 interface CreateDepartmentProps {
@@ -19,6 +19,7 @@ const CreateDepartment: React.FC<CreateDepartmentProps> = ({
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<DepartemntForm>();
 
@@ -27,8 +28,7 @@ const CreateDepartment: React.FC<CreateDepartmentProps> = ({
       const response = await createDepartment(data);
       if (response.success) {
         toast.success(response.message);
-      } else {
-        toast.error(response.message);
+        reset();
       }
     } catch (error: any) {
       if (error.response && error.response.data) {
@@ -59,8 +59,14 @@ const CreateDepartment: React.FC<CreateDepartmentProps> = ({
                 placeholder="Finance Departemnt"
                 {...register("departmentName", {
                   required: "This field is required !!",
-                  maxLength: 20,
-                  min: 5,
+                  maxLength: {
+                    value : 35,
+                    message : RegexMessages.MAXIMUM_LIMIT_REACHED
+                  },
+                  minLength:{
+                    value : 5,
+                    message : RegexMessages.MINIMUM_LIMIT
+                  } , 
                   pattern: {
                     value: regexPatterns.name,
                     message:
@@ -86,8 +92,14 @@ const CreateDepartment: React.FC<CreateDepartmentProps> = ({
                 placeholder="bills management and finance accounting"
                 {...register("responsibilities", {
                   required: "This field is required !!",
-                  maxLength: 60,
-                  min: 5,
+                  maxLength: {
+                    value :  70,
+                    message : RegexMessages.MAXIMUM_LIMIT_REACHED
+                  },
+                  minLength: {
+                    value : 5,
+                    message : RegexMessages.MINIMUM_LIMIT
+                  },
                   pattern: {
                     value: regexPatterns.textWithSpaceAndCommas,
                     message: "Text , space and commas only allowed",
