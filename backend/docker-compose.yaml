@@ -2,6 +2,7 @@ version: '3.9'
 
 services:
 
+
   rabbitmq:
     image: rabbitmq:3-management
     container_name: ticketflow-rabbitmq
@@ -24,6 +25,7 @@ services:
       start_period: 15s
 
   
+
   redis:
     image: redis:latest
     container_name: ticketFlow-redis
@@ -43,6 +45,7 @@ services:
       start_period: 15s
   
 
+
   api-gateway:
     build: 
       context: ./api-gateway
@@ -52,6 +55,9 @@ services:
     env_file:
       - ./api-gateway/.env
     container_name: ticketFlow-apiGateway
+    volumes:
+      - ./api-gateway:/app
+      - /app/node_modules
     restart: unless-stopped
     depends_on:
       rabbitmq:
@@ -71,6 +77,8 @@ services:
       - ticketFlow-internal
       - ticketFlow-external
 
+
+
   auth-service:
     build: 
       context: ./auth-service
@@ -79,6 +87,9 @@ services:
       - ./auth-service/.env
     container_name: ticketFlow-authService
     restart: unless-stopped
+    volumes:
+      - ./auth-service:/app
+      - /app/node_modules
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -86,6 +97,8 @@ services:
         condition: service_healthy
     networks:
       - ticketFlow-internal
+
+
 
   company-service:   
     build: 
@@ -95,6 +108,9 @@ services:
       - ./company-service/.env
     container_name: ticketFlow-companyService
     restart: unless-stopped
+    volumes:
+      - ./company-service:/app
+      - /app/node_modules
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -102,6 +118,8 @@ services:
         condition: service_healthy
     networks:
       - ticketFlow-internal
+
+
 
   ticket-service:
     build: 
@@ -111,6 +129,9 @@ services:
       - ./ticket-service/.env
     container_name: ticketFlow-ticketService
     restart: unless-stopped
+    volumes:
+      - ./ticket-service:/app
+      - /app/node_modules
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -120,6 +141,7 @@ services:
       - ticketFlow-internal
 
   
+
   notification-service:
     build:
       context: ./notification-service
@@ -128,6 +150,9 @@ services:
       - ./notification-service/.env
     container_name: ticketFlow-notificationService
     restart: unless-stopped
+    volumes:
+      - ./notification-service:/app
+      - /app/node_modules
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -135,6 +160,7 @@ services:
         condition: service_healthy
     networks:
       - ticketFlow-internal
+
 
 networks:
   ticketFlow-internal:

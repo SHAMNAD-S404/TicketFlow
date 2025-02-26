@@ -78,7 +78,7 @@ export class AuthController implements IAuthController {
       // Extract the email and password from the request body
 
       const { email, password } = req.body;
-
+      
       // Call the verifyLogin method of the Auth service
       const response = await this.authService.verifyLogin(email, password);
 

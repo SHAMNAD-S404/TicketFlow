@@ -28,10 +28,6 @@ import {
 } from "../../../common/Sheet";
 
 
-const tempLogo =
-  "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=50&h=50&fit=crop";
-
-
 interface AllEmployeeManagementProps {
   handleCancel : () => void;
 }
@@ -198,7 +194,7 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({handleCanc
               >
                 <div>{0 + index + 1}</div>
                 <div className="flex items-center gap-3">
-                  <img src={tempLogo} alt="" className="w-8 h-8 rounded-full" />
+                  <img src={employee.imageUrl} alt="" className="w-8 h-8 rounded-full" />
                   {employee.name}
                 </div>
                 <div>{employee.departmentName}</div>
@@ -217,24 +213,24 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({handleCanc
                         <FaEye className="w-5 h-5 text-gray-600" />
                       </button>
                     </SheetTrigger>
-                    <SheetContent className="bg-gray-600 border-none text-center text-white ">
+                    <SheetContent className="bg-black border-none text-center text-white ">
                       <SheetHeader>
-                        <SheetTitle className="text-center mt-8">
+                        <SheetTitle className="text-center text-white text-2xl mt-8">
                           {" "}
                           Employee Details
                         </SheetTitle>
-                        <SheetDescription className="text-center">
+                        <SheetDescription className="text-center text-sm text-white  font-thin">
                           View employee information
                         </SheetDescription>
                       </SheetHeader>
 
                       <div className="mt-6 flex flex-col justify-center items-center ">
                         <img
-                          src={tempLogo}
+                          src={employee.imageUrl}
                           alt="company dp"
-                          className="rounded-full w-20 h-20"
+                          className="rounded-full w-44 h-44"
                         />
-                        <h3 className="text-lg font-bold mt-1">
+                        <h3 className="text-2xl font-semibold mt-3">
                           {employee.name.toUpperCase()}
                         </h3>
                         <p className="text-sm font-medium">
@@ -249,16 +245,16 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({handleCanc
                             <p className="mt-1"> {employee.role}</p>
                           </div>
                           <div>
-                            <label className="text-sm font-semibold underlin">
+                            <label className="text-lg font-semibold underlin">
                               Contact Details
                             </label>
                             <div className="flex justify-center items-center gap-2">
-                              <MdOutlineEmail />
-                              <p className="mt-1 text-blue-500 underline">
+                              <MdOutlineEmail className="mt-2 text-xl" />
+                              <p className="mt-1 text-blue-500 underline text-lg font-semibold">
                                 {employee.email}
                               </p>
                             </div>
-                            <p className="mt-1">Phone : {employee.phone}</p>
+                            <p className="mt-1 text-lg font-semibold">Phone : {employee.phone}</p>
                           </div>
 
                           <div>

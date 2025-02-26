@@ -11,6 +11,7 @@ export interface ICompanyData {
     role : string;
     subscriptionPlan : string;
     isBlock : boolean;
+    imageUrl : string
 
     
 }

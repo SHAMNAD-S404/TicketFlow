@@ -13,13 +13,13 @@ dotenv.config();
 validateEnvVariables();
 
 const app = express();
-
 // app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(logger);
 app.use(morgan("dev"));
+
 
 // Set up CORS
 app.use(
@@ -37,5 +37,6 @@ app.use("/company", authenticateToken, proxy(config.companyServiceUrl,{
 app.use("/tickets",authenticateToken,proxy(config.ticketServiceUrl,{
   parseReqBody:false
 }))
+
 
 export default app;

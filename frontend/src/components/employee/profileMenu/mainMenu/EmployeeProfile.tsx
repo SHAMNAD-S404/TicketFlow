@@ -143,7 +143,7 @@ const ProfileUI: React.FC = () => {
                     onClick={hanldeUpload}
                     disabled={loading}
                     className={`mt-3 px-4 py-2 text-white rounded-lg ${
-                      loading ? "bg-gray-400 cursor-not-allowed " : "bg-blue-500 hover:bg-blue-700"
+                      loading ? "bg-gray-400 cursor-not-allowed " : "  bg-blue-500 hover:bg-blue-700"
                     }`}>
                     {loading ? "Uploading..." : "Upload"}
                   </button>

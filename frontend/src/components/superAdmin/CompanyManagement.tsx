@@ -26,9 +26,6 @@ import {
 } from "../common/Sheet";
 import { searchInputValidate } from "../utility/searchInputValidateNameEmail";
 
-const tempLogo =
-  "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=50&h=50&fit=crop";
-
 const CompanyManagement: React.FC = () => {
   const [sort, setSortBy] = useState<string>("recent");
   const [SearchKey, setSearchKey] = useState<string>("");
@@ -38,13 +35,6 @@ const CompanyManagement: React.FC = () => {
   const [companyData, setCompanyData] = useState<ICompanyData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // const filterData = companyData.filter(
-  //   (company) =>
-  //     company.companyName
-  //       .toLocaleLowerCase()
-  //       .includes(SearchKey.toLocaleLowerCase()) ||
-  //     company.email.toLocaleLowerCase().includes(SearchKey.toLocaleLowerCase())
-  // );
 
   const handleBlockUser = useCallback(
     debounce(
@@ -187,7 +177,7 @@ const CompanyManagement: React.FC = () => {
               >
                 <div>{0 + index + 1}</div>
                 <div className="flex items-center gap-3">
-                  <img src={tempLogo} alt="" className="w-8 h-8 rounded-full" />
+                  <img src={company.imageUrl} alt="" className="w-8 h-8 rounded-full" />
                   {company.companyName}
                 </div>
                 <div>{company.companyType}</div>
@@ -220,24 +210,24 @@ const CompanyManagement: React.FC = () => {
                         <FaEye className="w-5 h-5 text-gray-600" />
                       </button>
                     </SheetTrigger>
-                    <SheetContent className="bg-gray-700 border-none text-center text-white ">
+                    <SheetContent className="bg-black border-none text-center text-white ">
                       <SheetHeader>
-                        <SheetTitle className="text-center mt-8">
+                        <SheetTitle className="text-center text-white text-2xl mt-8">
                           {" "}
                           Company Details
                         </SheetTitle>
-                        <SheetDescription className="text-center">
+                        <SheetDescription className="text-center text-sm font-thin ">
                           View company information
                         </SheetDescription>
                       </SheetHeader>
 
                       <div className="mt-6 flex flex-col justify-center items-center ">
                         <img
-                          src={tempLogo}
+                          src={company.imageUrl}
                           alt="company dp"
-                          className="rounded-full w-20 h-20"
+                          className="rounded-full w-44 h-44"
                         />
-                        <h3 className="text-lg font-bold mt-1">
+                        <h3 className="text-xl  font-bold  mt-3">
                           {company.companyName.toUpperCase()}
                         </h3>
                         <p className="text-sm font-medium">
@@ -252,16 +242,16 @@ const CompanyManagement: React.FC = () => {
                             <p className="mt-1"> {company.corporatedId}</p>
                           </div>
                           <div>
-                            <label className="text-sm font-semibold underlin">
+                            <label className="text-lg font-semibold underlin">
                               Contact Details
                             </label>
                             <div className="flex justify-center items-center gap-2">
-                              <MdOutlineEmail />
-                              <p className="mt-1 text-blue-500 underline">
+                              <MdOutlineEmail className="text-xl mt-1" />
+                              <p className="mt-1 text-lg font-semibold text-blue-400 underline">
                                 {company.email}
                               </p>
                             </div>
-                            <p className="mt-1">
+                            <p className="mt-1 text-lg font-medium">
                               Phone : {company.phoneNumber}
                             </p>
                           </div>
