@@ -4,7 +4,8 @@ import { ITicketService } from "../../service/interface/ITicketService";
 import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
 import TicketModel from "../../models/implements/ticket";
-import mongoose from "mongoose";
+import { generateUniqTicketId } from "../../../queues/generate-uniq-ticketId";
+import { searchInputSchema } from "../../dtos/basicValidation";
 
 
 export class TicketController implements ITicketController {
@@ -13,30 +14,38 @@ export class TicketController implements ITicketController {
             this.ticketService = TicketServcie;
     }
 
-    public createTicket = async (req: Request, res: Response):Promise< void > =>{
+    public createTicket = async (req: Request, res: Response):Promise< void > => {
         try {
-            console.log("query : " , req.query);
-            console.log("body : " , req.body );
-            console.log("path : " , req.file?.path);
 
-            const { authUserUUID , email,role} = req.query;
-            const {ticketReason , description,department ,priority,dueDate, supportType  , assignedEmployee ,ticketRaisedDepartmentName ,ticketSendingDepartmentName ,ticketHandlingEmployeeName  } = req.body
+            const { authUserUUID} = req.query;
+            
+
+
+            const {ticketReason, description ,ticketHandling_department_ID, priority ,dueDate,supportType, ticketHandling_employee_ID,ticketRaisedDepartmentName,
+                ticketRaisedDepartmentID,ticketRaisedEmployeeID,ticketRaisedEmployeeName,ticketHandling_Department_Name,ticketHandlingEmployeeName,
+            } = req.body;
+
             const imageUrl = req.file?.path;
+            const ticketID = await generateUniqTicketId();
 
             const ticketData = new TicketModel({
+                authUserUUID,
+                ticketID,
                 ticketReason,
                 description,
-                ticketHandlingDepartmentId : department,
-                ticketHandlingDepartmentName : ticketSendingDepartmentName,
                 priority,
-                dueData : dueDate,
+                dueDate,
                 supportType,
-                ticketRaisedEmployeeId : authUserUUID,
-                ticketRaisedDepartmentName : ticketRaisedDepartmentName,
-                ticketHandlingEmployeeName ,
-                status : "commited",
-                imageUrl 
-
+                status : "on progress",
+                imageUrl,
+                ticketHandlingDepartmentId:ticketHandling_department_ID,
+                ticketHandlingDepartmentName:ticketHandling_Department_Name,
+                ticketHandlingEmployeeId:ticketHandling_employee_ID,
+                ticketHandlingEmployeeName,
+                ticketRaisedEmployeeId:ticketRaisedEmployeeID,
+                ticketRaisedEmployeeName,
+                ticketRaisedDepartmentName,
+                ticketRaisedDepartmentId:ticketRaisedDepartmentID
 
             })
 
@@ -48,10 +57,6 @@ export class TicketController implements ITicketController {
                 statusCode,
                 data
             })
- 
-
-
-            
             
             
         } catch (error) {
@@ -61,6 +66,32 @@ export class TicketController implements ITicketController {
                 success:false
             })
             
+        }
+    }
+
+    public getAllTickets =  async (req: Request, res: Response): Promise<void> => {
+        try {
+            
+            const validateSearchInput = searchInputSchema.safeParse(req.query);
+            if(!validateSearchInput.success){
+                res.status(HttpStatus.BAD_REQUEST).json({message:Messages.ENTER_VALID_INPUT,success:false});
+                return;
+            }
+
+            const { role , authUserUUID , page, sortBy, searchQuery } = validateSearchInput.data
+
+            if(role !== "company"){
+                res.status(HttpStatus.UNAUTHORIZED).json({message:Messages.NO_ACCESS,success:false})
+                return;
+            }
+
+            const result = await this.ticketService.fetchAllTickets(authUserUUID,page,sortBy,searchQuery)
+            const { message,statusCode,success,data } = result;
+            res.status(statusCode).json({message,success,data})
+            
+        } catch (error) {
+            console.log("error while getAllTickets",error);
+            throw error;
         }
     }
 }

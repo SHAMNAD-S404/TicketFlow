@@ -1,17 +1,21 @@
 import { Document } from "mongoose";
 
 export interface ITicket extends Document {
-   ticketReason : string;
-   description : string;
-   ticketHandlingDepartmentId : string,
-   ticketHandlingDepartmentName : string,
-   priority : string;
-   dueData : string;
-   supportType : string;
-   ticketRaisedEmployeeId : string,
-   ticketRaisedDepartmentName : string
-   ticketHandlingEmployeeName : string,
-   status : string,
-   imageUrl : string,
-
+  ticketID: string;
+  authUserUUID: string;
+  ticketReason: string;
+  description: string;
+  priority: string;
+  dueDate: string;
+  supportType: string;
+  status: string;
+  imageUrl: string;
+  ticketHandlingDepartmentId: string;
+  ticketHandlingDepartmentName: string;
+  ticketHandlingEmployeeId: string;
+  ticketHandlingEmployeeName: string;
+  ticketRaisedEmployeeId: string;
+  ticketRaisedEmployeeName: string;
+  ticketRaisedDepartmentName: string;
+  ticketRaisedDepartmentId: string;
 }

@@ -12,4 +12,10 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
             throw error
         }
     }
+
+    async findOneWithSingleField(query: Record<string, string>): Promise<T | null> {
+        return await this.model.findOne(query)
+    }
+
+
 }

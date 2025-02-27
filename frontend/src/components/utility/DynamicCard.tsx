@@ -16,7 +16,7 @@ const DynamicCard: React.FC<DynamicCardProps> = ({
   onButtonClick,
 }) => {
   return (
-    <div className="group relative w-full max-w-sm h-[24rem] rounded-2xl shadow-2xl shadow-black overflow-hidden transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
+    <div className="group relative w-full max-w-sm h-[23rem] rounded-2xl shadow-2xl shadow-black overflow-hidden transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
       {/* Background Image  */}
       <div
         className="absolute inset-0 bg-cover bg-blue-300 bg-center transition-transform duration-500 group-hover:scale-110"

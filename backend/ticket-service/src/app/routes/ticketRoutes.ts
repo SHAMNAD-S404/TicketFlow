@@ -17,6 +17,7 @@ const upload = multer({
 
 const router = Router();
 
-router.post("/create-ticket", extractUserData, upload.single("file"), ticketController.createTicket);
+router.post("/create-ticket", extractUserData, upload.single("file"), ticketController.createTicket)
+      .get("/get-all-tickets",extractUserData,ticketController.getAllTickets)
 
 export default router;

@@ -2,6 +2,9 @@ import TicketForm from "@/components/common/TicketForm";
 import React, { useState } from "react";
 import GifImage from "../../../assets/gif/star.gif";
 import DynamicCard from "@/components/utility/DynamicCard";
+import ManageTickets from "./ManageTickets";
+import { useSelector } from "react-redux";
+import { Rootstate } from "@/redux/store";
 
 interface ISubMenuList {
   header: string;
@@ -13,6 +16,11 @@ interface ISubMenuList {
 
 export const TicketHome: React.FC = () => {
   const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
+
+  const backToMainMenu = ()=> setActiveSubMenu(null);
+  const company = useSelector((state:Rootstate) => state.company.company)
+
+
   const subMenuList: ISubMenuList[] = [
     {
       header: "Create Ticket",
@@ -51,7 +59,13 @@ export const TicketHome: React.FC = () => {
         return <TicketForm 
         handleCancel = {onCancel} 
         ticketRaisedDepartmentName = "companyAdmin"
+        ticketRaisedDepartmentID = {company?._id as string}
+        ticketRaisedEmployeeID = {company?._id as string}
+        ticketRaisedEmployeeName = {company?.companyName as string}
+
         />;
+      case "Manage Tickets" :
+        return <ManageTickets  handleCancel = {backToMainMenu} />;
       default:
         return (
           <div className="flex flex-wrap gap-12 justify-start p-6">

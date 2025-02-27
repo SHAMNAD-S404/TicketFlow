@@ -1,49 +1,84 @@
-import mongoose,{Document, Schema} from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 import { ITicket } from "../interface/ITicketModel";
 
-const ticketSchema : Schema = new Schema<ITicket> ({
-    ticketReason : {
-        type : String , required : true
+const ticketSchema: Schema = new Schema<ITicket>(
+  {
+    authUserUUID: {
+      type: String,
+      required: true,
     },
-    description : {
-        type : String, required : true
+    ticketID: {
+      type: String,
+      required: true,
     },
-    ticketHandlingDepartmentId : {
-        type : String , required : true
+    ticketReason: {
+      type: String,
+      required: true,
     },
-    ticketHandlingDepartmentName : {
-        type : String , required : true
+    description: {
+      type: String,
+      required: true,
     },
-    priority : {
-        type : String , required : true
+    priority: {
+      type: String,
+      required: true,
     },
-    dueData : {
-        type : String ,required : true
+    dueDate: {
+      type: String,
+      required: true,
     },
-    supportType : {
-        type : String , required : true
+    supportType: {
+      type: String,
+      required: true,
     },
-    ticketRaisedEmployeeId : {
-        type : String , required : true
+    status: {
+      type: String,
+      required: true,
+      default: "committed",
     },
-    ticketRaisedDepartmentName : {
-        type : String , required : true 
+    imageUrl: {
+      type: String,
     },
-    ticketHandlingEmployeeName : {
-        type : String , required : true
+    ticketHandlingDepartmentId: {
+      type: String,
+      required: true,
     },
-    status : {
-        type : String , required : true , default : "committed"
+    ticketHandlingDepartmentName: {
+      type: String,
+      required: true,
     },
-    imageUrl : {
-        type : String
-    }
+    ticketHandlingEmployeeName: {
+      type: String,
+      required: true,
+    },
+    ticketHandlingEmployeeId: {
+      type: String,
+      required: true,
+    },
 
-   
+    ticketRaisedEmployeeId: {
+      type: String,
+      required: true,
+    },
 
-},{
-    timestamps:true
-})
+    ticketRaisedEmployeeName: {
+      type: String,
+      required: true,
+    },
 
-const TicketModel = mongoose.model<ITicket & Document>("tickets",ticketSchema)
+    ticketRaisedDepartmentName: {
+      type: String,
+      required: true,
+    },
+    ticketRaisedDepartmentId: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+const TicketModel = mongoose.model<ITicket & Document>("tickets", ticketSchema);
 export default TicketModel;

@@ -15,3 +15,17 @@ export const createTicket = async ( data : FormData) => {
         throw error
     }
 }
+
+export const fetchAllTickets = async (currentPage : number, sortBy : string, searchQuery:string ) => {
+    try {
+
+        const response = await axiosInstance.get(
+            `/tickets/get-all-tickets?page=${currentPage}&sortBy=${sortBy}&searchQuery=${searchQuery}`
+        );
+        return response.data;
+        
+    } catch (error) {
+        console.error(error);
+        throw error
+    }
+}

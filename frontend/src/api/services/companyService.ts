@@ -120,7 +120,9 @@ export const fetchAllDepartemtsWiseEmployees = async (
   searchKey: string
 ) => {
   try {
-    const response = await axiosInstance.get(`/company/emp/get-department-employee?companyId=${companyId}&departmentId=${departmentId}&currentPage=${currentPage}&sortBy=${sortBy}&searchKey=${searchKey}`);
+    const response = await axiosInstance.get(
+      `/company/emp/get-department-employee?companyId=${companyId}&departmentId=${departmentId}&currentPage=${currentPage}&sortBy=${sortBy}&searchKey=${searchKey}`
+    );
 
     return response.data;
   } catch (error) {
@@ -137,40 +139,39 @@ export const updateDepartmentInfo = async (data: Partial<IDepartmentData>) => {
   }
 };
 
-export const updateCompanyDp = async (data : FormData) => {
+export const updateCompanyDp = async (data: FormData) => {
   try {
-      const response = await axiosInstance.post("/company/comp/upload-dp",data,{
-        headers : {
-          "Content-Type": "multipart/form-data",
-        }
-      });
- 
-      
-      return response.data;
-  } catch (error) {
-    throw error
-  }
-}
+    const response = await axiosInstance.post("/company/comp/upload-dp", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
-export const updateEmployeeDp = async (data : FormData) => {
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateEmployeeDp = async (data: FormData) => {
   try {
-      const response = await axiosInstance.post("/company/emp/upload-dp",data,{
-        headers : {
-          "Content-Type": "multipart/form-data",
-        }
-      });
- 
-      return response.data;
-  } catch (error) {
-    throw error
-  }
-}
+    const response = await axiosInstance.post("/company/emp/upload-dp", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
-export const fetchEmployeesByDepartment = async (id:string) => {
-    try {
-        const response = await axiosInstance.get(`/company/emp/get-employee-by-department?id=${id}`);
-        return response.data;
-    } catch (error) {
-      throw error
-    }
-}
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const fetchEmployeesByDepartment = async (id: string) => {
+  try {
+    const response = await axiosInstance.get(`/company/emp/get-employee-by-department?id=${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
