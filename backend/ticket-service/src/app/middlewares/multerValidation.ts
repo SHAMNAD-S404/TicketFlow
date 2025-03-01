@@ -1,4 +1,4 @@
-import { Request, Express } from "express";
+import { Request } from "express";
 import { FileFilterCallback } from "multer";
 
 const allowedMimeTypes: string[] = ["image/jpeg", "image/png", "image/gif", "image/jpg"];

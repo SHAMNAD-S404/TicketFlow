@@ -16,3 +16,26 @@ export const ticketReassignSchema = z.object({
     selectedEmployeeId  : z.string().trim().min(7).max(40).regex(regexPatterns.alphabatesAndNumberOnly),
     selectedEmployeeName : z.string().trim().min(3).max(40).regex(regexPatterns.alphabatesAndSpaces)
 })
+
+export const TicketFormValidation = z.object({
+    ticketReason : z.string().trim().min(5).max(40).regex(regexPatterns.textWithSpaceAndCommas),
+    description : z.string().trim().min(10).max(200).regex(regexPatterns.textAreaValidation),
+    priority : z.string().trim().min(4).max(40).regex(regexPatterns.textWithSpaceAndCommas),
+    dueDate : z.string().trim().min(5).max(30).regex(regexPatterns.textAreaValidation),
+    supportType : z.string().trim().regex(regexPatterns.textAreaValidation),
+    ticketRaisedDepartmentName : z.string().trim().regex(regexPatterns.textWithSpaceAndCommas),
+    ticketRaisedDepartmentId : z.string().trim().regex(regexPatterns.objectIdRegex),
+    ticketRaisedEmployeeId : z.string().trim().regex(regexPatterns.objectIdRegex),
+    ticketRaisedEmployeeName : z.string().trim().min(4).max(40).regex(regexPatterns.alphabatesAndSpaces),
+    ticketHandlingDepartmentId : z.string().trim().regex(regexPatterns.objectIdRegex),
+    ticketHandlingDepartmentName : z.string().trim().min(3).max(50).regex(regexPatterns.alphabatesAndSpaces),
+    ticketHandlingEmployeeId : z.string().trim().regex(regexPatterns.objectIdRegex),
+    ticketHandlingEmployeeName : z.string().trim().min(4).max(40).regex(regexPatterns.alphabatesAndSpaces)
+
+})
+
+
+export const authUserUUIDValidation = z.object({
+    authUserUUID : z.string().trim().min(36).max(36).regex(regexPatterns.uuid_v4)
+});
+

@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { ITicket } from "../interface/ITicketModel";
+import { TicketStatus } from "../interface/ITicketModel";
 
 const ticketSchema: Schema = new Schema<ITicket>(
   {
@@ -33,8 +34,8 @@ const ticketSchema: Schema = new Schema<ITicket>(
     },
     status: {
       type: String,
-      required: true,
-      default: "committed",
+      enum : Object.values(TicketStatus),
+      default: TicketStatus.Pending,
     },
     imageUrl: {
       type: String,

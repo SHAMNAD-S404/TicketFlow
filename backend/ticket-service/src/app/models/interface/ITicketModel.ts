@@ -1,5 +1,14 @@
 import { Document } from "mongoose";
 
+export enum TicketStatus {
+  Pending = 'pending',
+  InProgress = 'in-progress',
+  Resolved = 'resolved',
+  Closed = 'closed',
+  ReOpened = 're-opened'
+}
+
+
 export interface ITicket extends Document {
   ticketID: string;
   authUserUUID: string;
@@ -8,7 +17,7 @@ export interface ITicket extends Document {
   priority: string;
   dueDate: string;
   supportType: string;
-  status: string;
+  status: TicketStatus;
   imageUrl: string;
   ticketHandlingDepartmentId: string;
   ticketHandlingDepartmentName: string;

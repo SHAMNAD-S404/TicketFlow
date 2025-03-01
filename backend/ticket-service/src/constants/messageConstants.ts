@@ -17,6 +17,7 @@ export const Messages = {
     REQUIRED_FIELD_MISSING : "Required fields are missing",
     DATA_CREATED : "data created successfully",
     FILE_UPDATED : "File updated successfully",
+    INVALID_INPUT : "Enter valid Inputs fields"
     
     
 

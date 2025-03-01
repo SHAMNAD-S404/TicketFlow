@@ -5,8 +5,13 @@ import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
 import TicketModel from "../../models/implements/ticket";
 import { generateUniqTicketId } from "../../../queues/generate-uniq-ticketId";
-import { searchInputSchema, ticketReassignSchema } from "../../dtos/basicValidation";
 import { ITicketReassignData } from "../../interface/userTokenData";
+import {
+  authUserUUIDValidation,
+  searchInputSchema,
+  TicketFormValidation,
+  ticketReassignSchema,
+} from "../../dtos/basicValidation";
 
 export class TicketController implements ITicketController {
   private readonly ticketService: ITicketService;
@@ -16,45 +21,28 @@ export class TicketController implements ITicketController {
 
   public createTicket = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { authUserUUID } = req.query;
+ 
+      const validateUUID = authUserUUIDValidation.safeParse(req.query);
 
-      const {
-        ticketReason,
-        description,
-        ticketHandling_department_ID,
-        priority,
-        dueDate,
-        supportType,
-        ticketHandling_employee_ID,
-        ticketRaisedDepartmentName,
-        ticketRaisedDepartmentID,
-        ticketRaisedEmployeeID,
-        ticketRaisedEmployeeName,
-        ticketHandling_Department_Name,
-        ticketHandlingEmployeeName,
-      } = req.body;
+      if (!validateUUID.success) {
+        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.ALL_FILED_REQUIRED_ERR, success: false });
+        return;
+      }
+      const authUserUUID = validateUUID.data.authUserUUID;
+
+      const validateTicketForm = TicketFormValidation.safeParse(req.body);
+      if (!validateTicketForm.success) {
+        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.INVALID_INPUT, success: false });
+        return;
+      }
 
       const imageUrl = req.file?.path;
       const ticketID = await generateUniqTicketId();
-
       const ticketData = new TicketModel({
         authUserUUID,
         ticketID,
-        ticketReason,
-        description,
-        priority,
-        dueDate,
-        supportType,
-        status: "on progress",
         imageUrl,
-        ticketHandlingDepartmentId: ticketHandling_department_ID,
-        ticketHandlingDepartmentName: ticketHandling_Department_Name,
-        ticketHandlingEmployeeId: ticketHandling_employee_ID,
-        ticketHandlingEmployeeName,
-        ticketRaisedEmployeeId: ticketRaisedEmployeeID,
-        ticketRaisedEmployeeName,
-        ticketRaisedDepartmentName,
-        ticketRaisedDepartmentId: ticketRaisedDepartmentID,
+        ...validateTicketForm.data,
       });
 
       const saveTicket = await this.ticketService.createTicketDocument(ticketData);
@@ -97,7 +85,6 @@ export class TicketController implements ITicketController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: Messages.SERVER_ERROR });
     }
   };
-  
 
   public ticketReassign = async (req: Request, res: Response): Promise<void> => {
     try {

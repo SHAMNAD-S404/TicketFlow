@@ -8,16 +8,7 @@ import { useForm } from "react-hook-form";
 import regexPatterns from "@/utils/regexPattern";
 import { RegexMessages } from "@/utils/regexPattern";
 import { createTicket } from "@/api/services/ticketService";
-
-interface TicketFormData {
-  ticketReason: string;
-  priority: string;
-  description: string;
-  dueDate: string;
-  ticketHandling_department_ID: string;
-  supportType: string;
-  ticketHandling_employee_ID: string;
-}
+import { TicketFormData } from "@/interfaces/formInterfaces";
 
 export interface IDepartement {
   _id: string;
@@ -33,13 +24,17 @@ export interface IEmployeeList {
 interface TicketFormProps {
   handleCancel: () => void;
   ticketRaisedDepartmentName: string;
-  ticketRaisedDepartmentID : string;
-  ticketRaisedEmployeeID : string;
-  ticketRaisedEmployeeName : string;
+  ticketRaisedDepartmentID: string;
+  ticketRaisedEmployeeID: string;
+  ticketRaisedEmployeeName: string;
 }
 
-const TicketForm: React.FC<TicketFormProps> = ({ handleCancel, ticketRaisedDepartmentName, 
-    ticketRaisedDepartmentID,ticketRaisedEmployeeID,ticketRaisedEmployeeName
+const TicketForm: React.FC<TicketFormProps> = ({
+  handleCancel,
+  ticketRaisedDepartmentName,
+  ticketRaisedDepartmentID,
+  ticketRaisedEmployeeID,
+  ticketRaisedEmployeeName,
 }) => {
   const [departments, setDepartments] = useState<IDepartement[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -54,13 +49,11 @@ const TicketForm: React.FC<TicketFormProps> = ({ handleCancel, ticketRaisedDepar
   } = useForm<TicketFormData>();
 
   const [employees, setEmployees] = useState<IEmployeeList[]>([]);
-  const SelectedDepartmentId = watch("ticketHandling_department_ID");
+  const SelectedDepartmentId = watch("ticketHandlingDepartmentId");
 
   const onSubmitForm = async (data: TicketFormData) => {
-    console.log("Ticket submitted:", data);
-
-    const selectedDepartment = departments.find((dept) => dept._id == data.ticketHandling_department_ID);
-    const selectedEmployee = employees.find((employee) => employee._id == data.ticketHandling_employee_ID);
+    const selectedDepartment = departments.find((dept) => dept._id == data.ticketHandlingDepartmentId);
+    const selectedEmployee = employees.find((employee) => employee._id == data.ticketHandlingEmployeeId);
 
     const formData = new FormData();
 
@@ -68,10 +61,10 @@ const TicketForm: React.FC<TicketFormProps> = ({ handleCancel, ticketRaisedDepar
       formData.append(key, data[key as keyof TicketFormData]);
     });
     formData.append("ticketRaisedDepartmentName", ticketRaisedDepartmentName);
-    formData.append("ticketRaisedDepartmentID",ticketRaisedDepartmentID);
-    formData.append("ticketRaisedEmployeeID" , ticketRaisedEmployeeID);
-    formData.append("ticketRaisedEmployeeName",ticketRaisedEmployeeName);
-    formData.append("ticketHandling_Department_Name", selectedDepartment?.departmentName as string);
+    formData.append("ticketRaisedDepartmentId", ticketRaisedDepartmentID);
+    formData.append("ticketRaisedEmployeeId", ticketRaisedEmployeeID);
+    formData.append("ticketRaisedEmployeeName", ticketRaisedEmployeeName);
+    formData.append("ticketHandlingDepartmentName", selectedDepartment?.departmentName as string);
     formData.append("ticketHandlingEmployeeName", selectedEmployee?.name as string);
 
     if (selectedImage) {
@@ -80,26 +73,34 @@ const TicketForm: React.FC<TicketFormProps> = ({ handleCancel, ticketRaisedDepar
 
     try {
       const response = await createTicket(formData);
-      if(response.success){
-        toast.success(response.message)
-        setPreviewUrl(null)
-        reset()
+      if (response.success) {
+        toast.success(response.message);
+        setPreviewUrl(null);
+        setSelectedImage(null);
+        reset();
       }
-
-     
-    } catch (error : any) {
-      if(error.response && error.response.data){
-          toast.error(error.response.data.message)
-      }else{
-        toast.error(Messages.SOMETHING_TRY_AGAIN)
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error(Messages.SOMETHING_TRY_AGAIN);
       }
     }
-
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/jpg"];
+
     const file = event.target.files?.[0];
     if (file) {
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Invalid file type. Only JPEG, PNG, and GIF are allowed.");
+        return;
+      }
+      if (file.size > 3 * 1024 * 1024) {
+        toast.error("Select file below 3 mb");
+        return;
+      }
       setSelectedImage(file);
       setPreviewUrl(URL.createObjectURL(file));
     }
@@ -261,7 +262,7 @@ const TicketForm: React.FC<TicketFormProps> = ({ handleCancel, ticketRaisedDepar
               <div className="relative">
                 <select
                   className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white text-lg"
-                  {...register("ticketHandling_department_ID", {
+                  {...register("ticketHandlingDepartmentId", {
                     required: RegexMessages.FEILD_REQUIRED,
                     pattern: {
                       value: regexPatterns.textAndNumberWithoutSpace,
@@ -277,8 +278,8 @@ const TicketForm: React.FC<TicketFormProps> = ({ handleCancel, ticketRaisedDepar
                 </select>
                 <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-500 pointer-events-none" />
               </div>
-              {errors.ticketHandling_department_ID && (
-                <p className="text-sm font-semibold text-red-500 p-2">{errors.ticketHandling_department_ID.message}</p>
+              {errors.ticketHandlingDepartmentId && (
+                <p className="text-sm font-semibold text-red-500 p-2">{errors.ticketHandlingDepartmentId.message}</p>
               )}
             </div>
           </div>
@@ -360,7 +361,7 @@ const TicketForm: React.FC<TicketFormProps> = ({ handleCancel, ticketRaisedDepar
                 <div className="relative">
                   <select
                     className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white text-lg"
-                    {...register("ticketHandling_employee_ID", {
+                    {...register("ticketHandlingEmployeeId", {
                       required: "Employee selection is required",
                     })}>
                     <option value="">Select one</option>
@@ -371,8 +372,8 @@ const TicketForm: React.FC<TicketFormProps> = ({ handleCancel, ticketRaisedDepar
                     ))}
                   </select>
                   <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-500 pointer-events-none" />
-                  {errors.ticketHandling_employee_ID && (
-                    <p className="text-sm font-semibold text-red-500 p-2">{errors.ticketHandling_employee_ID.message}</p>
+                  {errors.ticketHandlingEmployeeId && (
+                    <p className="text-sm font-semibold text-red-500 p-2">{errors.ticketHandlingEmployeeId.message}</p>
                   )}
                 </div>
               </div>
