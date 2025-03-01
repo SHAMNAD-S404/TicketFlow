@@ -8,3 +8,11 @@ export const searchInputSchema = z.object({
     sortBy:z.string().trim().min(3).max(30).regex(regexPatterns.alphabatesOnly),
     authUserUUID:z.string().trim().min(8).max(60).regex(regexPatterns.uuid_v4)
 })
+
+export const ticketReassignSchema = z.object({
+    ticketId : z.string().trim().min(7).max(40).regex(regexPatterns.alphabatesAndNumberOnly),
+    selectedDepartmentId : z.string().trim().min(7).max(40).regex(regexPatterns.alphabatesAndNumberOnly),
+    selectedDepartmentName : z.string().trim().min(3).max(50).regex(regexPatterns.alphabatesAndSpaces),
+    selectedEmployeeId  : z.string().trim().min(7).max(40).regex(regexPatterns.alphabatesAndNumberOnly),
+    selectedEmployeeName : z.string().trim().min(3).max(40).regex(regexPatterns.alphabatesAndSpaces)
+})

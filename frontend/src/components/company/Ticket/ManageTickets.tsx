@@ -22,6 +22,7 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
   const [tikcetData, setTicketData] = useState<ITicketContext[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [refreshState , setRefreshState] = useState<boolean>(false)
 
   const handleSearchQuery = useCallback(
     debounce((searchValue: string) => {
@@ -51,7 +52,7 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
       }
     };
     getAllTickets();
-  }, [currentPage, sortBy, searchQuery]);
+  }, [currentPage, sortBy, searchQuery,refreshState]);
 
 
   return (
@@ -96,7 +97,6 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
                 <option value="ticketRaisedDepartmentName">Department Raised</option>
                 <option value="ticketHandlingDepartmentName">Department Handling</option>
                 <option value="priority">Priority</option>
-                <option value="role">Role</option>
                 <option value="dueData">DueDate</option>
                 <option value="status">Status</option>
               </select>
@@ -170,11 +170,11 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
                   <div className="flex justify-center">{ticket.dueDate}</div>
                   <div className="flex justify-center">{ticket.status}</div>
                   {/* reassign ticket */}
-                  <ReassignTicket   
-                     selectedDepartmentName = {ticket.ticketHandlingDepartmentName}
-                     selectedDepartmentId = {ticket.ticketHandlingDepartmentId}
-                     selectedEmployeeName = {ticket.ticketHandlingEmployeeName}
+                  <ReassignTicket                    
+                     selectedDepartmentId = {ticket.ticketHandlingDepartmentId}                    
                      selectedEmployeeId = {ticket.ticketHandlingEmployeeId}
+                     selectedTicketId  = {ticket._id}
+                     twickParent = {() => setRefreshState(!refreshState)}
                      handleCancel = {handleCancel}
                   
                   />

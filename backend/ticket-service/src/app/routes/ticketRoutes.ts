@@ -19,5 +19,6 @@ const router = Router();
 
 router.post("/create-ticket", extractUserData, upload.single("file"), ticketController.createTicket)
       .get("/get-all-tickets",extractUserData,ticketController.getAllTickets)
+      .patch("/ticket-reassign",extractUserData,ticketController.ticketReassign)
 
 export default router;

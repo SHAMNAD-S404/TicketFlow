@@ -15,7 +15,8 @@ export const Messages = {
     EMAIL_INVALID : "Email ID is invalid",
     IMAGE_UPDATED : "Image updated successfully",
     REQUIRED_FIELD_MISSING : "Required fields are missing",
-    DATA_CREATED : "data created successfully"
+    DATA_CREATED : "data created successfully",
+    FILE_UPDATED : "File updated successfully",
     
     
 

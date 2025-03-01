@@ -4,7 +4,6 @@ import { fetchAllDepartemts, fetchEmployeesByDepartment } from "@/api/services/c
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { Messages } from "@/enums/Messages";
-
 import {
   Drawer,
   DrawerClose,
@@ -15,26 +14,70 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { ticketReassign } from "@/api/services/ticketService";
 
 interface IReassignTicketProps {
-  selectedDepartmentName: string;
   selectedDepartmentId: string;
-  selectedEmployeeName: string;
   selectedEmployeeId: string;
+  selectedTicketId:string;
   handleCancel: () => void;
+  twickParent : () => void;
+}
+
+export interface IUpdateReassignTicketData  {
+  ticketId : string;
+  selectedDepartmentId : string;
+  selectedDepartmentName : string;
+  selectedEmployeeId : string;
+  selectedEmployeeName : string;
 }
 
 export const ReassignTicket: React.FC<IReassignTicketProps> = ({
   selectedDepartmentId,
-  selectedDepartmentName,
+  selectedTicketId,
   selectedEmployeeId,
-  selectedEmployeeName,
   handleCancel,
+  twickParent,
 }) => {
   const [selectedDepartment, setSelectedDepartment] = useState<string>(selectedDepartmentId);
-  const [selectedEmployee, setSelectedEmployee] = useState<string>(selectedEmployeeId);
+  const [selectedEmployee, setSelectedEmployee] = useState<string >(selectedEmployeeId);
   const [allDepartment, setAllDepartment] = useState<IDepartement[]>([]);
   const [employees, setEmployees] = useState<IEmployeeList[]>([]);
+  const [ isDrawerOpen , setIsDrawerOpen] = useState<boolean>(false)
+
+
+
+  const handleSubmit = async() => {
+    try {
+      if(!selectedDepartment || employees.length === 0){
+        toast.error(Messages.SELECT_REQUIRED_FIELDS);
+        return;
+      }
+      const departmentDetails = allDepartment.find((dept) => dept._id === selectedDepartment);
+      const employeeDetails = employees.find((emp) => emp._id === selectedEmployee);
+      const ticketReassignData : IUpdateReassignTicketData = {
+        ticketId : selectedTicketId,
+        selectedDepartmentId : selectedDepartment,
+        selectedDepartmentName : departmentDetails?.departmentName as string,
+        selectedEmployeeId : selectedEmployee,
+        selectedEmployeeName: employeeDetails?.name as string,
+      }
+
+      const response  = await ticketReassign(ticketReassignData);
+      if(response.success){
+       toast.success(response.message)
+       twickParent()
+       setIsDrawerOpen(false);
+       
+      }      
+    } catch (error : any) {
+      if(error.response && error.response.data){
+        toast.error(error.response.data.message);
+      }else{
+        toast.error(Messages.SOMETHING_TRY_AGAIN);
+      }
+    }
+  }
 
   useEffect(() => {
     if (!selectedDepartment) {
@@ -46,6 +89,11 @@ export const ReassignTicket: React.FC<IReassignTicketProps> = ({
         const response = await fetchEmployeesByDepartment(selectedDepartment);
         if (response.success) {
           setEmployees(response.data);
+          // If the current selectedEmployee is not in the new employee list, update it
+          const isEmployeeValid = response.data.some((emp:IEmployeeList) => emp._id === selectedEmployee);
+          if(!isEmployeeValid && response.data.length > 0){
+            setSelectedEmployee(response.data[0]._id);
+          }
         }
       } catch (error: any) {
         if (error.response && error.response.data) {
@@ -88,7 +136,7 @@ export const ReassignTicket: React.FC<IReassignTicketProps> = ({
   return (
     <div>
       <div className="flex justify-center">
-        <Drawer>
+        <Drawer  open={isDrawerOpen} onOpenChange={setIsDrawerOpen} >
           <DrawerTrigger asChild>
             <button className="bg-blue-500 p-1 rounded-2xl text-white text-sm w-2/4 hover:bg-red-600 shadow-xl shadow-gray-400 ">
               Reassign
@@ -100,7 +148,7 @@ export const ReassignTicket: React.FC<IReassignTicketProps> = ({
                 <h2 className="text-center mt-2 text-2xl ">Reassign Ticket</h2>
               </DrawerTitle>
               <DrawerDescription>
-                <h3 className="text-center text-white">Reassign the ticket to another employee or department</h3>
+                <p className="text-center text-white">Reassign the ticket to another employee or department</p>
               </DrawerDescription>
             </DrawerHeader>
 
@@ -124,7 +172,7 @@ export const ReassignTicket: React.FC<IReassignTicketProps> = ({
                 <select
                   name="ticketHandlingDepartmentName"
                   className="mt-1 p-2 rounded-lg text-black "
-                  value={selectedEmployee}
+                  value={selectedEmployee }
                   onChange={(e) => setSelectedEmployee(e.target.value)}>
                   {employees.map((employee, index) => (
                     <option value={employee._id} key={index}>
@@ -137,7 +185,8 @@ export const ReassignTicket: React.FC<IReassignTicketProps> = ({
 
             <DrawerFooter className="mb-20">
               <div className="text-center">
-                <button className="bg-blue-500 hover:bg-green-600 p-2 font-semibold rounded-xl w-1/5 ">Submit</button>
+                <button className="bg-blue-500 hover:bg-green-600 p-2 font-semibold rounded-xl w-1/5 "
+                onClick={handleSubmit}>Submit</button>
               </div>
               <DrawerClose>
                 <button className="bg-gray-100 hover:bg-red-600 hover:text-white  text-black p-2 font-semibold rounded-xl w-1/5 ">

@@ -3,7 +3,7 @@ import { Messages } from "../../enums/Messages";
 
 export const searchInputValidate = (value: string): boolean => {
   try {
-    const regexPattern: RegExp = /^[a-zA-Z]+([@.][a-zA-Z]+)*$/;
+    const regexPattern: RegExp = /^[a-zA-Z0-9]+([@.][a-zA-Z]+)*$/;
     const trimmedInput = value.trim();
 
     if (trimmedInput === "") return true;
