@@ -21,7 +21,6 @@ export class TicketController implements ITicketController {
 
   public createTicket = async (req: Request, res: Response): Promise<void> => {
     try {
- 
       const validateUUID = authUserUUIDValidation.safeParse(req.query);
 
       if (!validateUUID.success) {
@@ -106,4 +105,48 @@ export class TicketController implements ITicketController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: Messages.SERVER_ERROR });
     }
   };
+
+  public fetchTicket = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.query;
+      if (!id) {
+        res.status(HttpStatus.FORBIDDEN).json({ message: Messages.TICKET_ID_MISSING, success: false });
+        return;
+      }
+      const getTicket = await this.ticketService.getTicketData(String(id));
+      const { message, statusCode, success, data } = getTicket;
+      res.status(statusCode).json({ message, success, data });
+      return;
+    } catch (error) {
+      console.error(error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+    }
+  };
+
+  public updateTicketStatus = async (req: Request, res: Response): Promise<void>  => {
+    try {
+      const {id,status} = req.body;
+      if(!id || !status){
+        res.status(HttpStatus.BAD_REQUEST).json({message:Messages.REQUIRED_FIELD_MISSING,success:false})
+        return
+      }
+      const ticketStatus: string[] = ["pending", "in-progress", "resolved", "closed", "re-opened"];
+      if( !ticketStatus.includes(status) ){
+        res.status(HttpStatus.BAD_REQUEST).json({message:Messages.ENTER_VALID_INPUT,success:false});
+        return;
+      }
+
+      const updateDoc = await this.ticketService.getUpdatedTicketStatus(id,status);
+      const {message,statusCode,success} = updateDoc;
+      res.status(statusCode).json({message,success});
+      return;
+      
+    } catch (error) {
+      console.error("error while updateTicketStatus :",error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:Messages.SERVER_ERROR,success:false})
+    }
+  }
+
+
+
 }

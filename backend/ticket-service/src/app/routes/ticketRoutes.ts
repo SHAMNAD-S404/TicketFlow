@@ -17,8 +17,10 @@ const upload = multer({
 
 const router = Router();
 
-router.post("/create-ticket", extractUserData, upload.single("file"), ticketController.createTicket)
-      .get("/get-all-tickets",extractUserData,ticketController.getAllTickets)
-      .patch("/ticket-reassign",extractUserData,ticketController.ticketReassign)
+router.post ("/create-ticket", extractUserData, upload.single("file"), ticketController.createTicket)
+      .get ("/get-all-tickets",extractUserData,ticketController.getAllTickets)
+      .get ("/get-ticket",ticketController.fetchTicket)
+      .patch ("/ticket-reassign",extractUserData,ticketController.ticketReassign)
+      .patch ("/update-status",ticketController.updateTicketStatus)
 
 export default router;

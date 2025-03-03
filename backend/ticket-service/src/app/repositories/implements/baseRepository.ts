@@ -17,5 +17,9 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
         return await this.model.findOne(query)
     }
 
+    async findOneDocAndUpdate(searchQuery: Record<string, string>, updateQuery: Record<string, string | number>): Promise<T | null> {
+        return await this.model.findOneAndUpdate(searchQuery,updateQuery,{new:true});
+    }
+
 
 }

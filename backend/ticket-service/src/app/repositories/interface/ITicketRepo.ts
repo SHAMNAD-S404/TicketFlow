@@ -17,4 +17,6 @@ export interface ITicketRepository extends IBaseRepository<ITicket> {
 
   ticketReassign(data:ITicketReassignData) : Promise<ITicket | null>
 
+  findAndupdateStatus(id:string,status:string) : Promise<ITicket | null>
+
 }

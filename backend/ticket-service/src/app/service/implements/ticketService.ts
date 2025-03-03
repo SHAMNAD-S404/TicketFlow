@@ -71,7 +71,7 @@ export default class TicketService implements ITicketService {
       }
       const update = await TicketRepository.ticketReassign(data);
       return {
-        message: Messages.FILE_UPDATED,
+        message: Messages.TICKET_REASSIGNED,
         statusCode: HttpStatus.OK,
         success: true,
         data: update,
@@ -80,4 +80,48 @@ export default class TicketService implements ITicketService {
       throw error;
     }
   }
+
+  async getTicketData(id: string): Promise<IReassignedTicketResponse> {
+    try {
+        const getData = await TicketRepository.findOneWithSingleField({_id:id});
+        if(getData){
+          return {
+            message:Messages.FETCH_SUCCESS,
+            statusCode:HttpStatus.OK,
+            success:true,
+            data:getData
+          }
+        }else{
+          return{
+            message : Messages.TICKET_NOT_FOUND,
+            statusCode:HttpStatus.BAD_REQUEST,
+            success:false
+          }
+        }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getUpdatedTicketStatus(id: string, status: string): Promise<IReassignedTicketResponse> {
+    try {
+      const updateDoc = await TicketRepository.findAndupdateStatus(id,status);
+      if(updateDoc){
+        return{
+          message:Messages.TICKET_STATUS_UPDATED,
+          statusCode:HttpStatus.OK,
+          success : true
+        }
+      }else{
+        return {
+          message:Messages.DATA_NOT_FOUND,
+          statusCode:HttpStatus.BAD_REQUEST,
+          success:false
+        }
+      }
+    } catch (error) {
+      throw error
+    }
+  }
+
 }

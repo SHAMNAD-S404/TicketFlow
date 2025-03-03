@@ -82,6 +82,14 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
       }
   }
 
+  async findAndupdateStatus(id: string, status: string): Promise<ITicket | null> {
+    try {
+      return await this.findOneDocAndUpdate({_id:id},{status:status});
+    } catch (error) {
+      throw error
+    }
+  }
+
 }
 
 export default new TicketRepository();

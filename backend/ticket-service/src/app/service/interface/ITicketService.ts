@@ -3,8 +3,10 @@ import { ITicket } from "../../models/interface/ITicketModel";
 import { IBasicResponse } from "../../interface/userTokenData";
 
 export interface IReassignedTicketResponse extends IBasicResponse{
-  data ? : ITicket | null
+  data ? : ITicket | null;
 }
+
+
 
 
 export interface ITicketService {
@@ -25,4 +27,8 @@ export interface ITicketService {
   }>;
 
   getReassignedTicket(data:ITicketReassignData) : Promise< IReassignedTicketResponse >
+
+  getTicketData (id:string) : Promise<IReassignedTicketResponse>;
+
+  getUpdatedTicketStatus(id:string,status:string) : Promise<IReassignedTicketResponse>;
 }

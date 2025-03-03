@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { FaEye, FaChevronDown, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronDown, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { debounce } from "lodash";
 import { searchInputValidate } from "@/components/utility/searchInputValidateNameEmail";
 import { ITicketContext } from "@/types/ITicketContext";
@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { Messages } from "@/enums/Messages";
 import { fetchAllTickets } from "@/api/services/ticketService";
 import { ReassignTicket } from "./ReassignTicket";
+import { ViewTickets } from "./ViewTickets";
 
 interface IManageTickets {
   handleCancel: () => void;
@@ -179,11 +180,12 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
                   
                   />
 
-                  <div className="flex justify-center">
-                    <button className=" " onClick={() => console.log("click")}>
-                      <FaEye />
-                    </button>
-                  </div>
+                 {/* ticket view and manage */}
+                  <ViewTickets
+                    ticketId = {ticket._id}
+                    twickParent = {()=> setRefreshState(!refreshState)}
+                  />
+
                 </div>
               ))}
             </div>

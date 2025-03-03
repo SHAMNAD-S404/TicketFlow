@@ -1,41 +1,55 @@
 import { IUpdateReassignTicketData } from "@/components/company/Ticket/ReassignTicket";
 import axiosInstance from "../axiosInstance";
 
+export const createTicket = async (data: FormData) => {
+  try {
+    const response = await axiosInstance.post("/tickets/create-ticket", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
-export const createTicket = async ( data : FormData) => {
+export const fetchAllTickets = async (currentPage: number, sortBy: string, searchQuery: string) => {
+  try {
+    const response = await axiosInstance.get(
+      `/tickets/get-all-tickets?page=${currentPage}&sortBy=${sortBy}&searchQuery=${searchQuery}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const ticketReassign = async (data: IUpdateReassignTicketData) => {
+  try {
+    const response = await axiosInstance.patch("/tickets/ticket-reassign", data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+export const fetchOneTicket = async (id:string) => {
     try {
-
-        const response = await axiosInstance.post("/tickets/create-ticket",data,{
-            headers : {
-                "Content-Type": "multipart/form-data",
-            }
-        });
-        return response.data
-        
+        const response = await axiosInstance.get(`/tickets/get-ticket?id=${id}`);
+        return response.data;
     } catch (error) {
-        throw error
+        throw error;
     }
 }
 
-export const fetchAllTickets = async (currentPage : number, sortBy : string, searchQuery:string ) => {
-    try {
-
-        const response = await axiosInstance.get(
-            `/tickets/get-all-tickets?page=${currentPage}&sortBy=${sortBy}&searchQuery=${searchQuery}`
-        );
-        return response.data;
-        
-    } catch (error) {
-        console.error(error);
-        throw error
-    }
-}
-
-export const ticketReassign = async (data : IUpdateReassignTicketData) => {
-    try {
-        const response = await axiosInstance.patch("/tickets/ticket-reassign",data);
-        return response.data;
-    } catch (error) {
-        throw error
-    }
+export const updateTicketStatus = async (id:string,status:string) => {
+  try {
+      const response = await axiosInstance.patch('/tickets/update-status',{id,status});
+      return response.data;
+  } catch (error) {
+    throw error;
+  }
 }
