@@ -5,6 +5,7 @@ import DynamicCard from "@/components/utility/DynamicCard";
 import ManageTickets from "./ManageTickets";
 import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux/store";
+import AssignedTickets from "./AssignedTickets";
 
 interface ISubMenuList {
   header: string;
@@ -66,6 +67,8 @@ export const TicketHome: React.FC = () => {
         />;
       case "Manage Tickets" :
         return <ManageTickets  handleCancel = {backToMainMenu} />;
+      case "My Tickets"  : 
+        return <AssignedTickets handleCancel={backToMainMenu} />
       default:
         return (
           <div className="flex flex-wrap gap-12 justify-start p-6">

@@ -6,6 +6,8 @@ import { Messages } from "../../../constants/messageConstants";
 import { EventType } from "../../../constants/queueEventType";
 import { publishToQueue } from "../../../queues/publisher";
 import { RabbitMQConfig } from "../../../config/rabbitmq";
+import { validateEmailSchema } from "../../dtos/basicValidation.schema";
+import { resetPasswordSchema } from "../../dtos/baseFormValidation.schema";
 
 export class AuthController implements IAuthController {
   private authService: IAuthService;
@@ -16,11 +18,7 @@ export class AuthController implements IAuthController {
 
   //create user ================================================================================
 
-  /**
-   * Registers a new user
-   * @param req The request object
-   * @param res The response object
-   */
+
   public registerUser = async (req: Request, res: Response): Promise<void> => {
     try {
       const registerData = req.body;
@@ -32,18 +30,12 @@ export class AuthController implements IAuthController {
 
       res.status(statusCode).json({ message, success });
     } catch (error) {
-      // Return a 400 status with an error message if the registration fails
       res.status(400).json({ message: String(error), success: false });
     }
   };
 
   //verify otp =====================================================================================
 
-  /**
-   * Verifies the OTP sent to the user's email
-   * @param req The request object
-   * @param res The response object
-   */
   public verifyOTP = async (req: Request, res: Response): Promise<void> => {
     try {
       // Extract the email and OTP from the request body
@@ -61,24 +53,18 @@ export class AuthController implements IAuthController {
       // Return the response with the message and success status
       res.status(statusCode).json({ message, success });
     } catch (error) {
-      // Catch any errors and return a 400 status with an error message
       res.status(400).json({ message: String(error), success: false });
     }
   };
 
   //verify login ==============================================================================
 
-  /**
-   * Verifies the user's login credentials
-   * @param req The request object
-   * @param res The response object
-   */
   public verifyLogin = async (req: Request, res: Response): Promise<void> => {
     try {
       // Extract the email and password from the request body
 
       const { email, password } = req.body;
-      
+
       // Call the verifyLogin method of the Auth service
       const response = await this.authService.verifyLogin(email, password);
 
@@ -91,8 +77,8 @@ export class AuthController implements IAuthController {
 
       const { message, success, tockens, isFirst, role } = response;
 
-      if(role === "sudo"){
-        res.status(HttpStatus.UNAUTHORIZED).json({message:Messages.NO_ACCESS,success:false});
+      if (role === "sudo") {
+        res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.NO_ACCESS, success: false });
         return;
       }
 
@@ -103,14 +89,14 @@ export class AuthController implements IAuthController {
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
           secure: false,
-          maxAge: 1 * 60 * 1000, //for 1 min
+          maxAge: 1 * 60 * 1000, 
           sameSite: "lax",
         });
 
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
           secure: false,
-          maxAge: 7 * 24 * 60 * 60 * 1000, //for 9 days
+          maxAge: 7 * 24 * 60 * 60 * 1000, 
           sameSite: "lax",
         });
 
@@ -119,9 +105,7 @@ export class AuthController implements IAuthController {
         return;
       } else {
         // Return a 500 status with an error message if the tokens are not present
-        res
-          .status(500)
-          .json({ message: "failed to assign tokens", success: false });
+        res.status(500).json({ message: "failed to assign tokens", success: false });
         return;
       }
     } catch (error) {
@@ -132,20 +116,12 @@ export class AuthController implements IAuthController {
 
   //verify email ===================================================================================
 
-  /**
-   * Verify email address by sending an OTP to the user
-   * @param req The request object
-   * @param res The response object
-   */
   public verifyEmail = async (req: Request, res: Response): Promise<void> => {
     try {
-      // Extract the email from the request body
-      console.log("inside verify controller", req.body);
+
       const { email } = req.body;
 
-      // Check if the email is provided
       if (!email) {
-        // Return a 400 status with an error message if the email is not provided
         res.status(400).json({ message: "Enter the email", success: false });
         return;
       }
@@ -160,17 +136,13 @@ export class AuthController implements IAuthController {
       // Return the response with the appropriate status code
       res.status(statusCode).json({ message, success });
     } catch (error) {
-      // Catch any errors and return a 400 status with an error message
       res.status(400).json({ message: String(error), success: false });
     }
   };
 
   // update password =========================================================================================
 
-  public updateUserPassword = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
+  public updateUserPassword = async (req: Request, res: Response): Promise<void> => {
     try {
       console.log("im inside controlere");
 
@@ -185,10 +157,7 @@ export class AuthController implements IAuthController {
         return;
       }
 
-      const updatePassword = await this.authService.updateUserPassword(
-        email as string,
-        password
-      );
+      const updatePassword = await this.authService.updateUserPassword(email as string, password);
       const { message, success } = updatePassword;
       const statusCode = success ? 200 : 400;
       res.status(statusCode).json({ message, success });
@@ -203,9 +172,7 @@ export class AuthController implements IAuthController {
     try {
       const userEmail = req.query.email;
       if (!userEmail) {
-        res
-          .status(400)
-          .json({ message: "user detail not found", success: false });
+        res.status(400).json({ message: "user detail not found", success: false });
         return;
       }
 
@@ -225,9 +192,7 @@ export class AuthController implements IAuthController {
     try {
       const authUserUUID = req.query.authUserUUID;
       if (!authUserUUID) {
-        res
-          .status(401)
-          .json({ message: "user not authenticated", success: false });
+        res.status(401).json({ message: "user not authenticated", success: false });
         return;
       }
 
@@ -286,27 +251,17 @@ export class AuthController implements IAuthController {
 
   // verify super admin login================================================================================================
 
-  public verifySudoLogin = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
+  public verifySudoLogin = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, password } = req.body;
       if (!email || !password) {
-        res
-          .status(HttpStatus.FORBIDDEN)
-          .json({ message: Messages.ALL_FILED_REQUIRED_ERR, succeess: false });
+        res.status(HttpStatus.FORBIDDEN).json({ message: Messages.ALL_FILED_REQUIRED_ERR, succeess: false });
         return;
       }
 
-      const response = await this.authService.verifySuperAdminLogin(
-        email,
-        password
-      );
+      const response = await this.authService.verifySuperAdminLogin(email, password);
       if (!response.success) {
-        res
-          .status(response.statusCode)
-          .json({ message: response.message, success: response.success });
+        res.status(response.statusCode).json({ message: response.message, success: response.success });
         return;
       }
 
@@ -334,24 +289,17 @@ export class AuthController implements IAuthController {
         return;
       } else {
         // Return a 500 status with an error message if the tokens are not present
-        res
-          .status(500)
-          .json({ message: "failed to assign tokens", success: false });
+        res.status(500).json({ message: "failed to assign tokens", success: false });
         return;
       }
     } catch (error) {
-      res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ success: false, message: String(error) });
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: String(error) });
     }
   };
 
   // verify refrsh Toekn ================================================================================================
 
-  public verifyRefreshToken = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
+  public verifyRefreshToken = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email } = req.query;
 
@@ -371,31 +319,22 @@ export class AuthController implements IAuthController {
       return;
     } catch (error) {
       console.error("error in verifyRefreshToken", error);
-      res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: Messages.SERVER_ERROR });
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR });
     }
   };
 
   // handle company block status refrsh Toekn ================================================================
 
-  public handleCompanyBlockStatus = async (
-    req: Request,
-    res: Response
-  ): Promise<void> => {
+  public handleCompanyBlockStatus = async (req: Request, res: Response): Promise<void> => {
     try {
       if (req.query.role !== "sudo") {
-        res
-          .status(HttpStatus.UNAUTHORIZED)
-          .json({ message: Messages.NO_ACCESS, success: false });
+        res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.NO_ACCESS, success: false });
         return;
       }
 
       const { email } = req.body;
       if (!email) {
-        res
-          .status(HttpStatus.BAD_REQUEST)
-          .json({ messages: Messages.EMAIL_MISSING, success: false });
+        res.status(HttpStatus.BAD_REQUEST).json({ messages: Messages.EMAIL_MISSING, success: false });
         return;
       }
 
@@ -413,44 +352,85 @@ export class AuthController implements IAuthController {
       res.status(statusCode).json({ message, success });
     } catch (error) {
       console.error("error in block company procedure", error);
-      res
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .json({ message: Messages.SERVER_ERROR, success: false });
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
       return;
     }
   };
 
-
-  public handleEmployeeBlockStatus = async(req: Request, res: Response): Promise<void> => {
+  public handleEmployeeBlockStatus = async (req: Request, res: Response): Promise<void> => {
     try {
-
-       const {role} = req.query;
-       const permittedRole = ["company","departmentHead"];
-       if( !permittedRole.includes(String(role))  ){
-        res.status(HttpStatus.UNAUTHORIZED).json({message:Messages.NO_ACCESS, success:false});
-        return
-       }
-
-       const email = req.body.email;
-       if(!email){
-        res.status(HttpStatus.BAD_REQUEST).json({message:Messages.EMAIL_MISSING,success:false})
+      const { role } = req.query;
+      const permittedRole = ["company", "departmentHead"];
+      if (!permittedRole.includes(String(role))) {
+        res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.NO_ACCESS, success: false });
         return;
-       }
+      }
 
-       const updateEmployee = await this.authService.updateUserBlockStatus(email);
-       const {message,statusCode,success,userDataPayload} = updateEmployee;
-       //sending to company service queue
-       if(success && userDataPayload){
-          await publishToQueue(RabbitMQConfig.companyMainConsumer , {
-            ...userDataPayload,
-            eventType : EventType.EMPLOYEE_STATUS_UPDATE
-          });
-       }
-       res.status(statusCode).json({message,success})
-      
+      const email = req.body.email;
+      if (!email) {
+        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.EMAIL_MISSING, success: false });
+        return;
+      }
+
+      const updateEmployee = await this.authService.updateUserBlockStatus(email);
+      const { message, statusCode, success, userDataPayload } = updateEmployee;
+      //sending to company service queue
+      if (success && userDataPayload) {
+        await publishToQueue(RabbitMQConfig.companyMainConsumer, {
+          ...userDataPayload,
+          eventType: EventType.EMPLOYEE_STATUS_UPDATE,
+        });
+      }
+      res.status(statusCode).json({ message, success });
     } catch (error) {
-      console.log("error in block company procedure : ",error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:Messages.SERVER_ERROR,success:false})
+      console.log("error in block company procedure : ", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
     }
-  }
+  };
+  //forgot password handle =====================================================================================
+
+  public forgotPasswordHandle = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const validateEmail = validateEmailSchema.safeParse(req.body);
+      if (!validateEmail.success) {
+        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.EMAIL_INVALID, success: false });
+        return;
+      }
+
+      const response = await this.authService.validateForgotPasswordReq(validateEmail.data.email);
+      const { message, statusCode, success } = response;
+      res.status(statusCode).json({ message, success });
+    } catch (error) {
+      console.error("error in forgot password :", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: Messages.SERVER_ERROR,
+        success: false,
+      });
+    }
+  };
+
+  public resetPassword = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const validateInput = resetPasswordSchema.safeParse(req.body);
+      if (!validateInput.success) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+          message: Messages.INVALID_FIELDS,
+          success: false,
+        });
+      } else {
+
+        const { password, token } = validateInput.data;
+        const response = await this.authService.handleResetPassword(token, password);
+        const { message, statusCode, success } = response;
+        res.status(statusCode).json({ message, success });
+        return;
+      }
+    } catch (error) {
+      console.log("error while resetPassword :", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: Messages.SERVER_ERROR,
+        success: false,
+      });
+    }
+  };
 }

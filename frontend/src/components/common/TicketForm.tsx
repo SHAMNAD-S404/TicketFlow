@@ -21,6 +21,12 @@ export interface IEmployeeList {
   email: string;
 }
 
+export interface ICompany {
+  _id : string,
+  companyName : string,
+  email : string,
+}
+
 interface TicketFormProps {
   handleCancel: () => void;
   ticketRaisedDepartmentName: string;
@@ -39,6 +45,7 @@ const TicketForm: React.FC<TicketFormProps> = ({
   const [departments, setDepartments] = useState<IDepartement[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [company , setCompany] = useState<ICompany[]>([]);
 
   const {
     register,
@@ -52,6 +59,12 @@ const TicketForm: React.FC<TicketFormProps> = ({
   const SelectedDepartmentId = watch("ticketHandlingDepartmentId");
 
   const onSubmitForm = async (data: TicketFormData) => {
+
+    if(ticketRaisedEmployeeID === data.ticketHandlingEmployeeId){
+      toast.error("You dont have permission to assign ticket for yourself !");
+      return
+    }
+
     const selectedDepartment = departments.find((dept) => dept._id == data.ticketHandlingDepartmentId);
     const selectedEmployee = employees.find((employee) => employee._id == data.ticketHandlingEmployeeId);
 

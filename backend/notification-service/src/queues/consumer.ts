@@ -1,41 +1,3 @@
-// import amqplib from "amqplib";
-// import { RabbitMQConfig } from "../config/rabbitmqConfig";
-// import { sendEmail } from "../utils/sendEmail";
-
-// export const startConsumer = async () => {
-//   try {
-//     const connection = await amqplib.connect(RabbitMQConfig.url);
-//     const channel = await connection.createChannel();
-
-//     //assert queue
-//     await channel.assertQueue(RabbitMQConfig.notificationQueue, {
-//       durable: true,
-//     });
-
-//     //consume the message from the queue
-//     channel.consume(
-//       RabbitMQConfig.notificationQueue,
-//       async (message) => {
-//         if (message) {
-//           const input = JSON.parse(message.content.toString());
-//           console.log("Recieved message in notifiction queue, mssg : ", input);
-
-//           //send mail functionality
-//           const { email, otp, content, subject, template } = input;
-//           await sendEmail(email, subject, template, { otp, content });
-
-//           //acknowledge the message
-//           channel.ack(message);
-//         }
-//       },
-//       { noAck: false }
-//     );
-//   } catch (error) {
-//     console.error("Error in notification consumer", error);
-//   }
-// };
-
-
 import amqplib from "amqplib";
 import { RabbitMQConfig } from "../config/rabbitmqConfig";
 import { sendEmail } from "../utils/sendEmail";
@@ -58,7 +20,7 @@ export const startConsumer = async () => {
           const input = JSON.parse(message.content.toString());
           console.log("Received message in notification queue:", input);
 
-          const { email, subject, template, type, content, otp,  password } = input;
+          const { email, subject, template, type, content, otp, password, resetLink } = input;
 
           try {
             // Handle different types of notifications dynamically
@@ -73,6 +35,14 @@ export const startConsumer = async () => {
                   email,
                   password,
                   content,
+                });
+                break;
+
+              case "change-password-link":
+                await sendEmail(email, subject, template, {
+                  resetLink,
+                  email,
+                  supportUrl: "TicketFlow support team",
                 });
                 break;
 
@@ -95,4 +65,3 @@ export const startConsumer = async () => {
     console.error("Error in notification consumer:", error);
   }
 };
-

@@ -25,13 +25,6 @@ export const TicketHome: React.FC = () => {
       onButtonClick : () => setActiveSubMenu("Create Ticket")
     },
     {
-      header: "Manage Tickets",
-      description: "Tap here to view and manage ticket ",
-      buttonText: "Manage Tickets",
-      image: GifImage,
-      onButtonClick : ()=> setActiveSubMenu("Manage Tickets")
-    },
-    {
       header: "Assigned Tickets For me",
       description: "Assigned tickets for me that i want to work on that",
       buttonText: "MY Tickets",
@@ -53,6 +46,9 @@ export const TicketHome: React.FC = () => {
       case "Create Ticket":
         return <TicketForm 
         ticketRaisedDepartmentName={employee?.departmentName as string}
+        ticketRaisedDepartmentID={employee?.departmentId as string}
+        ticketRaisedEmployeeID={employee?._id as string}
+        ticketRaisedEmployeeName={employee?.name as string}
         handleCancel={onCancel} />;
       default:
         return (

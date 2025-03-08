@@ -128,7 +128,7 @@ export const ViewTickets: React.FC<IViewTickets> = ({ ticketId, twickParent }) =
                     <div className="">
                       {ticketData.imageUrl ? (
                         <div className="flex justify-center items-center">
-                          <img className="rounded-xl w-6/6 h-96" src={ticketData.imageUrl} alt="ticket image" />
+                          <img className="rounded-xl w-6/6 h-80" src={ticketData.imageUrl} alt="ticket image" />
                         </div>
                       ) : (
                         <div className="flex flex-col gap-1 justify-center items-center ">

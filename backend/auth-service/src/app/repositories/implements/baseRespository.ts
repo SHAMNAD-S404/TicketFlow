@@ -141,5 +141,15 @@ export class BaseRepository<T extends Document> {
       throw error
     }
   }
+
+  async updateOneDocument<T>(query: Record<string, any>, updateQuery: Record<string, any>): Promise<T | null> {
+    try {
+      return await this.model.findOneAndUpdate(query,
+        {$set : updateQuery},{new : true});
+    } catch (error) {
+      throw error;
+    }
+  }
+
   
 }

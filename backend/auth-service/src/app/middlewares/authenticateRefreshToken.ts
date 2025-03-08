@@ -23,6 +23,7 @@ export const verifyRefreshToken = (
       res
         .status(HttpStatus.UNAUTHORIZED)
         .json({ message: Messages.TOKEN_NOT_FOUND, success: false });
+        return;
     }
 
     const decode = jwt.verify(

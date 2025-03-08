@@ -6,6 +6,7 @@ export interface Iconfig {
   OAuthClientId : string;
   superAdminEmail:string;
   jwtRefreshSecret: string;
+  resetPasswordUrlLink : string
 }
 
 export const config: Iconfig = {
@@ -15,4 +16,5 @@ export const config: Iconfig = {
   jwtRefreshSecret : process.env.REFRESH_TOKEN_SECRET as string,
   OAuthClientId : process.env.OAUTH_CLIENT_ID as string,
   superAdminEmail: process.env.SUDO_EMAIL_ID as string,
+  resetPasswordUrlLink : process.env.RESET_PASSWORD_LINK_URL as string,
 };

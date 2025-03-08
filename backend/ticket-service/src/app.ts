@@ -1,29 +1,20 @@
 import dotenv from "dotenv";
-import express,{Request,Response,NextFunction} from "express";
-import ticketRoutes  from "./app/routes/ticketRoutes"
-
-
-
+import express, { Request, Response, NextFunction } from "express";
+import ticketRoutes from "./app/routes/ticketRoutes";
 
 dotenv.config();
-
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-
-
 app.use((req: Request, res: Response, next: NextFunction) => {
-    console.log("Incoming Request Path in ticket-service", req.path);
-    console.log("Incoming Request Body in ticket-service", req.body);
-    next();
+  console.log("Incoming Request Path in ticket-service", req.path);
+  console.log("Incoming Request Body in ticket-service", req.body);
+  next();
 });
 
-app.use("/",ticketRoutes)
-
-
+app.use("/", ticketRoutes);
 
 export default app;

@@ -14,5 +14,7 @@ export interface IAuthController {
   verifyRefreshToken ( req:Request,res:Response) : Promise<void>;
   handleCompanyBlockStatus ( req: Request , res : Response) : Promise<void>;
   handleEmployeeBlockStatus (req : Request , res : Response) : Promise<void>;
+  forgotPasswordHandle (req : Request , res : Response) : Promise < void >;
+  resetPassword ( req : Request, res : Response) : Promise <void>;
   
 }

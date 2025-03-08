@@ -1,4 +1,5 @@
 import { RegisterUserDTO } from "../../dtos/registerUserDTO";
+import { basicResponse } from "../../interfaces/basicResponse";
 
 export interface IAuthService {
   registerUser(
@@ -52,4 +53,8 @@ export interface IAuthService {
   verifyUser(email : string) : Promise<{ message: string; success:boolean,statusCode :number , accessToken?:string }>
 
   updateUserBlockStatus(email : string) : Promise<{message : string , success : boolean , statusCode : number ,userDataPayload ?: object }>
+
+  validateForgotPasswordReq (email : string) : Promise<basicResponse>;
+
+  handleResetPassword (token:string,password:string) : Promise <basicResponse>;
 }

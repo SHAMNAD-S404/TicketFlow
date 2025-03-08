@@ -9,6 +9,7 @@ import regexPatterns, { RegexMessages } from "../../utils/regexPattern";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store";
 import { fetchEmployee } from "../../redux/employeeSlice";
+import { Messages } from "@/enums/Messages";
 
 interface UserLoginProps {
   forgotPassword: () => void;
@@ -43,7 +44,7 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
       if (response.success && response.isFirst) {
         localStorage.setItem("resetEmail", data.email);
         toast.success(response.message, {
-          onClose: () => navigate("/auth/employee/resetPassword"),
+          onClose: () => navigate("/auth/employee/create-new-password"),
         });
       } else if (response.success) {
         localStorage.setItem("userRole", response.role);
@@ -91,7 +92,7 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
                 placeholder="flip2@gmail.com"
                 className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 {...register("email", {
-                  required: "this field is required",
+                  required: RegexMessages.FEILD_REQUIRED,
                   pattern: {
                     value: regexPatterns.email,
                     message: RegexMessages.emailRegexMessage,
@@ -116,15 +117,22 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
               <div className="relative">
                 <input
                   type={passwordVisible ? "text" : "password"}
-                  id="password"
                   placeholder="****************"
                   className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   {...register("password", {
                     required: "this field is required",
-                    pattern: {
-                      value: regexPatterns.password,
-                      message: RegexMessages.passwordRegexMessage,
+                    // pattern: {
+                    //   value: regexPatterns.password,
+                    //   message: RegexMessages.passwordRegexMessage,
+                    // },
+                    minLength : {
+                      value : 8,
+                      message : RegexMessages.MINIMUM_LIMIT
                     },
+                    maxLength : {
+                      value : 15,
+                      message : RegexMessages.MAXIMUM_LIMIT_REACHED
+                    }
                   })}
                 />
                 <button

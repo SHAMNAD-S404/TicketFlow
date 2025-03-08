@@ -15,7 +15,7 @@ const regexPatterns: TregexPatterns = {
   nameAndNumber: /^[a-zA-Z0-9 ]+$/,
   email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, // Standard email validation
   phoneNumber: /^(\+?\d{1,3}[- ]?)?(6|7|8|9)\d{9}$/ , // Numbers only, supports optional "+" prefix
-  password: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,15}$/, // 8-15 chars, must contain letters and numbers
+  password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/, // 8-15 chars, must contain letters and numbers
   corporateId: /^[A-Za-z0-9]+$/, // Alphanumeric
   textWithSpaceAndCommas: /^[a-zA-Z][a-zA-Z\s,]*$/,
   textAreaValidation:/^[a-zA-Z0-9"'.(),/\-\s]+(?<![().])$/,
@@ -53,7 +53,7 @@ export const RegexMessages : regexPatternMessages = {
   corporateIdRegexMessage: " Alphates and number only allowed",
   textWithSpaceAndCommasRegexMessage : "Alphabates ,space and commas only allowed",
   FEILD_REQUIRED : "This is field is required",
-  MAXIMUM_LIMIT_REACHED : "Enter Input Maximun limit reached !",
+  MAXIMUM_LIMIT_REACHED : "Input Maximun limit reached !",
   MINIMUM_LIMIT : "Enter atleast minimum Limit",
   text_area_validation : "This field only allow alphabates , numbers , allowed symbols ',.(,), text end with ()  not allowed "
   

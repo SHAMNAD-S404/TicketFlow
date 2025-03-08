@@ -15,7 +15,6 @@ const CoAdminLogin: React.FC = () => {
   const [step, setStep] = useState<Steps>(Steps.Login);
 
   const handleForgotPassword = () => setStep(Steps.ForgotPassword);
-  const handleSubmitEmail = () => setStep(Steps.VerifyCode);
   const handleBackToLogin = () => setStep(Steps.Login);
   const handleSetPassword = () => setStep(Steps.NewPassword);
 
@@ -36,7 +35,6 @@ const CoAdminLogin: React.FC = () => {
       {step === "forgotPassword" && (
         <ForgotPassEmail
           userType="admin"
-          onSubmitEmail={handleSubmitEmail}
           onBacktoLogin={handleBackToLogin}
         />
       )}

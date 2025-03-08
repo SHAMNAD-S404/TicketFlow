@@ -16,7 +16,6 @@ const UserLogin: React.FC = () => {
 
   const goToLogin = () => setStep(Steps.Login);
   const goToForgotPassword = () => setStep(Steps.ForgotPassword);
-  const goToVerify = () => setStep(Steps.VerifyCode);
   const goToNewPassword = () => setStep(Steps.NewPassword);
 
   useEffect(() => {
@@ -38,7 +37,6 @@ const UserLogin: React.FC = () => {
       {step === Steps.ForgotPassword && (
         <ForgotPassEmail
           userType="user"
-          onSubmitEmail={goToVerify}
           onBacktoLogin={goToLogin}
         />
       )}

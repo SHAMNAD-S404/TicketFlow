@@ -13,16 +13,10 @@ import { config } from "../../../config";
 import { Messages } from "../../../constants/messageConstants";
 import { HttpStatus } from "../../../constants/httpStatus";
 import { UserData } from "../../middlewares/extractUserData";
-import {
-  deleteRedisData,
-  getRedisData,
-  setRedisData,
-} from "../../../utils/redisUtils";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-} from "../../../utils/jwtUtils";
-import { EventType } from "../../../constants/queueEventType";
+import { deleteRedisData, getRedisData, setRedisData } from "../../../utils/redisUtils";
+import { generateAccessToken, generateRefreshToken } from "../../../utils/jwtUtils";
+import { basicResponse } from "../../interfaces/basicResponse";
+import { nanoid } from "nanoid";
 
 export class AuthService implements IAuthService {
   constructor(private userRepository: UserRepository) {}
@@ -34,30 +28,12 @@ export class AuthService implements IAuthService {
    * @param data The user registration data
    * @returns A promise that resolves to an object containing a message and a boolean indicating success or failure
    */
-  async registerUser(
-    data: RegisterUserDTO
-  ): Promise<{ message: string; success: boolean; statusCode: number }> {
+  async registerUser(data: RegisterUserDTO): Promise<{ message: string; success: boolean; statusCode: number }> {
     try {
-      const {
-        email,
-        password,
-        companyName,
-        companyType,
-        phoneNumber,
-        corporatedId,
-        originCountry,
-      } = data;
+      const { email, password, companyName, companyType, phoneNumber, corporatedId, originCountry } = data;
 
       //check if email and password and other details are provided
-      if (
-        !email ||
-        !password ||
-        !companyName ||
-        !companyType ||
-        !phoneNumber ||
-        !corporatedId ||
-        !originCountry
-      ) {
+      if (!email || !password || !companyName || !companyType || !phoneNumber || !corporatedId || !originCountry) {
         return {
           message: Messages.ALL_FILED_REQUIRED_ERR,
           success: false,
@@ -92,12 +68,7 @@ export class AuthService implements IAuthService {
 
       //store user data in auth-service db.
       const role = UserRoles.Company;
-      const storeUser = await this.userRepository.create(
-        email,
-        hashedPassword,
-        role,
-        authUserUUID
-      );
+      const storeUser = await this.userRepository.create(email, hashedPassword, role, authUserUUID);
       if (!storeUser) {
         return {
           message: Messages.FAIL_TRY_AGAIN,
@@ -121,11 +92,7 @@ export class AuthService implements IAuthService {
       await deleteRedisData(`tempEmail:${email}`);
 
       //sending data to company-service to store in DB.
-      const response = await publishToQueueWithRPCAndRetry(
-        RabbitMQConfig.companyRPCQueue,
-        companyData,
-        3
-      );
+      const response = await publishToQueueWithRPCAndRetry(RabbitMQConfig.companyRPCQueue, companyData, 3);
 
       if (response.success) {
         return {
@@ -152,16 +119,7 @@ export class AuthService implements IAuthService {
 
   //=====================================================================================================================
 
-  /**
-   * Verifies the OTP for the given email
-   * @param email The user's email id
-   * @param otp The OTP sent to the user
-   * @returns A promise that resolves to an object containing a message and a boolean indicating success or failure
-   */
-  async verifyOTP(
-    email: string,
-    otp: string
-  ): Promise<{ message: string; success: boolean }> {
+  async verifyOTP(email: string, otp: string): Promise<{ message: string; success: boolean }> {
     try {
       // Check if email and OTP are provided
       if (!email || !otp) {
@@ -186,10 +144,7 @@ export class AuthService implements IAuthService {
       }
 
       // Store user email in reddis and delete verifyemail data from reddis
-      await Promise.all([
-        setRedisData(`tempEmail:${email}`, email, 1200),
-        deleteRedisData(`verifyEmail:${email}`),
-      ]);
+      await Promise.all([setRedisData(`tempEmail:${email}`, email, 1200), deleteRedisData(`verifyEmail:${email}`)]);
 
       return { message: Messages.OTP_VERIFIED, success: true };
     } catch (error) {
@@ -199,13 +154,6 @@ export class AuthService implements IAuthService {
 
   //====================================================================================================================
 
-  /**
-   * Verifies the user's login credentials
-   * @param email The user's email id
-   * @param password The user's password
-   * @returns A promise that resolves to an object containing a message and a boolean indicating success or failure.
-   * If success is true, the object will also contain an object with refresh and access tokens.
-   */
   async verifyLogin(
     email: string,
     password: string
@@ -228,8 +176,8 @@ export class AuthService implements IAuthService {
         return { message: "User not found", success: false };
       }
 
-      if(findUser.isBlock){
-        return {message : Messages.USER_BLOCKED , success:false}
+      if (findUser.isBlock) {
+        return { message: Messages.USER_BLOCKED, success: false };
       }
 
       // Compare the provided password with the hashed password stored in the database
@@ -269,14 +217,7 @@ export class AuthService implements IAuthService {
 
   // verify email =====================================================================================================
 
-  /**
-   * Verify email address by sending an OTP to the user
-   * @param email The user's email address
-   * @returns A promise that resolves to an object containing a message and a boolean indicating success or failure.
-   */
-  async verifyEmail(
-    email: string
-  ): Promise<{ message: string; success: boolean }> {
+  async verifyEmail(email: string): Promise<{ message: string; success: boolean }> {
     try {
       // Check if email is provided
       if (!email) {
@@ -315,10 +256,7 @@ export class AuthService implements IAuthService {
       };
 
       // Send notification to notification service using RabbitMQ
-      await publishToQueue(
-        RabbitMQConfig.notificationQueue,
-        notificationPayload
-      );
+      await publishToQueue(RabbitMQConfig.notificationQueue, notificationPayload);
 
       return { message: "Kindly check your email for OTP ", success: true };
     } catch (error) {
@@ -328,16 +266,7 @@ export class AuthService implements IAuthService {
 
   //password updation ===========================================================================================
 
-  /**
-   * Update the user's password in the database
-   * @param email The user's email address
-   * @param password The new password
-   * @returns A promise that resolves to an object containing a message and a boolean indicating success or failure
-   */
-  async updateUserPassword(
-    email: string,
-    password: string
-  ): Promise<{ message: string; success: boolean }> {
+  async updateUserPassword(email: string, password: string): Promise<{ message: string; success: boolean }> {
     try {
       // Check if user exists in the database
       const userExist = await this.userRepository.findByEmail(email);
@@ -349,10 +278,7 @@ export class AuthService implements IAuthService {
       const hashedPassword = await hashPassword(password);
 
       // Update the user's password in the database
-      const updatePassword = await this.userRepository.resetPassword(
-        email,
-        hashedPassword
-      );
+      const updatePassword = await this.userRepository.resetPassword(email, hashedPassword);
 
       // Check if password update was successful
       if (!updatePassword) {
@@ -361,11 +287,9 @@ export class AuthService implements IAuthService {
           success: false,
         };
       }
-
       // Return success message
       return {
-        message:
-          "successfully updated password ! kindly login with new credentials",
+        message: "successfully updated password ! kindly login with new credentials",
         success: true,
       };
     } catch (error) {
@@ -376,9 +300,7 @@ export class AuthService implements IAuthService {
 
   //user role fetching ======================================================================================
 
-  async getUserRole(
-    email: string
-  ): Promise<{ message: string; success: boolean; role?: string }> {
+  async getUserRole(email: string): Promise<{ message: string; success: boolean; role?: string }> {
     try {
       const userRole = await this.userRepository.findByEmail(email);
       if (!userRole) {
@@ -402,9 +324,7 @@ export class AuthService implements IAuthService {
    * @param token The Google sign-in token
    * @returns An object containing the message, success status, and the user's email if successful
    */
-  async verifyGoogleSignIn(
-    token: string
-  ): Promise<{ message: string; success: boolean; email?: string }> {
+  async verifyGoogleSignIn(token: string): Promise<{ message: string; success: boolean; email?: string }> {
     try {
       // Verify the token with the Google OAuth2 client
       const CLIENT_ID = config.OAuthClientId;
@@ -446,9 +366,7 @@ export class AuthService implements IAuthService {
 
   //======================================================================================================
 
-  async getResendOTP(
-    email: string
-  ): Promise<{ message: string; success: boolean }> {
+  async getResendOTP(email: string): Promise<{ message: string; success: boolean }> {
     try {
       const verifyEmail = await getRedisData(`verifyEmail:${email}`);
       if (!verifyEmail) {
@@ -468,10 +386,7 @@ export class AuthService implements IAuthService {
       };
 
       //send to notification queue
-      await publishToQueue(
-        RabbitMQConfig.notificationQueue,
-        notificationPayload
-      );
+      await publishToQueue(RabbitMQConfig.notificationQueue, notificationPayload);
 
       return { message: "Resend otp sended to email", success: true };
     } catch (error) {
@@ -545,9 +460,7 @@ export class AuthService implements IAuthService {
 
   //====================================================================================================================
 
-  async verifyUser(
-    email: string
-  ): Promise<{
+  async verifyUser(email: string): Promise<{
     message: string;
     success: boolean;
     statusCode: number;
@@ -594,31 +507,84 @@ export class AuthService implements IAuthService {
     }
   }
 
-  async updateUserBlockStatus(email: string): Promise<{ message: string; success: boolean; statusCode: number;userDataPayload?:object }> {
+  async updateUserBlockStatus(
+    email: string
+  ): Promise<{ message: string; success: boolean; statusCode: number; userDataPayload?: object }> {
     try {
-        const findUser = await this.userRepository.findByEmail(email);
-        if(!findUser) {
-          return {message : Messages.USER_NOT_FOUND ,statusCode : HttpStatus.NOT_FOUND , success : false}
-        }
-        const getStatus : boolean = !findUser.isBlock;
+      const findUser = await this.userRepository.findByEmail(email);
+      if (!findUser) {
+        return { message: Messages.USER_NOT_FOUND, statusCode: HttpStatus.NOT_FOUND, success: false };
+      }
+      const getStatus: boolean = !findUser.isBlock;
 
-        const updateUser = await this.userRepository.userBlockStatusUpdate(email,getStatus);
-        if(!updateUser){
-          return {message : Messages.USER_UPDATE_FAILED, statusCode:HttpStatus.BAD_REQUEST , success : false}
-        }
+      const updateUser = await this.userRepository.userBlockStatusUpdate(email, getStatus);
+      if (!updateUser) {
+        return { message: Messages.USER_UPDATE_FAILED, statusCode: HttpStatus.BAD_REQUEST, success: false };
+      }
 
-        const userDataPayload = {
-          email : updateUser.email,
-          isBlock : updateUser.isBlock,
-        }
+      const userDataPayload = {
+        email: updateUser.email,
+        isBlock: updateUser.isBlock,
+      };
 
-        return {message : Messages.USER_UPDATE_SUCCESS , statusCode:HttpStatus.OK,success:true,userDataPayload}
-
+      return { message: Messages.USER_UPDATE_SUCCESS, statusCode: HttpStatus.OK, success: true, userDataPayload };
     } catch (error) {
-      console.error("error while udpate user status",error);
-      return {message: Messages.SERVER_ERROR, statusCode:HttpStatus.INTERNAL_SERVER_ERROR,success:false}
-      
+      console.error("error while udpate user status", error);
+      return { message: Messages.SERVER_ERROR, statusCode: HttpStatus.INTERNAL_SERVER_ERROR, success: false };
     }
   }
 
+  async validateForgotPasswordReq(email: string): Promise<basicResponse> {
+    try {
+      const userIsExist = await this.userRepository.findByEmail(email);
+      if (!userIsExist) {
+        return { message: Messages.USER_NOT_FOUND, success: false, statusCode: HttpStatus.BAD_REQUEST };
+      }
+      //create a token using nano module
+      const token = nanoid();
+      const storeData = await setRedisData(token, userIsExist.email, 300);
+      if (storeData !== "OK") {
+        return { message: Messages.SERVER_ERROR, success: false, statusCode: HttpStatus.INTERNAL_SERVER_ERROR };
+      }
+      const notificationPayload = {
+        email: userIsExist.email,
+        type: "change-password-link",
+        resetLink: `${config.resetPasswordUrlLink}?token=${token}`,
+        subject: `Reset Password link`,
+        template: `resetPasswordTemplate`,
+      };
+
+      //send to notification queue
+      await publishToQueue(RabbitMQConfig.notificationQueue, notificationPayload);
+
+      return {
+        message: Messages.FORGOT_PASS_LINK,
+        success: true,
+        statusCode: HttpStatus.OK,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async handleResetPassword(token: string, password: string): Promise<basicResponse> {
+    try {
+      //fetching data from reddis
+      const getEmail = await getRedisData(token);
+      console.log("email:",token, "getEmail : ",getEmail)
+      if (!getEmail) {
+        return { message: Messages.TOKEN_EXPIRED, success: false, statusCode: HttpStatus.BAD_REQUEST };
+      }
+      //get hashed password
+      const getHashPassword = await hashPassword(password);
+      const updateUser = await this.userRepository.updatePasswordByEmail(getEmail, getHashPassword);
+      if (updateUser) {
+        return { message: Messages.PASSWORD_UPDATED, statusCode: HttpStatus.OK, success: true };
+      } else {
+        return { message: Messages.SERVER_ERROR, statusCode: HttpStatus.INTERNAL_SERVER_ERROR, success: false };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 }

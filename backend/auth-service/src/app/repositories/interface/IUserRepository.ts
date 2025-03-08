@@ -8,4 +8,5 @@ deleteUser(UserId:string):Promise<any>;
 getUserByAuthUserUUID(authUserUUID :string) : Promise<IUser | null>;
 resetPassword(email:string,password:string) : Promise<IUser | null> ;
 userBlockStatusUpdate(email : string , status:boolean) : Promise<IUser | null > 
+updatePasswordByEmail (email : string , hashPassword:string) : Promise <IUser | null>;
 }

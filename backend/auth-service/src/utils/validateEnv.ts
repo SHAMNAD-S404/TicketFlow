@@ -30,7 +30,9 @@ export function validateEnvVariables(): void {
     if (! process.env.SUDO_EMAIL_ID) {
       console.warn("SUDO_EMAIL_ID is not defined,");
     }
-
+    if (! process.env.RESET_PASSWORD_LINK_URL) {
+      console.warn("  RESET_PASSWORD_LINK_URL is not defined,");
+    }
 
   } 
   

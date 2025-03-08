@@ -20,9 +20,14 @@ export const Messages = {
     LOGIN_SUCCESS : "Login was successfull !",
     TOKEN_NOT_FOUND : "Token not found ! Please Try to login again!",
     TOKEN_INVALID : "Token invalid or not found !",
+    TOKEN_EXPIRED : "Token is invalid or expired",
     EMAIL_MISSING :  "Provide email",
     USER_UPDATE_FAILED : "User update failed ! Please Try again",
     USER_UPDATE_SUCCESS : "User status update successfully",
+    EMAIL_INVALID : "email is invalid or not found !",
+    FORGOT_PASS_LINK : "change password link sended to email",
+    INVALID_FIELDS : "Invalid fileds , or missing some field !",
+    PASSWORD_UPDATED : "Password updated , login with new credentials",
 
     
   

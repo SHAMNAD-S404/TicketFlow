@@ -133,18 +133,18 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
                     {...register("password", {
                       required: "Password is required",
                       minLength: {
-                        value: 6,
+                        value: 8,
                         message: "Password must be at least 6 characters",
                       },
                       maxLength: {
                         value: 15,
                         message: "Password must be at most 15 characters",
                       },
-                      pattern: {
-                        value: regexPatterns.password,
-                        message:
-                          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
-                      },
+                      // pattern: {
+                      //   value: regexPatterns.password,
+                      //   message:
+                      //     "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+                      // },
                     })}
                   />
 

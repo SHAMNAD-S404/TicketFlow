@@ -12,11 +12,7 @@ export class UserRepository
     super(User);
   }
 
-  /**
-   * Finds a user by their email address.
-   * @param email The email address to search for.
-   * @returns The user document, or null if no user is found.
-   */
+
   async findByEmail(email: string): Promise<UserDocument | null> {
     try {
       // Attempt to find the user by email
@@ -26,13 +22,7 @@ export class UserRepository
     }
   }
 
-  /**
-   * Creates a new user document.
-   * @param email The email address of the user.
-   * @param password The password of the user.
-   * @param role The role of the user.
-   * @returns The new user document, or undefined if creation fails.
-   */
+ 
   async createUser(
     email: string,
     password: string,
@@ -47,11 +37,6 @@ export class UserRepository
   }
 
 
-  /**
-   * Deletes a user by their user ID.
-   * @param UserId The ID of the user to delete.
-   * @throws An error if the deletion fails.
-   */
   async deleteUser(UserId: string): Promise<void> {
     try {
       // Attempt to delete the user by their ID
@@ -62,13 +47,6 @@ export class UserRepository
   }
 
 
-  /**
-   * Resets the password of a user in the database.
-   * @param authUserUUID The user ID of the user to reset the password for.
-   * @param password The new password.
-   * @returns The updated user document, or null if the user was not found.
-   * @throws An error if the update fails.
-   */
   async resetPassword(
     email: string,
     password: string
@@ -102,6 +80,10 @@ export class UserRepository
     } catch (error) {
       throw error
     }
+  }
+
+  async updatePasswordByEmail(email: string, hashPassword: string): Promise<IUser | null> {
+    return await this.updateOneDocument({email:email},{password:hashPassword})
   }
 
 
