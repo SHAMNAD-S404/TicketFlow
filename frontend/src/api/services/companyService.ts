@@ -121,7 +121,9 @@ export const fetchAllDepartemtsWiseEmployees = async (
 ) => {
   try {
     const response = await axiosInstance.get(
-      `/company/emp/get-department-employee?companyId=${companyId}&departmentId=${departmentId}&currentPage=${currentPage}&sortBy=${sortBy}&searchKey=${searchKey}`
+      `/company/emp/get-department-employee?companyId=${companyId}
+      &departmentId=${departmentId}&currentPage=${currentPage}
+      &sortBy=${sortBy}&searchKey=${searchKey}`
     );
 
     return response.data;
@@ -175,3 +177,12 @@ export const fetchEmployeesByDepartment = async (id: string) => {
     throw error;
   }
 };
+
+export const fetchAllEmployeeWithLessTicket = async (id : string) => {
+  try {
+    const response = await axiosInstance.get(`/company/emp/get-employee-by-less-ticket?id=${id}`);
+    return response.data;
+  } catch (error) {
+    throw error
+  }
+}

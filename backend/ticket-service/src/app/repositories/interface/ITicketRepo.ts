@@ -15,6 +15,15 @@ export interface ITicketRepository extends IBaseRepository<ITicket> {
     searchQuery: string
   ): Promise<{ tickets: ITicket[] | null; totalPages: number }>;
 
+  findAllTicketForEmployee (
+    authUserUUID : string,
+    ticketHandlingEmployeeId : string,
+    page : number,
+    sortBy : string,
+    searchQuery : string
+  ) : Promise<{ tickets : ITicket[] | null ; totalPages : number }>
+  
+
   ticketReassign(data:ITicketReassignData) : Promise<ITicket | null>
 
   findAndupdateStatus(id:string,status:string) : Promise<ITicket | null>

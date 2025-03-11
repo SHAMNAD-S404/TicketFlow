@@ -25,6 +25,7 @@ router.post("/add-employee",extractUserData,employeeController.createEmployee)
       .get("/get-department-employee",extractUserData,employeeController.getDepartmentWiseEmployees)
       .post("/upload-dp",extractUserData,upload.single('file'),employeeController.uploadProfileImage)
       .get("/get-employee-by-department",extractUserData,employeeController.getEmployeesByDept)
+      .get("/get-employee-by-less-ticket",extractUserData,employeeController.fetchEmployeeWithlessTicket)
 
 
 export default router;

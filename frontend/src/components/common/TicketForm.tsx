@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Calendar, Paperclip, ChevronDown, Image, TicketsPlane } from "lucide-react";
-import { fetchAllDepartemts, fetchEmployeesByDepartment } from "@/api/services/companyService";
+import { fetchAllDepartemts, fetchAllEmployeeWithLessTicket } from "@/api/services/companyService";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { Messages } from "@/enums/Messages";
@@ -22,9 +22,9 @@ export interface IEmployeeList {
 }
 
 export interface ICompany {
-  _id : string,
-  companyName : string,
-  email : string,
+  _id: string;
+  companyName: string;
+  email: string;
 }
 
 interface TicketFormProps {
@@ -33,6 +33,7 @@ interface TicketFormProps {
   ticketRaisedDepartmentID: string;
   ticketRaisedEmployeeID: string;
   ticketRaisedEmployeeName: string;
+  ticketRaisedEmployeeEmail: string;
 }
 
 const TicketForm: React.FC<TicketFormProps> = ({
@@ -41,11 +42,11 @@ const TicketForm: React.FC<TicketFormProps> = ({
   ticketRaisedDepartmentID,
   ticketRaisedEmployeeID,
   ticketRaisedEmployeeName,
+  ticketRaisedEmployeeEmail,
 }) => {
   const [departments, setDepartments] = useState<IDepartement[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [company , setCompany] = useState<ICompany[]>([]);
 
   const {
     register,
@@ -55,18 +56,13 @@ const TicketForm: React.FC<TicketFormProps> = ({
     reset,
   } = useForm<TicketFormData>();
 
-  const [employees, setEmployees] = useState<IEmployeeList[]>([]);
+  const [employees, setEmployees] = useState<IEmployeeList | null>(null);
   const SelectedDepartmentId = watch("ticketHandlingDepartmentId");
 
   const onSubmitForm = async (data: TicketFormData) => {
 
-    if(ticketRaisedEmployeeID === data.ticketHandlingEmployeeId){
-      toast.error("You dont have permission to assign ticket for yourself !");
-      return
-    }
-
     const selectedDepartment = departments.find((dept) => dept._id == data.ticketHandlingDepartmentId);
-    const selectedEmployee = employees.find((employee) => employee._id == data.ticketHandlingEmployeeId);
+    const selectedEmployee = employees;
 
     const formData = new FormData();
 
@@ -77,8 +73,12 @@ const TicketForm: React.FC<TicketFormProps> = ({
     formData.append("ticketRaisedDepartmentId", ticketRaisedDepartmentID);
     formData.append("ticketRaisedEmployeeId", ticketRaisedEmployeeID);
     formData.append("ticketRaisedEmployeeName", ticketRaisedEmployeeName);
+    formData.append("ticketRaisedEmployeeEmail",ticketRaisedEmployeeEmail);
     formData.append("ticketHandlingDepartmentName", selectedDepartment?.departmentName as string);
     formData.append("ticketHandlingEmployeeName", selectedEmployee?.name as string);
+    formData.append("ticketHandlingEmployeeEmail",employees?.email as string);
+    
+
 
     if (selectedImage) {
       formData.append("file", selectedImage);
@@ -107,11 +107,11 @@ const TicketForm: React.FC<TicketFormProps> = ({
     const file = event.target.files?.[0];
     if (file) {
       if (!allowedTypes.includes(file.type)) {
-        toast.error("Invalid file type. Only JPEG, PNG, and GIF are allowed.");
+        toast.error(Messages.IMAGE_ERROR);
         return;
       }
       if (file.size > 3 * 1024 * 1024) {
-        toast.error("Select file below 3 mb");
+        toast.error(Messages.IMAGE_MAX_SIZE_REACHED);
         return;
       }
       setSelectedImage(file);
@@ -155,13 +155,13 @@ const TicketForm: React.FC<TicketFormProps> = ({
 
   useEffect(() => {
     if (!SelectedDepartmentId) {
-      setEmployees([]);
+      setEmployees(null);
       return;
     }
 
     const fetchEmloyees = async () => {
       try {
-        const response = await fetchEmployeesByDepartment(SelectedDepartmentId);
+        const response = await fetchAllEmployeeWithLessTicket(SelectedDepartmentId);
         if (response.success) {
           setEmployees(response.data);
         }
@@ -178,12 +178,13 @@ const TicketForm: React.FC<TicketFormProps> = ({
   }, [SelectedDepartmentId]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmitForm)} className="max-w-6xl mx-auto p-8">
-      <div className="flex justify-center items-center gap-2">
-        <h2 className="text-center font-semibold text-2xl text-blue-600 underline ">Create Ticket</h2>
-        <TicketsPlane className="text-blue-600 w-8 h-8" />
-      </div>
-      <div className="bg-gradient-to-b from-blue-100 to-blue-200 rounded-3xl p-12 shadow-xl">
+    <form onSubmit={handleSubmit(onSubmitForm)} className="max-w-7xl mx-auto p-8">
+      <div className="bg-gradient-to-b from-blue-100 to-blue-200  rounded-3xl p-11 shadow-xl">
+        <div className="flex justify-center items-center gap-2 mb-2">
+          <h2 className="text-center font-semibold text-2xl text-blue-600 underline ">Create Ticket</h2>
+          <TicketsPlane className="text-blue-600 w-8 h-8" />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* Left Column */}
           <div className="space-y-8">
@@ -368,21 +369,16 @@ const TicketForm: React.FC<TicketFormProps> = ({
             </div>
 
             {/* Select Employee (Only Show if Employees Exist) */}
-            {employees.length > 0 && (
-              <div>
-                <label className="block text-gray-800 text-lg font-medium mb-3">Select an Employee</label>
+            {employees !== null && (
+              <div className="hidden">
+                <label className="block text-gray-800 text-lg font-medium mb-3">Assigning Employee</label>
                 <div className="relative">
                   <select
                     className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white text-lg"
                     {...register("ticketHandlingEmployeeId", {
                       required: "Employee selection is required",
                     })}>
-                    <option value="">Select one</option>
-                    {employees.map((employee) => (
-                      <option key={employee._id} value={employee._id}>
-                        {employee.name}
-                      </option>
-                    ))}
+                    <option value={employees._id}>{employees.name}</option>
                   </select>
                   <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-500 pointer-events-none" />
                   {errors.ticketHandlingEmployeeId && (
@@ -394,10 +390,16 @@ const TicketForm: React.FC<TicketFormProps> = ({
           </div>
         </div>
 
-        <div className="mt-12 flex justify-center">
+        <div className="mt-12 flex justify-center gap-6">
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="px-12 py-4 bg-red-500 hover:bg-orange-600 font-semibold text-white rounded-full text-lg  transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+            Cancel
+          </button>
           <button
             type="submit"
-            className="px-12 py-4 bg-purple-600 text-white rounded-full text-lg font-medium hover:bg-purple-700 transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+            className="px-12 py-4 bg-green-500 text-white rounded-full text-lg font-semibold hover:bg-purple-700 transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
             Send Ticket
           </button>
         </div>

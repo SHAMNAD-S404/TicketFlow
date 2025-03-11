@@ -130,37 +130,61 @@ class EmployeeRepository extends BaseRepository<IEmployee> implements IEmployeeR
 
   async updateImageUrl(email: string, imageUrl: string): Promise<string | null> {
     try {
-
       const result = await this.model.findOneAndUpdate(
-        {email },
-        {$set : {imageUrl : imageUrl}},
-        {upsert : true , new : true ,projection : {_id :0 , imageUrl:1}}
-    )
+        { email },
+        { $set: { imageUrl: imageUrl } },
+        { upsert: true, new: true, projection: { _id: 0, imageUrl: 1 } }
+      );
 
-    return result ? imageUrl : null;
-
-    } catch (error) {
-      throw error
-    }
-  }
-
-  async findEmployeesBasedOnDept(id: string, authUserUUID: string): Promise<{ _id: string; name: string; email: string; }[] | null> {
-    try {
-        const result = await this.model.find({departmentId : id , authUserUUID:authUserUUID}
-        ).select("_id , name , email")
-        .lean()
-       
-
-        return result ? result.map(emp => ({ 
-      _id: emp._id.toString(), // Explicitly convert _id to string
-      name: emp.name, 
-      email: emp.email 
-    })) : null;
+      return result ? imageUrl : null;
     } catch (error) {
       throw error;
     }
   }
 
+  async findEmployeesBasedOnDept(
+    id: string,
+    authUserUUID: string
+  ): Promise<{ _id: string; name: string; email: string }[] | null> {
+    try {
+      const result = await this.model
+        .find({ departmentId: id, authUserUUID: authUserUUID })
+        .sort({ liveTicket: 1 })
+        .select("_id , name , email")
+        .lean();
+
+      return result
+        ? result.map((emp) => ({
+            _id: emp._id.toString(), // Explicitly convert _id to string
+            name: emp.name,
+            email: emp.email,
+          }))
+        : null;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findEmployeeWithlessTicket(
+    id: string,
+    authUserUUID: string
+  ): Promise<{ _id: string; name: string; email: string } | null> {
+    try {
+      const employee = await this.model
+        .findOne({ departmentId: id, authUserUUID: authUserUUID })
+        .sort({ liveTicket: 1 });
+
+      return employee
+        ? {
+            _id: employee._id as string,
+            name: employee.name,
+            email: employee.email,
+          }
+        : null;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default new EmployeeRepository();

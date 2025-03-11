@@ -123,18 +123,18 @@ const SuperAdminLogin: React.FC = () => {
                 required
                 placeholder="********"
                 className="w-full mt-1 px-4 py-2 rounded-md border border-gray-600 bg-gray-900 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                {...register("password", {
-                  pattern: {
-                    value: regexPatterns.password,
-                    message: RegexMessages.passwordRegexMessage,
-                  },
-                })}
+                // {...register("password", {
+                //   pattern: {
+                //     value: regexPatterns.password,
+                //     message: RegexMessages.passwordRegexMessage,
+                //   },
+                // })}
               />
-              {errors.password && (
+              {/* {errors.password && (
                 <p className="text-sm text-red-500 mt-1">
                   {errors.password.message}
                 </p>
-              )}
+              )} */}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}

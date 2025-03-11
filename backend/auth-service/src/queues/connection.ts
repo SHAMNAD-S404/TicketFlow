@@ -38,8 +38,8 @@ export const connectRabbitMQ = async (): Promise<void> => {
   
         connection.on("close", () => {
           console.error("RabbitMQ connection closed. Attempting to reconnect...");
-          connection = null; // Reset connection reference
-          setTimeout(connectRabbitMQ,5000); // Retry connection after 5 seconds
+          connection = null;
+          setTimeout(connectRabbitMQ,5000); 
         });
   
         connection.on("error", (error) => {

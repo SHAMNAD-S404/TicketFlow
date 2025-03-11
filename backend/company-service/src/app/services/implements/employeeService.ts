@@ -1,4 +1,4 @@
-import { IEmployeeService } from "../interface/IEmployeeService";
+import { IEmployeeService, IGetEmployeeWithlessTicket, IUpdateProfileImage } from "../interface/IEmployeeService";
 import { IEmployee } from "../../models/interface/IEmployeeModel";
 import EmployeeRepository from "../../repositories/implements/employee";
 import { IEmployeeAuthData } from "../../interfaces/IEmployeeAuthData";
@@ -196,7 +196,7 @@ export default class EmployeeService implements IEmployeeService {
     }
   }
 
-    async updateProfileImage(email: string, imageUrl: string): Promise<{ message: string; success: boolean; statusCode: number; imageUrl?: string; }> {
+    async updateProfileImage(email: string, imageUrl: string): Promise<IUpdateProfileImage> {
       try {
   
         const result = await EmployeeRepository.updateImageUrl(email,imageUrl);
@@ -243,4 +243,25 @@ export default class EmployeeService implements IEmployeeService {
         throw error
       }
     }
+
+    async getEmployeeWithlessTicket(id: string, authUserUUID: string): Promise<IGetEmployeeWithlessTicket> {
+      try {
+         const result = await EmployeeRepository.findEmployeeWithlessTicket(id,authUserUUID);
+         return result ? 
+          {
+            message: Messages.FETCH_SUCCESS,
+            success : true,
+            statusCode : HttpStatus.OK,
+            data : result,
+          } : 
+          {
+            message : Messages.DATA_NOT_FOUND,
+            success : false,
+            statusCode : HttpStatus.BAD_REQUEST
+          }
+      } catch (error) {
+        throw error
+      }
+    }
+
 }

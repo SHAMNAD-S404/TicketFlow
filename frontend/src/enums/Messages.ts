@@ -5,5 +5,9 @@ export enum Messages {
     SELECT_REQUIRED_FIELDS = "Select required fields !",
     EMAIL_INVALID = "Enter valid email id",
     TOKEN_NOT_FOUND = "Token not found",
+    IMAGE_ERROR = "Invalid file type. Only JPEG, PNG, and GIF are allowed.",
+    IMAGE_MAX_SIZE_REACHED = "Select file below 3 mb",
+    
+
     
 }

@@ -2,12 +2,16 @@ import { ITicketReassignData } from "../../interface/userTokenData";
 import { ITicket } from "../../models/interface/ITicketModel";
 import { IBasicResponse } from "../../interface/userTokenData";
 
-export interface IReassignedTicketResponse extends IBasicResponse{
-  data ? : ITicket | null;
+export interface IReassignedTicketResponse extends IBasicResponse {
+  data?: ITicket | null;
 }
 
-
-
+export interface IfetchAllTicketsEmployeeWise extends IBasicResponse {
+  data?: {
+    tickets: ITicket[] | null;
+    totalPages: number;
+  };
+}
 
 export interface ITicketService {
   createTicketDocument(
@@ -26,9 +30,17 @@ export interface ITicketService {
     data?: { tickets: ITicket[] | null; totalPages: number };
   }>;
 
-  getReassignedTicket(data:ITicketReassignData) : Promise< IReassignedTicketResponse >
+  fetchAllTicketsEmployeeWise(
+    authUserUUID: string,
+    page: number,
+    ticketHandlingEmployeeId: string,
+    sortBy: string,
+    searchQuery: string
+  ): Promise<IfetchAllTicketsEmployeeWise>;
 
-  getTicketData (id:string) : Promise<IReassignedTicketResponse>;
+  getReassignedTicket(data: ITicketReassignData): Promise<IReassignedTicketResponse>;
 
-  getUpdatedTicketStatus(id:string,status:string) : Promise<IReassignedTicketResponse>;
+  getTicketData(id: string): Promise<IReassignedTicketResponse>;
+
+  getUpdatedTicketStatus(id: string, status: string): Promise<IReassignedTicketResponse>;
 }

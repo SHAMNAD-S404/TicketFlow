@@ -1,11 +1,13 @@
 import { ITicket } from "../../models/interface/ITicketModel";
 import TicketRepository from "../../repositories/implements/ticketRepository";
-import { IReassignedTicketResponse, ITicketService } from "../interface/ITicketService";
+import { IfetchAllTicketsEmployeeWise, IReassignedTicketResponse, ITicketService } from "../interface/ITicketService";
 import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
 import { ITicketReassignData } from "../../interface/userTokenData";
 
 export default class TicketService implements ITicketService {
+
+  
   async createTicketDocument(
     ticketData: ITicket
   ): Promise<{ message: string; success: boolean; statusCode: number; data?: ITicket }> {
@@ -15,6 +17,11 @@ export default class TicketService implements ITicketService {
       if (!newTicket) {
         return { message: Messages.DATA_NOT_FOUND, success: false, statusCode: HttpStatus.BAD_REQUEST };
       } else {
+
+
+       
+
+
         return {
           message: Messages.DATA_CREATED,
           success: true,
@@ -83,21 +90,21 @@ export default class TicketService implements ITicketService {
 
   async getTicketData(id: string): Promise<IReassignedTicketResponse> {
     try {
-        const getData = await TicketRepository.findOneWithSingleField({_id:id});
-        if(getData){
-          return {
-            message:Messages.FETCH_SUCCESS,
-            statusCode:HttpStatus.OK,
-            success:true,
-            data:getData
-          }
-        }else{
-          return{
-            message : Messages.TICKET_NOT_FOUND,
-            statusCode:HttpStatus.BAD_REQUEST,
-            success:false
-          }
-        }
+      const getData = await TicketRepository.findOneWithSingleField({ _id: id });
+      if (getData) {
+        return {
+          message: Messages.FETCH_SUCCESS,
+          statusCode: HttpStatus.OK,
+          success: true,
+          data: getData,
+        };
+      } else {
+        return {
+          message: Messages.TICKET_NOT_FOUND,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
+      }
     } catch (error) {
       throw error;
     }
@@ -105,23 +112,56 @@ export default class TicketService implements ITicketService {
 
   async getUpdatedTicketStatus(id: string, status: string): Promise<IReassignedTicketResponse> {
     try {
-      const updateDoc = await TicketRepository.findAndupdateStatus(id,status);
-      if(updateDoc){
-        return{
-          message:Messages.TICKET_STATUS_UPDATED,
-          statusCode:HttpStatus.OK,
-          success : true
-        }
-      }else{
+      const updateDoc = await TicketRepository.findAndupdateStatus(id, status);
+      if (updateDoc) {
         return {
-          message:Messages.DATA_NOT_FOUND,
-          statusCode:HttpStatus.BAD_REQUEST,
-          success:false
-        }
+          message: Messages.TICKET_STATUS_UPDATED,
+          statusCode: HttpStatus.OK,
+          success: true,
+        };
+      } else {
+        return {
+          message: Messages.DATA_NOT_FOUND,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
       }
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
+  async fetchAllTicketsEmployeeWise(
+    authUserUUID: string,
+    page: number,
+    ticketHandlingEmployeeId: string,
+    sortBy: string,
+    searchQuery: string
+  ): Promise<IfetchAllTicketsEmployeeWise> {
+    try {
+      const result = await TicketRepository.findAllTicketForEmployee(
+        authUserUUID,
+        ticketHandlingEmployeeId,
+        page,
+        sortBy,
+        searchQuery
+      );
+      if (result) {
+        return {
+          message: Messages.FETCH_SUCCESS,
+          statusCode: HttpStatus.OK,
+          success: true,
+          data: result,
+        };
+      } else {
+        return {
+          message: Messages.DATA_NOT_FOUND,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 }

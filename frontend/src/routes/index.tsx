@@ -67,15 +67,6 @@ const AppRoutes: React.FC = () => {
           }
         />
 
-{/* <Route
-          path="/employee/*"
-          element={
-           
-              <EmployeeRoutes />
-          
-          }
-        /> */}
-
         {/* Fallback Route */}
         <Route path="*" element={<NotFound />} />
       </Routes>

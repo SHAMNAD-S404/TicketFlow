@@ -15,7 +15,11 @@ export const Messages = {
     INVALID_INPUT : "Enter valid Inputs fields",
     TICKET_REASSIGNED : 'Ticket re-assigned successfully!',
     TICKET_ID_MISSING : "Ticket id is missing !",
-    TICKET_NOT_FOUND : "Ticket is not found !!"
+    TICKET_NOT_FOUND : "Ticket is not found !!",
+    INVALID_FILED_OR_MISSING_FIELD : "Invalid fields or missing required fields !",
+    ERROR_PUBLISH_MSSG :  "Error in publishing the message to queue !",
+    CHANNEL_NOT_AVILABLE :  "Channle is not avilable",
+    
     
     
 

@@ -4,6 +4,7 @@ import GifImage from "../../../assets/gif/star.gif";
 import DynamicCard from "@/components/utility/DynamicCard";
 import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux/store";
+import AssignedTickets from "./AssignedTickets";
 
 interface ISubMenuList {
   header: string;
@@ -29,7 +30,7 @@ export const TicketHome: React.FC = () => {
       description: "Assigned tickets for me that i want to work on that",
       buttonText: "MY Tickets",
       image: GifImage,
-      onButtonClick : ()=> setActiveSubMenu("My Tickets")
+      onButtonClick : ()=> setActiveSubMenu("Assigned Tickets For me")
     },{
         header : "Ticket analyse",
         description : "Click here to view detailed ticket and department performance",
@@ -50,6 +51,10 @@ export const TicketHome: React.FC = () => {
         ticketRaisedEmployeeID={employee?._id as string}
         ticketRaisedEmployeeName={employee?.name as string}
         handleCancel={onCancel} />;
+      case "Assigned Tickets For me" : 
+        return <AssignedTickets
+          handleCancel={onCancel}
+        />
       default:
         return (
           <div className="flex flex-wrap gap-12 justify-start p-6">

@@ -1,8 +1,10 @@
 import dotenv from "dotenv";
 import express, { Request, Response, NextFunction } from "express";
 import ticketRoutes from "./app/routes/ticketRoutes";
+import { validateEnvVariables } from "./utils/validateEnv";
 
 dotenv.config();
+validateEnvVariables();
 
 const app = express();
 

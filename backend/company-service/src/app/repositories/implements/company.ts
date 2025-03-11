@@ -53,7 +53,7 @@ class CompanyRepository
     searchKey: string
   ): Promise<{ companies: ICompany[] | null; totalPages: number }> {
     try {
-      const limit = 2;
+      const limit = 6;
       const pageNumber = Math.max(1, page);
       const filter: Record<string, 1 | -1> = {
         [sort]: sort === "createdAt" ? -1 : 1,

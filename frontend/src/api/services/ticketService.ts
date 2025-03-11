@@ -26,6 +26,17 @@ export const fetchAllTickets = async (currentPage: number, sortBy: string, searc
   }
 };
 
+export const fetchTicketsEmployeeWise = async ( currentPage: number ,employeeId : string, sortBy:string,searchQuery : string) => {
+  try {
+    const response = await axiosInstance.get(
+      `/tickets/get-ticket-employee-wise?page=${currentPage}&sortBy=${sortBy}&searchQuery=${searchQuery}&employeeId=${employeeId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error
+  }
+}
+
 export const ticketReassign = async (data: IUpdateReassignTicketData) => {
   try {
     const response = await axiosInstance.patch("/tickets/ticket-reassign", data);

@@ -65,31 +65,72 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
     }
   }
 
-
   async ticketReassign(data: ITicketReassignData): Promise<ITicket | null> {
-      try {
-         return await this.model.findOneAndUpdate(
-            {_id:data.ticketId},
-            {$set : {
-                ticketHandlingDepartmentId:data.selectedDepartmentId,
-                ticketHandlingDepartmentName:data.selectedDepartmentName,
-                ticketHandlingEmployeeId:data.selectedEmployeeId,
-                ticketHandlingEmployeeName:data.selectedEmployeeName
-            }},{new : true});
-        
-      } catch (error) {
-        throw error;
-      }
+    try {
+      return await this.model.findOneAndUpdate(
+        { _id: data.ticketId },
+        {
+          $set: {
+            ticketHandlingDepartmentId: data.selectedDepartmentId,
+            ticketHandlingDepartmentName: data.selectedDepartmentName,
+            ticketHandlingEmployeeId: data.selectedEmployeeId,
+            ticketHandlingEmployeeName: data.selectedEmployeeName,
+          },
+        },
+        { new: true }
+      );
+    } catch (error) {
+      throw error;
+    }
   }
 
   async findAndupdateStatus(id: string, status: string): Promise<ITicket | null> {
     try {
-      return await this.findOneDocAndUpdate({_id:id},{status:status});
+      return await this.findOneDocAndUpdate({ _id: id }, { status: status });
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
+  async findAllTicketForEmployee(
+    authUserUUID: string,
+    ticketHandlingEmployeeId: string,
+    page: number,
+    sortBy: string,
+    searchQuery: string
+  ): Promise<{ tickets: ITicket[] | null; totalPages: number }> {
+    try {
+      const limit = 4;
+      const filter: Record<string, 1 | -1> = {
+        [sortBy]: sortBy === "createdAt" ? -1 : 1,
+      };
+      const searchFilter =
+        searchQuery.trim() === ""
+          ? {}
+          : {
+              $or: [
+                { ticketID: { $regex: searchQuery, $options: "i" } },
+                { ticketHandlingDepartmentName: { $regex: searchQuery, $options: "i" } },
+                { ticketRaisedDepartmentName: { $regex: searchQuery, $options: "i" } },
+                { ticketHandlingEmployeeName: { $regex: searchQuery, $options: "i" } },
+              ],
+            };
+
+      const fetchTickets = await this.model
+        .find({
+          $and: [{ authUserUUID: authUserUUID, ticketHandlingEmployeeId: ticketHandlingEmployeeId }, searchFilter],
+        })
+        .sort(filter)
+        .skip((page - 1) * limit)
+        .limit(limit);
+
+      const totalFilteredDocuments = await this.model.countDocuments({ ticketHandlingEmployeeId,authUserUUID, ...searchFilter });
+      const totalPages = Math.ceil(totalFilteredDocuments / limit);
+      return { tickets: fetchTickets, totalPages };
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default new TicketRepository();

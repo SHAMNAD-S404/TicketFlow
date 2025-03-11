@@ -20,10 +20,6 @@ const EmployeeDashboard: React.FC = () => {
 
   const handleMenuSelect = (menu: string) => setActiveMenu(menu);
 
-  // // Fetch user data on mount
-  // useEffect(() => {
-  //   dispatch(fetchEmployee());
-  // }, [dispatch]);
 
   //user logout
   const handleLogout = async () => {
@@ -67,7 +63,11 @@ const EmployeeDashboard: React.FC = () => {
       <Sidebar role={role} onMenuSelect={handleMenuSelect} />
 
       <div className="flex-1 flex flex-col w-full ">
-        <DashboardHeader name={employee.name} onLogout={handleLogout} />
+        <DashboardHeader 
+        name={employee.name}
+        onLogout={handleLogout}
+        profileImage={employee.imageUrl}
+          />
 
         <EmployeeMainContent activeMenu={activeMenu} />
       </div>

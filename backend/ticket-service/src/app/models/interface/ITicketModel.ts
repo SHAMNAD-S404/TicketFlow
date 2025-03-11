@@ -19,12 +19,16 @@ export interface ITicket extends Document {
   supportType: string;
   status: TicketStatus;
   imageUrl: string;
+
   ticketHandlingDepartmentId: string;
   ticketHandlingDepartmentName: string;
   ticketHandlingEmployeeId: string;
   ticketHandlingEmployeeName: string;
+  ticketHandlingEmployeeEmail:string;
+
   ticketRaisedEmployeeId: string;
   ticketRaisedEmployeeName: string;
+  ticketRaisedEmployeeEmail: string;
   ticketRaisedDepartmentName: string;
   ticketRaisedDepartmentId: string;
 }

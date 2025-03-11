@@ -20,6 +20,7 @@ export const TicketHome: React.FC = () => {
 
   const backToMainMenu = ()=> setActiveSubMenu(null);
   const company = useSelector((state:Rootstate) => state.company.company)
+  
 
 
   const subMenuList: ISubMenuList[] = [
@@ -38,8 +39,8 @@ export const TicketHome: React.FC = () => {
       onButtonClick : ()=> setActiveSubMenu("Manage Tickets")
     },
     {
-      header: "Assigned Tickets For me",
-      description: "Assigned tickets for me that i want to work on that",
+      header: "My Ticket Progress",
+      description: "Ticket raised by Me , tap to see the progreess and details",
       buttonText: "MY Tickets",
       image: GifImage,
       onButtonClick : ()=> setActiveSubMenu("My Tickets")
@@ -63,6 +64,7 @@ export const TicketHome: React.FC = () => {
         ticketRaisedDepartmentID = {company?._id as string}
         ticketRaisedEmployeeID = {company?._id as string}
         ticketRaisedEmployeeName = {company?.companyName as string}
+        ticketRaisedEmployeeEmail = {company?.email as string}
 
         />;
       case "Manage Tickets" :

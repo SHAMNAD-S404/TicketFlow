@@ -11,5 +11,6 @@ export interface IEmployee extends Document {
     authUserUUID : string;
     isBlock : boolean;
     imageUrl : string;
+    liveTicket : number;
 
 }

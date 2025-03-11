@@ -34,7 +34,7 @@ const ticketSchema: Schema = new Schema<ITicket>(
     },
     status: {
       type: String,
-      enum : Object.values(TicketStatus),
+      enum: Object.values(TicketStatus),
       default: TicketStatus.Pending,
     },
     imageUrl: {
@@ -56,6 +56,10 @@ const ticketSchema: Schema = new Schema<ITicket>(
       type: String,
       required: true,
     },
+    ticketHandlingEmployeeEmail: {
+      type: String,
+      required: true,
+    },
 
     ticketRaisedEmployeeId: {
       type: String,
@@ -63,6 +67,11 @@ const ticketSchema: Schema = new Schema<ITicket>(
     },
 
     ticketRaisedEmployeeName: {
+      type: String,
+      required: true,
+    },
+
+    ticketRaisedEmployeeEmail: {
       type: String,
       required: true,
     },

@@ -1,17 +1,15 @@
-
 import React from "react";
 import { FaBell, FaSearch } from "react-icons/fa";
 import { FaPowerOff as FaPow } from "react-icons/fa6";
 
 
 interface DashboardHeaderProps {
-  name : string;
-  onLogout: ()=> void;
+  name: string;
+  profileImage: string;
+  onLogout: () => void;
 }
 
-const DashboardHeader: React.FC<DashboardHeaderProps> = ({name ,onLogout}) => {
- 
-
+const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name, onLogout,profileImage }) => {
   return (
     <header className="bg-gradient-to-r from-gray-100 via-gray-200 to-gray-200 border-b border-gray-200 px-6 py-2 rounded-xl w-full ">
       <div className="flex items-center justify-between ">
@@ -20,9 +18,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({name ,onLogout}) => {
           <h1 className="text-xl italic font-medium  text-gray-800">
             <span className="text-blue-500">Hello,</span> {name}
           </h1>
-          <p className="text-sm font-medium text-pink-400 mt-1 font-inter">
-            Have a good day!
-          </p>
+          <p className="text-sm font-medium text-pink-400 mt-1 font-inter">Have a good day!</p>
         </div>
 
         {/* Middle - Search Bar */}
@@ -49,25 +45,21 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({name ,onLogout}) => {
 
           {/* User Profile */}
           <div className="flex items-center  bg-gray-100 rounded-xl shadow-2xl shadow-gray-600 ">
-            <div className="flex flex-col items-end  ">
-            </div>
+            <div className="flex flex-col items-end  "></div>
             <img
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=100&h=100"
+              src={profileImage ? profileImage : "https://imgs.search.brave.com/YH7ay2TlJuJ4PGUTGS-GmsnCPqYehMWwx13lWbFYQnk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS1wc2QvM2Qt/cmVuZGVyaW5nLWhh/aXItc3R5bGUtYXZh/dGFyLWRlc2lnbl8y/My0yMTUxODY5MTUz/LmpwZz9zZW10PWFp/c19oeWJyaWQ"}
               alt="Profile"
               className="h-10 w-10 rounded-full object-cover ring-2 ring-white shadow-xl shadow-gray-500 "
             />
-            
           </div>
           {/* logout section */}
           <div className="flex items-center  rounded-xl shadow-2xl shadow-gray-600 ">
-            <div className="flex flex-col shadow-2xl shadow-gray-400 items-end  ">
-            </div>
+            <div className="flex flex-col shadow-2xl shadow-gray-400 items-end  "></div>
             <FaPow
-              onClick={()=> onLogout()}
+              onClick={() => onLogout()}
               className="h-9 w-9 rounded-full object-cover text-black shadow-lg shadow-gray-500 hover:shadow-blue-500   hover:shadow-xl cursor-pointer "
-              />
+            />
           </div>
-
         </div>
       </div>
     </header>

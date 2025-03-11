@@ -6,6 +6,7 @@ export interface ITicketController {
     ticketReassign (req:Request , res : Response) : Promise< void >;
     fetchTicket (req:Request , res: Response) : Promise< void >;
     updateTicketStatus (req: Request , res : Response) : Promise < void >;
+    getTicketEmployeeWise ( req : Request , res : Response ) : Promise < void >;
 
     
 }

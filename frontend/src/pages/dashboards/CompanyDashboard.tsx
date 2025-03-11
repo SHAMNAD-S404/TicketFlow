@@ -72,7 +72,11 @@ const CompanyDashboard: React.FC = () => {
       <Sidebar role={role} onMenuSelect={handleMenuSelect} />
 
       <div className="flex-1 flex flex-col w-full ">
-        <DashboardHeader name={company.companyName} onLogout={handleLogout} />
+        <DashboardHeader 
+        name={company.companyName}
+         onLogout={handleLogout}
+         profileImage={company.imageUrl}
+          />
 
         <MainContent activeMenu={activeMenu} />
       </div>

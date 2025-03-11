@@ -19,6 +19,7 @@ const router = Router();
 
 router.post ("/create-ticket", extractUserData, upload.single("file"), ticketController.createTicket)
       .get ("/get-all-tickets",extractUserData,ticketController.getAllTickets)
+      .get ("/get-ticket-employee-wise",extractUserData,ticketController.getTicketEmployeeWise)
       .get ("/get-ticket",ticketController.fetchTicket)
       .patch ("/ticket-reassign",extractUserData,ticketController.ticketReassign)
       .patch ("/update-status",ticketController.updateTicketStatus)

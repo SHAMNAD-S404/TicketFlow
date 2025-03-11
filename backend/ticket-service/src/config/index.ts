@@ -8,6 +8,8 @@ export interface Iconfig {
   cloudName : string,
   cloudApiKey : string,
   cloudApiSecret : string,
+ 
+  
 }
 
 export const config: Iconfig = {
@@ -16,5 +18,7 @@ export const config: Iconfig = {
     cloudName : process.env.CLOUDINARY_CLOUD_NAME as string,
     cloudApiKey : process.env.CLOUDINARY_API_KEY as string,
     cloudApiSecret : process.env.CLOUDINARY_API_SECRET as string,
+    
+    
   
   };

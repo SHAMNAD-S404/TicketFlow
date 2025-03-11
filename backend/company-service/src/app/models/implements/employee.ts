@@ -1,3 +1,4 @@
+import { number } from "zod";
 import { IEmployee } from "../interface/IEmployeeModel";
 import mongoose, { Document, Schema } from "mongoose";
 
@@ -30,6 +31,9 @@ const employeeSchema: Schema = new Schema<IEmployee>(
       required: true,
       default: "employee",
       enum: ["employee", "departmentHead"],
+    },
+    liveTicket : {
+      type : Number , default : 0,
     },
     authUserUUID: { 
       type: String, required: true 

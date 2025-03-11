@@ -9,6 +9,7 @@ import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
 import { departmentEmployeeSchema, searchInputSchema } from "../../dtos/searchInput.dto";
 import { emailSchema } from "../../dtos/jwtQueryValidation";
+import { fetchDeptEmployeesSchema } from "../../dtos/BaseValidation.schema";
 export class EmployeeController implements IEmployeeController {
   private readonly employeeService: IEmployeeService;
 
@@ -210,6 +211,28 @@ export class EmployeeController implements IEmployeeController {
         message: Messages.SERVER_ERROR,
         success: false,
       });
+    }
+  };
+
+  public fetchEmployeeWithlessTicket = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const validateInput = fetchDeptEmployeesSchema.safeParse(req.query);
+      if (!validateInput.success) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+          message: Messages.INPUT_INVALID_OR_FIELD_MISSING,
+          success: false,
+        });
+        return;
+      }
+      const { authUserUUID, id } = validateInput.data;
+
+      const result = await this.employeeService.getEmployeeWithlessTicket(id, authUserUUID);
+      const { message, statusCode, success, data } = result;
+      res.status(statusCode).json({ message, success, data });
+      return;
+    } catch (error) {
+      console.log("error while fetchEmployeeWithlessTicket : ", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
     }
   };
 }
