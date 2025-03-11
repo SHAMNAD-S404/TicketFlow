@@ -26,9 +26,8 @@ const Singup_Email: React.FC<SignupFormProps> = ({ onVerifyEmail }) => {
     try {
       const response = await verifyEmail(email);
       if (response.success) {
-        toast.success(response.message, {
-          onClose: () => onVerifyEmail(), //modal for otp verification
-        });
+        onVerifyEmail();
+        toast.success(response.message);
       } else {
         toast.error(response.message);
       }

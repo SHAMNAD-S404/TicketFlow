@@ -4,10 +4,12 @@ import { IfetchAllTicketsEmployeeWise, IReassignedTicketResponse, ITicketService
 import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
 import { ITicketReassignData } from "../../interface/userTokenData";
+import { publishToQueue } from "../../../queues/publisher";
+import { RabbitMQConfig } from "../../../config/rabbitMQConfig";
 
 export default class TicketService implements ITicketService {
 
-  
+
   async createTicketDocument(
     ticketData: ITicket
   ): Promise<{ message: string; success: boolean; statusCode: number; data?: ITicket }> {
@@ -18,9 +20,20 @@ export default class TicketService implements ITicketService {
         return { message: Messages.DATA_NOT_FOUND, success: false, statusCode: HttpStatus.BAD_REQUEST };
       } else {
 
+        //payload for sending to notification queue
+        const payload = {
+          type: "ticketAssigned",
+          email: newTicket.ticketHandlingEmployeeEmail,
+          subject: `Assigned a new Ticket -${newTicket.priority}`,
+          template: "ticketTemplate",
+          ticketId: newTicket.ticketID,
+          employeeName: newTicket.ticketHandlingEmployeeName,
+        };
+        //send to notification queue
+        publishToQueue(RabbitMQConfig.notificationQueue, payload);
 
-       
-
+        //update ticketcount in employee collection
+        
 
         return {
           message: Messages.DATA_CREATED,

@@ -1,3 +1,6 @@
+import dotev from "dotenv"
+dotev.config();
+
 export interface IRabbitMQConfig {
   url: string;
   notificationQueue: string;

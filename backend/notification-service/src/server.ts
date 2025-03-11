@@ -1,11 +1,12 @@
 import app from "./app";
 import { config } from "./config";
-import { startConsumer } from "./queues/consumer";
+import { startConsumerQueue } from "./queues/consumer";
 
 const startServer = async () => {
     try {
-        await startConsumer();
+        await startConsumerQueue();
             console.log("✅ Notification consumer started");
+            
         app.listen(config.port,() => {
             console.log(`✅ Notification service is running at http://localhost:${config.port}`);
         })

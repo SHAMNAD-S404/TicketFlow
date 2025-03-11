@@ -50,7 +50,9 @@ export const TicketHome: React.FC = () => {
         ticketRaisedDepartmentID={employee?.departmentId as string}
         ticketRaisedEmployeeID={employee?._id as string}
         ticketRaisedEmployeeName={employee?.name as string}
+        ticketRaisedEmployeeEmail={employee?.email as string}
         handleCancel={onCancel} />;
+
       case "Assigned Tickets For me" : 
         return <AssignedTickets
           handleCancel={onCancel}

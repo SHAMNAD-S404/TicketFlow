@@ -105,6 +105,7 @@ const VerifyOtp: React.FC<VerifyOtpProps> = ({ verifyHandler, userType }) => {
           >
             Verify
           </button>
+          
         </div>
 
         {/* Right Section: Image */}
