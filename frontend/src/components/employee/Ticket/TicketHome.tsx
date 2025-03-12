@@ -5,6 +5,7 @@ import DynamicCard from "@/components/utility/DynamicCard";
 import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux/store";
 import AssignedTickets from "./AssignedTickets";
+import { EManageTickets } from "./EManageTickets";
 
 interface ISubMenuList {
   header: string;
@@ -16,6 +17,7 @@ interface ISubMenuList {
 
 export const TicketHome: React.FC = () => {
   const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
+  const [getTicketID , setTicketID] = useState<string>("");
   const employee = useSelector((state:Rootstate) => state.employee.employee);
   const subMenuList: ISubMenuList[] = [
     {
@@ -41,9 +43,11 @@ export const TicketHome: React.FC = () => {
   ];
 
   const onCancel = () => setActiveSubMenu(null);
+  const onManageTicket = () => setActiveSubMenu("Manage Ticket")
 
   const renderSubContent = () => {
     switch (activeSubMenu) {
+
       case "Create Ticket":
         return <TicketForm 
         ticketRaisedDepartmentName={employee?.departmentName as string}
@@ -56,7 +60,16 @@ export const TicketHome: React.FC = () => {
       case "Assigned Tickets For me" : 
         return <AssignedTickets
           handleCancel={onCancel}
+          handleSetTicketId = {(value:string)=> setTicketID(value) }
+          handleManageTicket={onManageTicket}
         />
+      case "Manage Ticket" : 
+        return <EManageTickets
+        handleCancle = {()=> setActiveSubMenu("Assigned Tickets For me")}
+        ticketId={getTicketID}
+        />
+
+      
       default:
         return (
           <div className="flex flex-wrap gap-12 justify-start p-6">

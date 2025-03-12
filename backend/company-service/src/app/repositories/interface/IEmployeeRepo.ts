@@ -35,5 +35,7 @@ export interface IEmployeeRepo {
 
   findEmployeeWithlessTicket (id:string ,authUserUUID:string) : Promise<{_id : string,name:string,email:string} | null>;
 
+  findAndUpdateTicketCount (id:string , value : number) : Promise<IEmployee | null>
+
 
 }

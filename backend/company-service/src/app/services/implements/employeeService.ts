@@ -264,4 +264,16 @@ export default class EmployeeService implements IEmployeeService {
       }
     }
 
+    async updateTicketCount(id: string, value: number): Promise<IEmployee | null> {
+      try {
+
+         const updateData = await EmployeeRepository.findAndUpdateTicketCount(id,Number(value));
+         return updateData ? updateData : null;
+        
+      } catch (error) {
+        console.error("error while updating ticket count");
+        throw error;
+      }
+    }
+
 }

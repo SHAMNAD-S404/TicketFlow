@@ -64,4 +64,8 @@ export interface IEmployeeService {
   }>;
 
   getEmployeeWithlessTicket(id: string, authUserUUID: string): Promise<IGetEmployeeWithlessTicket>;
+
+  updateTicketCount(id:string,value:number) : Promise<IEmployee | null>
+
+
 }

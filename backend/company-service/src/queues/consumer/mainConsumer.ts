@@ -2,11 +2,13 @@ import { RabbitMQConfig } from "../../config/rabbitMQ";
 import { EventType } from "../../constants/queueEventsType";
 import { channel } from "../rabbitConnection";
 import { companyStatusUpdate } from "../eventHandlers/companyHandler";
-import { employeeStatusUpdate } from "../eventHandlers/employeeHandler";
+import { employeeStatusUpdate ,updateEmployeeTicketStatus} from "../eventHandlers/employeeHandler";
 
 const evnetHandler: { [key: string]: (data: any) => void } = {
+  //@EventType is  enum const
   [EventType.COMPANY_STATUS_UPDATE]: companyStatusUpdate,
   [EventType.EMPLOYEE_STATUS_UPDATE]: employeeStatusUpdate,
+  [EventType.EMPLOYEE_TICKET_UPDATE] : updateEmployeeTicketStatus,
 };
 
 export const mainConsumer = async (): Promise<void> => {
@@ -20,6 +22,7 @@ export const mainConsumer = async (): Promise<void> => {
       if (!message) return;
 
       const data = JSON.parse(message.content.toString());
+      //deriving the event type from the data we got
       const eventType = data.eventType;
       console.log(`📩 Received event: ${eventType}`, data);
 

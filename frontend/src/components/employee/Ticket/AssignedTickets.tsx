@@ -2,32 +2,32 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { FaChevronDown, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronDown, FaChevronLeft, FaChevronRight, FaEye } from "react-icons/fa";
 import { debounce } from "lodash";
 import { searchInputValidate } from "@/components/utility/searchInputValidateNameEmail";
 import { ITicketContext } from "@/types/ITicketContext";
 import { toast } from "react-toastify";
 import { Messages } from "@/enums/Messages";
 import { fetchTicketsEmployeeWise } from "@/api/services/ticketService";
-import { ReassignTicket } from "@/components/company/Ticket/ReassignTicket";
-import { ViewTickets } from "@/components/company/Ticket/ViewTickets";
 import { useSelector, UseSelector } from "react-redux";
 import { Rootstate } from "@/redux/store";
 
 interface IManageTickets {
   handleCancel: () => void;
+  handleManageTicket: () => void;
+  handleSetTicketId : (value:string) => void;
 }
 
-const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
+const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageTicket,handleSetTicketId }) => {
   const ticketCards = ["card 1", "card 2", "card 3", "card 4"];
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [tikcetData, setTicketData] = useState<ITicketContext[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [refreshState , setRefreshState] = useState<boolean>(false)
+  const [refreshState, setRefreshState] = useState<boolean>(false);
 
-  const employee = useSelector((state:Rootstate) => state.employee.employee)
+  const employee = useSelector((state: Rootstate) => state.employee.employee);
 
   const handleSearchQuery = useCallback(
     debounce((searchValue: string) => {
@@ -40,11 +40,16 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
     []
   );
 
+  const manageTicketHandle = (value : string) => {
+    handleSetTicketId(value);
+    handleManageTicket();
+  }
+
   useEffect(() => {
     const getAllTickets = async () => {
       try {
         const employeeId = employee?._id as string;
-        const response = await fetchTicketsEmployeeWise(currentPage , employeeId,sortBy,searchQuery);
+        const response = await fetchTicketsEmployeeWise(currentPage, employeeId, sortBy, searchQuery);
         if (response && response.data) {
           setTicketData(response.data.tickets);
           setTotalPages(response.data.totalPages);
@@ -58,8 +63,7 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
       }
     };
     getAllTickets();
-  }, [currentPage, sortBy, searchQuery,refreshState]);
-
+  }, [currentPage, sortBy, searchQuery, refreshState]);
 
   return (
     <div className="bg-blue-50">
@@ -145,7 +149,7 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
               <div className="text-sm font-semibold text-center">Priority</div>
               <div className="text-sm font-semibold text-center">Due Date</div>
               <div className="text-sm font-semibold text-center">Status</div>
-              <div className="text-sm font-semibold text-center">View</div>
+              <div className="text-sm font-semibold text-center">Manage</div>
             </div>
 
             {/* Rows */}
@@ -174,14 +178,15 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
                   </div>
                   <div className="flex justify-center">{ticket.dueDate}</div>
                   <div className="flex justify-center">{ticket.status}</div>
-               
 
-                 {/* ticket view and manage */}
-                  <ViewTickets
-                    ticketId = {ticket._id}
-                    twickParent = {()=> setRefreshState(!refreshState)}
-                  />
-
+                  {/* ticket view and manage */}
+                  <div className="flex justify-center">
+                  <button
+                   onClick={()=>manageTicketHandle(ticket._id)}
+                   >
+                    <FaEye />{" "}
+                  </button>
+                  </div>
                 </div>
               ))}
             </div>

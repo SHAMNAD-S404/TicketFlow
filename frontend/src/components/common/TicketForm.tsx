@@ -90,6 +90,7 @@ const TicketForm: React.FC<TicketFormProps> = ({
         toast.success(response.message);
         setPreviewUrl(null);
         setSelectedImage(null);
+        setEmployees(null);
         reset();
       }
     } catch (error: any) {

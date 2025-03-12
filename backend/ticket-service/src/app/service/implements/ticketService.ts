@@ -8,8 +8,6 @@ import { publishToQueue } from "../../../queues/publisher";
 import { RabbitMQConfig } from "../../../config/rabbitMQConfig";
 
 export default class TicketService implements ITicketService {
-
-
   async createTicketDocument(
     ticketData: ITicket
   ): Promise<{ message: string; success: boolean; statusCode: number; data?: ITicket }> {
@@ -19,7 +17,6 @@ export default class TicketService implements ITicketService {
       if (!newTicket) {
         return { message: Messages.DATA_NOT_FOUND, success: false, statusCode: HttpStatus.BAD_REQUEST };
       } else {
-
         //payload for sending to notification queue
         const payload = {
           type: "ticketAssigned",
@@ -32,11 +29,18 @@ export default class TicketService implements ITicketService {
         //send to notification queue
         publishToQueue(RabbitMQConfig.notificationQueue, payload);
 
+        //company service employee update payload
+        const employeeUpdate = {
+          eventType: "employee-ticket-update",
+          employeeId: newTicket.ticketHandlingEmployeeId,
+          value: 1,
+        };
+
         //update ticketcount in employee collection
-        
+        publishToQueue(RabbitMQConfig.companyMainQueue, employeeUpdate);
 
         return {
-          message: Messages.DATA_CREATED,
+          message: Messages.TICKET_CREATED,
           success: true,
           statusCode: HttpStatus.OK,
           data: newTicket,

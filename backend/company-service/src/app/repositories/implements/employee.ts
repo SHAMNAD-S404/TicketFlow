@@ -185,6 +185,19 @@ class EmployeeRepository extends BaseRepository<IEmployee> implements IEmployeeR
       throw error;
     }
   }
+
+  async findAndUpdateTicketCount(id: string, value: number): Promise<IEmployee | null> {
+    try {
+      const updateCount = await this.model.findOneAndUpdate(
+        { _id: id },
+        { $inc: { liveTicket: value } },
+        { new: true }
+      );
+      return updateCount;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default new EmployeeRepository();

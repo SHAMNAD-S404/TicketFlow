@@ -19,7 +19,8 @@ export const Messages = {
     INVALID_FILED_OR_MISSING_FIELD : "Invalid fields or missing required fields !",
     ERROR_PUBLISH_MSSG :  "Error in publishing the message to queue !",
     CHANNEL_NOT_AVILABLE :  "Channle is not avilable",
-    
+    TICKET_CREATED : "Ticket Created successfully !"
+
     
     
 
