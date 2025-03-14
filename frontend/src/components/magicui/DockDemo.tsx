@@ -9,14 +9,19 @@ import { Dock, DockIcon } from "./dock";
 
 export type IconProps = React.HTMLAttributes<HTMLImageElement>;
 
-export function DockDemo() {
+interface IDockDemo {
+  ticketId : string;
+  handleChat : () => void;
+}
+
+export const  DockDemo : React.FC<IDockDemo> = ({ticketId , handleChat}) => {
   return (
     <div className="relative ">
       <Dock iconMagnification={90} iconDistance={140}>
         <DockIcon className="bg-black/10 dark:bg-white/10">
           <Icons.chat
            className="size-full"
-           
+           onClick={ handleChat }
            />
         </DockIcon>
         <DockIcon className="bg-black/10 dark:bg-white/10">

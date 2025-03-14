@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux/store";
 import AssignedTickets from "./AssignedTickets";
 import { EManageTickets } from "./EManageTickets";
+import TickeChat from "../chat/TicketChat";
 
 interface ISubMenuList {
   header: string;
@@ -13,6 +14,15 @@ interface ISubMenuList {
   buttonText: string;
   image: string;
   onButtonClick : () => void;
+}
+
+const subMenuItems  = {
+  CREATE_TICKET : "Create Ticket",
+  ASSIGNED_TICKETS : "Assigned Tickets For me",
+  ANALYSE_TICKETS : "Ticket analyse",
+  MANAGE_TICKETS : "Manage Ticket",
+  SHOW_CHAT : "Show Chat",
+
 }
 
 export const TicketHome: React.FC = () => {
@@ -25,30 +35,30 @@ export const TicketHome: React.FC = () => {
       description: "Using the form we can create the ticket",
       buttonText: "Create Ticket",
       image: GifImage,
-      onButtonClick : () => setActiveSubMenu("Create Ticket")
+      onButtonClick : () => setActiveSubMenu(subMenuItems.CREATE_TICKET)
     },
     {
       header: "Assigned Tickets For me",
       description: "Assigned tickets for me that i want to work on that",
       buttonText: "MY Tickets",
       image: GifImage,
-      onButtonClick : ()=> setActiveSubMenu("Assigned Tickets For me")
+      onButtonClick : ()=> setActiveSubMenu(subMenuItems.ASSIGNED_TICKETS)
     },{
         header : "Ticket analyse",
         description : "Click here to view detailed ticket and department performance",
         buttonText : "View",
         image : GifImage,
-        onButtonClick : ()=> setActiveSubMenu("Ticket analyse")
+        onButtonClick : ()=> setActiveSubMenu(subMenuItems.ANALYSE_TICKETS)
     }
   ];
 
   const onCancel = () => setActiveSubMenu(null);
-  const onManageTicket = () => setActiveSubMenu("Manage Ticket")
+  const onManageTicket = () => setActiveSubMenu(subMenuItems.MANAGE_TICKETS)
 
   const renderSubContent = () => {
     switch (activeSubMenu) {
 
-      case "Create Ticket":
+      case subMenuItems.CREATE_TICKET:
         return <TicketForm 
         ticketRaisedDepartmentName={employee?.departmentName as string}
         ticketRaisedDepartmentID={employee?.departmentId as string}
@@ -57,18 +67,21 @@ export const TicketHome: React.FC = () => {
         ticketRaisedEmployeeEmail={employee?.email as string}
         handleCancel={onCancel} />;
 
-      case "Assigned Tickets For me" : 
+      case subMenuItems.ASSIGNED_TICKETS : 
         return <AssignedTickets
           handleCancel={onCancel}
           handleSetTicketId = {(value:string)=> setTicketID(value) }
           handleManageTicket={onManageTicket}
         />
-      case "Manage Ticket" : 
+      case subMenuItems.MANAGE_TICKETS : 
         return <EManageTickets
         handleCancle = {()=> setActiveSubMenu("Assigned Tickets For me")}
         ticketId={getTicketID}
+        handleChatSubMenu={()=> setActiveSubMenu(subMenuItems.SHOW_CHAT)}
         />
 
+      case subMenuItems.SHOW_CHAT : 
+        return <TickeChat/>
       
       default:
         return (

@@ -10,10 +10,11 @@ import { DockDemo } from "@/components/magicui/DockDemo";
 
 interface EManageTickets {
   handleCancle: () => void;
+  handleChatSubMenu : ()=> void;
   ticketId: string;
 }
 
-export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketId }) => {
+export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketId , handleChatSubMenu }) => {
   const [ticketData, setTicketData] = useState<ITicketDocument | null>(null);
   const [ticketStatus, setTicketStatus] = useState<string>("");
   const [currentProgress, setCurrentProgress] = useState<string>("");
@@ -144,7 +145,7 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
                 <div className="rounded-2xl bg-white p-2 shadow-xl border border-b-blue-500">{createdDate}</div>
                 <div className="rounded-2xl bg-white p-2 shadow-xl border border-b-blue-500">{ticketData?.dueDate}</div>
                 <div className="rounded-2xl bg-white p-2 shadow-xl border border-b-blue-500">{currentProgress}</div>
-                <div className="rounded-2xl bg-white p-2 shadow-xl border border-b-blue-500">
+                <div className="rounded-2xl bg-white p-2 shadow-xl border border-b-green-600">
                   <select
                     value={ticketStatus}
                     className="text-black bg-white outline-none "
@@ -179,20 +180,20 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
                     className="text-white bg-black/90 p-3 w-full h-full rounded-lg bg-gray-00 font-mono "
                     value={ticketData?.ticketReason}></textarea>
                 </div>
-                <div className="mt-4 ">
-                  <h1 className="font-bold mt-3 bg-white rounded-lg shadow-xl p-1 ">
+                <div className="mt-4  bg-white rounded-lg shadow-xl p-1">
+                  <h1 className="font-bold mt-3  ">
                     Ticket Raised Department :
                     <span className="ms-1 font-semibold text-blue-600 font-mono">
                       {ticketData?.ticketRaisedDepartmentName}
                     </span>{" "}
                   </h1>
-                  <h1 className="font-bold mt-3 bg-white rounded-lg shadow-xl p-1">
+                  <h1 className="font-bold mt-3 ">
                     Ticket Raised Employee :
                     <span className="ms-1 font-semibold text-blue-600 font-mono">
                       {ticketData?.ticketRaisedEmployeeName}
                     </span>{" "}
                   </h1>
-                  <h1 className="font-bold mt-3 bg-white rounded-lg shadow-xl p-1">
+                  <h1 className="font-bold mt-3 ">
                     Ticket last got updated on :
                     <span className="ms-1 font-semibold text-blue-600 font-mono">{lastUpdatedOn}</span>{" "}
                   </h1>
@@ -238,11 +239,14 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
           <footer>
 
              <div className="flex flex-col items-center justify-center">
-                <h2 className="text-center font-semibold">any additional features
+                <h2 className="text-center font-semibold">any additional support
                     <hr className="border-gray-400" />
                 </h2>
                <div>
-                <DockDemo/>
+                <DockDemo
+                ticketId={ticketData?.ticketID as string}
+                handleChat={handleChatSubMenu}
+                />
                </div>
              </div>
 
