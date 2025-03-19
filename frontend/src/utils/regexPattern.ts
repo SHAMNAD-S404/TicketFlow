@@ -8,6 +8,7 @@ type TregexPatterns = {
   textWithSpaceAndCommas : RegExp;
   textAreaValidation : RegExp;
   textAndNumberWithoutSpace : RegExp,
+  resolutionInputField : RegExp,
 };
 
 const regexPatterns: TregexPatterns = {
@@ -20,6 +21,7 @@ const regexPatterns: TregexPatterns = {
   textWithSpaceAndCommas: /^[a-zA-Z][a-zA-Z\s,]*$/,
   textAreaValidation:/^[a-zA-Z0-9"'.(),/\-\s]+(?<![().])$/,
   textAndNumberWithoutSpace : /^[a-zA-Z0-9]+$/,
+  resolutionInputField : /^[a-zA-Z0-9.,'"\(\)\s-]+$/,
 
 };
 

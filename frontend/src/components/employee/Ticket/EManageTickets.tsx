@@ -7,33 +7,55 @@ import { toast } from "react-toastify";
 import { Skeleton } from "@/components/ui/skeleton";
 import getDate from "@/components/utility/getDate";
 import { DockDemo } from "@/components/magicui/DockDemo";
+import InputModal from "@/components/common/InputModal";
 
 interface EManageTickets {
   handleCancle: () => void;
-  handleChatSubMenu : ()=> void;
+  handleChatSubMenu: () => void;
   ticketId: string;
 }
 
-export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketId , handleChatSubMenu }) => {
+export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketId, handleChatSubMenu }) => {
   const [ticketData, setTicketData] = useState<ITicketDocument | null>(null);
   const [ticketStatus, setTicketStatus] = useState<string>("");
   const [currentProgress, setCurrentProgress] = useState<string>("");
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const createdDate = getDate(ticketData?.createdAt as string);
   const lastUpdatedOn = getDate(ticketData?.updatedAt as string);
-  const ticketStatusArr: string[] = ["pending", "in-progress", "resolved", "closed", "re-opened"];
+  const ticketStatusArr: string[] = ["pending", "in-progress", "resolved"];
   const currentIndex = ticketStatusArr.indexOf(ticketStatus);
   const nextTicketStatus =
     currentIndex !== -1 && currentIndex < ticketStatusArr.length - 1
       ? ticketStatusArr[currentIndex + 1]
-      : ticketStatusArr[0];
+      : ticketStatusArr[2];
 
   const handleStatusChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setTicketStatus(event.target.value);
     setIsVisible(true);
   };
 
+  //left up state to get data from child
+  const handleResolution = async (data: string) => {
+    setModalOpen(false);
+    try {
+      const response = await updateTicketStatus(ticketData?._id as string, ticketStatus, data);
+      if (response.success) {
+        setCurrentProgress(ticketStatus);
+        toast.success(response.message);
+        setIsVisible(false);
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error(Messages.SOMETHING_TRY_AGAIN);
+      }
+    }
+  };
+
+  //ticket status update validation
   const handleTicketStatusUpdate = async () => {
     if (!ticketData) {
       toast.error(Messages.SELECT_REQUIRED_FIELDS);
@@ -49,8 +71,8 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
         toast.error("select a different status");
         return;
       }
-      if (ticketStatus === "re-opened" && currentProgress !== "closed") {
-        toast.warn("only closed ticket can re-open");
+      if (ticketStatus === "resolved") {
+        setModalOpen(true);
         return;
       }
 
@@ -148,7 +170,10 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
                 <div className="rounded-2xl bg-white p-2 shadow-xl border border-b-green-600">
                   <select
                     value={ticketStatus}
-                    className="text-black bg-white outline-none "
+                    disabled={ticketStatus === "resolved"}
+                    className={`text-black bg-white outline-none   ${
+                      ticketStatus === "resolved" ? "cursor-not-allowed " : "cursor-pointer"
+                    } `}
                     onChange={handleStatusChange}>
                     <option value={ticketStatus} disabled>
                       {ticketStatus}
@@ -162,13 +187,13 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
 
           <main>
             <div className="flex p-4 mt-4 gap-8 ms-8">
-              <div className="w-1/4 ">
+              <div className="w-1/4 mt-5">
                 {ticketData?.imageUrl ? (
                   <img className="p-1 rounded-lg h-5/6" src={ticketData?.imageUrl} alt="ticket image" />
                 ) : (
                   <div>
                     <Skeleton className="bg-gray-300 h-[350px] w-[300px] rounded-xl" />
-                    <p className="ms-4 p-2">No media attached with this ticket !</p>
+                    <p className="ms-4 p-2 text-red-500">No media attached with this ticket !</p>
                   </div>
                 )}
               </div>
@@ -181,21 +206,25 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
                     value={ticketData?.ticketReason}></textarea>
                 </div>
                 <div className="mt-4  bg-white rounded-lg shadow-xl p-1">
-                  <h1 className="font-bold mt-3  ">
+                  <h1 className="font-semibold mt-1  ">
                     Ticket Raised Department :
-                    <span className="ms-1 font-semibold text-blue-600 font-mono">
+                    <br />
+                    <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
                       {ticketData?.ticketRaisedDepartmentName}
                     </span>{" "}
                   </h1>
-                  <h1 className="font-bold mt-3 ">
+                  <h1 className="font-semibold mt-1 ">
                     Ticket Raised Employee :
-                    <span className="ms-1 font-semibold text-blue-600 font-mono">
+                    <br />{" "}
+                    <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
                       {ticketData?.ticketRaisedEmployeeName}
                     </span>{" "}
                   </h1>
-                  <h1 className="font-bold mt-3 ">
+                  <h1 className="font-semibold mt-1 ">
                     Ticket last got updated on :
-                    <span className="ms-1 font-semibold text-blue-600 font-mono">{lastUpdatedOn}</span>{" "}
+                    <br /> <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
+                      {lastUpdatedOn}
+                    </span>{" "}
                   </h1>
                 </div>
               </div>
@@ -208,26 +237,45 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
                     value={ticketData?.description}></textarea>
                 </div>
                 <div className="mt-4  bg-white rounded-lg shadow-xl p-2 ">
-                  <h1 className="font-bold mt-3">
+                  <h1 className="font-semibold mt-1">
                     Ticket Handling Department :
-                    <span className="ms-1 font-semibold text-blue-600 font-mono">
+                    <br />
+                    <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
                       {ticketData?.ticketHandlingDepartmentName}
                     </span>{" "}
                   </h1>
-                  <h1 className="font-bold mt-3">
+                  <h1 className="font-semibold mt-1">
                     Ticket Handling Employee :
-                    <span className="ms-1 font-semibold text-blue-600 font-mono">
+                    <br />
+                    <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
                       {ticketData?.ticketHandlingEmployeeName}
                     </span>{" "}
                   </h1>
-                  <h1 className="font-bold mt-3">
+                  <h1 className="font-semibold mt-1">
                     Additional support requested :
-                    <span className="ms-1 font-semibold text-blue-600 font-mono">{ticketData?.supportType}</span>{" "}
+                    <br />
+                    <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
+                      {ticketData?.supportType}
+                    </span>{" "}
                   </h1>
                 </div>
               </div>
+              {/* ticket resolution div */}
+              {ticketData?.ticketResolutions && (
+                <>
+                  <div className="w-1/4">
+                    <label className="font-bold">Resolutions Provided :</label>
+                    <div className="bg-gray-200 rounded-lg w-full h-3/6">
+                      <textarea
+                        readOnly
+                        className="text-white bg-black/90 p-3 w-full h-full rounded-lg bg-gray-00 font-mono "
+                        value={ticketData?.ticketResolutions}></textarea>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
-            <div className="flex justify-center mt-2">
+            <div className="flex justify-center ">
               <button
                 className={`bg-blue-600  hover:bg-green-500  transition-opacity duration-300  text-white p-2 font-semibold rounded-xl w-1/5
                     ${isVisible ? "opacity-100" : "opacity-0 pointer-events-none"}   `}
@@ -235,21 +283,20 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
                 Submit
               </button>
             </div>
+            <div>
+              <InputModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} submitSolution={handleResolution} />
+            </div>
           </main>
           <footer>
-
-             <div className="flex flex-col items-center justify-center">
-                <h2 className="text-center font-semibold">any additional support
-                    <hr className="border-gray-400" />
-                </h2>
-               <div>
-                <DockDemo
-                ticketId={ticketData?.ticketID as string}
-                handleChat={handleChatSubMenu}
-                />
-               </div>
-             </div>
-
+            <div className="flex flex-col items-center justify-center">
+              <h2 className="text-center font-semibold">
+                any additional support
+                <hr className="border-gray-400" />
+              </h2>
+              <div>
+                <DockDemo ticketId={ticketData?.ticketID as string} handleChat={handleChatSubMenu} />
+              </div>
+            </div>
           </footer>
         </div>
       )}

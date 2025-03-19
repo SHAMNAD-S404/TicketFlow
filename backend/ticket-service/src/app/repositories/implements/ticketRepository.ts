@@ -1,5 +1,5 @@
 import { BaseRepository } from "./baseRepository";
-import { ITicket } from "../../models/interface/ITicketModel";
+import { ITicket, TicketStatus } from "../../models/interface/ITicketModel";
 import { ITicketRepository } from "../interface/ITicketRepo";
 import TicketModel from "../../models/implements/ticket";
 import { ITicketReassignData } from "../../interface/userTokenData";
@@ -84,13 +84,19 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
     }
   }
 
-  async findAndupdateStatus(id: string, status: string): Promise<ITicket | null> {
+
+  async findAndupdateStatus(id: string, status: string, ticketResolutions?: string): Promise<ITicket | null> {
     try {
-      return await this.findOneDocAndUpdate({ _id: id }, { status: status });
+      const updateData: Record<string, string> = { status };
+      if (ticketResolutions) {
+        updateData.ticketResolutions = ticketResolutions;
+      }
+      return await this.findOneDocAndUpdate({ _id: id }, updateData);
     } catch (error) {
       throw error;
     }
   }
+  
 
   async findAllTicketForEmployee(
     authUserUUID: string,
@@ -124,7 +130,11 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
         .skip((page - 1) * limit)
         .limit(limit);
 
-      const totalFilteredDocuments = await this.model.countDocuments({ ticketHandlingEmployeeId,authUserUUID, ...searchFilter });
+      const totalFilteredDocuments = await this.model.countDocuments({
+        ticketHandlingEmployeeId,
+        authUserUUID,
+        ...searchFilter,
+      });
       const totalPages = Math.ceil(totalFilteredDocuments / limit);
       return { tickets: fetchTickets, totalPages };
     } catch (error) {

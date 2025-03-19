@@ -9,6 +9,7 @@ export interface ITicketDocument {
   supportType: string;
   status: string;
   imageUrl?: string;
+  ticketResolutions:string;
   ticketHandlingDepartmentId: string;
   ticketHandlingDepartmentName: string;
   ticketHandlingEmployeeId: string;

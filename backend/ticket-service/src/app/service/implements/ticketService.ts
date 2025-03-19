@@ -127,9 +127,9 @@ export default class TicketService implements ITicketService {
     }
   }
 
-  async getUpdatedTicketStatus(id: string, status: string): Promise<IReassignedTicketResponse> {
+  async getUpdatedTicketStatus(id: string, status: string,ticketResolutions?:string): Promise<IReassignedTicketResponse> {
     try {
-      const updateDoc = await TicketRepository.findAndupdateStatus(id, status);
+      const updateDoc = await TicketRepository.findAndupdateStatus(id, status,ticketResolutions);
       if (updateDoc) {
         return {
           message: Messages.TICKET_STATUS_UPDATED,

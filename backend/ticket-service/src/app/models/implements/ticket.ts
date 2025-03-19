@@ -40,6 +40,9 @@ const ticketSchema: Schema = new Schema<ITicket>(
     imageUrl: {
       type: String,
     },
+    ticketResolutions  : {
+      type : String , default:""
+    },
     ticketHandlingDepartmentId: {
       type: String,
       required: true,

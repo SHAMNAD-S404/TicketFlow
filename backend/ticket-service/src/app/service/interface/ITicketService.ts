@@ -42,5 +42,5 @@ export interface ITicketService {
 
   getTicketData(id: string): Promise<IReassignedTicketResponse>;
 
-  getUpdatedTicketStatus(id: string, status: string): Promise<IReassignedTicketResponse>;
+  getUpdatedTicketStatus(id: string, status: string,ticketResolutions?:string): Promise<IReassignedTicketResponse>;
 }

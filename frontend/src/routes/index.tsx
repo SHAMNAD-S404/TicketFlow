@@ -9,6 +9,10 @@ import NotFound from "../pages/404";
 import Unauthorized from "../pages/Unauthorized";
 import ProtoctedRoutes from "./ProtectedRoutes";
 import RestrictionRoute from "./RestrictionRoute";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { userRoles } from "@/enums/userRoles";
+
+const clientID = import.meta.env.VITE_OAUTH_CLIENT_ID;
 
 const AppRoutes: React.FC = () => {
   return (
@@ -31,9 +35,11 @@ const AppRoutes: React.FC = () => {
         <Route
           path="/auth/*"
           element={
-            <RestrictionRoute>
-              <AuthRoutes />
-            </RestrictionRoute>
+            <GoogleOAuthProvider clientId={clientID}>
+              <RestrictionRoute>
+                <AuthRoutes />
+              </RestrictionRoute>
+            </GoogleOAuthProvider>
           }
         />
 
@@ -41,7 +47,7 @@ const AppRoutes: React.FC = () => {
         <Route
           path="/sudo/*"
           element={
-            <ProtoctedRoutes allowedRoles={["sudo"]}>
+            <ProtoctedRoutes allowedRoles={[userRoles.Sudo]}>
               <SuperAdminRoutes />
             </ProtoctedRoutes>
           }
@@ -51,7 +57,7 @@ const AppRoutes: React.FC = () => {
         <Route
           path="/company/*"
           element={
-            <ProtoctedRoutes allowedRoles={["company"]}>
+            <ProtoctedRoutes allowedRoles={[userRoles.Company]}>
               <CompanyAdminRoutes />
             </ProtoctedRoutes>
           }
@@ -61,7 +67,7 @@ const AppRoutes: React.FC = () => {
         <Route
           path="/employee/*"
           element={
-            <ProtoctedRoutes allowedRoles={["employee"]}>
+            <ProtoctedRoutes allowedRoles={[userRoles.Employee]}>
               <EmployeeRoutes />
             </ProtoctedRoutes>
           }

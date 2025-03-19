@@ -26,16 +26,21 @@ export const fetchAllTickets = async (currentPage: number, sortBy: string, searc
   }
 };
 
-export const fetchTicketsEmployeeWise = async ( currentPage: number ,employeeId : string, sortBy:string,searchQuery : string) => {
+export const fetchTicketsEmployeeWise = async (
+  currentPage: number,
+  employeeId: string,
+  sortBy: string,
+  searchQuery: string
+) => {
   try {
     const response = await axiosInstance.get(
       `/tickets/get-ticket-employee-wise?page=${currentPage}&sortBy=${sortBy}&searchQuery=${searchQuery}&employeeId=${employeeId}`
     );
     return response.data;
   } catch (error) {
-    throw error
+    throw error;
   }
-}
+};
 
 export const ticketReassign = async (data: IUpdateReassignTicketData) => {
   try {
@@ -46,21 +51,20 @@ export const ticketReassign = async (data: IUpdateReassignTicketData) => {
   }
 };
 
-
-export const fetchOneTicket = async (id:string) => {
-    try {
-        const response = await axiosInstance.get(`/tickets/get-ticket?id=${id}`);
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
-}
-
-export const updateTicketStatus = async (id:string,status:string) => {
+export const fetchOneTicket = async (id: string) => {
   try {
-      const response = await axiosInstance.patch('/tickets/update-status',{id,status});
-      return response.data;
+    const response = await axiosInstance.get(`/tickets/get-ticket?id=${id}`);
+    return response.data;
   } catch (error) {
     throw error;
   }
-}
+};
+
+export const updateTicketStatus = async (id: string, status: string,ticketResolutions?:string) => {
+  try {
+    const response = await axiosInstance.patch("/tickets/update-status", { id, status,ticketResolutions });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

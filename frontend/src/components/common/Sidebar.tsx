@@ -28,8 +28,9 @@ const menuConfig: { [key: string]: { name: string; icon: React.ReactNode }[] } =
     ],
     employee: [
       { name: "Dashboard", icon: <FaHome /> },
+      { name: "Tickets", icon: <TiTicket/>},
       { name: "Profile", icon: <MdOutlineAccountCircle /> },
-      { name: "Tickets", icon: <TiTicket/>}
+      
     ],
   };
 

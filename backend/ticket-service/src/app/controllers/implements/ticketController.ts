@@ -13,6 +13,7 @@ import {
   TicketFormValidation,
   ticketReassignSchema,
 } from "../../dtos/basicValidation";
+import updateTicketValidation from "../../dtos/normalValidations";
 
 export class TicketController implements ITicketController {
   private readonly ticketService: ITicketService;
@@ -126,18 +127,17 @@ export class TicketController implements ITicketController {
 
   public updateTicketStatus = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { id, status } = req.body;
-      if (!id || !status) {
-        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.REQUIRED_FIELD_MISSING, success: false });
-        return;
-      }
-      const ticketStatus: string[] = ["pending", "in-progress", "resolved", "closed", "re-opened"];
-      if (!ticketStatus.includes(status)) {
-        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.ENTER_VALID_INPUT, success: false });
+      const { id, status, ticketResolutions } = req.body;
+      const validate = updateTicketValidation(id, status, ticketResolutions);
+      if (!validate.success) {
+        res.status(validate.statusCode as number).json({
+          message: validate.message,
+          success: validate.success,
+        });
         return;
       }
 
-      const updateDoc = await this.ticketService.getUpdatedTicketStatus(id, status);
+      const updateDoc = await this.ticketService.getUpdatedTicketStatus(id, status, ticketResolutions);
       const { message, statusCode, success } = updateDoc;
       res.status(statusCode).json({ message, success });
       return;
@@ -147,27 +147,32 @@ export class TicketController implements ITicketController {
     }
   };
 
-  public getTicketEmployeeWise = async(req: Request, res: Response): Promise<void> => {
+  public getTicketEmployeeWise = async (req: Request, res: Response): Promise<void> => {
     try {
-
       const validateSearchInput = EmployeesearchInputSchema.safeParse(req.query);
-      if(!validateSearchInput.success){
-        res.status(HttpStatus.BAD_REQUEST).json({message:Messages.INVALID_FILED_OR_MISSING_FIELD,success:false});
-        return
-      }
-
-      const {authUserUUID,employeeId,page,role,searchQuery,sortBy} = validateSearchInput.data;
-      if(role !== "employee"){
-        res.status(HttpStatus.UNAUTHORIZED).json({message:Messages.NO_ACCESS,success:false});
+      if (!validateSearchInput.success) {
+        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.INVALID_FILED_OR_MISSING_FIELD, success: false });
         return;
       }
 
-      const result = await this.ticketService.fetchAllTicketsEmployeeWise(authUserUUID,page,employeeId,sortBy,searchQuery);
-      const {message,statusCode,success,data} = result;
-      res.status(statusCode).json({message,success,data});
+      const { authUserUUID, employeeId, page, role, searchQuery, sortBy } = validateSearchInput.data;
+      if (role !== "employee") {
+        res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.NO_ACCESS, success: false });
+        return;
+      }
+
+      const result = await this.ticketService.fetchAllTicketsEmployeeWise(
+        authUserUUID,
+        page,
+        employeeId,
+        sortBy,
+        searchQuery
+      );
+      const { message, statusCode, success, data } = result;
+      res.status(statusCode).json({ message, success, data });
     } catch (error) {
-      console.error("error while getTicketEmployeeWise :",error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message:Messages.SERVER_ERROR,success:false});
+      console.error("error while getTicketEmployeeWise :", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
     }
-  }
+  };
 }
