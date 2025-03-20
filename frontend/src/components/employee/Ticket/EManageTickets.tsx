@@ -186,7 +186,7 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
           </header>
 
           <main>
-            <div className="flex p-4 mt-4 gap-8 ms-8">
+            <div className="flex p-4 mt-4 gap-4 ms-4">
               <div className="w-1/4 mt-5">
                 {ticketData?.imageUrl ? (
                   <img className="p-1 rounded-lg h-5/6" src={ticketData?.imageUrl} alt="ticket image" />
@@ -205,23 +205,23 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
                     className="text-white bg-black/90 p-3 w-full h-full rounded-lg bg-gray-00 font-mono "
                     value={ticketData?.ticketReason}></textarea>
                 </div>
-                <div className="mt-4  bg-white rounded-lg shadow-xl p-1">
+                <div className="mt-4  bg-white rounded-lg shadow-xl p-1 text-center">
                   <h1 className="font-semibold mt-1  ">
-                    Ticket Raised Department :
+                    Ticket Raised Department
                     <br />
                     <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
                       {ticketData?.ticketRaisedDepartmentName}
                     </span>{" "}
                   </h1>
-                  <h1 className="font-semibold mt-1 ">
-                    Ticket Raised Employee :
+                  <h1 className="font-semibold  ">
+                    Ticket Raised Employee
                     <br />{" "}
-                    <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
+                    <span className="ms-1   font-semibold text-sm text-blue-600 font-mono">
                       {ticketData?.ticketRaisedEmployeeName}
                     </span>{" "}
                   </h1>
-                  <h1 className="font-semibold mt-1 ">
-                    Ticket last got updated on :
+                  <h1 className="font-semibold  ">
+                    Ticket last got updated on
                     <br /> <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
                       {lastUpdatedOn}
                     </span>{" "}
@@ -236,23 +236,23 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
                     className="text-white bg-black/90 p-3 w-full h-full rounded-lg font-mono "
                     value={ticketData?.description}></textarea>
                 </div>
-                <div className="mt-4  bg-white rounded-lg shadow-xl p-2 ">
-                  <h1 className="font-semibold mt-1">
-                    Ticket Handling Department :
+                <div className="mt-4  bg-white rounded-lg shadow-xl p-2 text-center ">
+                  <h1 className="font-semibold ">
+                    Ticket Handling Department 
                     <br />
                     <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
                       {ticketData?.ticketHandlingDepartmentName}
                     </span>{" "}
                   </h1>
-                  <h1 className="font-semibold mt-1">
-                    Ticket Handling Employee :
+                  <h1 className="font-semibold ">
+                    Ticket Handling Employee 
                     <br />
                     <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
                       {ticketData?.ticketHandlingEmployeeName}
                     </span>{" "}
                   </h1>
-                  <h1 className="font-semibold mt-1">
-                    Additional support requested :
+                  <h1 className="font-semibold ">
+                    Additional support requested 
                     <br />
                     <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
                       {ticketData?.supportType}

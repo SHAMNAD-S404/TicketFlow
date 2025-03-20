@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ticket Closed Successfully</title>
+    <style>
+      /* Reset styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background-color: #f8fafc;
+        line-height: 1.6;
+        color: #334155;
+      }
+
+      /* Main container */
+      .email-wrapper {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #ffffff;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+
+      /* Header section with gradient */
+      .email-header {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        padding: 40px 20px;
+        text-align: center;
+        position: relative;
+      }
+
+      .success-icon {
+        width: 120px;
+        height: 120px;
+        background: #ffffff;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .success-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .header-title {
+        color: #ffffff;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .header-subtitle {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+      }
+
+      /* Content section */
+      .email-content {
+        padding: 40px 30px;
+      }
+
+      .ticket-info {
+        background: #f1f5f9;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+
+      .ticket-detail {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .ticket-detail:last-child {
+        border-bottom: none;
+      }
+
+      .detail-label {
+        color: #64748b;
+        font-weight: 600;
+      }
+
+      .detail-value {
+        color: #334155;
+        font-weight: 500;
+      }
+
+      /* CTA Button */
+      .cta-button {
+        display: inline-block;
+        background: #3b82f6;
+        color: #ffffff;
+        padding: 14px 28px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        margin: 20px 0;
+        text-align: center;
+        transition: background-color 0.3s ease;
+      }
+
+      .cta-button:hover {
+        background: #2563eb;
+      }
+
+      /* Footer section */
+      .email-footer {
+        background: #f8fafc;
+        padding: 20px;
+        text-align: center;
+        border-top: 1px solid #e2e8f0;
+      }
+
+      .footer-links {
+        margin-bottom: 15px;
+      }
+
+      .footer-link {
+        color: #3b82f6;
+        text-decoration: none;
+        margin: 0 10px;
+      }
+
+      .footer-text {
+        color: #64748b;
+        font-size: 14px;
+      }
+
+      /* Responsive design */
+      @media (max-width: 600px) {
+        .email-wrapper {
+          margin: 20px;
+          border-radius: 12px;
+        }
+
+        .email-header {
+          padding: 30px 15px;
+        }
+
+        .email-content {
+          padding: 30px 20px;
+        }
+
+        .success-icon {
+          width: 200px;
+          height: 200px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-wrapper">
+      <!-- Header Section -->
+      <div class="email-header">
+        <div class="success-icon">
+          <img
+            src="https://e7.pngegg.com/pngimages/511/969/png-clipart-red-and-black-rocket-illustration-rocket-spacecraft-rocket-image-file-formats-cartoon.png"
+            alt="Success Icon" />
+        </div>
+        <h1 class="header-title">Ticket Closed Successfully</h1>
+        <p class="header-subtitle">Thank you for using our support system</p>
+      </div>
+
+      <!-- Content Section -->
+      <div class="email-content">
+        <p>Dear <strong><%= employeeName %></strong>,</p>
+
+        <p>We're pleased to inform you that your ticket has been successfully resolved and closed.</p>
+
+        <div class="ticket-info font-weight: bolder;">
+          <div class="ticket-detail">
+            <span class="detail-label">Ticket ID</span>
+            <span class="detail-value"># : <%= ticketId %></span>
+          </div>
+          <div class="ticket-detail">
+            <span class="detail-label">Closed Date : </span>
+            <span class="detail-value"> <%= closedDate %></span>
+          </div>
+          <div class="ticket-detail">
+            <span class="detail-label">Resolution Time : </span>
+            <span class="detail-value"> <%= resolutionTime %></span>
+          </div>
+        </div>
+
+        <p>
+          We hope that the resolution provided meets your expectations. If you're satisfied with the solution, no
+          further action is needed.
+        </p>
+
+        <p>
+          However, if you feel that your issue hasn't been fully resolved, you can reopen this ticket within the next 48
+          hours.
+        </p>
+
+        <a class="cta-button">check your dashboard for more details</a>
+
+        <p>
+          Thank you for your patience throughout this process. We're committed to providing you with the best possible
+          support experience.
+        </p>
+
+        <p>Best regards,<br />TicketFlow support Team</p>
+      </div>
+
+      <!-- Footer Section -->
+      <div class="email-footer">
+        <div class="footer-links">
+          <a class="footer-link">Help Center</a>
+          <a class="footer-link">Contact Us</a>
+          <a class="footer-link">Feedback</a>
+        </div>
+        <p class="footer-text">&copy; <%= new Date().getFullYear() %> TicketFlow. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+</html>

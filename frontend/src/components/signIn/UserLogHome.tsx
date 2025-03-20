@@ -135,6 +135,11 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
                     }
                   })}
                 />
+                {errors.password && (
+                  <>
+                  <p className="mt-1 ms-1  text-sm font-semibold text-red-500">{errors.password.message}</p>
+                  </>
+                )}
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}

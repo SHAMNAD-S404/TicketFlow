@@ -1,4 +1,4 @@
-import { ITicket } from "../../models/interface/ITicketModel";
+import { ITicket, TicketStatus } from "../../models/interface/ITicketModel";
 import TicketRepository from "../../repositories/implements/ticketRepository";
 import { IfetchAllTicketsEmployeeWise, IReassignedTicketResponse, ITicketService } from "../interface/ITicketService";
 import { HttpStatus } from "../../../constants/httpStatus";
@@ -6,6 +6,9 @@ import { Messages } from "../../../constants/messageConstants";
 import { ITicketReassignData } from "../../interface/userTokenData";
 import { publishToQueue } from "../../../queues/publisher";
 import { RabbitMQConfig } from "../../../config/rabbitMQConfig";
+import { string } from "zod";
+import { error } from "console";
+import getResolutionTime from "../../../utils/getResolutionTime";
 
 export default class TicketService implements ITicketService {
   async createTicketDocument(
@@ -25,8 +28,9 @@ export default class TicketService implements ITicketService {
           template: "ticketTemplate",
           ticketId: newTicket.ticketID,
           employeeName: newTicket.ticketHandlingEmployeeName,
+          priority : newTicket.priority,
         };
-        //send to notification queue
+        //send to notification queue to send main to employee email id
         publishToQueue(RabbitMQConfig.notificationQueue, payload);
 
         //company service employee update payload
@@ -127,10 +131,47 @@ export default class TicketService implements ITicketService {
     }
   }
 
-  async getUpdatedTicketStatus(id: string, status: string,ticketResolutions?:string): Promise<IReassignedTicketResponse> {
+  async getUpdatedTicketStatus(
+    id: string,
+    status: string,
+    ticketResolutions?: string
+  ): Promise<IReassignedTicketResponse> {
     try {
-      const updateDoc = await TicketRepository.findAndupdateStatus(id, status,ticketResolutions);
+      let updateDoc;
+
+      if (status === TicketStatus.Resolved) {
+        const ticketData = await TicketRepository.findOneDocument({ _id: id });
+        const createdDate = new Date(ticketData?.createdAt as string).toLocaleString();
+        const date = new Date().toLocaleString();
+        // to calculate the ticket resolution time
+        const findResolutionTime = getResolutionTime(createdDate, date);
+        updateDoc = await TicketRepository.updateOnTicketClose({
+          id,
+          status,
+          ticketResolutions: ticketResolutions as string,
+          ticketClosedDate: date,
+          resolutionTime: findResolutionTime,
+        });
+      } else {
+        updateDoc = await TicketRepository.findAndupdateStatus(id, status, ticketResolutions);
+      }
+
       if (updateDoc) {
+        if (status === TicketStatus.Resolved) {
+          const payload = {
+            type: "ticketClosed",
+            email: updateDoc.ticketRaisedEmployeeEmail,
+            subject: ` Your Ticket resolved `,
+            template: "ticketClosedTemplate",
+            ticketId: updateDoc.ticketID,
+            employeeName: updateDoc.ticketRaisedEmployeeName,
+            closedDate: updateDoc.ticketClosedDate,
+            resolutionTime: updateDoc.resolutionTime,
+          };
+          //publishing event to notification que to send email
+          publishToQueue(RabbitMQConfig.notificationQueue, payload);
+        }
+
         return {
           message: Messages.TICKET_STATUS_UPDATED,
           statusCode: HttpStatus.OK,

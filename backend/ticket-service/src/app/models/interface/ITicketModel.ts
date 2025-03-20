@@ -4,7 +4,6 @@ export enum TicketStatus {
   Pending = 'pending',
   InProgress = 'in-progress',
   Resolved = 'resolved',
-  Closed = 'closed',
   ReOpened = 're-opened'
 }
 
@@ -20,6 +19,9 @@ export interface ITicket extends Document {
   status: TicketStatus;
   imageUrl: string;
   ticketResolutions:string;
+  ticketClosedDate:string;
+  createdAt?:string
+  resolutionTime:string
 
   ticketHandlingDepartmentId: string;
   ticketHandlingDepartmentName: string;

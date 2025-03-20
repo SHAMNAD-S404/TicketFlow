@@ -1,6 +1,6 @@
 import { BaseRepository } from "./baseRepository";
 import { ITicket, TicketStatus } from "../../models/interface/ITicketModel";
-import { ITicketRepository } from "../interface/ITicketRepo";
+import { ITicketRepository, IupdateOnTicketClose } from "../interface/ITicketRepo";
 import TicketModel from "../../models/implements/ticket";
 import { ITicketReassignData } from "../../interface/userTokenData";
 
@@ -84,7 +84,6 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
     }
   }
 
-
   async findAndupdateStatus(id: string, status: string, ticketResolutions?: string): Promise<ITicket | null> {
     try {
       const updateData: Record<string, string> = { status };
@@ -96,6 +95,16 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
       throw error;
     }
   }
+
+  async updateOnTicketClose(updateData: IupdateOnTicketClose): Promise<ITicket | null> {
+    try {
+      const {id,...updateField} = updateData;
+      return await this.findOneDocAndUpdate({_id:id},updateField);
+    } catch (error) {
+      throw error
+    }
+  }
+
   
 
   async findAllTicketForEmployee(

@@ -41,7 +41,7 @@ export const consumeAuthData = async () => {
             console.log("User saved successfully in auth service", email);
             //data to send
             const notificationPayload = {
-              type : "sendLoginDetails",
+              type: "sendLoginDetails",
               email: email,
               password: getPassword,
               subject: `One time credentials for login`,
@@ -50,10 +50,7 @@ export const consumeAuthData = async () => {
             };
 
             //publishing to notification queue
-            await publishToQueue(
-              RabbitMQConfig.notificationQueue,
-              notificationPayload
-            );
+            publishToQueue(RabbitMQConfig.notificationQueue, notificationPayload);
           }
 
           channel?.ack(message);

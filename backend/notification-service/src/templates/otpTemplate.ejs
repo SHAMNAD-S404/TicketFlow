@@ -1,114 +1,233 @@
-<!-- <!DOCTYPE html>
-<html>
-  <body style="font-family: Arial, sans-serif; margin: 20px">
-    <h2>OTP Verification</h2>
-    <p>Hi there,</p>
-    <p>Your OTP for verification is:</p>
-    <h1 style="color: #4caf50"><%= otp %></h1>
-    <p>
-      Please use this OTP to complete your registration. It will expire in 4
-      minutes.
-    </p>
-    <p>Thank you,<br />The TicketFlow Team</p>
-  </body>
-</html> -->
-
-
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OTP Verification</title>
     <style>
-      body {
-        font-family: 'Arial', sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f9f9f9;
-        color: #333;
-      }
-      .email-container {
-        max-width: 600px;
-        margin: 30px auto;
-        background: #ffffff;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-        overflow: hidden;
-      }
-      .email-header {
-        background-color: #4caf50;
-        padding: 20px;
-        text-align: center;
-        color: #ffffff;
-      }
-      .email-header h1 {
-        margin: 0;
-        font-size: 24px;
-      }
-      .email-body {
-        padding: 20px;
-      }
-      .email-body p {
-        margin: 10px 0;
-        line-height: 1.6;
-      }
-      .email-body .otp-box {
-        margin: 20px 0;
-        padding: 15px;
-        background-color: #f3f3f3;
-        border-radius: 8px;
-        text-align: center;
-      }
-      .email-body .otp-box h2 {
-        margin: 0;
-        font-size: 36px;
-        color: #4caf50;
-        font-weight: bold;
-      }
-      .email-footer {
-        background-color: #f3f3f3;
-        text-align: center;
-        padding: 10px;
-        font-size: 12px;
-        color: #666;
-      }
-      .email-footer a {
-        text-decoration: none;
-        color: #4caf50;
-        font-weight: bold;
-      }
+        /* Reset styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f8fafc;
+            line-height: 1.6;
+            color: #334155;
+        }
+
+        /* Main container */
+        .email-wrapper {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Header section with gradient */
+        .email-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            background: #ffffff;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .header-title {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+        }
+
+        /* Content section */
+        .email-content {
+            padding: 40px 30px;
+        }
+
+        /* OTP Box */
+        .otp-container {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .otp-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, #3b82f6, #1d4ed8);
+        }
+
+        .otp-label {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .otp-code {
+            font-family: 'Courier New', monospace;
+            font-size: 36px;
+            font-weight: 700;
+            color: #1e293b;
+            letter-spacing: 8px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 10px 0;
+        }
+
+        .otp-timer {
+            font-size: 14px;
+            color: #ef4444;
+            margin-top: 15px;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            background: #fff1f2;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        .warning-text {
+            color: #dc2626;
+            font-size: 14px;
+        }
+
+        /* Footer section */
+        .email-footer {
+            background: #f8fafc;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-links {
+            margin-bottom: 15px;
+        }
+
+        .footer-link {
+            color: #3b82f6;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .footer-text {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .email-wrapper {
+                margin: 20px;
+                border-radius: 12px;
+            }
+
+            .email-header {
+                padding: 30px 15px;
+            }
+
+            .email-content {
+                padding: 30px 20px;
+            }
+
+            .success-icon {
+                width: 300px;
+                height: 200px;
+            }
+
+            .otp-code {
+                font-size: 28px;
+                letter-spacing: 6px;
+            }
+            img{
+              object-fit: cover
+            }
+        }
     </style>
-  </head>
-  <body>
-    <div class="email-container">
-      <!-- Header Section -->
-      <div class="email-header">
-        <h1>OTP Verification</h1>
-      </div>
-
-      <!-- Body Section -->
-      <div class="email-body">
-        <p>Hi there,</p>
-        <p>We received a request to verify your email address.</p>
-        <p>
-          Use the one-time password (OTP) below to complete your verification.
-          Please note that the OTP is valid for only <strong>4 minutes</strong>:
-        </p>
-        <div class="otp-box">
-          <h2><%= otp %></h2>
+</head>
+<body>
+    <div class="email-wrapper">
+        <!-- Header Section -->
+        <div class="email-header">
+            <div class="success-icon">
+                <img src="https://e7.pngegg.com/pngimages/511/969/png-clipart-red-and-black-rocket-illustration-rocket-spacecraft-rocket-image-file-formats-cartoon.png" alt="Verification Icon">
+            </div>
+            <h1 class="header-title">Verify Your Email</h1>
+            <p class="header-subtitle">One-Time Password (OTP) Verification</p>
         </div>
-        <p>
-          If you didn't request this, please ignore this email 
-        </p>
-        <p>Thank you,<br />The TicketFlow Team</p>
-      </div>
 
-      <!-- Footer Section -->
-      <div class="email-footer">
-        <p>
-          Need help?
-        </p>
-        <p>&copy; <%= new Date().getFullYear() %> TicketFlow. All rights reserved.</p>
-      </div>
+        <!-- Content Section -->
+        <div class="email-content">
+            <p>Hello,</p>
+            
+            <p>We received a request to verify your email address. Please use the verification code below to complete the process:</p>
+
+            <div class="otp-container">
+                <div class="otp-label">Your Verification Code</div>
+                <div class="otp-code"><%= otp %></div>
+                <div class="otp-timer">⏰ Valid for 4 minutes only</div>
+            </div>
+
+            <div class="warning-box">
+                <p class="warning-text">
+                    ⚠️ If you didn't request this verification code, please ignore this email or contact our support team immediately.
+                </p>
+            </div>
+
+            <p>Best regards,<br>TicketFlow Support Team</p>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="email-footer">
+            <div class="footer-links">
+                <a href="#" class="footer-link">Help Center</a>
+                <a href="#" class="footer-link">Contact Support</a>
+            </div>
+            <p class="footer-text">&copy; <%= new Date().getFullYear() %> TicketFlow. All rights reserved.</p>
+        </div>
     </div>
-  </body>
+</body>
 </html>
-

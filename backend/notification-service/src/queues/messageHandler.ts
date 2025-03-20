@@ -1,7 +1,7 @@
+import { emit, send } from "process";
 import { sendEmail } from "../utils/sendEmail";
 
 export const messageHandlers: Record<string, (payload: any) => Promise<void>> = {
-
   registration: async ({ email, subject, template, otp, content }) => {
     await sendEmail(email, subject, template, { otp, content });
   },
@@ -18,11 +18,13 @@ export const messageHandlers: Record<string, (payload: any) => Promise<void>> = 
     });
   },
 
-  ticketAssigned : async ({  email , subject,template ,ticketId,employeeName}) => {
-    await sendEmail(email,subject,template,{ticketId,employeeName})
-  }
+  ticketAssigned: async ({ email, subject, template, ticketId, employeeName, priority }) => {
+    await sendEmail(email, subject, template, { ticketId, employeeName, priority });
+  },
 
-
+  ticketClosed: async ({ email, subject, template, ticketId, employeeName, closedDate, resolutionTime }) => {
+    await sendEmail(email, subject, template, { ticketId, employeeName, closedDate, resolutionTime });
+  },
 };
 
 export const processMessage = async (type: string, payload: any): Promise<void> => {

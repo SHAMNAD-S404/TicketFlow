@@ -21,6 +21,6 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
     searchQuery: Record<string, string>,
     updateQuery: Record<string, string | number>
   ): Promise<T | null> {
-    return await this.model.findOneAndUpdate(searchQuery, updateQuery, { new: true , upsert: true });
+    return await this.model.findOneAndUpdate(searchQuery, updateQuery, { new: true  });
   }
 }
