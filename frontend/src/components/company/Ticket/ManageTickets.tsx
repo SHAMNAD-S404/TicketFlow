@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { FaChevronDown, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronDown,   } from "react-icons/fa";
 import { debounce } from "lodash";
 import { searchInputValidate } from "@/components/utility/searchInputValidateNameEmail";
 import { ITicketContext } from "@/types/ITicketContext";
@@ -10,6 +10,7 @@ import { fetchAllTickets } from "@/api/services/ticketService";
 import { ReassignTicket } from "./ReassignTicket";
 import { ViewTickets } from "./ViewTickets";
 import TicketStaticsCards from "@/components/common/TicketStaticsCards";
+import Pagination from "@/components/common/Pagination";
 
 interface IManageTickets {
   handleCancel: () => void;
@@ -22,6 +23,11 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [refreshState, setRefreshState] = useState<boolean>(false);
+
+  //pagination handle function to liftup state
+  const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const handleCurrentPage = (page: number) => setCurrentPage(page);
+  const handleNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 
   const handleSearchQuery = useCallback(
     debounce((searchValue: string) => {
@@ -168,34 +174,15 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
 
         {/* pagination */}
 
-        <div className="flex items-center justify-between px-6 py-4 bg-white rounded-2xl shadow-lg mt-6">
-          <button
-            className="flex items-center gap-1 px-3 py-1 text-sm text-gray-600 hover:text-gray-900"
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}>
-            <FaChevronLeft className="w-4 h-4" /> Previous
-          </button>
-
-          <div className=" flex items-center gap-2">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`w-8 h-8 rounded-full ${
-                  currentPage === page ? "bg-gray-900 text-white" : "text-gray-600 hover:bg-gray-100"
-                }`}>
-                {page}
-              </button>
-            ))}
-          </div>
-
-          <button
-            className="flex items-center gap-1 px-3 py-1 text-sm text-gray-600 hover:text-gray-900"
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}>
-            Next <FaChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+        <footer>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            handlePrevPage={handlePrevPage}
+            handleCurrentPage={handleCurrentPage}
+            handleNextPage={handleNextPage}
+          />
+        </footer>
       </div>
     </div>
   );
