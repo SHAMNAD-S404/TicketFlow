@@ -15,7 +15,7 @@ function getResolutionTime(createdDate: string, closedDate: string): string {
   const minutes = Math.floor((diffSeconds % 3600) / 60);
   const seconds = diffSeconds % 60;
 
-  const resolutionDate = `${days} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds`;
+  const resolutionDate = `${days} days, ${hours} hours, ${minutes} min, ${seconds} sec`;
   return resolutionDate;
 }
 

@@ -10,6 +10,8 @@ export interface ITicketDocument {
   status: string;
   imageUrl?: string;
   ticketResolutions:string;
+  ticketClosedDate : string;
+  resolutionTime: string;
   ticketHandlingDepartmentId: string;
   ticketHandlingDepartmentName: string;
   ticketHandlingEmployeeId: string;

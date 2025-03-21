@@ -75,6 +75,7 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
             ticketHandlingDepartmentName: data.selectedDepartmentName,
             ticketHandlingEmployeeId: data.selectedEmployeeId,
             ticketHandlingEmployeeName: data.selectedEmployeeName,
+            ticketHandlingEmployeeEmail: data.selectedEmployeeEmail,
           },
         },
         { new: true }
@@ -98,14 +99,12 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
 
   async updateOnTicketClose(updateData: IupdateOnTicketClose): Promise<ITicket | null> {
     try {
-      const {id,...updateField} = updateData;
-      return await this.findOneDocAndUpdate({_id:id},updateField);
+      const { id, ...updateField } = updateData;
+      return await this.findOneDocAndUpdate({ _id: id }, updateField);
     } catch (error) {
-      throw error
+      throw error;
     }
   }
-
-  
 
   async findAllTicketForEmployee(
     authUserUUID: string,

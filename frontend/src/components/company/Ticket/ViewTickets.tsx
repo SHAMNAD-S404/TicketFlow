@@ -237,10 +237,10 @@ export const ViewTickets: React.FC<IViewTickets> = ({ ticketId, twickParent }) =
                   </h2>
                   <h2 className="text-lg font-medium">
                     Ticket last got updated on :{" "}
-                    <span className="text-green-400 font-semibold ">{new Date(ticketData.dueDate).toLocaleDateString("en-Us", options)}</span>{" "}
+                    <span className="text-green-400 font-semibold ">
+                      {new Date(ticketData.dueDate).toLocaleDateString("en-Us", options)}
+                    </span>{" "}
                   </h2>
-
-                 
                 </div>
                 {/* content div 2  */}
                 <div className="flex flex-col w-1/4 gap-2">
@@ -259,30 +259,26 @@ export const ViewTickets: React.FC<IViewTickets> = ({ ticketId, twickParent }) =
                     Ticket handling employee :{" "}
                     <span className="text-blue-400 font-semibold ">{ticketData.ticketHandlingEmployeeName}</span>{" "}
                   </h2>
-                
+
                   <h2 className="text-lg">
                     Support Type : <span className="font-semibold ">{ticketData.supportType}</span>{" "}
                   </h2>
-                
                 </div>
                 {/* content div 3 ticket resolutions*/}
                 {ticketData.ticketResolutions && (
                   <>
                     <div className="flex flex-col w-1/4 gap-2 ">
-                <h1 className="text-lg ">Ticket resolution provided :</h1>
-                <div className="bg-gray-200 rounded-lg w-full h-3/6">
-                    <textarea
-                      readOnly
-                      className="text-black bg-gray-100 p-3 w-full h-full rounded-lg font-mono "
-                      value={ticketData.ticketResolutions}></textarea>
-                  </div> 
-           
-                </div>
-
+                      <h1 className="text-lg ">Ticket resolution provided :</h1>
+                      <div className="bg-gray-200 rounded-lg w-full h-3/6">
+                        <textarea
+                          readOnly
+                          className="text-black bg-gray-100 p-3 w-full h-full rounded-lg font-mono "
+                          value={ticketData.ticketResolutions}></textarea>
+                      </div>
+                    </div>
                   </>
                 )}
 
-              
                 <div>
                   <InputModal
                     isOpen={isModalOpen}

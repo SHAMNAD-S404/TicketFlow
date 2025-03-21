@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import getDate from "@/components/utility/getDate";
 import { DockDemo } from "@/components/magicui/DockDemo";
 import InputModal from "@/components/common/InputModal";
+import TicketDiscriptionCard from "@/components/common/TicketDiscriptionCards";
 
 interface EManageTickets {
   handleCancle: () => void;
@@ -198,79 +199,59 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
                 )}
               </div>
               <div className="w-1/4">
-                <label className="font-bold ms-2">Ticket Raised for</label>
+                <h1 className="font-bold text-center">Ticket Raised for</h1>
                 <div className="bg-gray-200 rounded-lg w-full h-3/6">
                   <textarea
                     readOnly
                     className="text-white bg-black/90 p-3 w-full h-full rounded-lg bg-gray-00 font-mono "
                     value={ticketData?.ticketReason}></textarea>
                 </div>
-                <div className="mt-4  bg-white rounded-lg shadow-xl p-1 text-center">
-                  <h1 className="font-semibold mt-1  ">
-                    Ticket Raised Department
-                    <br />
-                    <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
-                      {ticketData?.ticketRaisedDepartmentName}
-                    </span>{" "}
-                  </h1>
-                  <h1 className="font-semibold  ">
-                    Ticket Raised Employee
-                    <br />{" "}
-                    <span className="ms-1   font-semibold text-sm text-blue-600 font-mono">
-                      {ticketData?.ticketRaisedEmployeeName}
-                    </span>{" "}
-                  </h1>
-                  <h1 className="font-semibold  ">
-                    Ticket last got updated on
-                    <br /> <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
-                      {lastUpdatedOn}
-                    </span>{" "}
-                  </h1>
-                </div>
+                <TicketDiscriptionCard
+                  caption1="Ticket Raised Department"
+                  value1={ticketData?.ticketRaisedDepartmentName as string}
+                  caption2="Ticket Raised Employee"
+                  value2={ticketData?.ticketRaisedEmployeeName as string}
+                  caption3="Ticket last got updated on"
+                  value3={lastUpdatedOn}
+                />
               </div>
               <div className="w-1/4">
-                <label className=" font-bold ">Ticket description :</label>
+                <h1 className=" font-bold text-center ">Ticket description :</h1>
                 <div className="bg-white rounded-lg w-full h-3/6">
                   <textarea
                     readOnly
                     className="text-white bg-black/90 p-3 w-full h-full rounded-lg font-mono "
                     value={ticketData?.description}></textarea>
                 </div>
-                <div className="mt-4  bg-white rounded-lg shadow-xl p-2 text-center ">
-                  <h1 className="font-semibold ">
-                    Ticket Handling Department 
-                    <br />
-                    <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
-                      {ticketData?.ticketHandlingDepartmentName}
-                    </span>{" "}
-                  </h1>
-                  <h1 className="font-semibold ">
-                    Ticket Handling Employee 
-                    <br />
-                    <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
-                      {ticketData?.ticketHandlingEmployeeName}
-                    </span>{" "}
-                  </h1>
-                  <h1 className="font-semibold ">
-                    Additional support requested 
-                    <br />
-                    <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
-                      {ticketData?.supportType}
-                    </span>{" "}
-                  </h1>
-                </div>
+                <TicketDiscriptionCard
+                  caption1="Ticket Handling Department"
+                  value1={ticketData?.ticketHandlingDepartmentName as string}
+                  caption2="Ticket Handling Employee"
+                  value2={ticketData?.ticketHandlingEmployeeName as string}
+                  caption3="Additional Support Requested"
+                  value3={ticketData?.supportType as string}
+                />
               </div>
               {/* ticket resolution div */}
               {ticketData?.ticketResolutions && (
                 <>
                   <div className="w-1/4">
-                    <label className="font-bold">Resolutions Provided :</label>
+                    <h1 className="font-bold text-center">Resolutions Provided :</h1>
                     <div className="bg-gray-200 rounded-lg w-full h-3/6">
                       <textarea
                         readOnly
                         className="text-white bg-black/90 p-3 w-full h-full rounded-lg bg-gray-00 font-mono "
                         value={ticketData?.ticketResolutions}></textarea>
                     </div>
+
+                    <TicketDiscriptionCard
+                      caption1="Ticket Closed Date"
+                      value1={ticketData.ticketClosedDate}
+                      caption2="Ticket Resolution Time"
+                      value2={ticketData.resolutionTime}
+                      caption3="May be the reopen come here"
+                      value3="ethoke sredhikende ambanei"
+                    />
                   </div>
                 </>
               )}

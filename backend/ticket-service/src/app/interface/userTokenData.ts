@@ -10,6 +10,7 @@ export interface ITicketReassignData {
     selectedDepartmentName : string;
     selectedEmployeeId : string;
     selectedEmployeeName : string;
+    selectedEmployeeEmail : string
 }
 
 export interface IBasicResponse{

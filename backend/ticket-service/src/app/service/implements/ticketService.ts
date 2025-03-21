@@ -6,8 +6,6 @@ import { Messages } from "../../../constants/messageConstants";
 import { ITicketReassignData } from "../../interface/userTokenData";
 import { publishToQueue } from "../../../queues/publisher";
 import { RabbitMQConfig } from "../../../config/rabbitMQConfig";
-import { string } from "zod";
-import { error } from "console";
 import getResolutionTime from "../../../utils/getResolutionTime";
 
 export default class TicketService implements ITicketService {
@@ -28,7 +26,7 @@ export default class TicketService implements ITicketService {
           template: "ticketTemplate",
           ticketId: newTicket.ticketID,
           employeeName: newTicket.ticketHandlingEmployeeName,
-          priority : newTicket.priority,
+          priority: newTicket.priority,
         };
         //send to notification queue to send main to employee email id
         publishToQueue(RabbitMQConfig.notificationQueue, payload);
@@ -37,7 +35,7 @@ export default class TicketService implements ITicketService {
         const employeeUpdate = {
           eventType: "employee-ticket-update",
           employeeId: newTicket.ticketHandlingEmployeeId,
-          value: 1,
+          value: 1, //value to determine increase or decrease the ticket 1 for inc -1 decr
         };
 
         //update ticketcount in employee collection
@@ -98,6 +96,39 @@ export default class TicketService implements ITicketService {
         };
       }
       const update = await TicketRepository.ticketReassign(data);
+      if (update) {
+        //payload for the notification queue
+        const payload = {
+          type: "ticketAssigned",
+          email: update.ticketHandlingEmployeeEmail,
+          subject: `Assigned a new Ticket -${update.priority}`,
+          template: "ticketTemplate",
+          ticketId: update.ticketID,
+          employeeName: update.ticketHandlingEmployeeName,
+          priority: update.priority,
+        };
+        //send to notification queue to send main to employee email id
+        publishToQueue(RabbitMQConfig.notificationQueue, payload);
+
+        //company service employee update payload
+        const employeeUpdate = {
+          eventType: "employee-ticket-update",
+          employeeId: update.ticketHandlingEmployeeId,
+          value: 1, //value to determine increase or decrease the ticket 1 for inc -1 decr
+        };
+
+        //update ticketcount in employee collection
+        publishToQueue(RabbitMQConfig.companyMainQueue, employeeUpdate);
+
+        //company service employee ticket count reduct payload
+        const updateEmployeeData = {
+          eventType: "employee-ticket-update",
+          employeeId: isExist.ticketHandlingEmployeeId,
+          value: -1, //decreasing the ticket count by 1.
+        };
+        //update reduced ticketcount in employee collection
+        publishToQueue(RabbitMQConfig.companyMainQueue, updateEmployeeData);
+      }
       return {
         message: Messages.TICKET_REASSIGNED,
         statusCode: HttpStatus.OK,
@@ -158,6 +189,7 @@ export default class TicketService implements ITicketService {
 
       if (updateDoc) {
         if (status === TicketStatus.Resolved) {
+          //payload to send to data to notification queue
           const payload = {
             type: "ticketClosed",
             email: updateDoc.ticketRaisedEmployeeEmail,
@@ -170,8 +202,16 @@ export default class TicketService implements ITicketService {
           };
           //publishing event to notification que to send email
           publishToQueue(RabbitMQConfig.notificationQueue, payload);
-        }
 
+          //send data to company service to reduce ticket count of employee
+          const employeeUpdate = {
+            eventType: "employee-ticket-update",
+            employeeId: updateDoc.ticketHandlingEmployeeId,
+            value: -1,
+          };
+          //reduce ticketcount in employee collection
+          publishToQueue(RabbitMQConfig.companyMainQueue, employeeUpdate);
+        }
         return {
           message: Messages.TICKET_STATUS_UPDATED,
           statusCode: HttpStatus.OK,

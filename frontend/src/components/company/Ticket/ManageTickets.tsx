@@ -1,6 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { FaChevronDown, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { debounce } from "lodash";
@@ -11,19 +9,19 @@ import { Messages } from "@/enums/Messages";
 import { fetchAllTickets } from "@/api/services/ticketService";
 import { ReassignTicket } from "./ReassignTicket";
 import { ViewTickets } from "./ViewTickets";
+import TicketStaticsCards from "@/components/common/TicketStaticsCards";
 
 interface IManageTickets {
   handleCancel: () => void;
 }
 
 const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
-  const ticketCards = ["card 1", "card 2", "card 3", "card 4"];
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [tikcetData, setTicketData] = useState<ITicketContext[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [refreshState , setRefreshState] = useState<boolean>(false)
+  const [refreshState, setRefreshState] = useState<boolean>(false);
 
   const handleSearchQuery = useCallback(
     debounce((searchValue: string) => {
@@ -53,31 +51,12 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
       }
     };
     getAllTickets();
-  }, [currentPage, sortBy, searchQuery,refreshState]);
-
+  }, [currentPage, sortBy, searchQuery, refreshState]);
 
   return (
     <div className="bg-blue-50">
       {/* card slides */}
-      <div className="flex items-center justify-evenly mt-4">
-        {ticketCards.map((card, index) => (
-          <Card key={index} className="w-80 bg-white border-none shadow-lg shadow-gray-400">
-            <CardHeader>
-              <CardTitle></CardTitle>
-              <CardDescription>
-                <Skeleton className="h-[125px] w-[250px] rounded-xl bg-gray-200 " />
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p></p>
-              <Skeleton className="h-4 w-[200px]" />
-            </CardContent>
-            <CardFooter>
-              <p></p>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+      <TicketStaticsCards />
 
       {/* table section */}
 
@@ -171,21 +150,16 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
                   <div className="flex justify-center">{ticket.dueDate}</div>
                   <div className="flex justify-center">{ticket.status}</div>
                   {/* reassign ticket */}
-                  <ReassignTicket                    
-                     selectedDepartmentId = {ticket.ticketHandlingDepartmentId}                    
-                     selectedEmployeeId = {ticket.ticketHandlingEmployeeId}
-                     selectedTicketId  = {ticket._id}
-                     twickParent = {() => setRefreshState(!refreshState)}
-                     handleCancel = {handleCancel}
-                  
+                  <ReassignTicket
+                    selectedDepartmentId={ticket.ticketHandlingDepartmentId}
+                    selectedEmployeeId={ticket.ticketHandlingEmployeeId}
+                    selectedTicketId={ticket._id}
+                    twickParent={() => setRefreshState(!refreshState)}
+                    handleCancel={handleCancel}
                   />
 
-                 {/* ticket view and manage */}
-                  <ViewTickets
-                    ticketId = {ticket._id}
-                    twickParent = {()=> setRefreshState(!refreshState)}
-                  />
-
+                  {/* ticket view and manage */}
+                  <ViewTickets ticketId={ticket._id} twickParent={() => setRefreshState(!refreshState)} />
                 </div>
               ))}
             </div>

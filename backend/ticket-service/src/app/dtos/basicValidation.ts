@@ -14,7 +14,8 @@ export const ticketReassignSchema = z.object({
     selectedDepartmentId : z.string().trim().min(7).max(40).regex(regexPatterns.alphabatesAndNumberOnly),
     selectedDepartmentName : z.string().trim().min(3).max(50).regex(regexPatterns.alphabatesAndSpaces),
     selectedEmployeeId  : z.string().trim().min(7).max(40).regex(regexPatterns.alphabatesAndNumberOnly),
-    selectedEmployeeName : z.string().trim().min(3).max(40).regex(regexPatterns.alphabatesAndSpaces)
+    selectedEmployeeName : z.string().trim().min(3).max(40).regex(regexPatterns.alphabatesAndSpaces),
+    selectedEmployeeEmail : z.string().trim().email(),
 })
 
 export const TicketFormValidation = z.object({

@@ -30,6 +30,7 @@ export interface IUpdateReassignTicketData  {
   selectedDepartmentName : string;
   selectedEmployeeId : string;
   selectedEmployeeName : string;
+  selectedEmployeeEmail: string;
 }
 
 export const ReassignTicket: React.FC<IReassignTicketProps> = ({
@@ -43,7 +44,7 @@ export const ReassignTicket: React.FC<IReassignTicketProps> = ({
   const [selectedEmployee, setSelectedEmployee] = useState<string >(selectedEmployeeId);
   const [allDepartment, setAllDepartment] = useState<IDepartement[]>([]);
   const [employees, setEmployees] = useState<IEmployeeList[]>([]);
-  const [ isDrawerOpen , setIsDrawerOpen] = useState<boolean>(false)
+  const [isDrawerOpen , setIsDrawerOpen] = useState<boolean>(false)
 
 
 
@@ -61,6 +62,7 @@ export const ReassignTicket: React.FC<IReassignTicketProps> = ({
         selectedDepartmentName : departmentDetails?.departmentName as string,
         selectedEmployeeId : selectedEmployee,
         selectedEmployeeName: employeeDetails?.name as string,
+        selectedEmployeeEmail : employeeDetails?.email as string,
       }
 
       const response  = await ticketReassign(ticketReassignData);
