@@ -23,11 +23,6 @@ export class AuthService implements IAuthService {
 
   // user registraction ===================================================================================================
 
-  /**
-   * Registers a new user with the provided data
-   * @param data The user registration data
-   * @returns A promise that resolves to an object containing a message and a boolean indicating success or failure
-   */
   async registerUser(data: RegisterUserDTO): Promise<{ message: string; success: boolean; statusCode: number }> {
     try {
       const { email, password, companyName, companyType, phoneNumber, corporatedId, originCountry } = data;

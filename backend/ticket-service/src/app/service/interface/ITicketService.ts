@@ -38,6 +38,14 @@ export interface ITicketService {
     searchQuery: string
   ): Promise<IfetchAllTicketsEmployeeWise>;
 
+  fetchAllTicketEmployeeRaised(
+    authUserUUID: string,
+    page: number,
+    ticketRaisedEmployeeId: string,
+    sortBy: string,
+    searchQuery: string
+  ): Promise<IfetchAllTicketsEmployeeWise>;
+
   getReassignedTicket(data: ITicketReassignData): Promise<IReassignedTicketResponse>;
 
   getTicketData(id: string): Promise<IReassignedTicketResponse>;

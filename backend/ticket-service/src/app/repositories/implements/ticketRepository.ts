@@ -1,6 +1,6 @@
 import { BaseRepository } from "./baseRepository";
-import { ITicket, TicketStatus } from "../../models/interface/ITicketModel";
-import { ITicketRepository, IupdateOnTicketClose } from "../interface/ITicketRepo";
+import { ITicket } from "../../models/interface/ITicketModel";
+import { IFindAllTicketForEmployeeRaised, ITicketRepository, IupdateOnTicketClose } from "../interface/ITicketRepo";
 import TicketModel from "../../models/implements/ticket";
 import { ITicketReassignData } from "../../interface/userTokenData";
 
@@ -140,6 +140,48 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
 
       const totalFilteredDocuments = await this.model.countDocuments({
         ticketHandlingEmployeeId,
+        authUserUUID,
+        ...searchFilter,
+      });
+      const totalPages = Math.ceil(totalFilteredDocuments / limit);
+      return { tickets: fetchTickets, totalPages };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findAllTicketsForEmployeeRaised(
+    data: IFindAllTicketForEmployeeRaised
+  ): Promise<{ tickets: ITicket[] | null; totalPages: number }> {
+    try {
+      const { authUserUUID, page, searchQuery, sortBy, ticketRaisedEmployeeId } = data;
+      console.log(ticketRaisedEmployeeId);
+      const limit = 4;
+      const filter: Record<string, 1 | -1> = {
+        [sortBy]: sortBy === "createdAt" ? -1 : 1,
+      };
+      const searchFilter =
+        searchQuery.trim() === ""
+          ? {}
+          : {
+              $or: [
+                { ticketID: { $regex: searchQuery, $options: "i" } },
+                { ticketHandlingDepartmentName: { $regex: searchQuery, $options: "i" } },
+                { ticketRaisedDepartmentName: { $regex: searchQuery, $options: "i" } },
+                { ticketHandlingEmployeeName: { $regex: searchQuery, $options: "i" } },
+              ],
+            };
+
+      const fetchTickets = await this.model
+        .find({
+          $and: [{ authUserUUID: authUserUUID, ticketRaisedEmployeeId: ticketRaisedEmployeeId }, searchFilter],
+        })
+        .sort(filter)
+        .skip((page - 1) * limit)
+        .limit(limit);
+
+      const totalFilteredDocuments = await this.model.countDocuments({
+        ticketRaisedEmployeeId,
         authUserUUID,
         ...searchFilter,
       });

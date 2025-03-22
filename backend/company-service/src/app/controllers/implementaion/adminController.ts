@@ -4,6 +4,7 @@ import { ICompanyService } from "../../services/interface/ICompanyService";
 import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
 import { emailSchema } from "../../dtos/jwtQueryValidation";
+import Roles from "../../../constants/roles";
 
  export class AdminController implements IAdminController {
     private readonly comapanyService : ICompanyService ;
@@ -14,11 +15,18 @@ import { emailSchema } from "../../dtos/jwtQueryValidation";
 
     public getUserData = async(req: Request, res: Response): Promise<void> =>{
         try {
-            const email = req.query.email;
+            const {email,role} = req.query;
+            if(role !== Roles.Company){
+                res.status(HttpStatus.UNAUTHORIZED).json({
+                    message:Messages.NO_ACCESS,success:false
+                });
+                return
+            }
             if(!email){
                 res.status(400).json({message:"user id dont found",succeess:false})
                 return;
             }
+
 
             const response = await this.comapanyService.fetchCompanyData(email.toString());
             const {message, success,data} = response;

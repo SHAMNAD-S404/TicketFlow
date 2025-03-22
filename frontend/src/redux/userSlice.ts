@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { IAdminContext } from "../types/IAdminContext";
 import { fetchUserData } from "../api/services/companyService";
+import { Messages } from "@/enums/Messages";
 
 
 //state interface
@@ -29,7 +30,9 @@ export const fetchCompany =  createAsyncThunk(
       localStorage.removeItem("signupStep")
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.message);
+      const errMsg = error.response?.data?.message || Messages.SOMETHING_TRY_AGAIN
+      console.log(errMsg)
+      return rejectWithValue(errMsg);
     }
   }
 );

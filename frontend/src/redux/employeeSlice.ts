@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { IEmployeeContext } from "../types/IEmployeeContext";
 import { fetchEmployeeData } from "../api/services/companyService";
+import { Messages } from "@/enums/Messages";
 
 //state interface
 interface EmployeeState {
@@ -26,7 +27,8 @@ export const fetchEmployee = createAsyncThunk(
       localStorage.removeItem("email");
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.message);
+      const errMsg = error.response?.data?.message || Messages.SOMETHING_TRY_AGAIN;
+      return rejectWithValue(errMsg);
     }
   }
 );

@@ -1,4 +1,4 @@
-import { fetchOneTicket, updateTicketStatus } from "@/api/services/ticketService";
+import { updateTicketStatus } from "@/api/services/ticketService";
 import { Messages } from "@/enums/Messages";
 import { ITicketDocument } from "@/interfaces/ITicketDocument";
 import React, { useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import getDate from "@/components/utility/getDate";
 import { DockDemo } from "@/components/magicui/DockDemo";
 import ManageTicketUI from "@/components/common/ManageTicketUI";
+import useTicketData from "@/customHooks/useTicketData";
 
 interface EManageTickets {
   handleCancle: () => void;
@@ -16,11 +17,10 @@ interface EManageTickets {
 }
 
 export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketId, handleChatSubMenu }) => {
-  const [ticketData, setTicketData] = useState<ITicketDocument | null>(null);
+  const { ticketData, loading, error, refetch } = useTicketData(ticketId);
   const [ticketStatus, setTicketStatus] = useState<string>("");
   const [currentProgress, setCurrentProgress] = useState<string>("");
   const [isVisible, setIsVisible] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const createdDate = getDate(ticketData?.createdAt as string);
   const lastUpdatedOn = getDate(ticketData?.updatedAt as string);
@@ -93,28 +93,12 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
   };
 
   useEffect(() => {
-    const fetchTicketData = async () => {
-      try {
-        setLoading(true);
-        const response = await fetchOneTicket(ticketId);
-        if (response.success) {
-          setTicketData(response.data);
-          setTicketStatus(response.data.status);
-          setCurrentProgress(response.data.status);
-          setIsVisible(false);
-          setLoading(false);
-        }
-      } catch (error: any) {
-        if (error.response && error.response.data) {
-          toast.error(error.response.data.message);
-        } else {
-          toast.error(Messages.SOMETHING_TRY_AGAIN);
-        }
-        setTicketData(null);
-      }
-    };
-    fetchTicketData();
-  }, [ticketId]);
+    if (ticketData) {
+      setTicketStatus(ticketData.status);
+      setCurrentProgress(ticketData.status);
+      setIsVisible(false);
+    }
+  }, [ticketData]);
 
   return (
     <div>

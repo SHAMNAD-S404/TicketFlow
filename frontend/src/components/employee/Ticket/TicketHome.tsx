@@ -7,6 +7,8 @@ import { Rootstate } from "@/redux/store";
 import AssignedTickets from "./AssignedTickets";
 import { EManageTickets } from "./EManageTickets";
 import TickeChat from "../chat/TicketChat";
+import MyTicketProgress from "./MyticketProgress";
+import ViewMyTicketProgress from "./ViewMyTicketProgress";
 
 interface ISubMenuList {
   header: string;
@@ -19,9 +21,11 @@ interface ISubMenuList {
 const subMenuItems  = {
   CREATE_TICKET : "Create Ticket",
   ASSIGNED_TICKETS : "Assigned Tickets For me",
+  MY_TICKET_PROGRESS : "My ticket Progress",
   ANALYSE_TICKETS : "Ticket analyse",
   MANAGE_TICKETS : "Manage Ticket",
   SHOW_CHAT : "Show Chat",
+  VIEW_TICKET_PROGRESS : "View My Ticket Progress",
 
 }
 
@@ -40,10 +44,20 @@ export const TicketHome: React.FC = () => {
     {
       header: "Assigned Tickets For me",
       description: "Assigned tickets for me that i want to work on that",
-      buttonText: "MY Tickets",
+      buttonText: "My Tickets",
       image: GifImage,
       onButtonClick : ()=> setActiveSubMenu(subMenuItems.ASSIGNED_TICKETS)
-    },{
+    },
+    {
+
+      header: "My Ticket Progress",
+      description : "Click to see the ticket progress",
+      buttonText : "Ticket Progress",
+      image:GifImage,
+      onButtonClick : ()=> setActiveSubMenu(subMenuItems.MY_TICKET_PROGRESS)
+
+    },
+    {
         header : "Ticket analyse",
         description : "Click here to view detailed ticket and department performance",
         buttonText : "View",
@@ -52,8 +66,12 @@ export const TicketHome: React.FC = () => {
     }
   ];
 
+  //go back to ticket home
   const onCancel = () => setActiveSubMenu(null);
-  const onManageTicket = () => setActiveSubMenu(subMenuItems.MANAGE_TICKETS)
+  //go to manage ticket page
+  const onManageTicket = () => setActiveSubMenu(subMenuItems.MANAGE_TICKETS);
+  //go to view my ticketProgress Page
+  const onViewMyTicketProgress = () => setActiveSubMenu(subMenuItems.VIEW_TICKET_PROGRESS);
 
   const renderSubContent = () => {
     switch (activeSubMenu) {
@@ -82,6 +100,20 @@ export const TicketHome: React.FC = () => {
 
       case subMenuItems.SHOW_CHAT : 
         return <TickeChat/>
+      
+      case subMenuItems.MY_TICKET_PROGRESS :
+        return <MyTicketProgress
+          handleCancel={onCancel}
+          handleSetTicketId={(value:string) => setTicketID(value) }
+          handleViewTicketProgress={onViewMyTicketProgress}
+        />
+      
+      case subMenuItems.VIEW_TICKET_PROGRESS :
+        return <ViewMyTicketProgress
+          handleCancle={()=> setActiveSubMenu(subMenuItems.MY_TICKET_PROGRESS)}
+          ticketId={getTicketID}
+          handleChatSubMenu={()=> setActiveSubMenu(subMenuItems.SHOW_CHAT)}
+        />
       
       default:
         return (

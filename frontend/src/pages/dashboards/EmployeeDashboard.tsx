@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import Sidebar from "../../components/common/Sidebar";
 import DashboardHeader from "../../components/common/DashboardHeader";
 import EmployeeMainContent from "../../components/employee/EmployeeMainContent";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchEmployee, clearUserData } from "../../redux/employeeSlice";
+import {  clearUserData } from "../../redux/employeeSlice";
 import { Rootstate, AppDispatch } from "../../redux/store";
 import { logoutUser } from "../../api/services/authService";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { showCustomeAlert } from "../../components/utility/swalAlertHelper";
 import { toast } from "react-toastify";
+import { Messages } from "@/enums/Messages";
 
 const EmployeeDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -48,11 +49,8 @@ const EmployeeDashboard: React.FC = () => {
         }
       }
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        alert("error while logout");
-      }
+      const errMsg = error.response?.data?.message || Messages.SOMETHING_TRY_AGAIN;
+      toast.error(errMsg)
     }
   };
 

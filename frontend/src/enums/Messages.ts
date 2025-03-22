@@ -7,6 +7,7 @@ export enum Messages {
     TOKEN_NOT_FOUND = "Token not found",
     IMAGE_ERROR = "Invalid file type. Only JPEG, PNG, and GIF are allowed.",
     IMAGE_MAX_SIZE_REACHED = "Select file below 3 mb",
+    DATA_NOT_FOUND = "Requested Data not Found",
     
 
     

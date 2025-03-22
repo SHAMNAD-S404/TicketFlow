@@ -7,6 +7,7 @@ export interface ITicketController {
     fetchTicket (req:Request , res: Response) : Promise< void >;
     updateTicketStatus (req: Request , res : Response) : Promise < void >;
     getTicketEmployeeWise ( req : Request , res : Response ) : Promise < void >;
+    getTicketEmployeeRaisedWise(req: Request , res : Response) : Promise<void>
 
     
 }

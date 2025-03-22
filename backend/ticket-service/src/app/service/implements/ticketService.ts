@@ -262,4 +262,39 @@ export default class TicketService implements ITicketService {
       throw error;
     }
   }
+
+  async fetchAllTicketEmployeeRaised(
+    authUserUUID: string,
+    page: number,
+    ticketRaisedEmployeeId: string,
+    sortBy: string,
+    searchQuery: string
+  ): Promise<IfetchAllTicketsEmployeeWise> {
+    try {
+      const result = await TicketRepository.findAllTicketsForEmployeeRaised({
+        authUserUUID,
+        ticketRaisedEmployeeId,
+        page,
+        sortBy,
+        searchQuery
+      }
+      );
+      if (result) {
+        return {
+          message: Messages.FETCH_SUCCESS,
+          statusCode: HttpStatus.OK,
+          success: true,
+          data: result,
+        };
+      } else {
+        return {
+          message: Messages.DATA_NOT_FOUND,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 }

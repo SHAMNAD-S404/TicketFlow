@@ -14,6 +14,7 @@ import {
   ticketReassignSchema,
 } from "../../dtos/basicValidation";
 import updateTicketValidation from "../../dtos/normalValidations";
+import Roles from "../../../constants/Roles";
 
 export class TicketController implements ITicketController {
   private readonly ticketService: ITicketService;
@@ -156,12 +157,37 @@ export class TicketController implements ITicketController {
       }
 
       const { authUserUUID, employeeId, page, role, searchQuery, sortBy } = validateSearchInput.data;
-      if (role !== "employee") {
+      if (role !== Roles.Employee) {
         res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.NO_ACCESS, success: false });
         return;
       }
 
       const result = await this.ticketService.fetchAllTicketsEmployeeWise(
+        authUserUUID,
+        page,
+        employeeId,
+        sortBy,
+        searchQuery
+      );
+      const { message, statusCode, success, data } = result;
+      res.status(statusCode).json({ message, success, data });
+    } catch (error) {
+      console.error("error while getTicketEmployeeWise :", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+    }
+  };
+
+  public getTicketEmployeeRaisedWise = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const validateSearchInput = EmployeesearchInputSchema.safeParse(req.query);
+      if (!validateSearchInput.success) {
+        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.INVALID_FILED_OR_MISSING_FIELD, success: false });
+        return;
+      }
+
+      const { authUserUUID, employeeId, page, searchQuery, sortBy } = validateSearchInput.data;
+
+      const result = await this.ticketService.fetchAllTicketEmployeeRaised(
         authUserUUID,
         page,
         employeeId,

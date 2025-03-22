@@ -10,6 +10,7 @@ import { Messages } from "../../../constants/messageConstants";
 import { departmentEmployeeSchema, searchInputSchema } from "../../dtos/searchInput.dto";
 import { emailSchema } from "../../dtos/jwtQueryValidation";
 import { fetchDeptEmployeesSchema } from "../../dtos/BaseValidation.schema";
+import Roles from "../../../constants/roles";
 export class EmployeeController implements IEmployeeController {
   private readonly employeeService: IEmployeeService;
 
@@ -60,7 +61,14 @@ export class EmployeeController implements IEmployeeController {
 
   public getEmployeeData = async (req: Request, res: Response): Promise<void> => {
     try {
-      const email = req.query.email;
+      const {email,role} = req.query
+      if(role !== Roles.Employee){
+        res.status(HttpStatus.UNAUTHORIZED).json({
+          message: Messages.NO_ACCESS,
+          success:false,
+        })
+        return ;
+      }
       if (!email) {
         res.status(401).json({ message: "email id not found", success: false });
         return;
