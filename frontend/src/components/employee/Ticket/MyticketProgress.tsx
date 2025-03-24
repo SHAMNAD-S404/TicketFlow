@@ -23,7 +23,7 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({ handleCancel, handleVie
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [refreshState, setRefreshState] = useState<boolean>(false);
+  
 
   const employee = useSelector((state: Rootstate) => state.employee.employee);
 
@@ -70,7 +70,7 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({ handleCancel, handleVie
       }
     };
     getAllTickets();
-  }, [currentPage, sortBy, searchQuery, refreshState]);
+  }, [currentPage, sortBy, searchQuery]);
 
   return (
     <div className="bg-blue-50">
@@ -87,6 +87,7 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({ handleCancel, handleVie
           handleSearch={handleSearch}
           handleSort={handleSort}
           manageTicketHandle={manageTicketHandle}
+          showRaisedBy={false}
         />
 
         {/* pagination */}

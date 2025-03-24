@@ -9,6 +9,7 @@ interface ITicketTable {
   handleSearch: (query: string) => void;
   tikcetData: ITicketContext[];
   manageTicketHandle: (value: string) => void;
+  showRaisedBy?: boolean;
 }
 
 const TicketTable: React.FC<ITicketTable> = ({
@@ -17,7 +18,10 @@ const TicketTable: React.FC<ITicketTable> = ({
   handleSearch,
   tikcetData,
   manageTicketHandle,
+  showRaisedBy = true,
 }) => {
+  const gridCols = showRaisedBy ? "grid-cols-8" : "grid-cols-7";
+
   return (
     <div>
       <nav>
@@ -72,9 +76,9 @@ const TicketTable: React.FC<ITicketTable> = ({
         <div className="overflow-x-auto">
           <div className="min-w-[1000px]">
             {/* Header session */}
-            <div className="bg-blue-100 rounded-2xl px-6 py-6 grid grid-cols-8 gap-4 mb-4">
+            <div className={` bg-blue-100 rounded-2xl px-6 py-6 grid ${gridCols} gap-4 mb-4`}>
               <div className="text-sm font-semibold">Ticket ID</div>
-              <div className="text-sm font-semibold">Ticket Raised by</div>
+              {showRaisedBy && <div className="text-sm font-semibold">Ticket Raised by</div>}
               <div className="text-sm font-semibold"> Assigned Department</div>
               <div className="text-sm font-semibold ">Assigned Employee</div>
               <div className="text-sm font-semibold text-center">Priority</div>
@@ -88,9 +92,9 @@ const TicketTable: React.FC<ITicketTable> = ({
               {tikcetData.map((ticket, index) => (
                 <div
                   key={ticket._id || index}
-                  className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-8 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 ">
+                  className={`bg-white rounded-2xl px-6 py-4 grid ${gridCols} gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 `}>
                   <div>{ticket.ticketID}</div>
-                  <div className="flex items-center gap-3">{ticket.ticketRaisedDepartmentName}</div>
+                  {showRaisedBy && <div className="flex items-center gap-3">{ticket.ticketRaisedDepartmentName}</div>}
                   <div>{ticket.ticketHandlingDepartmentName.toLowerCase()}</div>
                   <div>
                     <a className=" text-blue-600">{ticket.ticketHandlingEmployeeName}</a>

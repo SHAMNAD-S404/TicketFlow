@@ -49,7 +49,7 @@ class EmployeeRepository extends BaseRepository<IEmployee> implements IEmployeeR
     searchKey: string
   ): Promise<{ employees: IEmployee[] | null; totalPages: number }> {
     try {
-      const limit = 1;
+      const limit = 6;
       const pageNumber = Math.max(1, page);
       const filter: Record<string, 1 | -1> = {
         [sort]: sort === "createdAt" ? -1 : 1,
@@ -95,7 +95,7 @@ class EmployeeRepository extends BaseRepository<IEmployee> implements IEmployeeR
     searchKey: string
   ): Promise<{ employees: IEmployee[] | null; totalPages: number }> {
     try {
-      const limit = 1;
+      const limit = 4;
       const pageNumber = Math.max(1, page);
       const filter: Record<string, 1 | -1> = {
         [sort]: sort === "createdAt" ? -1 : 1,
