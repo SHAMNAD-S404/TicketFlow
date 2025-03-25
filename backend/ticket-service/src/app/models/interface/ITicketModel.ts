@@ -1,12 +1,11 @@
 import { Document } from "mongoose";
 
 export enum TicketStatus {
-  Pending = 'pending',
-  InProgress = 'in-progress',
-  Resolved = 'resolved',
-  ReOpened = 're-opened'
+  Pending = "pending",
+  InProgress = "in-progress",
+  Resolved = "resolved",
+  ReOpened = "re-opened",
 }
-
 
 export interface ITicket extends Document {
   ticketID: string;
@@ -18,16 +17,17 @@ export interface ITicket extends Document {
   supportType: string;
   status: TicketStatus;
   imageUrl: string;
-  ticketResolutions:string;
-  ticketClosedDate:string;
-  createdAt?:string
-  resolutionTime:string
+  ticketResolutions: string;
+  ticketClosedDate: string;
+  createdAt?: string;
+  resolutionTime: string;
+  ticketReopenReason?: string;
 
   ticketHandlingDepartmentId: string;
   ticketHandlingDepartmentName: string;
   ticketHandlingEmployeeId: string;
   ticketHandlingEmployeeName: string;
-  ticketHandlingEmployeeEmail:string;
+  ticketHandlingEmployeeEmail: string;
 
   ticketRaisedEmployeeId: string;
   ticketRaisedEmployeeName: string;

@@ -12,10 +12,13 @@ export interface ITicketDocument {
   ticketResolutions:string;
   ticketClosedDate : string;
   resolutionTime: string;
+  ticketReopenReason: string;
+
   ticketHandlingDepartmentId: string;
   ticketHandlingDepartmentName: string;
   ticketHandlingEmployeeId: string;
   ticketHandlingEmployeeName: string;
+  
   ticketRaisedEmployeeId: string;
   ticketRaisedEmployeeName: string;
   ticketRaisedDepartmentName: string;

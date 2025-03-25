@@ -1,8 +1,9 @@
 import { ITicketDocument } from "@/interfaces/ITicketDocument";
-import React from "react";
+import React, { useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import TicketDiscriptionCard from "./TicketDiscriptionCards";
 import InputModal from "./InputModal";
+import DataShowModal from "./DataShowModal";
 
 interface IManageTicketUI {
   ticketData: ITicketDocument;
@@ -24,6 +25,12 @@ const ManageTicketUI: React.FC<IManageTicketUI> = ({
   handleModalOpen,
   submitSolution,
 }) => {
+  const [openModal, setOpenModal] = useState<boolean>(false);
+
+  const handleViewModal = () => {
+    setOpenModal(true);
+  };
+
   return (
     <div>
       <main>
@@ -84,21 +91,51 @@ const ManageTicketUI: React.FC<IManageTicketUI> = ({
                     value={ticketData?.ticketResolutions}></textarea>
                 </div>
 
-                <TicketDiscriptionCard
-                  caption1="Ticket Closed Date"
-                  value1={ticketData.ticketClosedDate}
-                  caption2="Ticket Resolution Time"
-                  value2={ticketData.resolutionTime}
-                  caption3="May be the reopen come here"
-                  value3="ethoke sredhikende ambanei"
+                <div className="mt-4  bg-white rounded-lg shadow-xl p-2 text-center ">
+                  <h1 className="font-semibold ">
+                    Ticket Closed Date
+                    <br />
+                    <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
+                      {ticketData.ticketClosedDate}
+                    </span>{" "}
+                  </h1>
+                  <h1 className="font-semibold ">
+                    Ticket Resolution Time
+                    <br />
+                    <span className="ms-1 font-semibold text-sm text-blue-600 font-mono">
+                      {ticketData.resolutionTime}
+                    </span>{" "}
+                  </h1>
+                  {ticketData.ticketReopenReason ? (
+                    <h1 className="font-semibold ">
+                      Ticket Re-open reason
+                      <br />
+                      <button
+                        className="text-sm bg-blue-500 text-white px-8 rounded-xl hover:bg-black"
+                        onClick={handleViewModal}>
+                        view
+                      </button>
+                    </h1>
+                  ) : (
+                    <h1>
+                      {}
+                      <br />
+                      <span className="ms-1">{}</span>{" "}
+                    </h1>
+                  )}
+                </div>
+                <DataShowModal
+                  isOpen={openModal}
+                  onClose={() => setOpenModal(false)}
+                  data={ticketData.ticketReopenReason}
                 />
               </div>
             </>
           )}
         </div>
-        <div className="flex justify-center ">
+        <div className="flex justify-center  ">
           <button
-            className={`bg-blue-600  hover:bg-green-500  transition-opacity duration-300  text-white p-2 font-semibold rounded-xl w-1/5
+            className={`bg-blue-600 mt-16  hover:bg-green-500  transition-opacity duration-300  text-white p-2 font-semibold rounded-xl w-1/5
                     ${isVisible ? "opacity-100" : "opacity-0 pointer-events-none"}   `}
             onClick={handleTicketStatusUpdate}>
             Submit

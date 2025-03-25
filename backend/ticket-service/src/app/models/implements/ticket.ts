@@ -50,6 +50,9 @@ const ticketSchema: Schema = new Schema<ITicket>(
     resolutionTime: {
       type: String,
     },
+    ticketReopenReason : {
+      type : String
+    },
     ticketHandlingDepartmentId: {
       type: String,
       required: true,
