@@ -168,7 +168,7 @@ const TicketForm: React.FC<TicketFormProps> = ({
         }
       } catch (error: any) {
         if (error.response && error.response.data) {
-          toast.error(error.response.data.message);
+          toast.error(Messages.NO_EMPLOYEES||error.response.data.message);
         } else {
           toast.error(Messages.SOMETHING_TRY_AGAIN);
         }
@@ -179,8 +179,8 @@ const TicketForm: React.FC<TicketFormProps> = ({
   }, [SelectedDepartmentId]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmitForm)} className="max-w-7xl mx-auto p-8">
-      <div className="bg-gradient-to-b from-blue-100 to-blue-200  rounded-3xl p-11 shadow-xl">
+    <form onSubmit={handleSubmit(onSubmitForm)} className="max-w-6xl mx-auto p-2">
+      <div className="bg-gradient-to-b from-blue-100 to-blue-200  rounded-3xl p-6 shadow-xl">
         <div className="flex justify-center items-center gap-2 mb-2">
           <h2 className="text-center font-semibold text-2xl text-blue-600 underline ">Create Ticket</h2>
           <TicketsPlane className="text-blue-600 w-8 h-8" />

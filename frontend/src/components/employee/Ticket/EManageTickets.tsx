@@ -9,6 +9,7 @@ import getDate from "@/components/utility/getDate";
 import { DockDemo } from "@/components/magicui/DockDemo";
 import ManageTicketUI from "@/components/common/ManageTicketUI";
 import useTicketData from "@/customHooks/useTicketData";
+import ManageTicketHeader from "@/components/common/ManageTicketHeader";
 
 interface EManageTickets {
   handleCancle: () => void;
@@ -47,6 +48,7 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
         setCurrentProgress(ticketStatus);
         toast.success(response.message);
         setIsVisible(false);
+        refetch();
       }
     } catch (error: any) {
       if (error.response && error.response.data) {
@@ -127,23 +129,32 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
         </div>
       ) : (
         <div>
-          {/* ticket management body */}
-          <ManageTicketUI
-            createdDate={createdDate}
-            currentProgress={currentProgress}
-            handleModalOpen={handleModalOpen}
-            handleStatusChange={handleStatusChange}
-            handleTicketStatusUpdate={handleTicketStatusUpdate}
-            isVisible={isVisible}
-            isModalOpen={isModalOpen}
-            lastUpdatedOn={lastUpdatedOn}
-            nextTicketStatus={nextTicketStatus}
-            submitSolution={handleResolution}
-            ticketData={ticketData as ITicketDocument}
-            ticketStatus={ticketStatus}
-          />
+          <header>
+            <ManageTicketHeader
+              createdDate={createdDate}
+              currentProgress={currentProgress}
+              handleStatusChange={handleStatusChange}
+              nextTicketStatus={nextTicketStatus}
+              ticketStatus={ticketStatus}
+              ticketData={ticketData as ITicketDocument}
+            />
+          </header>
+
+          <main>
+            {/* ticket management body */}
+            <ManageTicketUI
+              handleModalOpen={handleModalOpen}
+              handleTicketStatusUpdate={handleTicketStatusUpdate}
+              isVisible={isVisible}
+              isModalOpen={isModalOpen}
+              lastUpdatedOn={lastUpdatedOn}
+              submitSolution={handleResolution}
+              ticketData={ticketData as ITicketDocument}
+            />
+          </main>
+
           <footer>
-            <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center mt-4">
               <h2 className="text-center font-semibold">
                 any additional support
                 <hr className="border-gray-400" />

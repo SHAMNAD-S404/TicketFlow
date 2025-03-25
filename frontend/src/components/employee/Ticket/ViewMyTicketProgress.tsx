@@ -1,5 +1,6 @@
 import { updateTicketStatus } from "@/api/services/ticketService";
 import ManageTicketUI from "@/components/common/ManageTicketUI";
+import TicketProgressHeader from "@/components/common/TicketProgressHeader";
 import { DockDemo } from "@/components/magicui/DockDemo";
 import { Skeleton } from "@/components/ui/skeleton";
 import getDate from "@/components/utility/getDate";
@@ -24,17 +25,6 @@ const ViewMyTicketProgress: React.FC<IViewMyTicketProgress> = ({ handleCancle, h
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const createdDate = getDate(ticketData?.createdAt as string);
   const lastUpdatedOn = getDate(ticketData?.updatedAt as string);
-  const ticketStatusArr: string[] = ["pending", "in-progress", "resolved"];
-  const currentIndex = ticketStatusArr.indexOf(ticketStatus);
-  const nextTicketStatus =
-    currentIndex !== -1 && currentIndex < ticketStatusArr.length - 1
-      ? ticketStatusArr[currentIndex + 1]
-      : ticketStatusArr[2];
-
-  const handleStatusChange = (value: string) => {
-    setTicketStatus(value);
-    setIsVisible(true);
-  };
 
   const handleModalOpen = () => setModalOpen(false);
 
@@ -102,7 +92,7 @@ const ViewMyTicketProgress: React.FC<IViewMyTicketProgress> = ({ handleCancle, h
 
   return (
     <div>
-      <h2 className="text-center text-3xl font-bold text-red-500">superrrrrrrrrrr</h2>
+     
       <div className="flex items-center justify-stretch">
         <div
           className="text-2xl w-10 bg-white p-2 rounded-2xl shadow-lg shadow-gray-400 hover:bg-blue-500 hover:text-white"
@@ -110,7 +100,7 @@ const ViewMyTicketProgress: React.FC<IViewMyTicketProgress> = ({ handleCancle, h
           <IoMdArrowRoundBack />{" "}
         </div>
         <div>
-          <h1 className="text-2xl font-semibold">Manage Tickets</h1>
+          <h1 className="text-2xl font-semibold">My Ticket Progress</h1>
         </div>
       </div>
 
@@ -128,23 +118,30 @@ const ViewMyTicketProgress: React.FC<IViewMyTicketProgress> = ({ handleCancle, h
         </div>
       ) : (
         <div>
-          {/* ticket management body */}
-          <ManageTicketUI
-            createdDate={createdDate}
-            currentProgress={currentProgress}
-            handleModalOpen={handleModalOpen}
-            handleStatusChange={handleStatusChange}
-            handleTicketStatusUpdate={handleTicketStatusUpdate}
-            isVisible={isVisible}
-            isModalOpen={isModalOpen}
-            lastUpdatedOn={lastUpdatedOn}
-            nextTicketStatus={nextTicketStatus}
-            submitSolution={handleResolution}
-            ticketData={ticketData as ITicketDocument}
-            ticketStatus={ticketStatus}
-          />
+          <header>
+            <TicketProgressHeader
+              ticketData={ticketData as ITicketDocument}
+              createdDate={createdDate}
+              currentProgress={currentProgress}
+              refetch={refetch}
+            />
+          </header>
+
+          <main>
+            {/* ticket management body */}
+            <ManageTicketUI
+              handleModalOpen={handleModalOpen}
+              handleTicketStatusUpdate={handleTicketStatusUpdate}
+              isVisible={isVisible}
+              isModalOpen={isModalOpen}
+              lastUpdatedOn={lastUpdatedOn}
+              submitSolution={handleResolution}
+              ticketData={ticketData as ITicketDocument}
+            />
+          </main>
+
           <footer>
-            <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center mt-4">
               <h2 className="text-center font-semibold">
                 any additional support
                 <hr className="border-gray-400" />

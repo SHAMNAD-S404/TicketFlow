@@ -19,8 +19,12 @@ export const Messages = {
     INVALID_FILED_OR_MISSING_FIELD : "Invalid fields or missing required fields !",
     ERROR_PUBLISH_MSSG :  "Error in publishing the message to queue !",
     CHANNEL_NOT_AVILABLE :  "Channle is not avilable",
-    TICKET_CREATED : "Ticket Created successfully !"
-
+    TICKET_CREATED : "Ticket Created successfully !",
+    TICKET_DOC_ID_MISSING : "Ticket Document id is missing ! try again",
+    UPDATE_FAILED : "Update failed ! try again",
+    REOPEN_TICKET : "Only resolved ticket can be re-open",
+    SOMETHING_WRONG : "Something went wrong ! please try again",
+    REOPEN_SUCCESS  : "Ticket re-opened successfully !",
     
     
 

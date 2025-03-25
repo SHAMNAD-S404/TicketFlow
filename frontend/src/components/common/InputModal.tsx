@@ -15,13 +15,16 @@ interface IInputModal {
   isOpen: boolean;
   onClose: () => void;
   submitSolution: (data: string) => void;
+  mainHeading : string;
+  subHeading : string;
+  placeHolderText : string;
 }
 
 interface IFormValue {
   resolutions: string;
 }
 
-const InputModal: React.FC<IInputModal> = ({ isOpen, onClose, submitSolution }) => {
+const InputModal: React.FC<IInputModal> = ({ isOpen, onClose, submitSolution,mainHeading,placeHolderText,subHeading }) => {
   //react hook forms props 
   const {
     register,
@@ -37,11 +40,13 @@ const InputModal: React.FC<IInputModal> = ({ isOpen, onClose, submitSolution }) 
   return (
     <div>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-[725px]   ">
+      {/* block outside click close */}
+        <DialogContent className="sm:max-w-[725px] "
+          onInteractOutside={(e) => e.preventDefault()}  >
           <DialogHeader>
-            <DialogTitle className="text-center text-xl">Ticket resolutions</DialogTitle>
+            <DialogTitle className="text-center text-xl">{mainHeading}</DialogTitle>
             <DialogDescription className="text-center font-semibold text-blue-500">
-              Update the resolutions you provided on the ticket to resolve.
+              {subHeading}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit(handleSubmitResolution)}>
@@ -52,11 +57,11 @@ const InputModal: React.FC<IInputModal> = ({ isOpen, onClose, submitSolution }) 
               </div>
               <textarea
                 className="bg-black/80 w-5/6 p-6 text-white font-mono rounded-lg h-64"
-                placeholder="enter the resolutions your  provide."
+                placeholder={placeHolderText}
                 {...register("resolutions", {
                   required: RegexMessages.FEILD_REQUIRED,
                   minLength: {
-                    value: 8,
+                    value: 15,
                     message: RegexMessages.MINIMUM_LIMIT,
                   },
                   maxLength: {

@@ -47,4 +47,8 @@ export interface ITicketRepository extends IBaseRepository<ITicket> {
   findAndupdateStatus(id: string, status: string, ticketResolutions?: string): Promise<ITicket | null>;
 
   updateOnTicketClose(updateData: IupdateOnTicketClose): Promise<ITicket | null>;
+
+  editTicketRepo(id:string,udpateData : Record<string,string>) : Promise<ITicket | null>;
+
+
 }

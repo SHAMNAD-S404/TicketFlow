@@ -8,6 +8,8 @@ export enum Messages {
     IMAGE_ERROR = "Invalid file type. Only JPEG, PNG, and GIF are allowed.",
     IMAGE_MAX_SIZE_REACHED = "Select file below 3 mb",
     DATA_NOT_FOUND = "Requested Data not Found",
+    NO_EMPLOYEES = "Currently selected department have no employees ! select another one dept ",
+    SELECT_DEPT_AGAIN = "oops something went wrong select department again !",
     
 
     

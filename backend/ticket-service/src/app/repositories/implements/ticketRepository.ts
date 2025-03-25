@@ -33,7 +33,6 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
   ): Promise<{ tickets: ITicket[] | null; totalPages: number }> {
     try {
       const limit = 4;
-      const pageNumber = Math.max(1, page);
       const filter: Record<string, 1 | -1> = {
         [sortBy]: sortBy === "createdAt" ? -1 : 1,
       };
@@ -191,6 +190,17 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
       throw error;
     }
   }
+
+  async editTicketRepo(id: string, udpateData: Record<string, string>): Promise<ITicket | null> {
+    try {
+        return await this.findOneDocAndUpdate({_id:id},udpateData);
+    } catch (error) {
+      throw error
+    }
+  }
+
+  
+
 }
 
 export default new TicketRepository();

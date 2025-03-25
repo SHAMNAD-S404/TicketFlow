@@ -6,15 +6,18 @@ import { Messages } from "../../../constants/messageConstants";
 import TicketModel from "../../models/implements/ticket";
 import { generateUniqTicketId } from "../../../utils/generate-uniq-ticketId";
 import { ITicketReassignData } from "../../interface/userTokenData";
+import updateTicketValidation from "../../dtos/normalValidations";
+import Roles from "../../../constants/Roles";
 import {
   authUserUUIDValidation,
+  EditTicketFormValidation,
   EmployeesearchInputSchema,
   searchInputSchema,
   TicketFormValidation,
   ticketReassignSchema,
+  ticketReopenValidation,
 } from "../../dtos/basicValidation";
-import updateTicketValidation from "../../dtos/normalValidations";
-import Roles from "../../../constants/Roles";
+import { TicketStatus } from "../../models/interface/ITicketModel";
 
 export class TicketController implements ITicketController {
   private readonly ticketService: ITicketService;
@@ -52,12 +55,49 @@ export class TicketController implements ITicketController {
       res.status(statusCode).json({
         message,
         success,
-        statusCode,
         data,
       });
     } catch (error) {
       console.log(error);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: Messages.SERVER_ERROR,
+        success: false,
+      });
+    }
+  };
+
+  public editTicket = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const documentID = req.body.id;
+      if (!documentID) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+          message: Messages.TICKET_DOC_ID_MISSING,
+          success: false,
+        });
+        return;
+      }
+
+      const validateEditForm = EditTicketFormValidation.safeParse(req.body);
+      if (!validateEditForm.success) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+          message: Messages.INVALID_INPUT,
+          success: false,
+        });
+        return;
+      }
+
+      const updationData = { ...validateEditForm.data };
+      if (req.file?.path) {
+        updationData.imageUrl = req.file.path;
+      }
+
+      const updateTicket = await this.ticketService.editTicketService(documentID, updationData);
+      const { message, statusCode, success } = updateTicket;
+      res.status(statusCode).json({ message, success });
+      return;
+    } catch (error) {
+      console.error("edit ticket error :", error);
+      res.json(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: Messages.SERVER_ERROR,
         success: false,
       });
@@ -198,6 +238,31 @@ export class TicketController implements ITicketController {
       res.status(statusCode).json({ message, success, data });
     } catch (error) {
       console.error("error while getTicketEmployeeWise :", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+    }
+  };
+
+  public ticketReOpen = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const validateInput = ticketReopenValidation.safeParse(req.body);
+      if (!validateInput) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+          message: Messages.INVALID_FILED_OR_MISSING_FIELD,
+          success: false,
+        });
+        return;
+      }
+
+      const data = {
+        ticketReopenReason: validateInput.data?.reason as string,
+        status: TicketStatus.Pending,
+      };
+      const updateTicket = await this.ticketService.tiketReOpenService(validateInput.data?.id as string, data);
+      const { message, statusCode, success } = updateTicket;
+      res.status(statusCode).json({ message, success });
+      return;
+    } catch (error) {
+      console.error("error while re-open ticket :", error);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
     }
   };

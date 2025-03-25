@@ -3,7 +3,7 @@ import TicketRepository from "../../repositories/implements/ticketRepository";
 import { IfetchAllTicketsEmployeeWise, IReassignedTicketResponse, ITicketService } from "../interface/ITicketService";
 import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
-import { ITicketReassignData } from "../../interface/userTokenData";
+import { IBasicResponse, ITicketReassignData } from "../../interface/userTokenData";
 import { publishToQueue } from "../../../queues/publisher";
 import { RabbitMQConfig } from "../../../config/rabbitMQConfig";
 import getResolutionTime from "../../../utils/getResolutionTime";
@@ -276,9 +276,8 @@ export default class TicketService implements ITicketService {
         ticketRaisedEmployeeId,
         page,
         sortBy,
-        searchQuery
-      }
-      );
+        searchQuery,
+      });
       if (result) {
         return {
           message: Messages.FETCH_SUCCESS,
@@ -293,6 +292,99 @@ export default class TicketService implements ITicketService {
           success: false,
         };
       }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async editTicketService(id: string, data: Record<string, string>): Promise<IReassignedTicketResponse> {
+    try {
+      const ticketExist = await TicketRepository.findOneDocument({ _id: id });
+      if (!ticketExist) {
+        return {
+          message: Messages.DATA_NOT_FOUND,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
+      }
+      const updateTicket = await TicketRepository.editTicketRepo(id, data);
+      if (!updateTicket) {
+        return {
+          message: Messages.UPDATE_FAILED,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
+      }
+
+      //release ticket count from old ticket handler
+      const payload1 = {
+        eventType: "employee-ticket-update",
+        employeeId: ticketExist.ticketHandlingEmployeeId,
+        value: -1, //decrease ticket count by one
+      };
+      publishToQueue(RabbitMQConfig.companyMainQueue, payload1);
+
+      //increase ticket count for new ticket handler
+      const payload2 = {
+        eventType: "employee-ticket-update",
+        employeeId: updateTicket.ticketHandlingEmployeeId,
+        value: 1, //decrease ticket count by one
+      };
+      publishToQueue(RabbitMQConfig.companyMainQueue, payload2);
+
+      //send email notificatoin to new ticket handler
+      const payload3 = {
+        type: "ticketAssigned",
+        email: updateTicket.ticketHandlingEmployeeEmail,
+        subject: `Assigned a new Ticket -${updateTicket.priority}`,
+        template: "ticketTemplate",
+        ticketId: updateTicket.ticketID,
+        employeeName: updateTicket.ticketHandlingEmployeeName,
+        priority: updateTicket.priority,
+      };
+      publishToQueue(RabbitMQConfig.notificationQueue, payload3);
+
+      return {
+        message: Messages.FILE_UPDATED,
+        statusCode: HttpStatus.OK,
+        success: true,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async tiketReOpenService(id: string, data: Record<string, string>): Promise<IBasicResponse> {
+    try {
+      const isExist = await TicketRepository.findOneDocument({ _id: id });
+      if (!isExist) {
+        return {
+          message: Messages.DATA_NOT_FOUND,
+          success: false,
+          statusCode: HttpStatus.BAD_REQUEST,
+        };
+      }
+      if (isExist.status !== TicketStatus.Resolved) {
+        return {
+          message: Messages.REOPEN_TICKET,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
+      }
+
+      const updateTicket = await TicketRepository.editTicketRepo(id, data);
+      if (!updateTicket) {
+        return {
+          message: Messages.SOMETHING_WRONG,
+          success: false,
+          statusCode: HttpStatus.BAD_REQUEST,
+        };
+      }
+      return {
+        message: Messages.REOPEN_SUCCESS,
+        statusCode: HttpStatus.OK,
+        success: true,
+      };
     } catch (error) {
       throw error;
     }

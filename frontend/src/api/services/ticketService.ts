@@ -14,6 +14,19 @@ export const createTicket = async (data: FormData) => {
   }
 };
 
+export const editTicket = async (data:FormData) => {
+  try {
+      const response = await axiosInstance.patch("/tickets/edit-ticket",data,{
+        headers : {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export const fetchAllTickets = async (currentPage: number, sortBy: string, searchQuery: string) => {
   try {
     const response = await axiosInstance.get(
@@ -56,7 +69,7 @@ export const fetchMyTicketProgress = async (
   } catch (error) {
     throw error;
   }
-}
+};
 
 export const ticketReassign = async (data: IUpdateReassignTicketData) => {
   try {
@@ -76,11 +89,20 @@ export const fetchOneTicket = async (id: string) => {
   }
 };
 
-export const updateTicketStatus = async (id: string, status: string,ticketResolutions?:string) => {
+export const updateTicketStatus = async (id: string, status: string, ticketResolutions?: string) => {
   try {
-    const response = await axiosInstance.patch("/tickets/update-status", { id, status,ticketResolutions });
+    const response = await axiosInstance.patch("/tickets/update-status", { id, status, ticketResolutions });
     return response.data;
   } catch (error) {
     throw error;
   }
 };
+
+export const reOpenTicket = async (id:string,reason : string) => {
+  try {
+    const response = await axiosInstance.patch("/tickets/re-open-ticket",{id,reason});
+    return response.data;
+  } catch (error) {
+    throw error
+  }
+}

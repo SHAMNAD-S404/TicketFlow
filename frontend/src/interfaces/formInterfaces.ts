@@ -3,8 +3,8 @@ export interface TicketFormData {
     priority: string;
     description: string;
     dueDate: string;
-    ticketHandlingDepartmentId: string;
     supportType: string;
+    ticketHandlingDepartmentId: string;
     ticketHandlingEmployeeId: string;
   }
 

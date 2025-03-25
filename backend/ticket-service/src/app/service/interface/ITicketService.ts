@@ -51,4 +51,8 @@ export interface ITicketService {
   getTicketData(id: string): Promise<IReassignedTicketResponse>;
 
   getUpdatedTicketStatus(id: string, status: string,ticketResolutions?:string): Promise<IReassignedTicketResponse>;
+
+  editTicketService(id:string,data:Record<string,string>) : Promise<IReassignedTicketResponse>
+
+  tiketReOpenService (id:string,data:Record<string,string>) : Promise<IBasicResponse>
 }

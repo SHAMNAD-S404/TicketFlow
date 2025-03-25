@@ -8,6 +8,8 @@ export interface ITicketController {
     updateTicketStatus (req: Request , res : Response) : Promise < void >;
     getTicketEmployeeWise ( req : Request , res : Response ) : Promise < void >;
     getTicketEmployeeRaisedWise(req: Request , res : Response) : Promise<void>
+    editTicket ( req:Request , res : Response) : Promise <void>;
+    ticketReOpen ( req:Request , res : Response) : Promise<void>
 
     
 }

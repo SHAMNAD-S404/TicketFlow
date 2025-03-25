@@ -7,6 +7,7 @@ export const regexPatterns = {
     textWithSpaceAndCommas :/^[a-zA-Z][a-zA-Z\s,]*$/,
     textAreaValidation :/^[a-zA-Z0-9"'.(),/\-\s]+(?<![().])$/, 
     objectIdRegex : /^[A-Za-z0-9]+$/,
+    resolutionInputField : /^[a-zA-Z0-9.,'"\(\)\s-]+$/,
     
 
 } 

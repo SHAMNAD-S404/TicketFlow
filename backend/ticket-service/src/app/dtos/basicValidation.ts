@@ -37,6 +37,21 @@ export const TicketFormValidation = z.object({
 
 })
 
+export const EditTicketFormValidation = z.object({
+    ticketReason : z.string().trim().min(5).max(40).regex(regexPatterns.textWithSpaceAndCommas),
+    description : z.string().trim().min(10).max(200).regex(regexPatterns.textAreaValidation),
+    priority : z.string().trim().min(4).max(40).regex(regexPatterns.textWithSpaceAndCommas),
+    dueDate : z.string().trim().min(5).max(30).regex(regexPatterns.textAreaValidation),
+    supportType : z.string().trim().regex(regexPatterns.textAreaValidation),
+    ticketHandlingDepartmentId : z.string().trim().regex(regexPatterns.objectIdRegex),
+    ticketHandlingDepartmentName : z.string().trim().min(3).max(50).regex(regexPatterns.alphabatesAndSpaces),
+    ticketHandlingEmployeeId : z.string().trim().regex(regexPatterns.objectIdRegex),
+    ticketHandlingEmployeeName : z.string().trim().min(4).max(40).regex(regexPatterns.alphabatesAndSpaces),
+    ticketHandlingEmployeeEmail : z.string().trim().email(),
+    imageUrl : z.string().optional(),
+   
+})
+
 export const EmployeesearchInputSchema = z.object({
     searchQuery:z.string().trim().max(20).regex(regexPatterns.searchInputField).or(z.literal("")),
     role:z.string().trim().max(15).min(3).regex(regexPatterns.alphabatesOnly),
@@ -50,4 +65,9 @@ export const EmployeesearchInputSchema = z.object({
 export const authUserUUIDValidation = z.object({
     authUserUUID : z.string().trim().min(36).max(36).regex(regexPatterns.uuid_v4)
 });
+
+export const ticketReopenValidation = z.object({
+    id:z.string().trim().min(7).max(30).regex(regexPatterns.alphabatesAndNumberOnly),
+    reason: z.string().trim().min(15).max(100).regex(regexPatterns.resolutionInputField)
+})
 
