@@ -362,7 +362,9 @@ const EditTicket: React.FC<IEditTicket> = ({ isOpen, onClose, ticketData, refetc
                         })}
                       />
                       <Calendar className="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-500 pointer-events-none" />
+                    
                     </div>
+                    
                   </div>
                   {errors.dueDate && <p className="text-sm font-semibold text-red-500">{errors.dueDate.message}</p>}
 
