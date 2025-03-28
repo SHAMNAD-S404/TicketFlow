@@ -5,14 +5,7 @@ import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
 
 export default class CompanyService implements ICompanyService {
-  /**
-   * Create a new company
-   * @param companyData Company data to be created
-   * @returns {message : string,data?:ICompany, success : boolean}
-   *              message: success or error message
-   *              data: created company data if successful
-   *              success: true if successful, false otherwise
-   */
+ 
 
   async createCompany(
     companyData: ICompany
@@ -45,14 +38,7 @@ export default class CompanyService implements ICompanyService {
     }
   }
 
-  /**
-   * Fetch a company data by user ID
-   * @param userId The user ID to find the company data
-   * @returns {message : string,data?:ICompany, success : boolean}
-   *              message: success or error message
-   *              data: fetched company data if successful
-   *              success: true if successful, false otherwise
-   */
+
   async fetchCompanyData(email: string): Promise<{
     message: string;
     data?: ICompany;

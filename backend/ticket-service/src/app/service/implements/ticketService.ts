@@ -9,6 +9,7 @@ import { RabbitMQConfig } from "../../../config/rabbitMQConfig";
 import getResolutionTime from "../../../utils/getResolutionTime";
 
 export default class TicketService implements ITicketService {
+  
   async createTicketDocument(
     ticketData: ITicket
   ): Promise<{ message: string; success: boolean; statusCode: number; data?: ITicket }> {
