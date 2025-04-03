@@ -40,7 +40,7 @@ const ManageTicketUI: React.FC<IManageTicketUI> = ({
               <img className="p-1 rounded-lg h-5/6" src={ticketData?.imageUrl} alt="ticket image" />
             ) : (
               <div>
-                <Skeleton className="bg-gray-300 h-[350px] w-[300px] rounded-xl" />
+                <Skeleton className="bg-gray-300 h-[320px] w-[300px] rounded-xl" />
                 <p className="ms-4 p-2 text-red-500">No media attached with this ticket !</p>
               </div>
             )}

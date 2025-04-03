@@ -4,7 +4,6 @@ import TicketStaticsCards from "@/components/common/TicketStaticsCards";
 import TicketTable from "@/components/common/TicketTable";
 import getErrMssg from "@/components/utility/getErrMssg";
 import { searchInputValidate } from "@/components/utility/searchInputValidateNameEmail";
-import { Messages } from "@/enums/Messages";
 import { Rootstate } from "@/redux/store";
 import { ITicketContext } from "@/types/ITicketContext";
 import { debounce } from "lodash";
@@ -29,7 +28,7 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
 
-  const employee = useSelector((state: Rootstate) => state.employee.employee);
+  const company = useSelector((state: Rootstate) => state.company.company);
 
   const handleSearchQuery = useCallback(
     debounce((searchValue: string) => {
@@ -43,8 +42,8 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
   );
 
   //pagination handle function to liftup state
-  const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-  const handleCurrentPage = (page: number) => setCurrentPage(page);
+  const handlePrevPage = () => setCurrentPage(( prev ) => Math.max(prev - 1, 1));
+  const handleCurrentPage = ( page: number ) => setCurrentPage(page);
   const handleNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 
   //ticket Table props to lift up state and do actions
@@ -59,7 +58,7 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
   useEffect(() => {
     const getAllTickets = async () => {
       try {
-        const employeeId = employee?._id as string;
+        const employeeId = company?._id as string;
         const response = await fetchMyTicketProgress(currentPage, employeeId, sortBy, searchQuery);
         if (response && response.data) {
           setTicketData(response.data.tickets);

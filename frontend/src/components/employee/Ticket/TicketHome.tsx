@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux/store";
 import AssignedTickets from "./AssignedTickets";
 import { EManageTickets } from "./EManageTickets";
-import TickeChat from "../chat/TicketChat";
+import TicketChat from "../chat/TicketChat";
 import MyTicketProgress from "./MyticketProgress";
 import ViewMyTicketProgress from "./ViewMyTicketProgress";
 
@@ -102,7 +102,7 @@ export const TicketHome: React.FC = () => {
         );
 
       case subMenuItems.SHOW_CHAT:
-        return <TickeChat />;
+        return <TicketChat />;
 
       case subMenuItems.MY_TICKET_PROGRESS:
         return (

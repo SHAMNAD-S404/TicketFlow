@@ -54,7 +54,7 @@ const sampleMessages: Message[] = [
   },
 ];
 
-const TickeChat: React.FC = () => {
+const TicketChat: React.FC = () => {
   const [selectedChatId, setSelectedChatId] = useState(sampleChats[0].id);
   const [messages, setMessages] = useState(sampleMessages);
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
@@ -132,4 +132,4 @@ const TickeChat: React.FC = () => {
   );
 };
 
-export default TickeChat;
+export default TicketChat;

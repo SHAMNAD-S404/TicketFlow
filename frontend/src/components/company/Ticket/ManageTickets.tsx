@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { FaChevronDown,   } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 import { debounce } from "lodash";
 import { searchInputValidate } from "@/components/utility/searchInputValidateNameEmail";
 import { ITicketContext } from "@/types/ITicketContext";
@@ -62,7 +62,10 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
   return (
     <div className="bg-blue-50">
       {/* card slides */}
-      <TicketStaticsCards />
+      <header>
+              <TicketStaticsCards />
+      </header>
+
 
       {/* table section */}
 

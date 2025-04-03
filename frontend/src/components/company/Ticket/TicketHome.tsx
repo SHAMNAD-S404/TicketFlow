@@ -5,23 +5,35 @@ import DynamicCard from "@/components/utility/DynamicCard";
 import ManageTickets from "./ManageTickets";
 import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux/store";
-import AssignedTickets from "./AssignedTickets";
+import MyTicketProgress from "./MyTicketProgress";
+import ViewMyTicketProgress from "@/components/employee/Ticket/ViewMyTicketProgress";
+import TicketChat from "@/components/employee/chat/TicketChat";
 
 interface ISubMenuList {
   header: string;
   description: string;
   buttonText: string;
   image: string;
-  onButtonClick : () => void;
+  onButtonClick: () => void;
 }
+
+const subMenuItems = {
+  CREATE_TICKET: "Create Ticket",
+  ALL_TICKET: "All Tickets",
+  MY_TICKET_PROGRESS: "My ticket Progress",
+  ANALYSE_TICKETS: "Ticket analyse",
+  MANAGE_TICKETS: "Manage Ticket",
+  SHOW_CHAT: "Show Chat",
+  VIEW_TICKET_PROGRESS: "View My Ticket Progress",
+};
 
 export const TicketHome: React.FC = () => {
   const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
+  const [getTicketID, setTicketID] = useState<string>("");
 
-  const backToMainMenu = ()=> setActiveSubMenu(null);
-  const company = useSelector((state:Rootstate) => state.company.company)
-  
-
+  const company = useSelector((state: Rootstate) => state.company.company);
+  const onCancel = () => setActiveSubMenu(null);
+  const onViewMyTicketProgress = () => setActiveSubMenu(subMenuItems.VIEW_TICKET_PROGRESS);
 
   const subMenuList: ISubMenuList[] = [
     {
@@ -29,48 +41,67 @@ export const TicketHome: React.FC = () => {
       description: "Using the form we can create the ticket",
       buttonText: "Create Ticket",
       image: GifImage,
-      onButtonClick : () => setActiveSubMenu("Create Ticket")
+      onButtonClick: () => setActiveSubMenu(subMenuItems.CREATE_TICKET),
     },
     {
-      header: "Manage Tickets",
-      description: "Tap here to view and manage ticket ",
-      buttonText: "Manage Tickets",
+      header: "All Tickets",
+      description: "Tap here to view and manage all ticket ",
+      buttonText: "View all Tickets",
       image: GifImage,
-      onButtonClick : ()=> setActiveSubMenu("Manage Tickets")
+      onButtonClick: () => setActiveSubMenu(subMenuItems.ALL_TICKET),
     },
     {
       header: "My Ticket Progress",
       description: "Ticket raised by Me , tap to see the progreess and details",
-      buttonText: "MY Tickets",
+      buttonText: "My Tickets",
       image: GifImage,
-      onButtonClick : ()=> setActiveSubMenu("My Tickets")
-    },{
-        header : "Ticket analyse",
-        description : "Click here to view detailed ticket and department performance",
-        buttonText : "View",
-        image : GifImage,
-        onButtonClick : ()=> setActiveSubMenu("Ticket analyse")
-    }
+      onButtonClick: () => setActiveSubMenu(subMenuItems.MY_TICKET_PROGRESS),
+    },
+    {
+      header: "Ticket analyse",
+      description: "Click here to view detailed ticket and department performance",
+      buttonText: "View",
+      image: GifImage,
+      onButtonClick: () => setActiveSubMenu(subMenuItems.ANALYSE_TICKETS),
+    },
   ];
-
-  const onCancel = () => setActiveSubMenu(null);
 
   const renderSubContent = () => {
     switch (activeSubMenu) {
-      case "Create Ticket":
-        return <TicketForm 
-        handleCancel = {onCancel} 
-        ticketRaisedDepartmentName = "companyAdmin"
-        ticketRaisedDepartmentID = {company?._id as string}
-        ticketRaisedEmployeeID = {company?._id as string}
-        ticketRaisedEmployeeName = {company?.companyName as string}
-        ticketRaisedEmployeeEmail = {company?.email as string}
+      case subMenuItems.CREATE_TICKET:
+        return (
+          <TicketForm
+            handleCancel={onCancel}
+            ticketRaisedDepartmentName="companyAdmin"
+            ticketRaisedDepartmentID={company?._id as string}
+            ticketRaisedEmployeeID={company?._id as string}
+            ticketRaisedEmployeeName={company?.companyName as string}
+            ticketRaisedEmployeeEmail={company?.email as string}
+          />
+        );
+      case subMenuItems.ALL_TICKET:
+        return <ManageTickets handleCancel={onCancel} />;
 
-        />;
-      case "Manage Tickets" :
-        return <ManageTickets  handleCancel = {backToMainMenu} />;
-      case "My Tickets"  : 
-        return <AssignedTickets handleCancel={backToMainMenu} />
+      case subMenuItems.MY_TICKET_PROGRESS:
+        return (
+          <MyTicketProgress
+            handleCancel={onCancel}
+            handleSetTicketId={(value: string) => setTicketID(value)}
+            handleViewTicketProgress={onViewMyTicketProgress}
+          />
+        );
+
+      case subMenuItems.VIEW_TICKET_PROGRESS:
+        return (
+          <ViewMyTicketProgress
+            handleCancle={() => setActiveSubMenu(subMenuItems.MY_TICKET_PROGRESS)}
+            handleChatSubMenu={() => setActiveSubMenu(subMenuItems.SHOW_CHAT)}
+            ticketId={getTicketID}
+          />
+        );
+
+      case subMenuItems.SHOW_CHAT:
+        return <TicketChat />;
       default:
         return (
           <div className="flex flex-wrap gap-12 justify-start p-6">
