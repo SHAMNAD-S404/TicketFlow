@@ -65,7 +65,7 @@ const InputModal: React.FC<IInputModal> = ({ isOpen, onClose, submitSolution,mai
                     message: RegexMessages.MINIMUM_LIMIT,
                   },
                   maxLength: {
-                    value: 100,
+                    value: 300,
                     message: RegexMessages.MAXIMUM_LIMIT_REACHED,
                   },
                   pattern: {

@@ -8,7 +8,7 @@ interface ChatSidebarProps {
   onChatSelect: (chatId: string) => void;
 }
 
-export function ChatSidebar({ chats, selectedChatId, onChatSelect }: ChatSidebarProps) {
+const  ChatSidebar :React.FC<ChatSidebarProps> = ({ chats, selectedChatId, onChatSelect }: ChatSidebarProps) => {
   return (
     <div className="h-5/6 flex flex-col bg-white shadow-xl rounded-xl overflow-hidden">
       {/* Header */}
@@ -81,3 +81,5 @@ export function ChatSidebar({ chats, selectedChatId, onChatSelect }: ChatSidebar
     </div>
   );
 }
+
+export default ChatSidebar

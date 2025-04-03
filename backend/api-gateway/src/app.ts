@@ -19,7 +19,6 @@ app.use(cookieParser());
 app.use(logger);
 app.use(morgan("dev"));
 
-
 // Set up CORS
 app.use(
   cors({
@@ -30,12 +29,21 @@ app.use(
 );
 
 app.use("/auth", proxy(config.authServiceUrl));
-app.use("/company", authenticateToken, proxy(config.companyServiceUrl,{
-  parseReqBody:false
-}));
-app.use("/tickets",authenticateToken,proxy(config.ticketServiceUrl,{
-  parseReqBody:false
-}))
+app.use(
+  "/company",
+  authenticateToken,
+  proxy(config.companyServiceUrl, {
+    parseReqBody: false,
+  })
+);
+app.use(
+  "/tickets",
+  authenticateToken,
+  proxy(config.ticketServiceUrl, {
+    parseReqBody: false,
+  })
+);
 
+app.use("/communication", authenticateToken, proxy(config.communicationServiceUrl));
 
 export default app;

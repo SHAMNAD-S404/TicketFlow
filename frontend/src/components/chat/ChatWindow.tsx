@@ -10,7 +10,13 @@ interface ChatWindowProps {
   isMobile: boolean;
 }
 
-export function ChatWindow({ selectedUser, messages, onSendMessage, onBack, isMobile }: ChatWindowProps) {
+const ChatWindow: React.FC<ChatWindowProps> = ({
+  selectedUser,
+  messages,
+  onSendMessage,
+  onBack,
+  isMobile,
+}: ChatWindowProps) => {
   const [newMessage, setNewMessage] = useState("");
 
   const handleSend = () => {
@@ -95,4 +101,6 @@ export function ChatWindow({ selectedUser, messages, onSendMessage, onBack, isMo
       </div>
     </div>
   );
-}
+};
+
+export default ChatWindow;

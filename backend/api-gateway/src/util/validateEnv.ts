@@ -12,5 +12,12 @@ export function validateEnvVariables(): void {
   if(!process.env.FRONTEND_URL){
     console.error("FRONTEND_URL not defined");
   }
+  if(!process.env.COMMUNICATION_SERVICE_URL){
+    console.error("COMMUNICATION_SERVICE_URL not defined");
+  }
+
+
+
+  
 }
 

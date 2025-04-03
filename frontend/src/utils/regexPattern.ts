@@ -19,9 +19,9 @@ const regexPatterns: TregexPatterns = {
   password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/, // 8-15 chars, must contain letters and numbers
   corporateId: /^[A-Za-z0-9]+$/, // Alphanumeric
   textWithSpaceAndCommas: /^[a-zA-Z][a-zA-Z\s,]*$/,
-  textAreaValidation:/^[a-zA-Z0-9"'.(),/\-\s]+(?<![().])$/,
+  textAreaValidation:/^[a-zA-Z0-9"'.(),/:\-\s]+(?<![().])$/,
   textAndNumberWithoutSpace : /^[a-zA-Z0-9]+$/,
-  resolutionInputField : /^[a-zA-Z0-9.,'"\(\)\s-]+$/,
+  resolutionInputField : /^[a-zA-Z0-9.,'"\:(\)\s-]+$/,
 
 };
 

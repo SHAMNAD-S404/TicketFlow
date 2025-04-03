@@ -17,13 +17,16 @@ interface IMyTicketProgress {
   handleSetTicketId: (value: string) => void;
 }
 
-const MyTicketProgress: React.FC<IMyTicketProgress> = ({ handleCancel, handleViewTicketProgress, handleSetTicketId }) => {
+const MyTicketProgress: React.FC<IMyTicketProgress> = ({
+  handleCancel,
+  handleViewTicketProgress,
+  handleSetTicketId,
+}) => {
   const [tikcetData, setTicketData] = useState<ITicketContext[]>([]);
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  
 
   const employee = useSelector((state: Rootstate) => state.employee.employee);
 
@@ -74,10 +77,11 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({ handleCancel, handleVie
 
   return (
     <div className="bg-blue-50">
-      {/* header card slides */}
+      <header>
+        {/* header card slides */}
 
-      <TicketStaticsCards />
-
+        <TicketStaticsCards />
+      </header>
       {/* table section */}
 
       <div className="p-6  space-y-6 ">

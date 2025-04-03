@@ -12,7 +12,6 @@ const updateTicketValidation = (
   status: string,
   ticketResolutions: string
 ): IupdateTicketValidationReturn => {
-
   if (!id || !status) {
     return {
       success: false,
@@ -35,7 +34,7 @@ const updateTicketValidation = (
       statusCode: HttpStatus.BAD_REQUEST,
     };
   }
-  const resolutionInputField: RegExp = /^[a-zA-Z0-9.,'"\(\)\s-]+$/;
+  const resolutionInputField: RegExp = /^[a-zA-Z0-9.,'"\:(\)\s-]+$/;
 
   if (ticketResolutions && !resolutionInputField.test(ticketResolutions)) {
     return {
