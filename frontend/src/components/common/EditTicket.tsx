@@ -189,8 +189,9 @@ const EditTicket: React.FC<IEditTicket> = ({ isOpen, onClose, ticketData, refetc
   return (
     <div>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-[525px] md:max-w-[1025px] md:max-h-[825px]"
-        onInteractOutside={(e) => e.preventDefault()} // Prevents closing when clicking outside
+        <DialogContent
+          className="sm:max-w-[525px] md:max-w-[1025px] md:max-h-[825px]"
+          onInteractOutside={(e) => e.preventDefault()} // Prevents closing when clicking outside
         >
           <DialogHeader>
             <DialogTitle className="text-center text-2xl underline underline-offset-4">Edit Ticket</DialogTitle>
@@ -352,6 +353,8 @@ const EditTicket: React.FC<IEditTicket> = ({ isOpen, onClose, ticketData, refetc
                     <div className="relative">
                       <input
                         type="date"
+                        min={new Date().toISOString().split("T")[0]}
+                        max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split("T")[0]}
                         className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white text-lg"
                         {...register("dueDate", {
                           required: RegexMessages.FEILD_REQUIRED,
@@ -362,9 +365,7 @@ const EditTicket: React.FC<IEditTicket> = ({ isOpen, onClose, ticketData, refetc
                         })}
                       />
                       <Calendar className="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-500 pointer-events-none" />
-                    
                     </div>
-                    
                   </div>
                   {errors.dueDate && <p className="text-sm font-semibold text-red-500">{errors.dueDate.message}</p>}
 

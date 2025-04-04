@@ -40,7 +40,7 @@ export const SubDepartmentManagement: React.FC = () => {
          handleCancel ={()=> setDepartmentView(null)}
          />
       ) : (
-        <div className="flex flex-wrap gap-12 justify-center p-6">
+        <div className="flex flex-wrap gap-12 justify-start p-6">
           {departmentData.map((department) => (
             <DepartmentCard
               key={department._id}

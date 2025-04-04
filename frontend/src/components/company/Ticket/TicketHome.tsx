@@ -2,12 +2,13 @@ import TicketForm from "@/components/common/TicketForm";
 import React, { useState } from "react";
 import GifImage from "../../../assets/gif/star.gif";
 import DynamicCard from "@/components/utility/DynamicCard";
-import ManageTickets from "./ManageTickets";
+import AllTickets from "./AllTickets";
 import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux/store";
 import MyTicketProgress from "./MyTicketProgress";
 import ViewMyTicketProgress from "@/components/employee/Ticket/ViewMyTicketProgress";
 import TicketChat from "@/components/employee/chat/TicketChat";
+import { EManageTickets } from "@/components/employee/Ticket/EManageTickets";
 
 interface ISubMenuList {
   header: string;
@@ -32,8 +33,12 @@ export const TicketHome: React.FC = () => {
   const [getTicketID, setTicketID] = useState<string>("");
 
   const company = useSelector((state: Rootstate) => state.company.company);
-  const onCancel = () => setActiveSubMenu(null);
+  const onCancel = () => setActiveSubMenu(null); // go to home
+  //go to detail view ticket progress
   const onViewMyTicketProgress = () => setActiveSubMenu(subMenuItems.VIEW_TICKET_PROGRESS);
+  const setChatState = () => setActiveSubMenu(subMenuItems.SHOW_CHAT);
+  //go to manage ticket ui
+  const onManageTicket = () => setActiveSubMenu(subMenuItems.MANAGE_TICKETS)
 
   const subMenuList: ISubMenuList[] = [
     {
@@ -80,7 +85,13 @@ export const TicketHome: React.FC = () => {
           />
         );
       case subMenuItems.ALL_TICKET:
-        return <ManageTickets handleCancel={onCancel} />;
+        return (
+          <AllTickets
+           handleCancel={onCancel} 
+           handleManageTicket={onManageTicket}
+           handleSetTicketId={ (value : string) => setTicketID(value) }
+           />
+        )
 
       case subMenuItems.MY_TICKET_PROGRESS:
         return (
@@ -95,13 +106,23 @@ export const TicketHome: React.FC = () => {
         return (
           <ViewMyTicketProgress
             handleCancle={() => setActiveSubMenu(subMenuItems.MY_TICKET_PROGRESS)}
-            handleChatSubMenu={() => setActiveSubMenu(subMenuItems.SHOW_CHAT)}
+            handleChatSubMenu={setChatState}
             ticketId={getTicketID}
           />
         );
 
       case subMenuItems.SHOW_CHAT:
         return <TicketChat />;
+
+      case subMenuItems.MANAGE_TICKETS:
+        return (
+          <EManageTickets
+            handleCancle={() => setActiveSubMenu(subMenuItems.ALL_TICKET)}
+            handleChatSubMenu={setChatState}
+            ticketId={getTicketID}
+          />
+        );
+
       default:
         return (
           <div className="flex flex-wrap gap-12 justify-start p-6">

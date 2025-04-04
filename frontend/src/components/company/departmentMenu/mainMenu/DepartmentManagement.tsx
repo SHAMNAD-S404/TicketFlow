@@ -21,7 +21,7 @@ const DepartmentManagement: React.FC = () => {
 
       default:
         return (
-          <div className="flex flex-wrap gap-12 justify-center p-6">
+          <div className="flex flex-wrap gap-12 justify-start p-6">
             <DynamicCard
               header="Add Departments"
               description="Add your departement and details for efficient management."

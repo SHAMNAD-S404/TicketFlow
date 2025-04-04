@@ -69,6 +69,9 @@ export const TicketHome: React.FC = () => {
   const onManageTicket = () => setActiveSubMenu(subMenuItems.MANAGE_TICKETS);
   //go to view my ticketProgress Page
   const onViewMyTicketProgress = () => setActiveSubMenu(subMenuItems.VIEW_TICKET_PROGRESS);
+  //go to chat
+  const setChatState = () => setActiveSubMenu(subMenuItems.SHOW_CHAT)
+
 
   const renderSubContent = () => {
     switch (activeSubMenu) {
@@ -95,9 +98,9 @@ export const TicketHome: React.FC = () => {
       case subMenuItems.MANAGE_TICKETS:
         return (
           <EManageTickets
-            handleCancle={() => setActiveSubMenu("Assigned Tickets For me")}
+            handleCancle={() => setActiveSubMenu(subMenuItems.ASSIGNED_TICKETS)}
             ticketId={getTicketID}
-            handleChatSubMenu={() => setActiveSubMenu(subMenuItems.SHOW_CHAT)}
+            handleChatSubMenu={setChatState}
           />
         );
 
@@ -118,9 +121,11 @@ export const TicketHome: React.FC = () => {
           <ViewMyTicketProgress
             handleCancle={() => setActiveSubMenu(subMenuItems.MY_TICKET_PROGRESS)}
             ticketId={getTicketID}
-            handleChatSubMenu={() => setActiveSubMenu(subMenuItems.SHOW_CHAT)}
+            handleChatSubMenu={setChatState}
           />
         );
+
+     
 
       default:
         return (

@@ -14,7 +14,7 @@ import {
 import { toast } from "react-toastify";
 import regexPatterns, { RegexMessages } from "@/utils/regexPattern";
 import { updateDepartmentInfo } from "@/api/services/companyService";
-import { Messages } from "@/enums/Messages";
+import getErrMssg from "../utility/getErrMssg";
 
 export interface DepartmentCardProps {
   _id: string;
@@ -54,11 +54,7 @@ const DepartmentCard: React.FC<DepartmentCardProps> = ({ _id, image, header, des
         setModalOpen(false);
       }
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error(Messages.SOMETHING_TRY_AGAIN);
-      }
+     toast.error(getErrMssg(error))
     }
   };
 
@@ -71,7 +67,7 @@ const DepartmentCard: React.FC<DepartmentCardProps> = ({ _id, image, header, des
   }, [_id, header, description]);
 
   return (
-    <div className="group relative w-full max-w-sm h-[24rem] rounded-2xl shadow-2xl shadow-black overflow-hidden transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
+    <div className="group relative w-full max-w-sm h-[20rem] rounded-2xl shadow-2xl shadow-black overflow-hidden transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl">
       {/* Background Image  */}
       <div
         className="absolute inset-0 bg-cover bg-blue-300 bg-center transition-transform duration-500 group-hover:scale-110"
@@ -94,7 +90,7 @@ const DepartmentCard: React.FC<DepartmentCardProps> = ({ _id, image, header, des
                   <FaPencil className="text-black  " />
                 </button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[625px] sm:max-h-[500px] text-white bg-black border-blue-400  shadowlg shadow-violet-500 ">
+              <DialogContent className="sm:max-w-[600px] sm:max-h-[400px] text-white bg-black border-blue-400  shadowlg shadow-violet-500 ">
                 <form onSubmit={handleSubmit(onSubmitData)}>
                   <DialogHeader>
                     <DialogTitle className="text-center text-xl   ">Edit Department</DialogTitle>

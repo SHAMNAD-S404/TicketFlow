@@ -9,6 +9,8 @@ import regexPatterns from "@/utils/regexPattern";
 import { RegexMessages } from "@/utils/regexPattern";
 import { createTicket } from "@/api/services/ticketService";
 import { TicketFormData } from "@/interfaces/formInterfaces";
+import getErrMssg from "../utility/getErrMssg";
+import { IoCloseCircleSharp } from "react-icons/io5";
 
 export interface IDepartement {
   _id: string;
@@ -59,8 +61,12 @@ const TicketForm: React.FC<TicketFormProps> = ({
   const [employees, setEmployees] = useState<IEmployeeList | null>(null);
   const SelectedDepartmentId = watch("ticketHandlingDepartmentId");
 
-  const onSubmitForm = async (data: TicketFormData) => {
+  const handleClearImage = () => {
+    setPreviewUrl(null)
+    setSelectedImage(null);
+  }
 
+  const onSubmitForm = async (data: TicketFormData) => {
     const selectedDepartment = departments.find((dept) => dept._id == data.ticketHandlingDepartmentId);
     const selectedEmployee = employees;
 
@@ -73,12 +79,10 @@ const TicketForm: React.FC<TicketFormProps> = ({
     formData.append("ticketRaisedDepartmentId", ticketRaisedDepartmentID);
     formData.append("ticketRaisedEmployeeId", ticketRaisedEmployeeID);
     formData.append("ticketRaisedEmployeeName", ticketRaisedEmployeeName);
-    formData.append("ticketRaisedEmployeeEmail",ticketRaisedEmployeeEmail);
+    formData.append("ticketRaisedEmployeeEmail", ticketRaisedEmployeeEmail);
     formData.append("ticketHandlingDepartmentName", selectedDepartment?.departmentName as string);
     formData.append("ticketHandlingEmployeeName", selectedEmployee?.name as string);
-    formData.append("ticketHandlingEmployeeEmail",employees?.email as string);
-    
-
+    formData.append("ticketHandlingEmployeeEmail", employees?.email as string);
 
     if (selectedImage) {
       formData.append("file", selectedImage);
@@ -94,11 +98,7 @@ const TicketForm: React.FC<TicketFormProps> = ({
         reset();
       }
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error(Messages.SOMETHING_TRY_AGAIN);
-      }
+      toast.error(getErrMssg(error));
     }
   };
 
@@ -168,7 +168,7 @@ const TicketForm: React.FC<TicketFormProps> = ({
         }
       } catch (error: any) {
         if (error.response && error.response.data) {
-          toast.error(Messages.NO_EMPLOYEES||error.response.data.message);
+          toast.error(Messages.NO_EMPLOYEES || error.response.data.message);
         } else {
           toast.error(Messages.SOMETHING_TRY_AGAIN);
         }
@@ -179,8 +179,8 @@ const TicketForm: React.FC<TicketFormProps> = ({
   }, [SelectedDepartmentId]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmitForm)} className="max-w-6xl mx-auto p-2">
-      <div className="bg-gradient-to-b from-blue-100 to-blue-200  rounded-3xl p-6 shadow-xl">
+    <form onSubmit={handleSubmit(onSubmitForm)} className="max-w-6xl mx-auto p-1">
+      <div className="bg-gradient-to-b from-blue-100 to-blue-200  rounded-3xl p-5 shadow-xl">
         <div className="flex justify-center items-center gap-2 mb-2">
           <h2 className="text-center font-semibold text-2xl text-blue-600 underline ">Create Ticket</h2>
           <TicketsPlane className="text-blue-600 w-8 h-8" />
@@ -188,9 +188,9 @@ const TicketForm: React.FC<TicketFormProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* Left Column */}
-          <div className="space-y-8">
+          <div className="space-y-2">
             <div>
-              <label className="block text-gray-800 text-lg font-medium mb-3">Ticket is creating for?</label>
+              <label className="block text-gray-800 text-lg font-medium mb-1 ms-2">Ticket is creating for?</label>
               {errors.ticketReason && (
                 <p className="text-sm font-semibold text-red-500 mt-1">{errors.ticketReason.message}</p>
               )}
@@ -217,9 +217,9 @@ const TicketForm: React.FC<TicketFormProps> = ({
             </div>
 
             <div>
-              <label className="block text-gray-800 text-lg font-medium mb-3">Describe the issue</label>
+              <label className="block text-gray-800 text-lg font-medium mb-1 ms-2">Describe the issue</label>
               <textarea
-                className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent h-48 resize-none text-lg"
+                className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent h-40 resize-none text-lg"
                 placeholder="Provide detailed description of the issue"
                 {...register("description", {
                   required: RegexMessages.FEILD_REQUIRED,
@@ -242,7 +242,7 @@ const TicketForm: React.FC<TicketFormProps> = ({
 
             {/* image upload */}
             <div>
-              <label className="block text-gray-800 text-lg font-medium mb-3">Attach media here</label>
+              <label className="block text-gray-800 text-lg font-medium mb-1 ms-2">Attach media here</label>
               <div className="flex items-center gap-2">
                 <input
                   type="file"
@@ -258,25 +258,36 @@ const TicketForm: React.FC<TicketFormProps> = ({
                   <Image className="w-6 h-6 text-gray-500" />
                   <span>Upload Image</span>
                 </label>
+                {/* Image Preview  only show if image is avilable*/}
+                {previewUrl && (
+                  <div className="flex ms-4">
+                    <div className="mt-4">
+                      <img
+                        src={previewUrl}
+                        alt="Selected Preview"
+                        className="w-36 h-36 object-cover rounded-lg border border-gray-300"
+                      />
+                    </div>
+                    <div>
+                      <button 
+                        onClick={handleClearImage}
+                      >
+                        <IoCloseCircleSharp className="text-xl mt-2 ms-2 hover:text-red-600 hover:text-2xl" />
+                      </button>
+                      
+                    </div>
+                  </div>
+                )}
               </div>
-
-              {/* Image Preview */}
-              {previewUrl && (
-                <div className="mt-4">
-                  <img
-                    src={previewUrl}
-                    alt="Selected Preview"
-                    className="w-24 h-24 object-cover rounded-lg border border-gray-300"
-                  />
-                </div>
-              )}
             </div>
 
             <div>
-              <label className="block text-gray-800 text-lg font-medium mb-3">Choose Ticket assigning department</label>
+              <label className="block text-gray-800 text-lg font-medium mb-1 ms-2">
+                Choose Ticket assigning department
+              </label>
               <div className="relative">
                 <select
-                  className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white text-lg"
+                  className="w-full px-6 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white text-lg"
                   {...register("ticketHandlingDepartmentId", {
                     required: RegexMessages.FEILD_REQUIRED,
                     pattern: {
@@ -300,9 +311,9 @@ const TicketForm: React.FC<TicketFormProps> = ({
           </div>
 
           {/* Right Column */}
-          <div className="space-y-8">
+          <div className="space-y-6">
             <div>
-              <label className="block text-gray-800 text-lg font-medium mb-3">
+              <label className="block text-gray-800 text-lg font-medium mb-1 ms-2">
                 Choose appropriate priority for this task
               </label>
               <div className="relative">
@@ -314,7 +325,7 @@ const TicketForm: React.FC<TicketFormProps> = ({
                       message: RegexMessages.textWithSpaceAndCommasRegexMessage,
                     },
                   })}
-                  className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white text-lg">
+                  className="w-full px-6 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white text-lg">
                   <option value="">Select</option>
                   <option value="High priority">High priority</option>
                   <option value="Medium priority">Medium priority</option>
@@ -326,11 +337,15 @@ const TicketForm: React.FC<TicketFormProps> = ({
             {errors.priority && <p className="text-sm font-semibold text-red-500">{errors.priority.message}</p>}
 
             <div>
-              <label className="block text-gray-800 text-lg font-medium mb-3">Select a due date for this task</label>
+              <label className="block text-gray-800 text-lg font-medium mb-1 ms-2">
+                Select a due date for this task
+              </label>
               <div className="relative">
                 <input
                   type="date"
-                  className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white text-lg"
+                  min={new Date().toISOString().split("T")[0]}
+                  max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split("T")[0]}
+                  className="w-full px-6 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white text-lg"
                   {...register("dueDate", {
                     required: RegexMessages.FEILD_REQUIRED,
                     pattern: {
@@ -345,10 +360,12 @@ const TicketForm: React.FC<TicketFormProps> = ({
             {errors.dueDate && <p className="text-sm font-semibold text-red-500">{errors.dueDate.message}</p>}
 
             <div>
-              <label className="block text-gray-800 text-lg font-medium mb-3">Any additional support required?</label>
+              <label className="block text-gray-800 text-lg font-medium mb-1 ms-2">
+                Any additional support required?
+              </label>
               <div className="relative">
                 <select
-                  className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white text-lg"
+                  className="w-full px-6 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white text-lg"
                   {...register("supportType", {
                     required: RegexMessages.FEILD_REQUIRED,
                     pattern: {
@@ -391,7 +408,7 @@ const TicketForm: React.FC<TicketFormProps> = ({
           </div>
         </div>
 
-        <div className="mt-12 flex justify-center gap-6">
+        <div className="mt-8 flex justify-center gap-6">
           <button
             type="button"
             onClick={handleCancel}

@@ -11,28 +11,19 @@ import { searchInputValidate } from "../../../utility/searchInputValidateNameEma
 import { fetchAllEmployees } from "../../../../api/services/companyService";
 import { Messages } from "../../../../enums/Messages";
 import { handleBlockEmployee } from "../../../../api/services/authService";
-
-import {
-  FaEye,
-  FaChevronDown,
-  FaChevronLeft,
-  FaChevronRight,
-} from "react-icons/fa";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "../../../common/Sheet";
-
+import { FaEye, FaChevronDown } from "react-icons/fa";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "../../../common/Sheet";
+import Pagination from "@/components/common/Pagination";
+import { MdPeopleAlt } from "react-icons/md";
 
 interface AllEmployeeManagementProps {
-  handleCancel : () => void;
+  handleCancel: () => void;
 }
 
-const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({handleCancel}) => {
+const tableHeaders : string[] = ["No:","Employee Name","Department", "Change Department", "Email ID", "Role", "View", "Status"]
+
+
+const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({ handleCancel }) => {
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -51,6 +42,10 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({handleCanc
     []
   );
 
+  //pagination handle function to liftup state
+  const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const handleCurrentPage = (page: number) => setCurrentPage(page);
+  const handleNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 
   const handleBlockUser = useCallback(
     debounce(
@@ -72,9 +67,7 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({handleCanc
               //update ui
               setEmployeeData((prevData) =>
                 prevData.map((employee) =>
-                  employee.email === email
-                    ? { ...employee, isBlock: !employee.isBlock }
-                    : employee
+                  employee.email === email ? { ...employee, isBlock: !employee.isBlock } : employee
                 )
               );
             }
@@ -98,12 +91,7 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({handleCanc
     const getAllEmployees = async () => {
       try {
         const companyId = company?._id as string;
-        const response = await fetchAllEmployees(
-          companyId,
-          currentPage,
-          sortBy,
-          searchQuery
-        );
+        const response = await fetchAllEmployees(companyId, currentPage, sortBy, searchQuery);
         if (response && response.data) {
           setEmployeeData(response.data.employees);
           setTotalPages(response.data.totalPages);
@@ -119,212 +107,167 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({handleCanc
 
     getAllEmployees();
   }, [currentPage, sortBy, searchQuery]);
- 
 
   return (
     <div className="p-6  space-y-6 ">
-      <div className="flex justify-between mb-6">
-        <div className="relative ">
-          <div className="flex justify-center items-center gap-2">
-            <div className="text-2xl bg-white p-2 rounded-2xl shadow-lg shadow-gray-400 hover:bg-blue-300"
-              onClick={()=> handleCancel()}
-            >
-              <IoMdArrowRoundBack />{" "}
-            </div>
-            <select
-              className="appearance-none bg-white px-8 py-2 rounded-full  shadow-lg border border-gray-200 
-            focus:outline-none focus:ring-2 focus:ring-blue-400 font-medium "
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              <option value="createdAt">Recent</option>
-              <option value="name">Name</option>
-              <option value="email">Email</option>
-              <option value="departmentName">Department</option>
-              <option value="role">Role</option>
-              <option value="isBlock">Status</option>
-            </select>
-
-            <FaChevronDown className="absolute right-3 top-3 w-4 h-4 text-gray-400  " />
-          </div>
-        </div>
-
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search by name or email"
-            className="ms-1 pl-4 pr-10 py-2 rounded-full shadow-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 "
-            onChange={(e) => handleSearchQuery(e.target.value)}
-          />
-          <svg
-            className="absolute right-3 top-2.5 w-5 h-5 text-gray-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-        </div>
-      </div>
-
-      {/*scrollable container*/}
-      <div className="overflow-x-auto">
-        <div className="min-w-[1000px]">
-          {/* Header session */}
-          <div className="bg-blue-100 rounded-2xl px-6 py-6 grid grid-cols-7 gap-4 mb-4">
-            <div className="text-sm font-semibold">No:</div>
-            <div className="text-sm font-semibold">Employee name</div>
-            <div className="text-sm font-semibold">Department</div>
-            <div className="text-sm font-semibold ">Email ID</div>
-            <div className="text-sm font-semibold text-center">Role</div>
-            <div className="text-sm font-semibold text-center">View</div>
-            <div className="text-sm font-semibold text-center">Status</div>
-          </div>
-
-          {/* Rows */}
-          <div className="space-y-4 ">
-            {employeeData.map((employee, index) => (
+      <header>
+        <div className="flex justify-between mb-6">
+          <div className="relative ">
+            <div className="flex justify-center items-center gap-2">
               <div
-                key={employee._id || index}
-                className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-7 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 "
-              >
-                <div>{0 + index + 1}</div>
-                <div className="flex items-center gap-3">
-                  <img src={employee.imageUrl} alt="" className="w-8 h-8 rounded-full" />
-                  {employee.name}
-                </div>
-                <div>{employee.departmentName}</div>
-                <div>
-                  <a className="underline text-blue-600">{employee.email}</a>
-                </div>
-                <div className="text-center">
-                  <span className="flex justify-center items-center gap-2">
-                    {employee.role}
-                  </span>
-                </div>
-                <div className="flex justify-center">
-                  <Sheet>
-                    <SheetTrigger asChild>
-                      <button className="hover:bg-gray-100 p-2 rounded-full transition-colors">
-                        <FaEye className="w-5 h-5 text-gray-600" />
-                      </button>
-                    </SheetTrigger>
-                    <SheetContent className="bg-black border-none text-center text-white ">
-                      <SheetHeader>
-                        <SheetTitle className="text-center text-white text-2xl mt-8">
-                          {" "}
-                          Employee Details
-                        </SheetTitle>
-                        <SheetDescription className="text-center text-sm text-white  font-thin">
-                          View employee information
-                        </SheetDescription>
-                      </SheetHeader>
-
-                      <div className="mt-6 flex flex-col justify-center items-center ">
-                        <img
-                          src={employee.imageUrl}
-                          alt="company dp"
-                          className="rounded-full w-44 h-44"
-                        />
-                        <h3 className="text-2xl font-semibold mt-3">
-                          {employee.name.toUpperCase()}
-                        </h3>
-                        <p className="text-sm font-medium">
-                          {employee.departmentName}
-                        </p>
-                        {/*  company information */}
-                        <div className="mt-3 space-y-4">
-                          <div>
-                            <label className="text-sm font-semibold">
-                              working as :
-                            </label>
-                            <p className="mt-1"> {employee.role}</p>
-                          </div>
-                          <div>
-                            <label className="text-lg font-semibold underlin">
-                              Contact Details
-                            </label>
-                            <div className="flex justify-center items-center gap-2">
-                              <MdOutlineEmail className="mt-2 text-xl" />
-                              <p className="mt-1 text-blue-500 underline text-lg font-semibold">
-                                {employee.email}
-                              </p>
-                            </div>
-                            <p className="mt-1 text-lg font-semibold">Phone : {employee.phone}</p>
-                          </div>
-
-                          <div>
-                            <p className="mt-1">
-                              Joined on :
-                              {new Date(
-                                employee.createdAt
-                              ).toLocaleDateString()}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </SheetContent>
-                  </Sheet>
-                </div>
-                <div className="flex justify-center">
-                  <button
-                    className={`px-4 py-1 text-sm font-semibold rounded-full transition-colors text-white ${
-                      employee.isBlock
-                        ? "bg-lime-500 hover:bg-green-500"
-                        : " bg-orange-600  hover:bg-violet-600"
-                    }   `}
-                    onClick={() => handleBlockUser(employee.email)}
-                  >
-                    {employee.isBlock ? "Unblock" : "Block"}
-                  </button>
-                </div>
+                className="text-2xl bg-white p-2 rounded-2xl shadow-lg shadow-gray-400 hover:bg-blue-300"
+                onClick={() => handleCancel()}>
+                <IoMdArrowRoundBack />{" "}
               </div>
-            ))}
+              <select
+                className="appearance-none bg-white px-8 py-2 rounded-full  shadow-lg border border-gray-200 
+            focus:outline-none focus:ring-2 focus:ring-blue-400 font-medium "
+                onChange={(e) => setSortBy(e.target.value)}>
+                <option value="createdAt">Recent</option>
+                <option value="name">Name</option>
+                <option value="email">Email</option>
+                <option value="departmentName">Department</option>
+                <option value="role">Role</option>
+                <option value="isBlock">Status</option>
+              </select>
+
+              <FaChevronDown className="absolute right-3 top-3 w-4 h-4 text-gray-400  " />
+            </div>
+          </div>
+          <div className="relative">
+            <h1 className="text-2xl font-bold shadow-lg shadow-gray-300 rounded-xl p-2 flex items-center gap-2  ">
+              <MdPeopleAlt className="text-blue-500 text-3xl " />
+              Manage Employees
+            </h1>
+          </div>
+
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search by name or email"
+              className="ms-1 pl-4 pr-10 py-2 rounded-full shadow-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 "
+              onChange={(e) => handleSearchQuery(e.target.value)}
+            />
+            <svg
+              className="absolute right-3 top-2.5 w-5 h-5 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* pagination */}
+      <main>
+        {/*scrollable container*/}
+        <div className="overflow-x-auto">
+          <div className="min-w-[1000px] mt-4">
+            <nav>
+              {/* Header session */}
+              <div className="bg-blue-100 rounded-2xl px-6 py-6 grid grid-cols-8 gap-4 mb-4">
+               
+                 {tableHeaders.map((header,index) => (
+                   <div key={index} className="text-sm font-semibold text-center">{header}</div>
+                 ))}
+              </div>
+            </nav>
+            <body>
+              <div className="space-y-4 ">
+                {employeeData.map((employee, index) => (
+                  <div
+                    key={employee._id || index}
+                    className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-8 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 ">
+                    <div className="text-center">{0 + index + 1}</div>
+                    <div className="flex items-center gap-3 ">
+                      <img src={employee.imageUrl} alt="" className="w-8 h-8 rounded-full" />
+                      {employee.name}
+                    </div>
+                    <div className="text-center">{employee.departmentName}</div>
+                    <div className="text-center">Change</div>
+                    <div className="text-center">
+                      <a className="underline text-blue-600">{employee.email}</a>
+                    </div>
+                    <div className="text-center">
+                      <span className="flex justify-center items-center gap-2">{employee.role}</span>
+                    </div>
+                    <div className="flex justify-center">
+                      <Sheet>
+                        <SheetTrigger asChild>
+                          <button className="hover:bg-gray-100  p-2 rounded-full transition-colors">
+                            <FaEye className="w-5 h-5 text-gray-600 hover:text-blue-600" />
+                          </button>
+                        </SheetTrigger>
+                        <SheetContent className="bg-black border-none text-center text-white ">
+                          <SheetHeader>
+                            <SheetTitle className="text-center text-white text-2xl mt-8"> Employee Details</SheetTitle>
+                            <SheetDescription className="text-center text-sm text-white  font-thin">
+                              View employee information
+                            </SheetDescription>
+                          </SheetHeader>
 
-      <div className="flex items-center justify-between px-6 py-4 bg-white rounded-2xl shadow-lg mt-6">
-        <button
-          className="flex items-center gap-1 px-3 py-1 text-sm text-gray-600 hover:text-gray-900"
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-        >
-          <FaChevronLeft className="w-4 h-4" /> Previous
-        </button>
+                          <div className="mt-6 flex flex-col justify-center items-center ">
+                            <img src={employee.imageUrl} alt="company dp" className="rounded-full w-44 h-44" />
+                            <h3 className="text-2xl font-semibold mt-3">{employee.name.toUpperCase()}</h3>
+                            <p className="text-sm font-medium">{employee.departmentName}</p>
+                            {/*  company information */}
+                            <div className="mt-3 space-y-4">
+                              <div>
+                                <label className="text-sm font-semibold">working as :</label>
+                                <p className="mt-1"> {employee.role}</p>
+                              </div>
+                              <div>
+                                <label className="text-lg font-semibold underlin">Contact Details</label>
+                                <div className="flex justify-center items-center gap-2">
+                                  <MdOutlineEmail className="mt-2 text-xl" />
+                                  <p className="mt-1 text-blue-500 underline text-lg font-semibold">{employee.email}</p>
+                                </div>
+                                <p className="mt-1 text-lg font-semibold">Phone : {employee.phone}</p>
+                              </div>
 
-        <div className=" flex items-center gap-2">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`w-8 h-8 rounded-full ${
-                currentPage === page
-                  ? "bg-gray-900 text-white"
-                  : "text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              {page}
-            </button>
-          ))}
+                              <div>
+                                <p className="mt-1">Joined on :{new Date(employee.createdAt).toLocaleDateString()}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </SheetContent>
+                      </Sheet>
+                    </div>
+                    <div className="flex justify-center">
+                      <button
+                        className={`px-4 py-1 text-sm font-semibold rounded-full transition-colors text-white ${
+                          employee.isBlock ? "bg-lime-500 hover:bg-green-500" : " bg-orange-600  hover:bg-violet-600"
+                        }   `}
+                        onClick={() => handleBlockUser(employee.email)}>
+                        {employee.isBlock ? "Unblock" : "Block"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </body>
+
+            {/* Rows */}
+          </div>
         </div>
+      </main>
 
-        <button
-          className="flex items-center gap-1 px-3 py-1 text-sm text-gray-600 hover:text-gray-900"
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-          disabled={currentPage === totalPages}
-        >
-          Next <FaChevronRight className="w-4 h-4" />
-        </button>
-      </div>
+      <footer>
+        {/* pagination */}
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handleCurrentPage={handleCurrentPage}
+          handleNextPage={handleNextPage}
+          handlePrevPage={handlePrevPage}
+        />
+      </footer>
     </div>
   );
 };

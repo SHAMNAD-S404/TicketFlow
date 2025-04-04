@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { FaChevronDown } from "react-icons/fa";
+import { FaChevronDown, FaEye } from "react-icons/fa";
 import { debounce } from "lodash";
 import { searchInputValidate } from "@/components/utility/searchInputValidateNameEmail";
 import { ITicketContext } from "@/types/ITicketContext";
@@ -8,15 +8,17 @@ import { toast } from "react-toastify";
 import { Messages } from "@/enums/Messages";
 import { fetchAllTickets } from "@/api/services/ticketService";
 import { ReassignTicket } from "./ReassignTicket";
-import { ViewTickets } from "./ViewTickets";
 import TicketStaticsCards from "@/components/common/TicketStaticsCards";
 import Pagination from "@/components/common/Pagination";
+import getErrMssg from "@/components/utility/getErrMssg";
 
-interface IManageTickets {
+interface IAllTickets {
   handleCancel: () => void;
+  handleManageTicket: () => void;
+  handleSetTicketId: (value: string) => void;
 }
 
-const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
+const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, handleSetTicketId }) => {
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [tikcetData, setTicketData] = useState<ITicketContext[]>([]);
@@ -29,6 +31,7 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
   const handleCurrentPage = (page: number) => setCurrentPage(page);
   const handleNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
 
+  //handle search feature with debounce
   const handleSearchQuery = useCallback(
     debounce((searchValue: string) => {
       const validateInput = searchInputValidate(searchValue);
@@ -40,6 +43,12 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
     []
   );
 
+  //function to update ticket id and subment state
+  const manageTicketHandle = (value: string) => {
+    handleSetTicketId(value);
+    handleManageTicket();
+  };
+
   useEffect(() => {
     const getAllTickets = async () => {
       try {
@@ -49,11 +58,7 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
           setTotalPages(response.data.totalPages);
         }
       } catch (error: any) {
-        if (error.response && error.response.data) {
-          toast.error(error.response.data.message);
-        } else {
-          toast.error(Messages.SOMETHING_TRY_AGAIN);
-        }
+        toast.error(getErrMssg(error))
       }
     };
     getAllTickets();
@@ -63,9 +68,8 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
     <div className="bg-blue-50">
       {/* card slides */}
       <header>
-              <TicketStaticsCards />
+        <TicketStaticsCards />
       </header>
-
 
       {/* table section */}
 
@@ -168,7 +172,12 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
                   />
 
                   {/* ticket view and manage */}
-                  <ViewTickets ticketId={ticket._id} twickParent={() => setRefreshState(!refreshState)} />
+
+                  <div className="flex justify-center">
+                    <button onClick={() => manageTicketHandle(ticket._id)}>
+                      <FaEye className="hover:text-blue-600" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -191,4 +200,4 @@ const ManageTickets: React.FC<IManageTickets> = ({ handleCancel }) => {
   );
 };
 
-export default ManageTickets;
+export default AllTickets;
