@@ -5,7 +5,7 @@ import { debounce } from "lodash";
 import { searchInputValidate } from "@/components/utility/searchInputValidateNameEmail";
 import { ITicketContext } from "@/types/ITicketContext";
 import { toast } from "react-toastify";
-import { Messages } from "@/enums/Messages";
+
 import { fetchAllTickets } from "@/api/services/ticketService";
 import { ReassignTicket } from "./ReassignTicket";
 import TicketStaticsCards from "@/components/common/TicketStaticsCards";
@@ -17,6 +17,9 @@ interface IAllTickets {
   handleManageTicket: () => void;
   handleSetTicketId: (value: string) => void;
 }
+
+const tableHeaders : string[] = ["Ticket ID","Ticket Raised by","Assigned Department","Assigned Employee","Priority","Status","Reassign Ticket","View"];
+
 
 const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, handleSetTicketId }) => {
   const [sortBy, setSortBy] = useState<string>("createdAt");
@@ -90,7 +93,7 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
                 <option value="ticketRaisedDepartmentName">Department Raised</option>
                 <option value="ticketHandlingDepartmentName">Department Handling</option>
                 <option value="priority">Priority</option>
-                <option value="dueData">DueDate</option>
+               
                 <option value="status">Status</option>
               </select>
 
@@ -124,28 +127,24 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
         <div className="overflow-x-auto">
           <div className="min-w-[1000px]">
             {/* Header session */}
-            <div className="bg-blue-100 rounded-2xl px-6 py-6 grid grid-cols-9 gap-4 mb-4">
-              <div className="text-sm font-semibold">Ticket ID</div>
-              <div className="text-sm font-semibold">Ticket Raised by</div>
-              <div className="text-sm font-semibold"> Assigned Department</div>
-              <div className="text-sm font-semibold ">Assigned Employee</div>
-              <div className="text-sm font-semibold text-center">Priority</div>
-              <div className="text-sm font-semibold text-center">Due Date</div>
-              <div className="text-sm font-semibold text-center">Status</div>
-              <div className="text-sm font-semibold text-center">Reassign Ticket</div>
-              <div className="text-sm font-semibold text-center">View</div>
+            <div className="bg-blue-100 rounded-2xl px-6 py-6 grid grid-cols-8 gap-4 mb-4">
+             
+               {tableHeaders.map((header,index) => (
+                 <div key={index} className="text-sm font-semibold text-center ">{header}</div>
+               ))}
             </div>
+
 
             {/* Rows */}
             <div className="space-y-4 ">
               {tikcetData.map((ticket, index) => (
                 <div
                   key={ticket._id || index}
-                  className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-9 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 ">
-                  <div>{ticket.ticketID}</div>
-                  <div className="flex items-center gap-3">{ticket.ticketRaisedDepartmentName}</div>
-                  <div>{ticket.ticketHandlingDepartmentName.toLowerCase()}</div>
-                  <div>
+                  className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-8 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 ">
+                  <div className="text-center">{ticket.ticketID}</div>
+                  <div className=" text-center">{ticket.ticketRaisedDepartmentName}</div>
+                  <div className="text-center">{ticket.ticketHandlingDepartmentName.toLowerCase()}</div>
+                  <div className="text-center">
                     <a className=" text-blue-600">{ticket.ticketHandlingEmployeeName}</a>
                   </div>
                   <div className="text-center">
@@ -160,7 +159,7 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
                       {ticket.priority}
                     </span>
                   </div>
-                  <div className="flex justify-center">{ticket.dueDate}</div>
+                 
                   <div className="flex justify-center">{ticket.status}</div>
                   {/* reassign ticket */}
                   <ReassignTicket

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { TicketFormData } from "@/interfaces/formInterfaces";
-import { Calendar, ChevronDown, Paperclip, Image } from "lucide-react";
+import { ChevronDown, Paperclip, Image } from "lucide-react";
 import regexPatterns, { RegexMessages } from "@/utils/regexPattern";
 import { editTicket } from "@/api/services/ticketService";
 import { toast } from "react-toastify";
@@ -117,7 +117,6 @@ const EditTicket: React.FC<IEditTicket> = ({ isOpen, onClose, ticketData, refetc
       reset({
         ticketReason: ticketData.ticketReason || "",
         description: ticketData.description || "",
-        dueDate: ticketData.dueDate || "",
         priority: ticketData.priority || "",
         supportType: ticketData.supportType || "",
         ticketHandlingDepartmentId: ticketData.ticketHandlingDepartmentId || "",
@@ -345,29 +344,6 @@ const EditTicket: React.FC<IEditTicket> = ({ isOpen, onClose, ticketData, refetc
                     </div>
                   </div>
                   {errors.priority && <p className="text-sm font-semibold text-red-500">{errors.priority.message}</p>}
-
-                  <div>
-                    <label className="block text-gray-800 text-lg font-medium mb-3">
-                      Select a due date for this task
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="date"
-                        min={new Date().toISOString().split("T")[0]}
-                        max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split("T")[0]}
-                        className="w-full px-6 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white text-lg"
-                        {...register("dueDate", {
-                          required: RegexMessages.FEILD_REQUIRED,
-                          pattern: {
-                            value: regexPatterns.textAreaValidation,
-                            message: RegexMessages.textWithSpaceAndCommasRegexMessage,
-                          },
-                        })}
-                      />
-                      <Calendar className="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-500 pointer-events-none" />
-                    </div>
-                  </div>
-                  {errors.dueDate && <p className="text-sm font-semibold text-red-500">{errors.dueDate.message}</p>}
 
                   <div>
                     <label className="block text-gray-800 text-lg font-medium mb-3">

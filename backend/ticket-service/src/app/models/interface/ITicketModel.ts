@@ -13,7 +13,6 @@ export interface ITicket extends Document {
   ticketReason: string;
   description: string;
   priority: string;
-  dueDate: string;
   supportType: string;
   status: TicketStatus;
   imageUrl: string;

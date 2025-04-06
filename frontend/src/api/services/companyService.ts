@@ -178,11 +178,25 @@ export const fetchEmployeesByDepartment = async (id: string) => {
   }
 };
 
-export const fetchAllEmployeeWithLessTicket = async (id : string) => {
+export const fetchAllEmployeeWithLessTicket = async (id: string) => {
   try {
     const response = await axiosInstance.get(`/company/emp/get-employee-by-less-ticket?id=${id}`);
     return response.data;
   } catch (error) {
-    throw error
+    throw error;
   }
-}
+};
+
+// api call to change department of a employee
+export const changeEmployeeDepartment = async (employeeId: string, departmentId: string, departmentName: string) => {
+  try {
+    const response = await axiosInstance.patch("/company/emp/change-department", {
+      employeeId,
+      departmentId,
+      departmentName,
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

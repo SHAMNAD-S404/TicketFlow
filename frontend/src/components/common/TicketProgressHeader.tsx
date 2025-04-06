@@ -27,7 +27,7 @@ const TicketProgressHeader: React.FC<ITicketProgressHeader> = ({
   const handleReOpenModalClose = () => setReOpenModal(false);
 
   const reOpenStatus: boolean = currentProgress === "resolved";
-  const gridCols = reOpenStatus ? "grid-cols-7" : "grid-cols-6";
+  const gridCols = reOpenStatus ? "grid-cols-6" : "grid-cols-5";
 
   //handle tikcet reopen
   const handleReopen = async (reason: string) => {
@@ -52,7 +52,6 @@ const TicketProgressHeader: React.FC<ITicketProgressHeader> = ({
           <div>Ticket ID</div>
           <div>Priority level</div>
           <div>Ticket created date</div>
-          <div>Ticket due date</div>
           <div>Current Progress</div>
           <div>Edit Ticket</div>
           {reOpenStatus && <div> Re-open ticket </div>}
@@ -66,7 +65,7 @@ const TicketProgressHeader: React.FC<ITicketProgressHeader> = ({
           <div className="rounded-2xl bg-white p-2 shadow-xl border border-b-blue-500">{ticketData?.ticketID}</div>
           <div className="rounded-2xl bg-white p-2 shadow-xl border border-b-blue-500">{ticketData?.priority}</div>
           <div className="rounded-2xl bg-white p-2 shadow-xl border border-b-blue-500">{createdDate}</div>
-          <div className="rounded-2xl bg-white p-2 shadow-xl border border-b-blue-500">{ticketData?.dueDate}</div>
+         
           <div className="rounded-2xl bg-white p-2 shadow-xl border border-b-blue-500">{currentProgress}</div>
           <div
             className="rounded-2xl hover:bg-blue-600 p-2 shadow-xl bg-black cursor-pointer"

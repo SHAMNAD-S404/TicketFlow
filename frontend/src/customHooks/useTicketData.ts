@@ -1,5 +1,5 @@
 import { fetchOneTicket } from "@/api/services/ticketService";
-import { Messages } from "@/enums/Messages";
+import getErrMssg from "@/components/utility/getErrMssg";
 import { ITicketDocument } from "@/interfaces/ITicketDocument";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
@@ -25,9 +25,8 @@ const useTicketData = (ticketId: string): IUseTicketDataResult => {
         setError(null);
       }
     } catch (error: any) {
-      const errMsg = error.response?.data?.message || Messages.SOMETHING_TRY_AGAIN;
-      setError(errMsg);
-      toast.error(errMsg);
+      toast.error(getErrMssg(error));
+      setError(getErrMssg(error));
     } finally {
       setLoading(false);
     }

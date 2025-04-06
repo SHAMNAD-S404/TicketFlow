@@ -193,14 +193,11 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
 
   async editTicketRepo(id: string, udpateData: Record<string, string>): Promise<ITicket | null> {
     try {
-        return await this.findOneDocAndUpdate({_id:id},udpateData);
+      return await this.findOneDocAndUpdate({ _id: id }, udpateData);
     } catch (error) {
-      throw error
+      throw error;
     }
   }
-
-  
-
 }
 
 export default new TicketRepository();

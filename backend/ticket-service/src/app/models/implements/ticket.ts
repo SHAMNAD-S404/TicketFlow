@@ -24,10 +24,6 @@ const ticketSchema: Schema = new Schema<ITicket>(
       type: String,
       required: true,
     },
-    dueDate: {
-      type: String,
-      required: true,
-    },
     supportType: {
       type: String,
       required: true,

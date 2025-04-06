@@ -10,6 +10,7 @@ import { DockDemo } from "@/components/magicui/DockDemo";
 import ManageTicketUI from "@/components/common/ManageTicketUI";
 import useTicketData from "@/customHooks/useTicketData";
 import ManageTicketHeader from "@/components/common/ManageTicketHeader";
+import getErrMssg from "@/components/utility/getErrMssg";
 
 interface EManageTickets {
   handleCancle: () => void;
@@ -86,11 +87,7 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
         setIsVisible(false);
       }
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error(Messages.SOMETHING_TRY_AGAIN);
-      }
+      toast.error(getErrMssg(error));
     }
   };
 
@@ -154,7 +151,7 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
           </main>
 
           <footer>
-            <div className="flex flex-col items-center justify-center mt-4">
+            <div className="flex flex-col items-center justify-center mt-2">
               <h2 className="text-center font-semibold">
                 any additional support
                 <hr className="border-gray-400" />

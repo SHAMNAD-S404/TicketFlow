@@ -1,6 +1,6 @@
 import { IEmployeeController } from "../interface/IEmployeeController";
 import { Request, Response } from "express";
-import { IEmployeeService } from "../../services/interface/IEmployeeService";
+import { IChangeDepartmentData, IEmployeeService } from "../../services/interface/IEmployeeService";
 import EmployeeModel from "../../models/implements/employee";
 import mongoose from "mongoose";
 import { publishToQueue } from "../../../queues/publisher";
@@ -9,7 +9,7 @@ import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
 import { departmentEmployeeSchema, searchInputSchema } from "../../dtos/searchInput.dto";
 import { emailSchema } from "../../dtos/jwtQueryValidation";
-import { fetchDeptEmployeesSchema } from "../../dtos/BaseValidation.schema";
+import { changeDepartmentSchema, fetchDeptEmployeesSchema } from "../../dtos/BaseValidation.schema";
 import Roles from "../../../constants/roles";
 export class EmployeeController implements IEmployeeController {
   private readonly employeeService: IEmployeeService;
@@ -61,13 +61,13 @@ export class EmployeeController implements IEmployeeController {
 
   public getEmployeeData = async (req: Request, res: Response): Promise<void> => {
     try {
-      const {email,role} = req.query
-      if(role !== Roles.Employee){
+      const { email, role } = req.query;
+      if (role !== Roles.Employee) {
         res.status(HttpStatus.UNAUTHORIZED).json({
           message: Messages.NO_ACCESS,
-          success:false,
-        })
-        return ;
+          success: false,
+        });
+        return;
       }
       if (!email) {
         res.status(401).json({ message: "email id not found", success: false });
@@ -240,6 +240,26 @@ export class EmployeeController implements IEmployeeController {
       return;
     } catch (error) {
       console.log("error while fetchEmployeeWithlessTicket : ", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+    }
+  };
+
+  public changeDepartment = async (req: Request, res: Response): Promise<void> => {
+    try {
+      if (req.query.role !== Roles.Company) {
+        res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.NO_ACCESS, success: false });
+        return;
+      }
+      const validateData = changeDepartmentSchema.safeParse(req.body);
+      if (!validateData.success) {
+        res.status(HttpStatus.FORBIDDEN).json({ messages: Messages.INPUT_INVALID_OR_FIELD_MISSING, success: false });
+        return;
+      }
+      const updateEmployee = await this.employeeService.changeDepartmentService(req.body);
+      const { message, statusCode, success } = updateEmployee;
+      res.status(statusCode).json({ message, success });
+    } catch (error) {
+      console.error("error while change department", error);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
     }
   };

@@ -52,13 +52,10 @@ export class TicketController implements ITicketController {
 
       const saveTicket = await this.ticketService.createTicketDocument(ticketData);
       const { message, statusCode, success, data } = saveTicket;
-      res.status(statusCode).json({
-        message,
-        success,
-        data,
-      });
+      res.status(statusCode).json({ message, success, data });
+
     } catch (error) {
-      console.log(error);
+      console.error(error);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: Messages.SERVER_ERROR,
         success: false,

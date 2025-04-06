@@ -62,9 +62,9 @@ const TicketForm: React.FC<TicketFormProps> = ({
   const SelectedDepartmentId = watch("ticketHandlingDepartmentId");
 
   const handleClearImage = () => {
-    setPreviewUrl(null)
+    setPreviewUrl(null);
     setSelectedImage(null);
-  }
+  };
 
   const onSubmitForm = async (data: TicketFormData) => {
     const selectedDepartment = departments.find((dept) => dept._id == data.ticketHandlingDepartmentId);
@@ -179,8 +179,8 @@ const TicketForm: React.FC<TicketFormProps> = ({
   }, [SelectedDepartmentId]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmitForm)} className="max-w-6xl mx-auto p-1">
-      <div className="bg-gradient-to-b from-blue-100 to-blue-200  rounded-3xl p-5 shadow-xl">
+    <form onSubmit={handleSubmit(onSubmitForm)} className="max-w-6xl mx-auto p-2">
+      <div className="bg-gradient-to-b from-blue-100 to-blue-200  rounded-3xl p-8 mt-8 shadow-xl">
         <div className="flex justify-center items-center gap-2 mb-2">
           <h2 className="text-center font-semibold text-2xl text-blue-600 underline ">Create Ticket</h2>
           <TicketsPlane className="text-blue-600 w-8 h-8" />
@@ -269,18 +269,18 @@ const TicketForm: React.FC<TicketFormProps> = ({
                       />
                     </div>
                     <div>
-                      <button 
-                        onClick={handleClearImage}
-                      >
+                      <button onClick={handleClearImage}>
                         <IoCloseCircleSharp className="text-xl mt-2 ms-2 hover:text-red-600 hover:text-2xl" />
                       </button>
-                      
                     </div>
                   </div>
                 )}
               </div>
             </div>
+          </div>
 
+          {/* Right Column */}
+          <div className="space-y-6">
             <div>
               <label className="block text-gray-800 text-lg font-medium mb-1 ms-2">
                 Choose Ticket assigning department
@@ -308,10 +308,6 @@ const TicketForm: React.FC<TicketFormProps> = ({
                 <p className="text-sm font-semibold text-red-500 p-2">{errors.ticketHandlingDepartmentId.message}</p>
               )}
             </div>
-          </div>
-
-          {/* Right Column */}
-          <div className="space-y-6">
             <div>
               <label className="block text-gray-800 text-lg font-medium mb-1 ms-2">
                 Choose appropriate priority for this task
@@ -335,29 +331,6 @@ const TicketForm: React.FC<TicketFormProps> = ({
               </div>
             </div>
             {errors.priority && <p className="text-sm font-semibold text-red-500">{errors.priority.message}</p>}
-
-            <div>
-              <label className="block text-gray-800 text-lg font-medium mb-1 ms-2">
-                Select a due date for this task
-              </label>
-              <div className="relative">
-                <input
-                  type="date"
-                  min={new Date().toISOString().split("T")[0]}
-                  max={new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split("T")[0]}
-                  className="w-full px-6 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none bg-white text-lg"
-                  {...register("dueDate", {
-                    required: RegexMessages.FEILD_REQUIRED,
-                    pattern: {
-                      value: regexPatterns.textAreaValidation,
-                      message: RegexMessages.textWithSpaceAndCommasRegexMessage,
-                    },
-                  })}
-                />
-                <Calendar className="absolute right-6 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-500 pointer-events-none" />
-              </div>
-            </div>
-            {errors.dueDate && <p className="text-sm font-semibold text-red-500">{errors.dueDate.message}</p>}
 
             <div>
               <label className="block text-gray-800 text-lg font-medium mb-1 ms-2">

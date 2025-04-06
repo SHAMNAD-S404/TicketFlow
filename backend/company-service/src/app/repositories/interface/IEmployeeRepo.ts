@@ -36,6 +36,7 @@ export interface IEmployeeRepo {
   findEmployeeWithlessTicket (id:string ,authUserUUID:string) : Promise<{_id : string,name:string,email:string} | null>;
 
   findAndUpdateTicketCount (id:string , value : number) : Promise<IEmployee | null>
+  changeDepartmentRepo(searchQuery:Record<string,string>,updateData:Record<string,string>) : Promise<IEmployee|null>
 
-
+  findOneDoc(searchQuery:Record<string,string>) : Promise<IEmployee | null>
 }

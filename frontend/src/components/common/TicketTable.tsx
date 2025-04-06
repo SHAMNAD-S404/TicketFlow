@@ -20,7 +20,7 @@ const TicketTable: React.FC<ITicketTable> = ({
   manageTicketHandle,
   showRaisedBy = true,
 }) => {
-  const gridCols = showRaisedBy ? "grid-cols-8" : "grid-cols-7";
+  const gridCols = showRaisedBy ? "grid-cols-7" : "grid-cols-6";
 
   return (
     <div>
@@ -40,7 +40,6 @@ const TicketTable: React.FC<ITicketTable> = ({
                 <option value="createdAt">Recent</option>
                 <option value="ticketRaisedDepartmentName">Department Raised</option>
                 <option value="priority">Priority</option>
-                <option value="dueData">DueDate</option>
                 <option value="status">Status</option>
               </select>
 
@@ -82,7 +81,7 @@ const TicketTable: React.FC<ITicketTable> = ({
               <div className="text-sm font-semibold"> Assigned Department</div>
               <div className="text-sm font-semibold ">Assigned Employee</div>
               <div className="text-sm font-semibold text-center">Priority</div>
-              <div className="text-sm font-semibold text-center">Due Date</div>
+
               <div className="text-sm font-semibold text-center">Status</div>
               <div className="text-sm font-semibold text-center">Manage</div>
             </div>
@@ -111,7 +110,7 @@ const TicketTable: React.FC<ITicketTable> = ({
                       {ticket.priority}
                     </span>
                   </div>
-                  <div className="flex justify-center">{ticket.dueDate}</div>
+
                   <div className="flex justify-center">{ticket.status}</div>
 
                   {/* ticket view and manage */}

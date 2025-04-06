@@ -14,6 +14,13 @@ export interface IGetEmployeeWithlessTicket extends IBaseResponse {
   };
 }
 
+export interface IChangeDepartmentData {
+  employeeId : string,
+  departmentId : string,
+  departmentName : string
+}
+
+
 export interface IEmployeeService {
   addEmployees(employeeData: IEmployee): Promise<{ message: string; success: boolean; authData?: IEmployeeAuthData }>;
 
@@ -67,5 +74,6 @@ export interface IEmployeeService {
 
   updateTicketCount(id:string,value:number) : Promise<IEmployee | null>
 
+  changeDepartmentService(data:IChangeDepartmentData) : Promise<IBaseResponse>
 
 }

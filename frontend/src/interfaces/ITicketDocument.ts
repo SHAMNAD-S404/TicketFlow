@@ -5,7 +5,6 @@ export interface ITicketDocument {
   ticketReason: string;
   description: string;
   priority: string;
-  dueDate: string;
   supportType: string;
   status: string;
   imageUrl?: string;

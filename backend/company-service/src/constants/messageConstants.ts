@@ -16,8 +16,8 @@ export const Messages = {
     IMAGE_UPDATED : "Image updated successfully",
     REQUIRED_FIELD_MISSING : "Required fields are missing",
     INPUT_INVALID_OR_FIELD_MISSING : "Given input is invalid or Required fileds are missing!",
-    
-    
+    SOMETHING_WRONG : "Something Went wrong try again! ",
+    DEPT_CHANGE_SUCCESS : "Department changed successfully",
     
     
   

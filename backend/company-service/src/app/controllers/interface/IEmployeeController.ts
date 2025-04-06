@@ -9,4 +9,5 @@ export interface IEmployeeController {
   uploadProfileImage(req: Request, res: Response): Promise<void>;
   getEmployeesByDept(req: Request, res: Response): Promise<void>;
   fetchEmployeeWithlessTicket(req: Request, res: Response): Promise<void>;
+  changeDepartment (req: Request , res: Response) : Promise<void>;
 }

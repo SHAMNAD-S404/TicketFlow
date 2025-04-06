@@ -10,7 +10,8 @@ export enum Messages {
     DATA_NOT_FOUND = "Requested Data not Found",
     NO_EMPLOYEES = "Currently selected department have no employees ! select another one dept ",
     SELECT_DEPT_AGAIN = "oops something went wrong select department again !",
-    
+    SELECT_A_DEPT = "Select a department to continue!",
+    EMPLOYEE_ID_MISSING = "oops issue with selected employee data ! try again!",
 
     
 }

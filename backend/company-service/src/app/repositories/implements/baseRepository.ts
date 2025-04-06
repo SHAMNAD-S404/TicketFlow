@@ -60,19 +60,28 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
     }
   }
 
-  async updateUserStatus(
-    email: string,
-    blockStatus: boolean
-  ): Promise<T | null> {
+  async updateUserStatus(email: string, blockStatus: boolean): Promise<T | null> {
     try {
-      return await this.model.findOneAndUpdate(
-        { email: email },
-        { $set: { isBlock: blockStatus } },
-        { new: true }
-      );
+      return await this.model.findOneAndUpdate({ email: email }, { $set: { isBlock: blockStatus } }, { new: true });
     } catch (error) {
       console.error("error in base repo update user : ", error);
       throw error;
+    }
+  }
+
+  async updateOneDocument(searchQuery: Record<string, string>, updateData: Record<string, string>): Promise<T | null> {
+    try {
+      return await this.model.findOneAndUpdate(searchQuery, { $set: updateData }, { new: true });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findOneDocument(searchQuery: Record<string, string>): Promise<T | null> {
+    try {
+       return await this.model.findOne(searchQuery)
+    } catch (error) {
+      throw error
     }
   }
 }

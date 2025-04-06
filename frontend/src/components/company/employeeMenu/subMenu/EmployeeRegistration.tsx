@@ -13,6 +13,7 @@ import Swal from "sweetalert2";
 import { useSelector } from "react-redux";
 import { Rootstate } from "../../../../redux/store";
 import { Messages } from "@/enums/Messages";
+import getErrMssg from "@/components/utility/getErrMssg";
 
 interface Departement {
   _id: string;
@@ -23,14 +24,11 @@ interface EmployeeRegistrationProps {
   handleCancel: () => void;
 }
 
-const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
-  handleCancel,
-}) => {
+const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({ handleCancel }) => {
   const [departments, setDepartments] = useState<Departement[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const company = useSelector((state:Rootstate) => state.company.company);
-
+  const company = useSelector((state: Rootstate) => state.company.company);
 
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -51,7 +49,7 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
             }
           });
         } else {
-          toast.error(Messages.SOMETHING_TRY_AGAIN)
+          toast.error(Messages.SOMETHING_TRY_AGAIN);
         }
       } finally {
         setIsLoading(false);
@@ -70,9 +68,7 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
 
   const onSubmit = async (data: IEmployeeForm) => {
     try {
-      const selectedDepartment = departments.find(
-        (dept) => dept._id === data.departmentId
-      );
+      const selectedDepartment = departments.find((dept) => dept._id === data.departmentId);
       if (selectedDepartment && company) {
         data.departmentName = selectedDepartment.departmentName;
         data.companyId = company._id;
@@ -82,13 +78,9 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
       if (response.success) {
         toast.success(response.message);
         reset(); //Reset the form fields
-      } 
-    } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error(Messages.SOMETHING_TRY_AGAIN)
       }
+    } catch (error: any) {
+      toast.error(getErrMssg(error));
     }
   };
 
@@ -105,11 +97,7 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
               <br />– Register Your Team Today!"
             </div>
             <div className="mt-8">
-              <img
-                src={RegisterImage}
-                alt="Team collaboration"
-                className="rounded-lg w-full object-cover"
-              />
+              <img src={RegisterImage} alt="Team collaboration" className="rounded-lg w-full object-cover" />
             </div>
           </div>
 
@@ -117,9 +105,7 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
           <div className="p-8 md:w-7/12">
             <div className="flex items-center mb-8 gap-1 justify-center text-blue-600">
               <RiUserSharedFill className="text-xl" />
-              <h2 className="text-2xl font-bold text-gray-800">
-                Employee Registration
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-800">Employee Registration</h2>
             </div>
 
             <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
@@ -151,18 +137,10 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
                 />
                 {errors.name && (
                   <div className="text-sm font-medium text-red-500">
-                    {errors.name.type === "required" && (
-                      <p>{errors.name.message}</p>
-                    )}
-                    {errors.name.type === "maxLength" && (
-                      <p>{errors.name.message}</p>
-                    )}
-                    {errors.name.type === "minLength" && (
-                      <p>{errors.name.message}</p>
-                    )}
-                    {errors.name.type === "pattern" && (
-                      <p>{errors.name.message}</p>
-                    )}
+                    {errors.name.type === "required" && <p>{errors.name.message}</p>}
+                    {errors.name.type === "maxLength" && <p>{errors.name.message}</p>}
+                    {errors.name.type === "minLength" && <p>{errors.name.message}</p>}
+                    {errors.name.type === "pattern" && <p>{errors.name.message}</p>}
                   </div>
                 )}
               </div>
@@ -194,20 +172,7 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
                   })}
                 />
                 {errors.email && (
-                  <div className="text-sm font-medium text-red-500">
-                    {errors.email.type === "required" && (
-                      <p>{errors.email.message}</p>
-                    )}
-                    {errors.email.type === "maxLength" && (
-                      <p>{errors.email.message}</p>
-                    )}
-                    {errors.email.type === "minLength" && (
-                      <p>{errors.email.message}</p>
-                    )}
-                    {errors.email.type === "pattern" && (
-                      <p>{errors.email.message}</p>
-                    )}
-                  </div>
+                  <p className="text-sm font-semibold text-red-500">{errors.email.message}</p>
                 )}
               </div>
 
@@ -239,33 +204,22 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
                 />
                 {errors.phone && (
                   <div className="text-sm text-red-500 font-medium">
-                    {errors.phone.type === "required" && (
-                      <p>{errors.phone.message}</p>
-                    )}
-                    {errors.phone.type === "minLength" && (
-                      <p>{errors.phone.message}</p>
-                    )}
-                    {errors.phone.type === "maxLength" && (
-                      <p>{errors.phone.message}</p>
-                    )}
-                    {errors.phone.type === "pattern" && (
-                      <p>{errors.phone.message}</p>
-                    )}
+                    {errors.phone.type === "required" && <p>{errors.phone.message}</p>}
+                    {errors.phone.type === "minLength" && <p>{errors.phone.message}</p>}
+                    {errors.phone.type === "maxLength" && <p>{errors.phone.message}</p>}
+                    {errors.phone.type === "pattern" && <p>{errors.phone.message}</p>}
                   </div>
                 )}
               </div>
 
               {/* Department Field */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Select employee department
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Select employee department</label>
                 <select
                   {...register("departmentId", {
                     required: "this field is required",
                   })}
-                  className="w-full px-4 py-2 rounded-md bg-gray-100 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                >
+                  className="w-full px-4 py-2 rounded-md bg-gray-100 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500">
                   <option value="">Select</option>
                   {departments.map((dept) => (
                     <option key={dept._id} value={dept._id}>
@@ -274,9 +228,7 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
                   ))}
                 </select>
                 {errors.departmentId && (
-                  <p className="text-sm text-red-500 font-medium">
-                    {errors.departmentId.message}
-                  </p>
+                  <p className="text-sm text-red-500 font-medium">{errors.departmentId.message}</p>
                 )}
               </div>
 
@@ -284,15 +236,13 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({
               <div className="flex space-x-4">
                 <button
                   type="submit"
-                  className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors duration-200"
-                >
+                  className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors duration-200">
                   Register
                 </button>
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="flex-1 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-colors duration-200"
-                >
+                  className="flex-1 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-colors duration-200">
                   Cancel
                 </button>
               </div>

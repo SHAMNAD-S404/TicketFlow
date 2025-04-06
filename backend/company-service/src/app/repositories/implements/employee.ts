@@ -198,6 +198,25 @@ class EmployeeRepository extends BaseRepository<IEmployee> implements IEmployeeR
       throw error;
     }
   }
+
+  async changeDepartmentRepo(
+    searchQuery: Record<string, string>,
+    updateData: Record<string, string>
+  ): Promise<IEmployee | null> {
+    try {
+      return await this.updateOneDocument(searchQuery, updateData);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findOneDoc(searchQuery: Record<string, string>): Promise<IEmployee | null> {
+    try {
+      return await this.findOneDocument(searchQuery)
+    } catch (error) {
+      throw error
+    }
+  }
 }
 
 export default new EmployeeRepository();

@@ -1,9 +1,15 @@
-import { IEmployeeService, IGetEmployeeWithlessTicket, IUpdateProfileImage } from "../interface/IEmployeeService";
+import {
+  IChangeDepartmentData,
+  IEmployeeService,
+  IGetEmployeeWithlessTicket,
+  IUpdateProfileImage,
+} from "../interface/IEmployeeService";
 import { IEmployee } from "../../models/interface/IEmployeeModel";
 import EmployeeRepository from "../../repositories/implements/employee";
 import { IEmployeeAuthData } from "../../interfaces/IEmployeeAuthData";
 import { Messages } from "../../../constants/messageConstants";
 import { HttpStatus } from "../../../constants/httpStatus";
+import { IBaseResponse } from "../../interfaces/IBaseResponse";
 
 export default class EmployeeService implements IEmployeeService {
   async addEmployees(employeeData: IEmployee): Promise<{
@@ -196,84 +202,109 @@ export default class EmployeeService implements IEmployeeService {
     }
   }
 
-    async updateProfileImage(email: string, imageUrl: string): Promise<IUpdateProfileImage> {
-      try {
-  
-        const result = await EmployeeRepository.updateImageUrl(email,imageUrl);
-        if(result){
-          return {
-            message : Messages.IMAGE_UPDATED,
-            success : true,
-            statusCode : HttpStatus.OK,
-            imageUrl : result
-          }
-        }else{
-          return {
-            message : Messages.DATA_NOT_FOUND,
-            statusCode:HttpStatus.BAD_REQUEST,
-            success : false
-          }
-        }
-  
-      } catch (error) {
-        throw error
+  async updateProfileImage(email: string, imageUrl: string): Promise<IUpdateProfileImage> {
+    try {
+      const result = await EmployeeRepository.updateImageUrl(email, imageUrl);
+      if (result) {
+        return {
+          message: Messages.IMAGE_UPDATED,
+          success: true,
+          statusCode: HttpStatus.OK,
+          imageUrl: result,
+        };
+      } else {
+        return {
+          message: Messages.DATA_NOT_FOUND,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
       }
+    } catch (error) {
+      throw error;
     }
+  }
 
-     async getEmployeesDeptWise(id: string, authUserUUID: string): Promise<{ message: string; success: boolean; statusCode: number; data?: { _id: string; name: string; email: string; }[]; }> {
-      try {
+  async getEmployeesDeptWise(
+    id: string,
+    authUserUUID: string
+  ): Promise<{
+    message: string;
+    success: boolean;
+    statusCode: number;
+    data?: { _id: string; name: string; email: string }[];
+  }> {
+    try {
+      const result = await EmployeeRepository.findEmployeesBasedOnDept(id, authUserUUID);
+      if (result) {
+        return {
+          message: Messages.FETCH_SUCCESS,
+          statusCode: HttpStatus.OK,
+          success: true,
+          data: result,
+        };
+      } else {
+        return {
+          message: Messages.DATA_NOT_FOUND,
+          success: false,
+          statusCode: HttpStatus.BAD_REQUEST,
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 
-        const result = await EmployeeRepository.findEmployeesBasedOnDept(id,authUserUUID);
-        if(result){
-          return {
+  async getEmployeeWithlessTicket(id: string, authUserUUID: string): Promise<IGetEmployeeWithlessTicket> {
+    try {
+      const result = await EmployeeRepository.findEmployeeWithlessTicket(id, authUserUUID);
+      return result
+        ? {
             message: Messages.FETCH_SUCCESS,
-            statusCode:HttpStatus.OK,
-            success : true,
-            data:result
+            success: true,
+            statusCode: HttpStatus.OK,
+            data: result,
           }
-        }else{
-          return {
-            message:Messages.DATA_NOT_FOUND,
-            success:false,
-            statusCode:HttpStatus.BAD_REQUEST
-          }
-        }
-
-      } catch (error) {
-        throw error
-      }
+        : {
+            message: Messages.DATA_NOT_FOUND,
+            success: false,
+            statusCode: HttpStatus.BAD_REQUEST,
+          };
+    } catch (error) {
+      throw error;
     }
+  }
 
-    async getEmployeeWithlessTicket(id: string, authUserUUID: string): Promise<IGetEmployeeWithlessTicket> {
-      try {
-         const result = await EmployeeRepository.findEmployeeWithlessTicket(id,authUserUUID);
-         return result ? 
-          {
-            message: Messages.FETCH_SUCCESS,
-            success : true,
-            statusCode : HttpStatus.OK,
-            data : result,
-          } : 
-          {
-            message : Messages.DATA_NOT_FOUND,
-            success : false,
-            statusCode : HttpStatus.BAD_REQUEST
-          }
-      } catch (error) {
-        throw error
-      }
+  async updateTicketCount(id: string, value: number): Promise<IEmployee | null> {
+    try {
+      const updateData = await EmployeeRepository.findAndUpdateTicketCount(id, Number(value));
+      return updateData ? updateData : null;
+    } catch (error) {
+      throw error;
     }
+  }
 
-    async updateTicketCount(id: string, value: number): Promise<IEmployee | null> {
-      try {
-
-         const updateData = await EmployeeRepository.findAndUpdateTicketCount(id,Number(value));
-         return updateData ? updateData : null;
-        
-      } catch (error) {
-        console.error("error while updating ticket count");
-        throw error;
+  async changeDepartmentService(data: IChangeDepartmentData): Promise<IBaseResponse> {
+    try {
+      const { employeeId, ...updationData } = data;
+      const isExist = await EmployeeRepository.findOneDoc({ _id: employeeId });
+      if (!isExist) {
+        return { message: Messages.USER_NOT_FOUND, success: false, statusCode: HttpStatus.NOT_FOUND };
       }
+      const updateData = await EmployeeRepository.changeDepartmentRepo({ _id: employeeId }, updationData);
+      if (!updateData) {
+        return {
+          message: Messages.SOMETHING_WRONG,
+          success: false,
+          statusCode: HttpStatus.BAD_REQUEST,
+        };
+      }
+      return {
+        message: Messages.DEPT_CHANGE_SUCCESS,
+        success: true,
+        statusCode: HttpStatus.OK,
+      };
+    } catch (error) {
+      throw error;
     }
-
+  }
 }

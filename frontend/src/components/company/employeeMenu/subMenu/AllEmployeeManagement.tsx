@@ -15,13 +15,23 @@ import { FaEye, FaChevronDown } from "react-icons/fa";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "../../../common/Sheet";
 import Pagination from "@/components/common/Pagination";
 import { MdPeopleAlt } from "react-icons/md";
+import getErrMssg from "@/components/utility/getErrMssg";
+import DeptChangeModal from "@/components/common/DeptChangeModal";
 
 interface AllEmployeeManagementProps {
   handleCancel: () => void;
 }
 
-const tableHeaders : string[] = ["No:","Employee Name","Department", "Change Department", "Email ID", "Role", "View", "Status"]
-
+const tableHeaders: string[] = [
+  "No:",
+  "Employee Name",
+  "Email ID",
+  "Role",
+  "Department",
+  "Change Department",
+  "Status",
+  "View",
+];
 
 const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({ handleCancel }) => {
   const [sortBy, setSortBy] = useState<string>("createdAt");
@@ -29,6 +39,10 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({ handleCan
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [employeeData, setEmployeeData] = useState<IEmployeeContext[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("");
+  const [currentDepartment , setCurrentDepartment] = useState<string>("")
+  const [twickParent , setTwickParent] = useState<boolean>(false);
 
   const company = useSelector((state: Rootstate) => state.company.company);
 
@@ -41,6 +55,20 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({ handleCan
     }, 1000),
     []
   );
+
+  //to show dept change modal
+  const handleModalOpen = (employeeId: string,departementName : string) => {
+    setSelectedEmployeeId(employeeId);
+    setCurrentDepartment(departementName)
+    setIsModalOpen(true);
+  };
+
+  //to handle modal close functions
+  const handleModalClose = () => {
+    setSelectedEmployeeId("");
+    setCurrentDepartment("");
+    setIsModalOpen(false);
+  };
 
   //pagination handle function to liftup state
   const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -73,11 +101,7 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({ handleCan
             }
           }
         } catch (error: any) {
-          if (error.response && error.response.data) {
-            toast.error(error.response.data.message);
-          } else {
-            toast.error(Messages.SOMETHING_TRY_AGAIN);
-          }
+          toast.error(getErrMssg(error));
         }
       },
       4000,
@@ -97,16 +121,12 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({ handleCan
           setTotalPages(response.data.totalPages);
         }
       } catch (error: any) {
-        if (error.response && error.response.data) {
-          toast.error(error.response.data.message);
-        } else {
-          toast.error(Messages.SOMETHING_TRY_AGAIN);
-        }
+        toast.error(getErrMssg(error));
       }
     };
 
     getAllEmployees();
-  }, [currentPage, sortBy, searchQuery]);
+  }, [currentPage, sortBy, searchQuery,twickParent]);
 
   return (
     <div className="p-6  space-y-6 ">
@@ -171,10 +191,11 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({ handleCan
             <nav>
               {/* Header session */}
               <div className="bg-blue-100 rounded-2xl px-6 py-6 grid grid-cols-8 gap-4 mb-4">
-               
-                 {tableHeaders.map((header,index) => (
-                   <div key={index} className="text-sm font-semibold text-center">{header}</div>
-                 ))}
+                {tableHeaders.map((header, index) => (
+                  <div key={index} className="text-sm font-semibold text-center">
+                    {header}
+                  </div>
+                ))}
               </div>
             </nav>
             <body>
@@ -182,20 +203,38 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({ handleCan
                 {employeeData.map((employee, index) => (
                   <div
                     key={employee._id || index}
-                    className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-8 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 ">
+                    className=" bg-white rounded-2xl px-6 py-3 grid grid-cols-8 gap-2 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 ">
                     <div className="text-center">{0 + index + 1}</div>
                     <div className="flex items-center gap-3 ">
                       <img src={employee.imageUrl} alt="" className="w-8 h-8 rounded-full" />
                       {employee.name}
                     </div>
-                    <div className="text-center">{employee.departmentName}</div>
-                    <div className="text-center">Change</div>
                     <div className="text-center">
                       <a className="underline text-blue-600">{employee.email}</a>
                     </div>
                     <div className="text-center">
                       <span className="flex justify-center items-center gap-2">{employee.role}</span>
                     </div>
+
+                    <div className="text-center">{employee.departmentName}</div>
+                    <div className="text-center">
+                      <button
+                        onClick={() => handleModalOpen(employee._id ,employee.departmentName )}
+                        className="bg-blue-500 text-white rounded-xl px-2 py-1 text-sm font-semibold hover:bg-violet-600">
+                        Change
+                      </button>
+                    </div>
+
+                    <div className="flex justify-center">
+                      <button
+                        className={`px-4 py-1 text-sm font-semibold rounded-full transition-colors text-white ${
+                          employee.isBlock ? "bg-lime-500 hover:bg-green-500" : " bg-orange-600  hover:bg-violet-600"
+                        }   `}
+                        onClick={() => handleBlockUser(employee.email)}>
+                        {employee.isBlock ? "Unblock" : "Block"}
+                      </button>
+                    </div>
+
                     <div className="flex justify-center">
                       <Sheet>
                         <SheetTrigger asChild>
@@ -238,18 +277,20 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({ handleCan
                         </SheetContent>
                       </Sheet>
                     </div>
-                    <div className="flex justify-center">
-                      <button
-                        className={`px-4 py-1 text-sm font-semibold rounded-full transition-colors text-white ${
-                          employee.isBlock ? "bg-lime-500 hover:bg-green-500" : " bg-orange-600  hover:bg-violet-600"
-                        }   `}
-                        onClick={() => handleBlockUser(employee.email)}>
-                        {employee.isBlock ? "Unblock" : "Block"}
-                      </button>
-                    </div>
                   </div>
                 ))}
               </div>
+
+              {/* Modal for change department */}
+              {selectedEmployeeId && (
+                <DeptChangeModal
+                  isModalOpen={isModalOpen}
+                  onModalClose={handleModalClose}
+                  employeeId={selectedEmployeeId}
+                  currentDepartment={currentDepartment}
+                  twickParent = {() => setTwickParent(!twickParent)}
+                />
+              )}
             </body>
 
             {/* Rows */}
