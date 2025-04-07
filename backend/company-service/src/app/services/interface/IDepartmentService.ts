@@ -1,3 +1,4 @@
+import { IBaseResponse } from "../../interfaces/IBaseResponse";
 import { IDepartment } from "../../models/interface/IDepartementModel";
 
 export interface IDepartmentService {
@@ -35,5 +36,7 @@ export interface IDepartmentService {
     departmentName:string,
     responsibilities:string}
   }>
+
+  deleteDepartementService (id:string) : Promise<IBaseResponse>
 
 }

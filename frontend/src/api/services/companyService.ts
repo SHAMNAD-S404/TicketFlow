@@ -200,3 +200,13 @@ export const changeEmployeeDepartment = async (employeeId: string, departmentId:
     throw error;
   }
 };
+
+//api call to delete department
+export const deleteDepartment  = async (id:string) => {
+  try {
+     const response = await axiosInstance.delete(`/company/dept/delete-department?id=${id}`)
+     return response.data;
+  } catch (error) {
+    throw error;
+  }
+}

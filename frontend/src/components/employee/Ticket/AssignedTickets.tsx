@@ -23,7 +23,6 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageT
   const [tikcetData, setTicketData] = useState<ITicketContext[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [refreshState, setRefreshState] = useState<boolean>(false);
 
   const employee = useSelector((state: Rootstate) => state.employee.employee);
 
@@ -70,7 +69,7 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageT
       }
     };
     getAllTickets();
-  }, [currentPage, sortBy, searchQuery, refreshState]);
+  }, [currentPage, sortBy, searchQuery]);
 
   return (
     <div className="bg-blue-50">

@@ -19,9 +19,6 @@ const upload = multer({
 
 const router = Router();
 
-
-
-
 router.get("/get-user",extractUserData,adminController.getUserData)
       .patch("/update-profile",adminController.updateCompany)
       .get("/get-all-companies",extractUserData,adminController.fetchAllCompany)

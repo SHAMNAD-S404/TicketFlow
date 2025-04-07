@@ -62,7 +62,7 @@ class DepartmentRepository extends DepartmentBase<IDepartment> implements IDepar
     id: string,
     departementName: string,
     responsibilities: string,
-    getNormalizeDepartmentName:string
+    getNormalizeDepartmentName: string
   ): Promise<{ _id: string; departmentName: string; responsibilities: string } | null> {
     try {
       const result = await this.model
@@ -72,7 +72,7 @@ class DepartmentRepository extends DepartmentBase<IDepartment> implements IDepar
             $set: {
               departmentName: departementName,
               responsibilities: responsibilities,
-              departmentNameNormalized:getNormalizeDepartmentName
+              departmentNameNormalized: getNormalizeDepartmentName,
             },
           },
           { new: true }
@@ -88,17 +88,19 @@ class DepartmentRepository extends DepartmentBase<IDepartment> implements IDepar
 
   async findDepartmentWithUUIDAndName(authUserUUID: string, departmentNameNormalized: string): Promise<boolean> {
     try {
-        const result = await this.model.findOne(
-          {authUserUUID:authUserUUID,
-          departmentNameNormalized:departmentNameNormalized});
-        return result ? true : false;
+      const result = await this.model.findOne({
+        authUserUUID: authUserUUID,
+        departmentNameNormalized: departmentNameNormalized,
+      });
+      return result ? true : false;
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
-
-
+  async deleteDepartment(id: string): Promise<boolean> {
+    return await this.deleteOneDocument(id);
+  }
 }
 
 export default new DepartmentRepository();

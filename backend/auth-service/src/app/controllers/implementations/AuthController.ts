@@ -255,7 +255,7 @@ export class AuthController implements IAuthController {
     try {
       const { email, password } = req.body;
       if (!email || !password) {
-        res.status(HttpStatus.FORBIDDEN).json({ message: Messages.ALL_FILED_REQUIRED_ERR, succeess: false });
+        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.ALL_FILED_REQUIRED_ERR, succeess: false });
         return;
       }
 

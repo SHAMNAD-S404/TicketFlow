@@ -10,6 +10,7 @@ import DepartemntEmployeeManagment from "./DepartmentEmployeeManage";
 export const SubDepartmentManagement: React.FC = () => {
   const [departmentData, setDepartmentData] = useState<IDepartmentData[]>([]);
   const [departmentView, setDepartmentView] = useState<string | null>(null);
+  const [refresh, setRefresh] = useState<boolean>(false)
 
   const handleDepartmentView = (_id: string) => {
     setDepartmentView(_id);
@@ -29,7 +30,7 @@ export const SubDepartmentManagement: React.FC = () => {
       }
     };
     getDepartmentData();
-  }, []);
+  }, [refresh]);
 
   return (
 
@@ -49,7 +50,7 @@ export const SubDepartmentManagement: React.FC = () => {
               description={department.responsibilities}
               image={GifImage}
               handleView={() => handleDepartmentView(department._id)}
-              
+              twickParent={()=> setRefresh(!refresh)}
             />
           ))}
         </div>

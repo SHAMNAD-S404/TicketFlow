@@ -134,7 +134,7 @@ export class TicketController implements ITicketController {
       }
       const ticketValidation = ticketReassignSchema.safeParse(req.body);
       if (!ticketValidation.success) {
-        res.status(HttpStatus.FORBIDDEN).json({ message: Messages.ENTER_VALID_INPUT, success: false });
+        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.ENTER_VALID_INPUT, success: false });
       }
       const updateDocument = await this.ticketService.getReassignedTicket(ticketValidation.data as ITicketReassignData);
       const { message, statusCode, success, data } = updateDocument;
@@ -150,7 +150,7 @@ export class TicketController implements ITicketController {
     try {
       const { id } = req.query;
       if (!id) {
-        res.status(HttpStatus.FORBIDDEN).json({ message: Messages.TICKET_ID_MISSING, success: false });
+        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.TICKET_ID_MISSING, success: false });
         return;
       }
       const getTicket = await this.ticketService.getTicketData(String(id));

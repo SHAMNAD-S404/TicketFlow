@@ -16,6 +16,7 @@ router.post  ("/add-department",extractUserData,departmentController.createDepar
       .get   ("/get-departments",extractUserData,departmentController.getAllDepartmentList)
       .get   ("/get-departments-data",extractUserData,departmentController.getAllDepartmentData)
       .patch ("/update-department",extractUserData,departmentController.updateDepartment)
+      .delete("/delete-department",extractUserData,departmentController.deleteDepartment)
      
 
 

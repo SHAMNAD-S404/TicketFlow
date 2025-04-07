@@ -4,6 +4,8 @@ import { IDepartment } from "../../models/interface/IDepartementModel";
 import DepartmentRepository from "../../repositories/implements/departement";
 import { IDepartmentService } from "../interface/IDepartmentService";
 import { normalizeDepartmentName } from "../../../utils/normalizeName";
+import { IBaseResponse } from "../../interfaces/IBaseResponse";
+import EmployeeRepository from "../../repositories/implements/employee";
 
 export default class DepartmentService implements IDepartmentService {
   async createDepartment(departmentData: IDepartment): Promise<{ message: string; success: boolean }> {
@@ -27,7 +29,7 @@ export default class DepartmentService implements IDepartmentService {
         return { message: "failed to store . try again later", success: false };
       }
     } catch (error) {
-      return { message: String(error), success: false };
+      throw error;
     }
   }
 
@@ -51,7 +53,7 @@ export default class DepartmentService implements IDepartmentService {
         data: departmentList,
       };
     } catch (error) {
-      return { message: String(error), success: false };
+      throw error;
     }
   }
 
@@ -123,6 +125,40 @@ export default class DepartmentService implements IDepartmentService {
         success: true,
         data: udpateData,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteDepartementService(id: string): Promise<IBaseResponse> {
+    try {
+      const isExist = await DepartmentRepository.getDepartmentById(id);
+      if (!isExist) {
+        return { message: Messages.DATA_NOT_FOUND, success: false, statusCode: HttpStatus.NOT_FOUND };
+      }
+      const isExistEmployees = await EmployeeRepository.findOneDoc({ departmentId: id });
+      if (isExistEmployees) {
+        return {
+          message: Messages.DEPT_HAVE_EMPLOYEES,
+          success: false,
+          statusCode: HttpStatus.BAD_REQUEST,
+        };
+      }
+
+      const deleteDoc = await DepartmentRepository.deleteDepartment(id);
+      if (deleteDoc) {
+        return {
+          message: Messages.DEPT_DELETE_SUCCESS,
+          success: true,
+          statusCode: HttpStatus.OK,
+        };
+      } else {
+        return {
+          message: Messages.SOMETHING_WRONG,
+          success: false,
+          statusCode: HttpStatus.BAD_REQUEST,
+        };
+      }
     } catch (error) {
       throw error;
     }

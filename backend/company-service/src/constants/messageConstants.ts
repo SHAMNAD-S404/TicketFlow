@@ -18,10 +18,9 @@ export const Messages = {
     INPUT_INVALID_OR_FIELD_MISSING : "Given input is invalid or Required fileds are missing!",
     SOMETHING_WRONG : "Something Went wrong try again! ",
     DEPT_CHANGE_SUCCESS : "Department changed successfully",
+    DEPT_DELETE_SUCCESS : "Department deleted successfully",
+    DEPT_HAVE_EMPLOYEES : "Department have employees !. first Manage them and try again !",
     
-    
-  
-
 
   };
   

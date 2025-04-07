@@ -252,7 +252,7 @@ export class EmployeeController implements IEmployeeController {
       }
       const validateData = changeDepartmentSchema.safeParse(req.body);
       if (!validateData.success) {
-        res.status(HttpStatus.FORBIDDEN).json({ messages: Messages.INPUT_INVALID_OR_FIELD_MISSING, success: false });
+        res.status(HttpStatus.BAD_REQUEST).json({ messages: Messages.INPUT_INVALID_OR_FIELD_MISSING, success: false });
         return;
       }
       const updateEmployee = await this.employeeService.changeDepartmentService(req.body);

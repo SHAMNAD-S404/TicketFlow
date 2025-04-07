@@ -1,15 +1,16 @@
-import {
-  IChangeDepartmentData,
-  IEmployeeService,
-  IGetEmployeeWithlessTicket,
-  IUpdateProfileImage,
-} from "../interface/IEmployeeService";
 import { IEmployee } from "../../models/interface/IEmployeeModel";
 import EmployeeRepository from "../../repositories/implements/employee";
 import { IEmployeeAuthData } from "../../interfaces/IEmployeeAuthData";
 import { Messages } from "../../../constants/messageConstants";
 import { HttpStatus } from "../../../constants/httpStatus";
 import { IBaseResponse } from "../../interfaces/IBaseResponse";
+import {
+  IChangeDepartmentData,
+  IEmployeeService,
+  IGetEmployeeWithlessTicket,
+  IUpdateProfileImage,
+} from "../interface/IEmployeeService";
+
 
 export default class EmployeeService implements IEmployeeService {
   async addEmployees(employeeData: IEmployee): Promise<{

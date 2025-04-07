@@ -42,7 +42,7 @@ export class AuthService implements IAuthService {
         return {
           message: Messages.VERIFIED_EMAIL_ERR,
           success: false,
-          statusCode: HttpStatus.FORBIDDEN,
+          statusCode: HttpStatus.BAD_REQUEST,
         };
       }
 
@@ -406,7 +406,7 @@ export class AuthService implements IAuthService {
       if (!findUser) {
         return {
           message: Messages.USER_NOT_FOUND,
-          statusCode: HttpStatus.FORBIDDEN,
+          statusCode: HttpStatus.BAD_REQUEST,
           success: false,
         };
       }
@@ -415,7 +415,7 @@ export class AuthService implements IAuthService {
         return {
           message: Messages.NO_ACCESS,
           success: false,
-          statusCode: HttpStatus.FORBIDDEN,
+          statusCode: HttpStatus.BAD_REQUEST,
         };
       }
 
@@ -424,7 +424,7 @@ export class AuthService implements IAuthService {
         return {
           message: Messages.INVALID_CREDENTIALS,
           success: false,
-          statusCode: HttpStatus.FORBIDDEN,
+          statusCode: HttpStatus.BAD_REQUEST,
         };
       }
 

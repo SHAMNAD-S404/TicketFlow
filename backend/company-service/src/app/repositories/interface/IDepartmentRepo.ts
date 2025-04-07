@@ -9,5 +9,6 @@ export interface IDepartmentRepo {
     updateDepartmentData (id:string,departementName:string,responsibilities:string,getNormalizeDepartmentName:string) :
          Promise<{_id:string,departmentName:string,responsibilities:string}|null>
     findDepartmentWithUUIDAndName(authUserUUID:string,departmentNameNormalized:string) : Promise<boolean>
+    deleteDepartment(id:string) : Promise<boolean>
     
 }

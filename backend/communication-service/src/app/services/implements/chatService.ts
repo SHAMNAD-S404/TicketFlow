@@ -34,7 +34,7 @@ export default class ChatService implements IChatService {
       
       if (getMessages.length === 0) {
         return {
-          statusCode: HttpStatus.FORBIDDEN,
+          statusCode: HttpStatus.BAD_REQUEST,
           success: false,
           message: Messages.DATA_NOT_FOUND,
         };
