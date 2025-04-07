@@ -4,58 +4,43 @@ import { IUser } from "../../models/interface/IUser";
 import { IUserRepository } from "../interface/IUserRepository";
 import { BaseRepository } from "./baseRespository";
 
-export class UserRepository
-  extends BaseRepository<UserDocument>
-  implements IUserRepository
-{
+export class UserRepository extends BaseRepository<UserDocument> implements IUserRepository {
   constructor() {
     super(User);
   }
-
 
   async findByEmail(email: string): Promise<UserDocument | null> {
     try {
       // Attempt to find the user by email
       return await this.findUserByEmail(email);
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
- 
-  async createUser(
-    email: string,
-    password: string,
-    role: string,
-    authUserUUID: string
-  ): Promise<IUser | undefined> {
+  async createUser(email: string, password: string, role: string, authUserUUID: string): Promise<IUser | undefined> {
     try {
       return await this.create(email, password, role, authUserUUID);
     } catch (error) {
-      throw error
+      throw error;
     }
   }
-
 
   async deleteUser(UserId: string): Promise<void> {
     try {
       // Attempt to delete the user by their ID
       await this.deleteById(UserId);
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
-
-  async resetPassword(
-    email: string,
-    password: string
-  ): Promise<IUser | null> {
+  async resetPassword(email: string, password: string): Promise<IUser | null> {
     try {
       // Attempt to update the user document with the new password
       const updatedUser = await this.model.findOneAndUpdate(
         { email },
-        { password , isFirstLogin:false },
+        { password, isFirstLogin: false },
         { new: true }
       );
       // Return the updated user document, or null if no user was found
@@ -70,21 +55,24 @@ export class UserRepository
       const user = await this.findByAuthUserUUID(authUserUUID);
       return user;
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
   async userBlockStatusUpdate(email: string, status: boolean): Promise<IUser | null> {
     try {
-       return await this.blockAndUnblockUserWithEmail(email,status);
+      return await this.blockAndUnblockUserWithEmail(email, status);
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
   async updatePasswordByEmail(email: string, hashPassword: string): Promise<IUser | null> {
-    return await this.updateOneDocument({email:email},{password:hashPassword})
+    return await this.updateOneDocument({ email: email }, { password: hashPassword });
   }
 
-
+  async changePasswordRepo(searchQuery: Record<string, string>, updateData: Record<string, string>): Promise<boolean> {
+    const result = await this.updateOneDocument(searchQuery, updateData);
+    return result ? true : false;
+  }
 }

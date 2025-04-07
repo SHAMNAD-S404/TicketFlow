@@ -9,6 +9,7 @@ type TregexPatterns = {
   textAreaValidation : RegExp;
   textAndNumberWithoutSpace : RegExp,
   resolutionInputField : RegExp,
+  newPasswordValidation : RegExp,
 };
 
 const regexPatterns: TregexPatterns = {
@@ -22,6 +23,8 @@ const regexPatterns: TregexPatterns = {
   textAreaValidation:/^[a-zA-Z0-9"'.(),/:\-\s]+(?<![().])$/,
   textAndNumberWithoutSpace : /^[a-zA-Z0-9]+$/,
   resolutionInputField : /^[a-zA-Z0-9.,'"\:(\)\s-]+$/,
+  newPasswordValidation : /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+
 
 };
 
@@ -40,6 +43,7 @@ type regexPatternMessages = {
   MAXIMUM_LIMIT_REACHED : string;
   MINIMUM_LIMIT : string;
   text_area_validation : string;
+  newPassValidationMssg : string;
 }
 
 
@@ -57,7 +61,8 @@ export const RegexMessages : regexPatternMessages = {
   FEILD_REQUIRED : "This is field is required",
   MAXIMUM_LIMIT_REACHED : "Input Maximun limit reached !",
   MINIMUM_LIMIT : "Enter atleast minimum Limit",
-  text_area_validation : "This field only allow alphabates , numbers , allowed symbols ',.(,), text end with ()  not allowed "
+  text_area_validation : "This field only allow alphabates , numbers , allowed symbols ',.(,), text end with ()  not allowed ",
+  newPassValidationMssg : "Password: 8-15 chars, alphanumeric & special chars required"
   
 
 }

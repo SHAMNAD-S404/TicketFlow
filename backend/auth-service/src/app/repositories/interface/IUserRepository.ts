@@ -9,4 +9,5 @@ getUserByAuthUserUUID(authUserUUID :string) : Promise<IUser | null>;
 resetPassword(email:string,password:string) : Promise<IUser | null> ;
 userBlockStatusUpdate(email : string , status:boolean) : Promise<IUser | null > 
 updatePasswordByEmail (email : string , hashPassword:string) : Promise <IUser | null>;
+changePasswordRepo (searchQuery : Record<string,string>,updateData:Record<string,string>) : Promise<boolean>
 }

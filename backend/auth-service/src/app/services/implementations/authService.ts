@@ -1,6 +1,6 @@
 import { UserRepository } from "../../repositories/implements/userRepository";
 import { RegisterUserDTO } from "../../dtos/registerUserDTO";
-import { IAuthService } from "../../services/interface/IAuthService";
+import { IAuthService, IChangePassData } from "../../services/interface/IAuthService";
 import { hashPassword, comparePassword } from "../../../utils/hashUtils";
 import { generateOTP } from "../../../utils/otpUtils";
 import { RabbitMQConfig } from "../../../config/rabbitmq";
@@ -566,7 +566,7 @@ export class AuthService implements IAuthService {
     try {
       //fetching data from reddis
       const getEmail = await getRedisData(token);
-      console.log("email:",token, "getEmail : ",getEmail)
+      console.log("email:", token, "getEmail : ", getEmail);
       if (!getEmail) {
         return { message: Messages.TOKEN_EXPIRED, success: false, statusCode: HttpStatus.BAD_REQUEST };
       }
@@ -578,6 +578,51 @@ export class AuthService implements IAuthService {
       } else {
         return { message: Messages.SERVER_ERROR, statusCode: HttpStatus.INTERNAL_SERVER_ERROR, success: false };
       }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async changePasswordService(data: IChangePassData): Promise<basicResponse> {
+    try {
+      const { currentPassword, email, newPassword } = data;
+      console.log("im servide eee ");
+      
+      console.log(data)
+      const isExist = await this.userRepository.findByEmail(email);
+      console.log(isExist);
+      
+      if (!isExist) {
+        return {
+          message: Messages.USER_NOT_FOUND,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
+      }
+
+      const passwordMatch = await comparePassword(currentPassword, isExist.password);
+      if (!passwordMatch) {
+        return {
+          message: Messages.PASSWORD_NOT_MATCHING,
+          success: false,
+          statusCode: HttpStatus.BAD_REQUEST,
+        };
+      }
+
+      const getHashedPassword = await hashPassword(newPassword);
+      const updatePassword = await this.userRepository.changePasswordRepo({ email: email }, { password: getHashedPassword });
+      if (!updatePassword) {
+        return {
+          message: Messages.SOMETHING_WENT_WRONG,
+          success: false,
+          statusCode: HttpStatus.BAD_REQUEST,
+        };
+      }
+      return {
+        message: Messages.PASSWORD_UPDATED,
+        statusCode: HttpStatus.OK,
+        success: true,
+      };
     } catch (error) {
       throw error;
     }

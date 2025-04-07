@@ -8,6 +8,7 @@ import regexPatterns from "../../utils/regexPattern";
 import { IsignupForm } from "../../types/auth";
 import { signupUser } from "../../api/services/authService";
 import { toast } from 'react-toastify';
+import getErrMssg from "../utility/getErrMssg";
 
 
 const SignupForm: React.FC = () => {
@@ -28,24 +29,16 @@ const SignupForm: React.FC = () => {
   const navigate = useNavigate();
 
   const formSubmit = async (data: IsignupForm) => {
-    
-    console.log("Form Data :", data);
 
     try {
       const response = await signupUser(data);
       if(response.success){
         toast.success(response.message );
         navigate("/auth/login?role=admin");
-      }else {
-        toast.error(response.message);
       }
           
     } catch (error : any) {
-      if(error.response && error.response.data){
-        toast.error(error.response.data.message);
-      }else{
-         alert("Error creating account. Please try again.");
-      }
+     toast.error(getErrMssg(error))
     }
   };
 

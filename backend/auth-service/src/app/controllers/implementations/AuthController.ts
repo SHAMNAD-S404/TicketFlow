@@ -7,7 +7,8 @@ import { EventType } from "../../../constants/queueEventType";
 import { publishToQueue } from "../../../queues/publisher";
 import { RabbitMQConfig } from "../../../config/rabbitmq";
 import { validateEmailSchema } from "../../dtos/basicValidation.schema";
-import { resetPasswordSchema } from "../../dtos/baseFormValidation.schema";
+import { changePasswordSchema, resetPasswordSchema } from "../../dtos/baseFormValidation.schema";
+import { json } from "stream/consumers";
 
 export class AuthController implements IAuthController {
   private authService: IAuthService;
@@ -17,7 +18,6 @@ export class AuthController implements IAuthController {
   }
 
   //create user ================================================================================
-
 
   public registerUser = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -89,14 +89,14 @@ export class AuthController implements IAuthController {
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
           secure: false,
-          maxAge: 1 * 60 * 1000, 
+          maxAge: 1 * 60 * 1000,
           sameSite: "lax",
         });
 
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
           secure: false,
-          maxAge: 7 * 24 * 60 * 60 * 1000, 
+          maxAge: 7 * 24 * 60 * 60 * 1000,
           sameSite: "lax",
         });
 
@@ -118,7 +118,6 @@ export class AuthController implements IAuthController {
 
   public verifyEmail = async (req: Request, res: Response): Promise<void> => {
     try {
-
       const { email } = req.body;
 
       if (!email) {
@@ -418,7 +417,6 @@ export class AuthController implements IAuthController {
           success: false,
         });
       } else {
-
         const { password, token } = validateInput.data;
         const response = await this.authService.handleResetPassword(token, password);
         const { message, statusCode, success } = response;
@@ -431,6 +429,26 @@ export class AuthController implements IAuthController {
         message: Messages.SERVER_ERROR,
         success: false,
       });
+    }
+  };
+
+  public changePassword = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const validateData = changePasswordSchema.safeParse(req.body.data);
+      if (!validateData.success) {
+        res.status(HttpStatus.BAD_REQUEST).json({
+          message: Messages.INPUT_INVALID_OR_MISSING_SOME_FIELD,
+          success: false,
+        });
+        return;
+      }
+
+      const updatePassword = await this.authService.changePasswordService(validateData.data);
+      const { message, statusCode, success } = updatePassword;
+      res.status(statusCode).json({ message, success });
+    } catch (error) {
+      console.error("error while change Password", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
     }
   };
 }

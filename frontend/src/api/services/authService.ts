@@ -131,3 +131,13 @@ export const resetPasswordReq = async (token:string,password:string) => {
     throw error;
   }
 }
+
+
+export const changePassword = async (data : Record<string,string>) => {
+  try {
+    const response = await axiosInstance.patch("/auth/change-password",{data});
+    return response.data
+  } catch (error) {
+    throw error;
+  }
+}

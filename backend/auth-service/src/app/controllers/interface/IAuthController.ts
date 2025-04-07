@@ -16,5 +16,6 @@ export interface IAuthController {
   handleEmployeeBlockStatus (req : Request , res : Response) : Promise<void>;
   forgotPasswordHandle (req : Request , res : Response) : Promise < void >;
   resetPassword ( req : Request, res : Response) : Promise <void>;
+  changePassword ( req : Request, res : Response) : Promise <void>;
   
 }

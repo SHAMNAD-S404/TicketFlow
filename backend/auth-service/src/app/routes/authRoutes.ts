@@ -31,6 +31,7 @@ router.post("/signup",authController.registerUser)
       .patch("/block-employee",authenticateToken,extractUserData,authController.handleEmployeeBlockStatus)
       .post('/forgot-password',authController.forgotPasswordHandle)
       .post("/reset-password",authController.resetPassword)
+      .patch("/change-password",authenticateToken,authController.changePassword)
 
 
 export default router;

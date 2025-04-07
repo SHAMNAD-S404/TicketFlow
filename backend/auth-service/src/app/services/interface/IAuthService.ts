@@ -1,6 +1,15 @@
 import { RegisterUserDTO } from "../../dtos/registerUserDTO";
 import { basicResponse } from "../../interfaces/basicResponse";
 
+
+export interface IChangePassData {
+  email : string,
+  currentPassword : string,
+  newPassword : string
+}
+
+
+
 export interface IAuthService {
   registerUser(
     data: RegisterUserDTO
@@ -57,4 +66,6 @@ export interface IAuthService {
   validateForgotPasswordReq (email : string) : Promise<basicResponse>;
 
   handleResetPassword (token:string,password:string) : Promise <basicResponse>;
+
+  changePasswordService (data: IChangePassData) : Promise<basicResponse>
 }

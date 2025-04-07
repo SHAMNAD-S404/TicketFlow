@@ -28,6 +28,9 @@ export const Messages = {
     FORGOT_PASS_LINK : "change password link sended to email",
     INVALID_FIELDS : "Invalid fileds , or missing some field !",
     PASSWORD_UPDATED : "Password updated , login with new credentials",
+    PASSWORD_NOT_MATCHING : "Current password is not matching !",
+    INPUT_INVALID_OR_MISSING_SOME_FIELD : "Given input are invalid or some of fields are missing ! try again",
+    SOMETHING_WENT_WRONG : "Something went wrong try again later",
 
     
   
