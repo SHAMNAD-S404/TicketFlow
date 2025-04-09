@@ -7,6 +7,7 @@ import { IBasicResponse, ITicketReassignData } from "../../interface/userTokenDa
 import { publishToQueue } from "../../../queues/publisher";
 import { RabbitMQConfig } from "../../../config/rabbitMQConfig";
 import getResolutionTime from "../../../utils/getResolutionTime";
+import ticketShiftReqRepo from "../../repositories/implements/ticketShiftReqRepo";
 
 export default class TicketService implements ITicketService {
   async createTicketDocument(
@@ -97,6 +98,9 @@ export default class TicketService implements ITicketService {
       }
       const update = await TicketRepository.ticketReassign(data);
       if (update) {
+        //remove from the shiftreq collection if its there
+        ticketShiftReqRepo.deleteOneDocument({ ticketObjectId: data.ticketId });
+
         //payload for the notification queue
         const payload = {
           type: "ticketAssigned",

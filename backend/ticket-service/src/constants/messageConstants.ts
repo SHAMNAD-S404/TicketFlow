@@ -25,9 +25,9 @@ export const Messages = {
     REOPEN_TICKET : "Only resolved ticket can be re-open",
     SOMETHING_WRONG : "Something went wrong ! please try again",
     REOPEN_SUCCESS  : "Ticket re-opened successfully !",
-    
-    
-
+    REQ_EXIST : "The Request already exist ! try again",
+    REQ_SUBMITED : "Request submitted successfully ! ",
+    REQ_REJECTED : "Request reject successfully !",
 
   };
   

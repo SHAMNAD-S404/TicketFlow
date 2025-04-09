@@ -161,9 +161,9 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
                   </div>
                  
                   <div className="flex justify-center">{ticket.status}</div>
-                  {/* reassign ticket */}
+                 {/* reassign ticket */}
                   <ReassignTicket
-                    selectedDepartmentId={ticket.ticketHandlingDepartmentId}
+                     selectedDepartmentId={ticket.ticketHandlingDepartmentId}
                     selectedEmployeeId={ticket.ticketHandlingEmployeeId}
                     selectedTicketId={ticket._id}
                     twickParent={() => setRefreshState(!refreshState)}

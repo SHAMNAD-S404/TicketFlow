@@ -66,3 +66,17 @@ export const ticketReopenValidation = z.object({
   id: z.string().trim().min(7).max(30).regex(regexPatterns.alphabatesAndNumberOnly),
   reason: z.string().trim().min(15).max(300).regex(regexPatterns.resolutionInputField),
 });
+
+
+export const ticketShiftReqValidation = z.object({
+  ticketObjectId : z.string().trim().min(8).max(55).regex(regexPatterns.alphabatesAndNumberOnly),
+  ticketID : z.string().trim().min(4).max(7),
+  ticketHandlingEmployeeName : z.string().trim().min(4).max(30).regex(regexPatterns.alphabatesAndSpaces),
+  ticketHandlingEmployeeId :z.string().trim().min(8).max(55).regex(regexPatterns.alphabatesAndNumberOnly),
+  ticketHandlingDepartmentName : z.string().trim().min(4).max(30).regex(regexPatterns.alphabatesAndSpaces),
+  ticketHandlingDepartmentId :z.string().trim().min(8).max(55).regex(regexPatterns.alphabatesAndNumberOnly),
+  reason : z.string().trim().min(4).max(300).regex(regexPatterns.textAreaValidation)
+})
+
+
+

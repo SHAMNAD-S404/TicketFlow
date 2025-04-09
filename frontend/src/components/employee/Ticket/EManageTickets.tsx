@@ -16,9 +16,10 @@ interface EManageTickets {
   handleCancle: () => void;
   handleChatSubMenu: () => void;
   ticketId: string;
+  enableShowReq? : boolean
 }
 
-export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketId, handleChatSubMenu }) => {
+export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketId, handleChatSubMenu ,enableShowReq}) => {
   const { ticketData, loading, error, refetch } = useTicketData(ticketId);
   const [ticketStatus, setTicketStatus] = useState<string>("");
   const [currentProgress, setCurrentProgress] = useState<string>("");
@@ -52,13 +53,11 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
         refetch();
       }
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error(Messages.SOMETHING_TRY_AGAIN);
-      }
+      toast.error(getErrMssg(error))
     }
   };
+
+ 
 
   //ticket status update validation
   const handleTicketStatusUpdate = async () => {
@@ -134,6 +133,7 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
               nextTicketStatus={nextTicketStatus}
               ticketStatus={ticketStatus}
               ticketData={ticketData as ITicketDocument}
+              enableShiftReq={enableShowReq}
             />
           </header>
 

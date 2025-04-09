@@ -1,6 +1,5 @@
 import { Model, Document } from "mongoose";
 import { IDepartmentBaseRepo } from "../interface/baseDepartmentRepo";
-import departement from "./departement";
 
 export class DepartmentBase<T extends Document> implements IDepartmentBaseRepo<T> {
   constructor(protected readonly model: Model<T>) {}

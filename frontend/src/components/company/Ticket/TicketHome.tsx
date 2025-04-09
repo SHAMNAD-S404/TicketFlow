@@ -9,6 +9,7 @@ import MyTicketProgress from "./MyTicketProgress";
 import ViewMyTicketProgress from "@/components/employee/Ticket/ViewMyTicketProgress";
 import TicketChat from "@/components/employee/chat/TicketChat";
 import { EManageTickets } from "@/components/employee/Ticket/EManageTickets";
+import ShiftReq from "./ShiftReq";
 
 interface ISubMenuList {
   header: string;
@@ -26,19 +27,34 @@ const subMenuItems = {
   MANAGE_TICKETS: "Manage Ticket",
   SHOW_CHAT: "Show Chat",
   VIEW_TICKET_PROGRESS: "View My Ticket Progress",
+  SHIFT_REQUESTS: "shift requests",
 };
 
 export const TicketHome: React.FC = () => {
+  //******************component states*************/
   const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
   const [getTicketID, setTicketID] = useState<string>("");
+  const [shiftReqHome, setShiftReqHome] = useState<boolean>(false);
 
+  //*****************functions*****************/
   const company = useSelector((state: Rootstate) => state.company.company);
   const onCancel = () => setActiveSubMenu(null); // go to home
   //go to detail view ticket progress
   const onViewMyTicketProgress = () => setActiveSubMenu(subMenuItems.VIEW_TICKET_PROGRESS);
   const setChatState = () => setActiveSubMenu(subMenuItems.SHOW_CHAT);
   //go to manage ticket ui
-  const onManageTicket = () => setActiveSubMenu(subMenuItems.MANAGE_TICKETS)
+  const onManageTicket = () => setActiveSubMenu(subMenuItems.MANAGE_TICKETS);
+  //go to shift req home
+  const handleShiftReqHome = () => setShiftReqHome(true);
+
+  //handle cancel button action
+  const handleCancelButtonAction = () => {
+    if (shiftReqHome) {
+      setActiveSubMenu(subMenuItems.SHIFT_REQUESTS);
+    } else {
+      setActiveSubMenu(subMenuItems.ALL_TICKET);
+    }
+  };
 
   const subMenuList: ISubMenuList[] = [
     {
@@ -69,6 +85,13 @@ export const TicketHome: React.FC = () => {
       image: GifImage,
       onButtonClick: () => setActiveSubMenu(subMenuItems.ANALYSE_TICKETS),
     },
+    {
+      header: "Shift Requests",
+      description: "Enter to view ticket shift requests submitted by employees",
+      buttonText: "Manage Requests",
+      image: GifImage,
+      onButtonClick: () => setActiveSubMenu(subMenuItems.SHIFT_REQUESTS),
+    },
   ];
 
   const renderSubContent = () => {
@@ -87,11 +110,11 @@ export const TicketHome: React.FC = () => {
       case subMenuItems.ALL_TICKET:
         return (
           <AllTickets
-           handleCancel={onCancel} 
-           handleManageTicket={onManageTicket}
-           handleSetTicketId={ (value : string) => setTicketID(value) }
-           />
-        )
+            handleCancel={onCancel}
+            handleManageTicket={onManageTicket}
+            handleSetTicketId={(value: string) => setTicketID(value)}
+          />
+        );
 
       case subMenuItems.MY_TICKET_PROGRESS:
         return (
@@ -117,9 +140,19 @@ export const TicketHome: React.FC = () => {
       case subMenuItems.MANAGE_TICKETS:
         return (
           <EManageTickets
-            handleCancle={() => setActiveSubMenu(subMenuItems.ALL_TICKET)}
+            handleCancle={handleCancelButtonAction}
             handleChatSubMenu={setChatState}
             ticketId={getTicketID}
+          />
+        );
+
+      case subMenuItems.SHIFT_REQUESTS:
+        return (
+          <ShiftReq
+            handleCancel={onCancel}
+            handleManageTicket={onManageTicket}
+            handleShiftReqHome={handleShiftReqHome}
+            handleSetTicketId={(value: string) => setTicketID(value)}
           />
         );
 

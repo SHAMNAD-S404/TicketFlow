@@ -37,7 +37,7 @@ const ManageTicketUI: React.FC<IManageTicketUI> = ({
         <div className="flex p-4 mt-4 gap-4 ms-4">
           <div className="w-1/4 mt-5">
             {ticketData?.imageUrl ? (
-              <img className="p-1 rounded-lg h-5/6" src={ticketData?.imageUrl} alt="ticket image" />
+              <img className="p-1 rounded-lg h-4/6" src={ticketData?.imageUrl} alt="ticket image" />
             ) : (
               <div>
                 <Skeleton className="bg-gray-300 h-[320px] w-[300px] rounded-xl" />
@@ -47,7 +47,7 @@ const ManageTicketUI: React.FC<IManageTicketUI> = ({
           </div>
           <div className="w-1/4">
             <h1 className="font-bold text-center">Ticket Raised for</h1>
-            <div className="bg-gray-200 rounded-lg w-full h-3/6">
+            <div className="bg-gray-200 rounded-lg w-full h-2/6">
               <textarea
                 readOnly
                 className="text-white bg-black/90 p-3 w-full h-full rounded-lg bg-gray-00 font-mono "
@@ -64,7 +64,7 @@ const ManageTicketUI: React.FC<IManageTicketUI> = ({
           </div>
           <div className="w-1/4">
             <h1 className=" font-bold text-center ">Ticket description :</h1>
-            <div className="bg-white rounded-lg w-full h-3/6">
+            <div className="bg-white rounded-lg w-full h-2/6">
               <textarea
                 readOnly
                 className="text-white bg-black/90 p-3 w-full h-full rounded-lg font-mono "
@@ -84,7 +84,7 @@ const ManageTicketUI: React.FC<IManageTicketUI> = ({
             <>
               <div className="w-1/4">
                 <h1 className="font-bold text-center">Resolutions Provided :</h1>
-                <div className="bg-gray-200 rounded-lg w-full h-3/6">
+                <div className="bg-gray-200 rounded-lg w-full h-2/6">
                   <textarea
                     readOnly
                     className="text-white bg-black/90 p-3 w-full h-full rounded-lg bg-gray-00 font-mono "
@@ -128,6 +128,7 @@ const ManageTicketUI: React.FC<IManageTicketUI> = ({
                   isOpen={openModal}
                   onClose={() => setOpenModal(false)}
                   data={ticketData.ticketReopenReason}
+                  heading="Ticket Re-open Reason"
                 />
               </div>
             </>

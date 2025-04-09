@@ -27,7 +27,7 @@ export class DepartmentController implements IDepartmentController {
 
       if (!authUserUUID || !departmentName || !responsibilities) {
         res.status(400).json({
-          message: "provide all neccessary dat",
+          message: "provide all neccessary data",
           success: false,
         });
         return;
@@ -114,9 +114,6 @@ export class DepartmentController implements IDepartmentController {
 
   public updateDepartment = async (req: Request, res: Response): Promise<void> => {
     try {
-      console.log("query : ", req.query);
-      console.log("body : ", req.body);
-
       const { role, authUserUUID } = req.query;
       if (role !== "company") {
         res.status(HttpStatus.UNAUTHORIZED).json({
@@ -152,9 +149,6 @@ export class DepartmentController implements IDepartmentController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ messages: Messages.SERVER_ERROR, success: false });
     }
   };
-
-
-  
 
   public deleteDepartment = async (req: Request, res: Response): Promise<void> => {
     try {

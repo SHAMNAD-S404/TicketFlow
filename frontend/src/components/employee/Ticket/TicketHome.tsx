@@ -70,8 +70,7 @@ export const TicketHome: React.FC = () => {
   //go to view my ticketProgress Page
   const onViewMyTicketProgress = () => setActiveSubMenu(subMenuItems.VIEW_TICKET_PROGRESS);
   //go to chat
-  const setChatState = () => setActiveSubMenu(subMenuItems.SHOW_CHAT)
-
+  const setChatState = () => setActiveSubMenu(subMenuItems.SHOW_CHAT);
 
   const renderSubContent = () => {
     switch (activeSubMenu) {
@@ -101,6 +100,7 @@ export const TicketHome: React.FC = () => {
             handleCancle={() => setActiveSubMenu(subMenuItems.ASSIGNED_TICKETS)}
             ticketId={getTicketID}
             handleChatSubMenu={setChatState}
+            enableShowReq={true}
           />
         );
 
@@ -124,8 +124,6 @@ export const TicketHome: React.FC = () => {
             handleChatSubMenu={setChatState}
           />
         );
-
-     
 
       default:
         return (

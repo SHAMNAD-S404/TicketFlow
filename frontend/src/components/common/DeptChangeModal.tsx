@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-
+import { changeEmployeeDepartment, fetchAllDepartemts } from "@/api/services/companyService";
+import { toast } from "react-toastify";
+import getErrMssg from "../utility/getErrMssg";
+import { Messages } from "@/enums/Messages";
 import {
   Dialog,
   DialogContent,
@@ -10,10 +13,7 @@ import {
   DialogClose,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { changeEmployeeDepartment, fetchAllDepartemts } from "@/api/services/companyService";
-import { toast } from "react-toastify";
-import getErrMssg from "../utility/getErrMssg";
-import { Messages } from "@/enums/Messages";
+
 
 interface IDeptChangeModal {
   isModalOpen: boolean;
@@ -35,7 +35,6 @@ const DeptChangeModal: React.FC<IDeptChangeModal> = ({
   employeeId,
   currentDepartment,
 }) => {
-
   //component states
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>("");
   const [isVisible, setIsVisible] = useState<boolean>(false);

@@ -23,4 +23,14 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
   ): Promise<T | null> {
     return await this.model.findOneAndUpdate(searchQuery, updateQuery, { new: true  });
   }
+
+  async deleteOneDocument(query: Record<string, string>): Promise<boolean> {
+    try {
+        const result = await this.model.deleteOne(query);
+        return result.acknowledged ? true : false;
+    } catch (error) {
+      throw error
+    }
+  }
+  
 }

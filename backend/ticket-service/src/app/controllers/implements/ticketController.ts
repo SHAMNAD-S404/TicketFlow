@@ -16,6 +16,7 @@ import {
   TicketFormValidation,
   ticketReassignSchema,
   ticketReopenValidation,
+
 } from "../../dtos/basicValidation";
 import { TicketStatus } from "../../models/interface/ITicketModel";
 
@@ -263,4 +264,6 @@ export class TicketController implements ITicketController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
     }
   };
+
+
 }

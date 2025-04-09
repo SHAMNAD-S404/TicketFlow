@@ -10,6 +10,7 @@ import { logoutUser } from "../../api/services/authService";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { showCustomeAlert } from "../../components/utility/swalAlertHelper";
+import getErrMssg from "@/components/utility/getErrMssg";
 
 const CompanyDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -52,11 +53,7 @@ const CompanyDashboard: React.FC = () => {
             }
           }       
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        alert("error while logout");
-      }
+     toast.error(getErrMssg(error))
     }
   };
 
