@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import app from "./app";
 import Messages from "./constants/Messages";
 import { config } from "./config";
 import { server } from "./socket";

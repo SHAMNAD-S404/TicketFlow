@@ -25,6 +25,7 @@ app.use(
     origin: config.frontend_URL,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 

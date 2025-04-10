@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaHome, FaUsers, FaHospitalUser, FaChevronLeft } from "react-icons/fa";
 import { FaHandHoldingDollar } from "react-icons/fa6";
 import { MdOutlineAccountCircle } from "react-icons/md";
+import { IoChatbubblesOutline } from "react-icons/io5";
 import { RiDashboardFill } from "react-icons/ri";
 import { FaUserTie } from "react-icons/fa";
 import { TiTicket } from "react-icons/ti";
@@ -30,6 +31,7 @@ const menuConfig: { [key: string]: { name: string; icon: React.ReactNode }[] } =
       { name: "Dashboard", icon: <FaHome /> },
       { name: "Tickets", icon: <TiTicket/>},
       { name: "Profile", icon: <MdOutlineAccountCircle /> },
+      { name: "Chat", icon :<IoChatbubblesOutline /> }
       
     ],
   };

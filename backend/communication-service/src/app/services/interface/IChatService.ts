@@ -16,5 +16,7 @@ export interface fetchMessageRes extends IBasicResponse {
 
 export interface IChatService {
   saveMessage(data: IMessageData): Promise<saveMessageResponse>;
-  fetchMessage(ticketID: string): Promise<fetchMessageRes>;
+  getMessagesByTicketID(ticketId : string) : Promise<fetchMessageRes>
+  getAllChatRooms() : Promise<any[]>
+  getChatRoomByTicketID(ticketID : string) : Promise<any>
 }

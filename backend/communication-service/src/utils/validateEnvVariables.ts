@@ -20,5 +20,9 @@ function validateEnvVariables(): void {
   if (!process.env.CLOUDINARY_API_SECRET) {
     console.warn("CLOUDINARY_API_SECRET is not defined,");
   }
+  if(!process.env.FRONTEND_URL){
+    console.warn("process.env.FRONTEND_URL is not defined");
+    
+  }
 }
 export default validateEnvVariables;

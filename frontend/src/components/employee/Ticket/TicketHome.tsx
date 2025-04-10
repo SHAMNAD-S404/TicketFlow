@@ -105,7 +105,11 @@ export const TicketHome: React.FC = () => {
         );
 
       case subMenuItems.SHOW_CHAT:
-        return <TicketChat />;
+        return <TicketChat
+         sender={employee?._id}
+         ticketID={getTicketID}
+         
+         />;
 
       case subMenuItems.MY_TICKET_PROGRESS:
         return (

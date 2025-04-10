@@ -2,16 +2,19 @@ import React from "react";
 import { Search, MessageSquareMore } from "lucide-react";
 import { Chat } from "@/types/chat";
 
+
 interface ChatSidebarProps {
   chats: Chat[];
   selectedChatId: string;
   onChatSelect: (chatId: string) => void;
 }
 
-const  ChatSidebar :React.FC<ChatSidebarProps> = ({ chats, selectedChatId, onChatSelect }: ChatSidebarProps) => {
+const ChatSidebar: React.FC<ChatSidebarProps> = ({ chats, selectedChatId, onChatSelect }: ChatSidebarProps) => {
   return (
     <div className="h-5/6 flex flex-col bg-white shadow-xl rounded-xl overflow-hidden">
-      {/* Header */}
+
+      <header>
+        
       <div className="p-4 flex justify-between items-center">
         <h1 className="text-2xl font-bold">Chats</h1>
         <button className="bg-purple-600 p-2 rounded-full text-white shadow-md hover:bg-purple-700 transition">
@@ -30,6 +33,8 @@ const  ChatSidebar :React.FC<ChatSidebarProps> = ({ chats, selectedChatId, onCha
           />
         </div>
       </div>
+      </header>
+     
 
       {/* Chat Filters */}
       {/* <div className="flex gap-4 mt-4 px-4">
@@ -69,17 +74,12 @@ const  ChatSidebar :React.FC<ChatSidebarProps> = ({ chats, selectedChatId, onCha
               </p>
             </div>
 
-            {/* Unread Messages Badge */}
-            {chat.unreadCount > 0 && (
-              <div className="bg-purple-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full">
-                {chat.unreadCount}
-              </div>
-            )}
+
           </div>
         ))}
       </div>
     </div>
   );
-}
+};
 
-export default ChatSidebar
+export default ChatSidebar;

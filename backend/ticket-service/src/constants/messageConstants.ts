@@ -29,5 +29,5 @@ export const Messages = {
     REQ_SUBMITED : "Request submitted successfully ! ",
     REQ_REJECTED : "Request reject successfully !",
 
-  };
+  } as const;
   

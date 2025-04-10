@@ -150,7 +150,7 @@ const ChangePassword: React.FC<IChangePassword> = ({ userEmail }) => {
         </div>
         <div className="flex justify-center text-center mt-8 gap-4">
           <button
-            className="bg-black px-20 py-2  text-white text-sm font-semibold rounded-xl hover:bg-blue-500 "
+            className="bg-black px-28 py-2  text-white text-sm font-semibold rounded-xl hover:bg-blue-500 "
             type="submit">
             submit
           </button>

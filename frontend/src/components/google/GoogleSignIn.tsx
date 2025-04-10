@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { GoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { googleSignIn } from "../../api/services/authService";
 import { toast } from "react-toastify";
 import { SignupSteps } from "../../enums/SingnupSteps";
+import getErrMssg from "../utility/getErrMssg";
 
 
 const GoogleSignIn: React.FC = () => {
@@ -18,16 +19,10 @@ const GoogleSignIn: React.FC = () => {
           localStorage.setItem("signupStep", SignupSteps.Signup_Form);
           toast.success(response.message);
           window.location.reload()
-                 
-        } else {
-          toast.error(response.message);
+
         }
       } catch (error: any) {
-        if (error.response && error.response.data) {
-          toast.error(error.response.data.message);
-        } else {
-          alert("Error Google sign in. Please try again.");
-        }
+       toast.error(getErrMssg(error))
       }
     }
   };

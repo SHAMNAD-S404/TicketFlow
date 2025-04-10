@@ -157,7 +157,7 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
                 <hr className="border-gray-400" />
               </h2>
               <div>
-                <DockDemo ticketId={ticketData?.ticketID as string} handleChat={handleChatSubMenu} />
+                <DockDemo ticketId={ticketData?.ticketID as string}  handleChat={handleChatSubMenu} />
               </div>
             </div>
           </footer>

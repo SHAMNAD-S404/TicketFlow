@@ -1,11 +1,12 @@
 import mongoose, { Schema, Document } from "mongoose";
 import IMessage from "../interface/IMessage";
 
-const messageSchema: Schema = new Schema<IMessage>(
+const MessageSchema: Schema = new Schema<IMessage>(
   {
     ticketID: {
       type: String,
       required: true,
+      index : true,
     },
     sender: {
       type: String,
@@ -15,9 +16,13 @@ const messageSchema: Schema = new Schema<IMessage>(
       type: String,
       required: true,
     },
+    timestamp : {
+      type : Date,
+      default : Date.now(),
+    }
   },
   { timestamps: true }
 );
 
-const MessageModel = mongoose.model<IMessage & Document>("messages", messageSchema);
+const MessageModel = mongoose.model<IMessage & Document>("Messages", MessageSchema);
 export default MessageModel;

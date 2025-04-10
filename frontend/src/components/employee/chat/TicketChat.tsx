@@ -2,6 +2,16 @@ import React, { useEffect, useState } from "react";
 import ChatSidebar from "@/components/chat/ChatSidebar";
 import ChatWindow from "@/components/chat/ChatWindow";
 import { Chat, Message } from "../../../types/chat";
+import { Socket, io } from "socket.io-client";
+import { fetchAllMessages } from "@/api/services/communicationService";
+import { toast } from "react-toastify";
+
+const communicationServer = import.meta.env.VITE_COMMUNICATION_SERVER;
+
+const socket: Socket = io(communicationServer,{
+  withCredentials : true,
+  transports : ["websocket"],
+});
 
 // Sample data
 const sampleChats: Chat[] = [
@@ -15,7 +25,6 @@ const sampleChats: Chat[] = [
       lastSeen: "3 hours ago",
     },
     lastMessage: "Are you there ??",
-    unreadCount: 4,
     timestamp: "11:10 AM",
   },
   {
@@ -27,7 +36,6 @@ const sampleChats: Chat[] = [
         "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
       lastSeen: "1 hour ago",
     },
-    unreadCount: 4,
     lastMessage: "Are we meeting today? Let's...",
     timestamp: "3:45 PM",
   },
@@ -54,10 +62,65 @@ const sampleMessages: Message[] = [
   },
 ];
 
-const TicketChat: React.FC = () => {
+interface IMessage {
+  _id: string;
+  ticketID: string;
+  sender: string;
+  message: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface ChatProps {
+  ticketID?: string;
+  sender?: string;
+}
+
+const TicketChat: React.FC<ChatProps> = ({ ticketID, sender }) => {
+  
+
+  console.log("ticket Id : ",ticketID,"sender ; ",sender);
+  
+
+
   const [selectedChatId, setSelectedChatId] = useState(sampleChats[0].id);
   const [messages, setMessages] = useState(sampleMessages);
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
+  const [message1, setMessages1] = useState<string>("");
+  const [messages2, setMessages2] = useState<IMessage[]>([]);
+
+  useEffect(() => {
+    //join the chat room for this ticket
+    socket.emit("join_room", ticketID);
+
+    const fetchMessages = async () => {
+      try {
+        const response = await fetchAllMessages(ticketID as string);
+        setMessages2(response.data);
+      } catch (error: any) {
+        toast.error(error);
+      }
+    };
+
+    fetchMessages();
+
+    socket.on("receive_message", (newMessage: IMessage) => {
+      setMessages2((prevMessages) => [...prevMessages, newMessage]);
+    });
+
+    return () => {
+      socket.off("receive_message");
+    };
+  }, [ticketID]);
+
+  //send message through socket io
+  const sendMessages = (newMssg:string) => {
+    if (messages) {
+      socket.emit("send_message", { ticketID, sender, message:newMssg });
+      setMessages1("");
+    }
+  };
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -105,7 +168,7 @@ const TicketChat: React.FC = () => {
           <ChatWindow
             selectedUser={selectedUser}
             messages={messages}
-            onSendMessage={handleSendMessage}
+            onSendMessage={sendMessages}
             onBack={handleBack}
             isMobile={true}
           />
@@ -124,7 +187,7 @@ const TicketChat: React.FC = () => {
         <ChatWindow
           selectedUser={selectedUser}
           messages={messages}
-          onSendMessage={handleSendMessage}
+          onSendMessage={sendMessages}
           isMobile={false}
         />
       </div>

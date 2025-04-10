@@ -7,6 +7,8 @@ export default class ChatService implements IChatService {
 
   async saveMessage(data: IMessageData): Promise<saveMessageResponse> {
     try {
+      console.log("IM reached service");
+      
       const saveMessg = await messageRepo.createMessage(data);
       if (!saveMessg) {
         return {
@@ -27,26 +29,26 @@ export default class ChatService implements IChatService {
     }
   }
 
-  async fetchMessage(ticketID: string): Promise<fetchMessageRes> {
-    try {
-      const getMessages = await messageRepo.getMessagesByTicketID(ticketID);
-      console.log(getMessages);
+  // async fetchMessage(ticketID: string): Promise<fetchMessageRes> {
+  //   try {
+  //     const getMessages = await messageRepo.getMessagesByTicketID(ticketID);
+  //     console.log("get messages in comm repo :",getMessages);
       
-      if (getMessages.length === 0) {
-        return {
-          statusCode: HttpStatus.BAD_REQUEST,
-          success: false,
-          message: Messages.DATA_NOT_FOUND,
-        };
-      } else {
-        return {
-          message: Messages.DATA_FETCHED,
-          statusCode: HttpStatus.OK,
-          success: true,
-        };
-      }
-    } catch (error) {
-      throw error;
-    }
-  }
+  //     if (getMessages.length === 0) {
+  //       return {
+  //         statusCode: HttpStatus.BAD_REQUEST,
+  //         success: false,
+  //         message: Messages.DATA_NOT_FOUND,
+  //       };
+  //     } else {
+  //       return {
+  //         message: Messages.DATA_FETCHED,
+  //         statusCode: HttpStatus.OK,
+  //         success: true,
+  //       };
+  //     }
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 }

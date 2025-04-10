@@ -17,6 +17,5 @@ export interface User {
     user: User;
     lastMessage: string;
     timestamp: string;
-    unread?: boolean;
-    unreadCount: number;
+
   }
