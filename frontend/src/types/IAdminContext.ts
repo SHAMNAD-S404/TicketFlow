@@ -10,5 +10,5 @@ export interface IAdminContext   {
     createdAt : string,
     role : string,
     imageUrl:string
-    
+    subscriptionPlan : string;
   }
