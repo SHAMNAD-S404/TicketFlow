@@ -8,6 +8,7 @@ const chatService = new ChatService();
 const chatController = new ChatController(chatService);
 
 
-router.get("/get-message",chatController.getMessages)
+router.get ("/get-message",chatController.getMessagesByTicketID)
+      .get ("/get-all-rooms",chatController.getAllChatRooms)
 
 export default router;

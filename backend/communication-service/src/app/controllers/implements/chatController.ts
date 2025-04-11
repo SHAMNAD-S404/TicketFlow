@@ -11,7 +11,7 @@ export class ChatController implements IChatController {
     this.chatService = ChatService;
   }
 
-  public getMessages = async (req: Request, res: Response): Promise<void> => {
+  public getMessagesByTicketID = async (req: Request, res: Response): Promise<void> => {
     try {
       const { ticketID } = req.query;
       if (!ticketID) {
@@ -21,11 +21,22 @@ export class ChatController implements IChatController {
         });
         return;
       }
-      const messages = await this.chatService.fetchMessage(ticketID as string);
-      const {message,statusCode,success,data} = messages
-      res.status(statusCode).json({message,success,data})
+      const messages = await this.chatService.getMessagesByTicketID(ticketID as string);
+      const { message, statusCode, success, data } = messages;
+      res.status(statusCode).json({ message, success, data });
     } catch (error) {
-      console.log(error);
+      console.log("error while fetching messsg", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: Messages.SERVER_ERROR });
+    }
+  };
+
+  public getAllChatRooms = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const chatRooms = await this.chatService.getAllChatRooms();
+      const { message, statusCode, success, data } = chatRooms;
+      res.status(statusCode).json({ message, success, data });
+    } catch (error) {
+      console.log("error while fetching getAllrooms :", error);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: Messages.SERVER_ERROR });
     }
   };

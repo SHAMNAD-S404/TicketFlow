@@ -31,6 +31,7 @@ const subMenuItems = {
 export const TicketHome: React.FC = () => {
   const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
   const [getTicketID, setTicketID] = useState<string>("");
+  const [ticketUUID , setTicketUUID ] = useState<string>("");
   const employee = useSelector((state: Rootstate) => state.employee.employee);
   const subMenuList: ISubMenuList[] = [
     {
@@ -100,6 +101,7 @@ export const TicketHome: React.FC = () => {
             handleCancle={() => setActiveSubMenu(subMenuItems.ASSIGNED_TICKETS)}
             ticketId={getTicketID}
             handleChatSubMenu={setChatState}
+            handleTicketUUID={(uuid:string) => setTicketUUID(uuid)}
             enableShowReq={true}
           />
         );
@@ -107,7 +109,8 @@ export const TicketHome: React.FC = () => {
       case subMenuItems.SHOW_CHAT:
         return <TicketChat
          sender={employee?._id}
-         ticketID={getTicketID}
+         senderName={employee?.name}
+         ticketID={ticketUUID}
          
          />;
 

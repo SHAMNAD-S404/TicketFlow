@@ -1,5 +1,6 @@
 import   { Request , Response  } from "express";
 
 export interface IChatController {
-    getMessages (req : Request , res : Response) : Promise<void>;
+    getMessagesByTicketID (req : Request , res : Response) : Promise<void>;
+    getAllChatRooms ( req:Request , res : Response) : Promise<void>;
 }

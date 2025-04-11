@@ -2,6 +2,7 @@ import IMessage from "../../models/interface/IMessage";
 import MessageModel from "../../models/implements/message";
 import { IMessageRepo } from "../interface/IMessageRepo";
 
+
 class MessageRepository implements IMessageRepo {
   constructor() {}
 
@@ -16,7 +17,7 @@ class MessageRepository implements IMessageRepo {
 
   async getMessagesByTicketID(ticketID: string): Promise<IMessage[]> {
     try {
-      return MessageModel.find({ ticketID }).sort({ createdAt: 1 });
+      return MessageModel.find({ ticketID }).sort({ timestamp: 1 });
     } catch (error) {
       throw error;
     }

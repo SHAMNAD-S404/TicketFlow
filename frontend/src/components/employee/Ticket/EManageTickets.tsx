@@ -16,10 +16,17 @@ interface EManageTickets {
   handleCancle: () => void;
   handleChatSubMenu: () => void;
   ticketId: string;
-  enableShowReq? : boolean
+  handleTicketUUID: (uuid: string) => void;
+  enableShowReq?: boolean;
 }
 
-export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketId, handleChatSubMenu ,enableShowReq}) => {
+export const EManageTickets: React.FC<EManageTickets> = ({
+  handleCancle,
+  ticketId,
+  handleTicketUUID,
+  handleChatSubMenu,
+  enableShowReq,
+}) => {
   const { ticketData, loading, error, refetch } = useTicketData(ticketId);
   const [ticketStatus, setTicketStatus] = useState<string>("");
   const [currentProgress, setCurrentProgress] = useState<string>("");
@@ -53,11 +60,9 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
         refetch();
       }
     } catch (error: any) {
-      toast.error(getErrMssg(error))
+      toast.error(getErrMssg(error));
     }
   };
-
- 
 
   //ticket status update validation
   const handleTicketStatusUpdate = async () => {
@@ -94,6 +99,7 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
     if (ticketData) {
       setTicketStatus(ticketData.status);
       setCurrentProgress(ticketData.status);
+      handleTicketUUID(ticketData.ticketID)
       setIsVisible(false);
     }
   }, [ticketData]);
@@ -157,7 +163,7 @@ export const EManageTickets: React.FC<EManageTickets> = ({ handleCancle, ticketI
                 <hr className="border-gray-400" />
               </h2>
               <div>
-                <DockDemo ticketId={ticketData?.ticketID as string}  handleChat={handleChatSubMenu} />
+                <DockDemo ticketId={ticketData?.ticketID as string} handleChat={handleChatSubMenu} />
               </div>
             </div>
           </footer>

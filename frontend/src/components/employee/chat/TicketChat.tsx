@@ -3,64 +3,18 @@ import ChatSidebar from "@/components/chat/ChatSidebar";
 import ChatWindow from "@/components/chat/ChatWindow";
 import { Chat, Message } from "../../../types/chat";
 import { Socket, io } from "socket.io-client";
-import { fetchAllMessages } from "@/api/services/communicationService";
+import { fetchAllMessages, fetchAllRooms } from "@/api/services/communicationService";
 import { toast } from "react-toastify";
+import getErrMssg from "@/components/utility/getErrMssg";
+import { useSelector } from "react-redux";
+import { Rootstate } from "@/redux/store";
 
 const communicationServer = import.meta.env.VITE_COMMUNICATION_SERVER;
 
-const socket: Socket = io(communicationServer,{
-  withCredentials : true,
-  transports : ["websocket"],
+const socket: Socket = io(communicationServer, {
+  withCredentials: true,
+  transports: ["websocket"],
 });
-
-// Sample data
-const sampleChats: Chat[] = [
-  {
-    id: "1",
-    user: {
-      id: "1",
-      name: "Kirti Yadav",
-      avatar:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
-      lastSeen: "3 hours ago",
-    },
-    lastMessage: "Are you there ??",
-    timestamp: "11:10 AM",
-  },
-  {
-    id: "2",
-    user: {
-      id: "2",
-      name: "Ankit Mishra",
-      avatar:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80",
-      lastSeen: "1 hour ago",
-    },
-    lastMessage: "Are we meeting today? Let's...",
-    timestamp: "3:45 PM",
-  },
-];
-
-const sampleMessages: Message[] = [
-  {
-    id: "1",
-    senderId: "other",
-    content: "Let's together work on this an create something more awesome.",
-    timestamp: "12:21 AM",
-  },
-  {
-    id: "2",
-    senderId: "me",
-    content: "I really like your idea, but I still think we can do more in this.",
-    timestamp: "12:22 AM",
-  },
-  {
-    id: "3",
-    senderId: "me",
-    content: "I will share something",
-    timestamp: "12:23 AM",
-  },
-];
 
 interface IMessage {
   _id: string;
@@ -71,104 +25,213 @@ interface IMessage {
   updatedAt: Date;
 }
 
+interface IChatRoom {
+  _id: string;
+  ticketID: string;
+  participants: string[];
+  lastMessage: string;
+  lastMessageTimestamp: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface ChatProps {
   ticketID?: string;
   sender?: string;
+  senderName?: string;
 }
 
-const TicketChat: React.FC<ChatProps> = ({ ticketID, sender }) => {
-  
+const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName }) => {
+  // const employee = useSelector((state: Rootstate) => state.employee.employee);
 
-  console.log("ticket Id : ",ticketID,"sender ; ",sender);
-  
+  // sender = sender ? sender : employee?._id;
+  // senderName = senderName ? senderName : employee?.name;
 
+  console.log("tik id", ticketID);
+  console.log("sender : ", sender);
 
-  const [selectedChatId, setSelectedChatId] = useState(sampleChats[0].id);
-  const [messages, setMessages] = useState(sampleMessages);
+  //******component states************
+  //for responsive design
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
-  const [message1, setMessages1] = useState<string>("");
-  const [messages2, setMessages2] = useState<IMessage[]>([]);
+  const [chatRooms, setChatRooms] = useState<IChatRoom[]>([]);
+  const [selectedTicketID, setSelectedTicketID] = useState<string | undefined>(ticketID);
+  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [newMessage, setNewMessage] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    //join the chat room for this ticket
-    socket.emit("join_room", ticketID);
+  //format chat rooms to match the chat interface for the sidebar
+  const formatChatRooms = (rooms: IChatRoom[]): Chat[] => {
+    return rooms.map((rooms) => ({
+      id: rooms.ticketID,
+      user: {
+        id: rooms.participants[0] || "unknown",
+        name: `Ticket #${rooms.ticketID}`,
+        avatar: "https://cdn-icons-png.flaticon.com/512/6858/6858504.png",
+        lastSeen: new Date(rooms.lastMessageTimestamp).toLocaleString(),
+      },
+      lastMessage: rooms.lastMessage,
+      timestamp: new Date(rooms.lastMessageTimestamp).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    }));
+  };
 
-    const fetchMessages = async () => {
-      try {
-        const response = await fetchAllMessages(ticketID as string);
-        setMessages2(response.data);
-      } catch (error: any) {
-        toast.error(error);
+  //format messages for the chat window
+  const formatMessages = (messageList: IMessage[]): Message[] => {
+    return messageList.map((msg) => ({
+      id: msg._id,
+      senderId: msg.sender === sender ? "me" : "other",
+      content: msg.message,
+      timestamp: new Date(msg.createdAt).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    }));
+  };
+
+  //fn to create new chat room if didn't exist
+  const initializeChat = async (ticketID: string, sender: string) => {
+    try {
+      const hasMessages = messages.length > 0;
+      if (!hasMessages && ticketID && sender) {
+        // Send an initial system message to create the room
+        socket.emit("send_message", {
+          ticketID: ticketID,
+          sender: "system",
+          message: `Chat started by ${senderName} for ticket #${ticketID}`,
+        });
+
+        // Fetch messages again after a short delay to make sure our message was saved
+        setTimeout(async () => {
+          try {
+            const response = await fetchAllMessages(ticketID);
+            setMessages(response.data);
+          } catch (error) {
+            toast.error("Error fetching messages after initialization");
+          }
+        }, 500);
       }
-    };
-
-    fetchMessages();
-
-    socket.on("receive_message", (newMessage: IMessage) => {
-      setMessages2((prevMessages) => [...prevMessages, newMessage]);
-    });
-
-    return () => {
-      socket.off("receive_message");
-    };
-  }, [ticketID]);
-
-  //send message through socket io
-  const sendMessages = (newMssg:string) => {
-    if (messages) {
-      socket.emit("send_message", { ticketID, sender, message:newMssg });
-      setMessages1("");
+    } catch (error) {
+      toast.error(getErrMssg(error));
     }
   };
 
-
+  //fetch all chat rooms
   useEffect(() => {
+    //fn to fetch chat rooms
+    const fetchChatRooms = async () => {
+      try {
+        setLoading(true);
+        const response = await fetchAllRooms();
+        setChatRooms(response.data);
+
+        // If no ticketID was provided and we have chat rooms, select the first one
+        if (!ticketID && response.data.length > 0 && !isMobileView) {
+          setSelectedTicketID(response.data[0].ticketID);
+        }
+
+        if (ticketID) {
+          setSelectedTicketID(ticketID);
+        }
+
+        setLoading(false);
+      } catch (error: any) {
+        if (!error.response.data.data) {
+        }
+        toast.error(getErrMssg(error));
+      }
+    };
+
+    fetchChatRooms();
+
+    //fn to select tikcet id and responsive ui logic
     const handleResize = () => {
       setIsMobileView(window.innerWidth < 768);
-      // Reset selected chat for mobile view to show the chat list
       if (window.innerWidth < 768) {
-        setSelectedChatId("");
-      } else {
-        // Set first chat as selected for desktop view if none selected
-        setSelectedChatId((prev) => prev || sampleChats[0].id);
+        if (!ticketID) {
+          setSelectedTicketID(undefined);
+        }
+      } else if (chatRooms.length > 0 && !selectedTicketID) {
+        setSelectedTicketID(chatRooms[0].ticketID);
       }
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [ticketID]);
 
-  const selectedUser = sampleChats.find((chat) => chat.id === selectedChatId)?.user || null;
+  //join room and fetch message when selectedTicketID changes
+  useEffect(() => {
+    console.log("sleec id ", selectedTicketID);
+    if (!selectedTicketID) return;
 
-  const handleSendMessage = (content: string) => {
-    const newMessage: Message = {
-      id: String(messages.length + 1),
-      senderId: "me",
-      content,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    //join the chat room
+    socket.emit("join_room", selectedTicketID);
+
+    // fetch messages for the selected ticket
+    const fetchMessages = async () => {
+      try {
+        const response = await fetchAllMessages(selectedTicketID);
+        setMessages(response.data);
+      } catch (error: any) {
+        //if no messages exist , initialize the new chat
+        if (!error.response?.data?.data && sender) {
+          initializeChat(selectedTicketID, sender);
+          // return;
+        }
+
+        //toast.error(getErrMssg(error));
+      }
     };
-    setMessages([...messages, newMessage]);
+
+    fetchMessages();
+
+    //listen for the new messages
+    socket.on("receive_message", (newMessages: IMessage) => {
+      setMessages((prevMessages) => [...prevMessages, newMessages]);
+    });
+
+    //cleanup fn
+    return () => {
+      socket.off("receive_message");
+    };
+  }, [selectedTicketID, sender]);
+
+  //fn to send messages through socket io
+  const sendMessage = (messageContent: string) => {
+    if (selectedTicketID && sender && messageContent.trim()) {
+      socket.emit("send_message", {
+        ticketID: selectedTicketID,
+        sender,
+        message: messageContent,
+      });
+      setNewMessage("");
+    }
   };
 
-  const handleChatSelect = (chatId: string) => {
-    setSelectedChatId(chatId);
-  };
+  const handleChatSelect = (chatId: string) => setSelectedTicketID(chatId);
 
-  const handleBack = () => {
-    setSelectedChatId("");
-  };
+  const handleBack = () => setSelectedTicketID(undefined);
+
+  const formattedChats = formatChatRooms(chatRooms);
+  const formattedMessages = formatMessages(messages);
+
+  //find the selected user info
+  const selectedChat = formattedChats.find((chat) => chat.id === selectedTicketID);
+  const selectedUser = selectedChat?.user || null;
 
   // For mobile: show either chat list or chat window
   if (isMobileView) {
     return (
       <div className="h-screen ">
-        {!selectedChatId ? (
-          <ChatSidebar chats={sampleChats} selectedChatId={selectedChatId || ""} onChatSelect={handleChatSelect} />
+        {!selectedTicketID ? (
+          <ChatSidebar chats={formattedChats} selectedChatId={selectedTicketID || ""} onChatSelect={handleChatSelect} />
         ) : (
           <ChatWindow
             selectedUser={selectedUser}
-            messages={messages}
-            onSendMessage={sendMessages}
+            messages={formattedMessages}
+            onSendMessage={sendMessage}
             onBack={handleBack}
             isMobile={true}
           />
@@ -181,13 +244,13 @@ const TicketChat: React.FC<ChatProps> = ({ ticketID, sender }) => {
   return (
     <div className="h-screen flex overflow-hidden ">
       <div className="w-[320px]  ">
-        <ChatSidebar chats={sampleChats} selectedChatId={selectedChatId || ""} onChatSelect={handleChatSelect} />
+        <ChatSidebar chats={formattedChats} selectedChatId={selectedTicketID || ""} onChatSelect={handleChatSelect} />
       </div>
       <div className="flex-1 overflow-hidden ">
         <ChatWindow
           selectedUser={selectedUser}
-          messages={messages}
-          onSendMessage={sendMessages}
+          messages={formattedMessages}
+          onSendMessage={sendMessage}
           isMobile={false}
         />
       </div>

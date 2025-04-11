@@ -63,14 +63,14 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ chats, selectedChatId, onChat
             <div className="flex-1">
               <div className="flex justify-between items-center">
                 <h3 className={`font-semibold ${selectedChatId === chat.id ? "text-white" : "text-gray-900"}`}>
-                  {chat.user.name}
+                  {chat.user.name.slice(0,28)}
                 </h3>
                 <span className={`text-xs ${selectedChatId === chat.id ? "text-gray-200" : "text-gray-500"}`}>
                   {chat.timestamp}
                 </span>
               </div>
               <p className={`text-sm truncate ${selectedChatId === chat.id ? "text-gray-300" : "text-gray-500"}`}>
-                {chat.lastMessage}
+                {chat.lastMessage.slice(0,28)}
               </p>
             </div>
 

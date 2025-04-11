@@ -1,5 +1,6 @@
 import IMessage from "../../models/interface/IMessage";
 import { IBasicResponse } from "./BaseResponse";
+import IChatRoom from "../../models/interface/IChatRoom"
 
 export interface IMessageData {
   ticketID: string;
@@ -14,9 +15,13 @@ export interface fetchMessageRes extends IBasicResponse {
   data?: IMessage[] | null;
 }
 
+export interface getAllChatRoomsRes extends IBasicResponse {
+  data ? : IChatRoom[] | null;
+}
+
 export interface IChatService {
-  saveMessage(data: IMessageData): Promise<saveMessageResponse>;
+  saveMessage(data: IMessageData): Promise<any>;
   getMessagesByTicketID(ticketId : string) : Promise<fetchMessageRes>
-  getAllChatRooms() : Promise<any[]>
+  getAllChatRooms() : Promise<getAllChatRoomsRes>
   getChatRoomByTicketID(ticketID : string) : Promise<any>
 }
