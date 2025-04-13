@@ -11,6 +11,7 @@ import ProtoctedRoutes from "./ProtectedRoutes";
 import RestrictionRoute from "./RestrictionRoute";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { userRoles } from "@/enums/userRoles";
+import PaymentRoutes from "./PaymentRoutes";
 
 const clientID = import.meta.env.VITE_OAUTH_CLIENT_ID;
 
@@ -69,6 +70,16 @@ const AppRoutes: React.FC = () => {
           element={
             <ProtoctedRoutes allowedRoles={[userRoles.Employee]}>
               <EmployeeRoutes />
+            </ProtoctedRoutes>
+          }
+        />
+
+          {/* Payment Routes */}
+          <Route
+          path="/payment/*"
+          element={
+            <ProtoctedRoutes allowedRoles={[userRoles.Company]}>
+              <PaymentRoutes />
             </ProtoctedRoutes>
           }
         />

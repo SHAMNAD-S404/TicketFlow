@@ -37,8 +37,6 @@ const SuperAdminLogin: React.FC = () => {
         dispatch(setUser(userData));
         toast.success(response.message);
         navigate("/sudo/dashboard");
-      } else {
-        toast.error(response.message);
       }
     } catch (error: any) {
       if (error.response && error.response.data) {
@@ -123,18 +121,23 @@ const SuperAdminLogin: React.FC = () => {
                 required
                 placeholder="********"
                 className="w-full mt-1 px-4 py-2 rounded-md border border-gray-600 bg-gray-900 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                // {...register("password", {
-                //   pattern: {
-                //     value: regexPatterns.password,
-                //     message: RegexMessages.passwordRegexMessage,
-                //   },
-                // })}
+                {...register("password", {
+                  required : RegexMessages.FEILD_REQUIRED,
+                  minLength : {
+                    value :  8,
+                    message : RegexMessages.MINIMUM_LIMIT
+                  },
+                  maxLength : {
+                    value : 15,
+                    message : RegexMessages.MAXIMUM_LIMIT_REACHED
+                  }
+                })}
               />
-              {/* {errors.password && (
+               {errors.password && (
                 <p className="text-sm text-red-500 mt-1">
                   {errors.password.message}
                 </p>
-              )} */}
+              )} 
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}

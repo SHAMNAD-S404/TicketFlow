@@ -57,7 +57,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name, onLogout,profil
             <div className="flex flex-col shadow-2xl shadow-gray-400 items-end  "></div>
             <FaPow
               onClick={() => onLogout()}
-              className="h-9 w-9 rounded-full object-cover text-black shadow-lg shadow-gray-500 hover:shadow-blue-500   hover:shadow-xl cursor-pointer "
+              className="h-9 w-9 rounded-full object-cover text-black shadow-xl shadow-gray-500 hover:text-red-600    hover:shadow-xl cursor-pointer "
             />
           </div>
         </div>
