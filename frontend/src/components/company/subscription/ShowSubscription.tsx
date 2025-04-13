@@ -1,63 +1,3 @@
-// import React from "react";
-// import { GiMoneyStack } from "react-icons/gi";
-// import { RiPoliceBadgeLine } from "react-icons/ri";
-// import { useSelector } from "react-redux";
-// import { Rootstate } from "@/redux/store";
-// import { getDayCountByPlan, getFutureDate } from "@/components/utility/getFutureDate";
-// import PricingTable from "./PricingTable";
-
-// const ShowSubscription: React.FC = () => {
-//   //redux store data
-//   const company = useSelector((state: Rootstate) => state.company.company);
-//   //to check its free tier plan or not
-//   const isFreeTierPlan: boolean = company?.subscriptionPlan === "Free Tier";
-//   const getDayCount = getDayCountByPlan(company?.subscriptionPlan as string);
-//   const planExpiryDate: string = getFutureDate(new Date(company?.createdAt as string), getDayCount);
-//   return (
-//     <div className=" flex flex-col gap-2 bg-blue-50 rounded-lg">
-//       <header>
-//         <h1 className=" flex justify-center items-center gap-2 mt-2 text-2xl font-semibold underline  ">
-//           Subscription
-//           <GiMoneyStack className="text-green-600 text-3xl" />
-//           Management
-//         </h1>
-
-//         <div className="mt-4 shadow-2xl p-2 bg-white rounded-lg mx-8 h-1/4">
-//           <div className=" ms-4 flex items-center gap-2 justify-evenly p-2">
-//             <RiPoliceBadgeLine className={`text-8xl p-1 ${isFreeTierPlan ? "text-blue-600" : "text-yellow-400"}  `} />
-
-//             <h1
-//               className="text-2xl font-semibold bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500 text-transparent bg-clip-text
-//                          ">
-//               {company?.subscriptionPlan}
-//             </h1>
-//             <div className="flex flex-col gap-2">
-//               <h2 className="font-semibold underline underline-offset-2"> Subscription plan ends on </h2>
-//               <h1>{planExpiryDate}</h1>
-//             </div>
-//           </div>
-//           <div className="overflow-hidden whitespace-nowrap">
-//             <h2 className="inline-block animate-marquee pause-on-hover text-center bg-gradient-to-l from-purple-500 via-orange-500 to-yellow-500 text-transparent bg-clip-text font-semibold text-sm">
-//               Purchase a subscription plan to continue or extend your subscription validity and access our app support
-//               and services. Thank you for choosing us!
-//             </h2>
-//           </div>
-//         </div>
-//       </header>
-
-//       <main>
-//         <div className="rounded-lg bg-gray-50 mx-8 p-2 shadow-2xl">
-//           <PricingTable />
-//         </div>
-//       </main>
-//     </div>
-//   );
-// };
-
-// export default ShowSubscription;
-
-
-
 import React from "react";
 import { GiMoneyStack } from "react-icons/gi";
 import { RiPoliceBadgeLine } from "react-icons/ri";
@@ -66,37 +6,31 @@ import { Rootstate } from "@/redux/store";
 import { getDayCountByPlan, getFutureDate } from "@/components/utility/getFutureDate";
 import PricingTable from "./PricingTable";
 
-
 const ShowSubscription: React.FC = () => {
-  // Redux store data
+  //redux store data
   const company = useSelector((state: Rootstate) => state.company.company);
-
-  
-  // To check its free tier plan or not
+  //to check its free tier plan or not
   const isFreeTierPlan: boolean = company?.subscriptionPlan === "Free Tier";
   const getDayCount = getDayCountByPlan(company?.subscriptionPlan as string);
   const planExpiryDate: string = getFutureDate(new Date(company?.createdAt as string), getDayCount);
-  
   return (
-    <div className="flex flex-col gap-2 bg-blue-50 rounded-lg">
+    <div className=" flex flex-col gap-2 bg-blue-50 rounded-lg">
       <header>
-        <h1 className="flex justify-center items-center gap-2 mt-2 text-2xl font-semibold underline">
+        <h1 className=" flex justify-center items-center gap-2 mt-2 text-2xl font-semibold underline  ">
           Subscription
           <GiMoneyStack className="text-green-600 text-3xl" />
           Management
         </h1>
-
         <div className="mt-4 shadow-2xl p-2 bg-white rounded-lg mx-8 h-1/4">
-          <div className="ms-4 flex items-center gap-2 justify-evenly p-2">
-            <RiPoliceBadgeLine className={`text-8xl p-1 ${isFreeTierPlan ? "text-blue-600" : "text-yellow-400"}`} />
-
+          <div className=" ms-4 flex items-center gap-2 justify-evenly p-2">
+            <RiPoliceBadgeLine className={`text-8xl p-1 ${isFreeTierPlan ? "text-blue-600" : "text-yellow-400"}  `} />
             <h1
-              className="text-2xl font-semibold bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500 text-transparent bg-clip-text"
-            >
+              className="text-2xl font-semibold bg-gradient-to-r from-yellow-500 via-red-500 to-pink-500 text-transparent bg-clip-text
+                         ">
               {company?.subscriptionPlan}
             </h1>
             <div className="flex flex-col gap-2">
-              <h2 className="font-semibold underline underline-offset-2">Subscription plan ends on</h2>
+              <h2 className="font-semibold underline underline-offset-2"> Subscription plan ends on </h2>
               <h1>{planExpiryDate}</h1>
             </div>
           </div>
@@ -108,14 +42,12 @@ const ShowSubscription: React.FC = () => {
           </div>
         </div>
       </header>
-
       <main>
-        <div className="rounded-lg bg-gray-50 mx-8 p-2 shadow-2xl mb-8">
+        <div className="rounded-lg bg-gray-50 mx-8 p-2 shadow-2xl">
           <PricingTable />
         </div>
       </main>
     </div>
   );
 };
-
 export default ShowSubscription;

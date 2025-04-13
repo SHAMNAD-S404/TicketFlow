@@ -3,7 +3,6 @@ import PricingCard from "./PricingCard";
 
 const pricingData = {
   silver: {
-    id: "silver_plan_6m", // Add unique product ID for Stripe
     title: "6 Months Silver Plan",
     price: 5999,
     period: "6 months",
@@ -14,7 +13,6 @@ const pricingData = {
     ],
   },
   premium: {
-    id: "premium_plan_24m", // Add unique product ID for Stripe
     title: "24 months Pro Plan",
     price: 15999,
     period: "24 months",
@@ -26,7 +24,6 @@ const pricingData = {
     isPopular: true,
   },
   gold: {
-    id: "gold_plan_12m", // Add unique product ID for Stripe
     title: "12 Months Gold Plan",
     price: 11999,
     period: "12 months",
@@ -40,10 +37,10 @@ const pricingData = {
 
 const PricingTable: React.FC = () => {
   return (
-    <div className="bg-gray-50 px-4 py-6 rounded-lg">
+    <div className=" bg-gray-50 px-4 py-6 rounded-lg">
       <div className="mx-auto max-w-5xl text-center">
         <h2 className="mb-1 font-bold text-black sm:text-5xl md:text-4xl">Choose a Best Plan for your organisation</h2>
-        <p className="mx-auto mb-8 max-w-2xl text-gray-600">
+        <p className="mx-auto mb-8 max-w-2xl  text-gray-600">
           TicketFlow is evolving to be more than just an IT Ticketing System. It supports the entire organization and
           its employees in managing and improving their work, helping deliver high-quality service to clients."
         </p>
