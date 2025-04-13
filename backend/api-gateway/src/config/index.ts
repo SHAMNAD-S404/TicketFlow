@@ -9,6 +9,7 @@ export interface Iconfig {
   frontend_URL : string;
   ticketServiceUrl : string;
   communicationServiceUrl : string;
+  subscription_service : string;
 }
 
 export const config: Iconfig = {
@@ -18,5 +19,6 @@ export const config: Iconfig = {
   jwtSecret: process.env.JWT_SECRET as string,
   frontend_URL: process.env.FRONTEND_URL as string,
   ticketServiceUrl : process.env.TICKET_SERVICE_URL as string,
-  communicationServiceUrl : process.env.COMMUNICATION_SERVICE_URL as string
+  communicationServiceUrl : process.env.COMMUNICATION_SERVICE_URL as string,
+  subscription_service : process.env.SUBSCRIPTION_SERVICE_URL as string
 };

@@ -162,6 +162,25 @@ services:
     networks:
       - ticketFlow-internal
 
+  subscription-service:
+    build: 
+      context: ./subscription-service
+      dockerfile: Dockerfile
+    env_file:
+      - ./subscription-service/.env
+    container_name: ticketFlow-subscriptionService
+    restart: unless-stopped
+    volumes:
+      - ./subscription-service:/app
+      - /app/node_modules
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ticketFlow-internal
+
   
 
   notification-service:
