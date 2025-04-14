@@ -7,7 +7,7 @@ import { fetchAllMessages, fetchAllRooms } from "@/api/services/communicationSer
 import { toast } from "react-toastify";
 import getErrMssg from "@/components/utility/getErrMssg";
 import { useSelector } from "react-redux";
-import { Rootstate } from "@/redux/store";
+import { Rootstate } from "@/redux store/store";
 
 const communicationServer = import.meta.env.VITE_COMMUNICATION_SERVER;
 

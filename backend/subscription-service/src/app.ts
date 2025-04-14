@@ -20,6 +20,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 
 // Register routes
-app.use("/api/payment", router);
+app.use("/", router);
 
 export default app;

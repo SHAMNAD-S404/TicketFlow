@@ -3,7 +3,7 @@ import AppRoutes from "./routes";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toastConfig } from "./utils/toastConfig";
-import store, { persistor } from "./redux/store";
+import store, { persistor } from "./redux store/store";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 

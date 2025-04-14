@@ -24,10 +24,10 @@ export class BaseRepository<T extends Document> {
    * @param role The role of the user.
    * @returns The user document.
    */
-  async create(email: string, password: string, role: string,authUserUUID:string): Promise<T> {
+  async create(email: string, password: string, role: string,authUserUUID:string,subscriptionEndDate:string): Promise<T> {
     try {
       // Create a new user document
-      const userData = { email, password, role , authUserUUID };
+      const userData = { email, password, role , authUserUUID,subscriptionEndDate };
       const document = new this.model(userData);
 
       // Save the user document

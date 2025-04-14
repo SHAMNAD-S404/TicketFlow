@@ -1,6 +1,17 @@
 import React from "react";
 import { Check } from "lucide-react";
 import { BiCrown } from "react-icons/bi";
+import getErrMssg from "@/components/utility/getErrMssg";
+import { toast } from "react-toastify";
+import { IHandlePurchaseData } from "@/interfaces/IPurchaseData";
+import { useSelector } from "react-redux";
+import { Rootstate } from "@/redux store/store";
+import { Messages } from "@/enums/Messages";
+import secrets from "@/config/secrets";
+import { findMaxDate } from "@/components/utility/getMaxDate";
+import { getPlanEndDate } from "@/components/utility/getFutureDate";
+import { validatePurchaseData } from "@/components/utility/validateData";
+import { createCheckoutSession } from "@/api/services/subscription_service";
 
 interface PricingFeature {
   text: string;
@@ -23,6 +34,48 @@ const PricingCard: React.FC<PricingCardProps> = ({
   isPopular = false,
   buttonVariant = "default",
 }) => {
+  //redux store value
+  const company = useSelector((state: Rootstate) => state.company.company);
+
+  //****component functions
+
+  //fn to handle subscription purchase
+  const handlePurchase = async (amount: string, plan: string, validity: string) => {
+    try {
+      if (!company) {
+        toast.error(Messages.COMPANY_DETAILS_NOT_FOUND);
+        return;
+      }
+      const startDate = findMaxDate(company.subscriptionEndDate);
+
+      const getPurchaseData: IHandlePurchaseData = {
+        authUserUUID: company.authUserUUID,
+        companyName: company.companyName,
+        companyEmail: company.email,
+        amount,
+        plan,
+        planValidity: validity,
+        successUrl: secrets.PAYMENT_SUCCESS_URL,
+        cancelUrl: secrets.PAYMENT_CANCEL_URL,
+        planStartDate: startDate,
+        planEndDate: getPlanEndDate(startDate, validity),
+      };
+      //validating data before sending
+      const validateData = validatePurchaseData(getPurchaseData);
+      if (!validateData.isValid) {
+        toast.error(validateData.message);
+        return;
+      }
+      //send to backend
+      const response = await createCheckoutSession(getPurchaseData);
+      if (response.data.sessionUrl) {
+        window.location.href = response.data.sessionUrl;
+      }
+    } catch (error: any) {
+      toast.error(getErrMssg(error));
+    }
+  };
+
   return (
     <div className="relative rounded-2xl border border-gray-800 bg-black p-8 shadow-lg">
       {isPopular && (
@@ -55,7 +108,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
             ? "bg-white text-black hover:bg-yellow-500 "
             : "border border-gray-600 text-white hover:bg-white hover:text-black"
         }`}
-        onClick={() => alert(title)}>
+        onClick={() => handlePurchase(price.toString(), title, period)}>
         Get Started
       </button>
     </div>

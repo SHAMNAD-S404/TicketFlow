@@ -1,11 +1,12 @@
 import axios from "axios";
+import secrets from "@/config/secrets";
 import {
   setupRequestInterceptor,
   setupResponseInterceptor,
 } from "./interceptors";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: secrets.APIGATEWAY_URL,
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",

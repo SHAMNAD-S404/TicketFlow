@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import Sidebar from "../../components/common/Sidebar";
 import DashboardHeader from "../../components/common/DashboardHeader";
 import MainContent from "../../components/company/CompanyMainContent";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCompany, clearUserData } from "../../redux/userSlice";
-import { Rootstate, AppDispatch } from "../../redux/store";
+import {  clearUserData } from "../../redux store/userSlice";
+import { Rootstate, AppDispatch } from "../../redux store/store";
 import { toast } from "react-toastify";
 import { logoutUser } from "../../api/services/authService";
 import { useNavigate } from "react-router-dom";
@@ -48,16 +48,21 @@ const CompanyDashboard: React.FC = () => {
                 dispatch(clearUserData());
                 navigate("/");
               });
-            } else {
-              toast.error(response.message);
-            }
+            } 
           }       
     } catch (error: any) {
      toast.error(getErrMssg(error))
     }
   };
 
-  if (!company || !role) return <div>Loading......</div>;
+  //old codeee
+  // if (!company || !role) return <div>Loading......</div>;
+
+  //new code 
+  if (!company || !role){
+    localStorage.clear();
+    return 
+  } 
 
   return (
     <div className="flex h-screen w-full">

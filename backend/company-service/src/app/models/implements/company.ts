@@ -3,24 +3,27 @@ import { ICompany } from "../interface/IcompanyModel";
 
 
 const companySchema : Schema = new Schema<ICompany> ({
-    companyName: { 
+     companyName: { 
         type: String, required: true },
-    companyType: { 
+     companyType: { 
         type: String, required: true },
-    phoneNumber: { 
+     phoneNumber: { 
         type: String, required: true },
-    corporatedId: {
+     corporatedId: {
          type: String, required: true },
-    role : {
+     role : {
          type: String,required : true , default:"comapny"}, 
-    email: { 
+     email: { 
          type: String, required: true },
-    originCountry: {
+     originCountry: {
          type: String, required: true },
-    authUserUUID: {
+     authUserUUID: {
          type: String, required: true },
      subscriptionPlan : {
           type:String , default : "Free tier"
+     },
+     subscriptionEndDate : {
+          type : String , required : true
      },
      isBlock : {
           type:Boolean , default : false

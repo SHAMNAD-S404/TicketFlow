@@ -4,8 +4,8 @@ import regexPatterns, { RegexMessages } from "../../../../utils/regexPattern";
 import { udpateEmployeeProfile } from "../../../../api/services/companyService";
 import { toast } from "react-toastify";
 import { useSelector , useDispatch } from "react-redux";
-import { Rootstate ,AppDispatch } from "../../../../redux/store";
-import { fetchEmployee } from "../../../../redux/employeeSlice";
+import { Rootstate ,AppDispatch } from "../../../../redux store/store";
+import { fetchEmployee } from "../../../../redux store/employeeSlice";
 
 export interface EmployeeEditForm {
   name: string;

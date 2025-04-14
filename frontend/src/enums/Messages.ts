@@ -12,6 +12,8 @@ export enum Messages {
     SELECT_DEPT_AGAIN = "oops something went wrong select department again !",
     SELECT_A_DEPT = "Select a department to continue!",
     EMPLOYEE_ID_MISSING = "oops issue with selected employee data ! try again!",
+    COMPANY_DETAILS_NOT_FOUND = "Company details didn't found ! please try again !",
+    
 
     
 }

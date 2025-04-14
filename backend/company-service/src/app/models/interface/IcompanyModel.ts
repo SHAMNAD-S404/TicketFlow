@@ -11,6 +11,7 @@ export interface ICompany extends Document {
   authUserUUID : string;
   role : string ;
   subscriptionPlan:string;
+  subscriptionEndDate : string;
   isBlock : boolean;
   imageUrl : string;
 }

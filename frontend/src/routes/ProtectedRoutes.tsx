@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Rootstate } from '../redux/store';
+import { Rootstate } from '../redux store/store';
 import { userRoles } from '../enums/userRoles';
 import Spinner from '../components/common/Spinner';
 

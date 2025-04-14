@@ -18,9 +18,9 @@ export class UserRepository extends BaseRepository<UserDocument> implements IUse
     }
   }
 
-  async createUser(email: string, password: string, role: string, authUserUUID: string): Promise<IUser | undefined> {
+  async createUser(email: string, password: string, role: string, authUserUUID: string,subscriptionEndDate:string): Promise<IUser | undefined> {
     try {
-      return await this.create(email, password, role, authUserUUID);
+      return await this.create(email, password, role, authUserUUID,subscriptionEndDate);
     } catch (error) {
       throw error;
     }

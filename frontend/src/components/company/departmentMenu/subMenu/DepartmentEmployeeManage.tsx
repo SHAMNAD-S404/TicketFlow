@@ -6,7 +6,7 @@ import { debounce } from "lodash";
 import { showCustomeAlert } from "../../../utility/swalAlertHelper";
 import { IEmployeeContext } from "../../../../types/IEmployeeContext";
 import { useSelector } from "react-redux";
-import { Rootstate } from "../../../../redux/store";
+import { Rootstate } from "../../../../redux store/store";
 import { searchInputValidate } from "../../../utility/searchInputValidateNameEmail";
 import { fetchAllDepartemtsWiseEmployees } from "../../../../api/services/companyService";
 import { handleBlockEmployee } from "../../../../api/services/authService";

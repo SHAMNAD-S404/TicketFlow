@@ -73,8 +73,6 @@ const AppRoutes: React.FC = () => {
           }
         />
 
-    
-
         {/* Fallback Route */}
         <Route path="*" element={<NotFound />} />
       </Routes>

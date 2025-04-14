@@ -1,6 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { ITicket } from "../interface/ITicketModel";
-import { TicketStatus } from "../interface/ITicketModel";
+import { ITicket, TicketStatus } from "../interface/ITicketModel";
 
 const ticketSchema: Schema = new Schema<ITicket>(
   {
@@ -46,8 +45,8 @@ const ticketSchema: Schema = new Schema<ITicket>(
     resolutionTime: {
       type: String,
     },
-    ticketReopenReason : {
-      type : String
+    ticketReopenReason: {
+      type: String,
     },
     ticketHandlingDepartmentId: {
       type: String,
@@ -99,5 +98,5 @@ const ticketSchema: Schema = new Schema<ITicket>(
   }
 );
 
-const TicketModel = mongoose.model<ITicket & Document>("tickets", ticketSchema);
+const TicketModel = mongoose.model<ITicket >("tickets", ticketSchema);
 export default TicketModel;

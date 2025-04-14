@@ -11,7 +11,7 @@ import RegisterImage from "../../../../assets/images/hero2.png";
 import { createEmployee } from "../../../../api/services/companyService";
 import Swal from "sweetalert2";
 import { useSelector } from "react-redux";
-import { Rootstate } from "../../../../redux/store";
+import { Rootstate } from "../../../../redux store/store";
 import { Messages } from "@/enums/Messages";
 import getErrMssg from "@/components/utility/getErrMssg";
 

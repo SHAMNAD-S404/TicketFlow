@@ -5,7 +5,7 @@ import TicketTable from "@/components/common/TicketTable";
 import getErrMssg from "@/components/utility/getErrMssg";
 import { searchInputValidate } from "@/components/utility/searchInputValidateNameEmail";
 import { Messages } from "@/enums/Messages";
-import { Rootstate } from "@/redux/store";
+import { Rootstate } from "@/redux store/store";
 import { ITicketContext } from "@/types/ITicketContext";
 import { debounce } from "lodash";
 import { useCallback, useEffect, useState } from "react";

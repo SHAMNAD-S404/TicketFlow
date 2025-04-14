@@ -7,8 +7,8 @@ import { loginUser } from "../../api/services/authService";
 import { useNavigate } from "react-router-dom";
 import regexPatterns, { RegexMessages } from "../../utils/regexPattern";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../redux/store";
-import { fetchEmployee } from "../../redux/employeeSlice";
+import { AppDispatch } from "../../redux store/store";
+import { fetchEmployee } from "../../redux store/employeeSlice";
 import { Messages } from "@/enums/Messages";
 
 interface UserLoginProps {

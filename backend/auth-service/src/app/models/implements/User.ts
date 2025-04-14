@@ -11,6 +11,7 @@ const UserSchema: Schema = new Schema(
     authUserUUID: { type: String, required: true },
     isFirstLogin: { type: Boolean, required: true, default: false },
     isBlock: { type: Boolean, required: true, default: false },
+    subscriptionEndDate : {type : String }
   },
   { timestamps: true }
 );

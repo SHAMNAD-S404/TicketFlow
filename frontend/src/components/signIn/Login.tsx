@@ -7,8 +7,8 @@ import { toast } from "react-toastify";
 import regexPatterns from "../../utils/regexPattern";
 import { loginUser } from "../../api/services/authService";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../redux/store";
-import { fetchCompany } from "../../redux/userSlice";
+import { AppDispatch } from "../../redux store/store";
+import { fetchCompany } from "../../redux store/userSlice";
 import { Messages } from "@/enums/Messages";
 
 interface LoginProps {

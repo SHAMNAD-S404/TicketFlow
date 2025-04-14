@@ -5,10 +5,11 @@ export interface IAdminContext   {
     companyType : string;
     corporatedId: string;
     originCountry : string;
-    authUser :string,
+    authUserUUID :string,
     _id : string;
     createdAt : string,
     role : string,
     imageUrl:string
     subscriptionPlan : string;
+    subscriptionEndDate : string
   }

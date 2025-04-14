@@ -6,8 +6,8 @@ import { loginSuperAdmin } from "../../api/services/authService";
 import { toast } from "react-toastify";
 import regexPatterns, { RegexMessages } from "../../utils/regexPattern";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../redux/store";
-import { setUser } from "../../redux/sudoSlice";
+import { AppDispatch } from "../../redux store/store";
+import { setUser } from "../../redux store/sudoSlice";
 
 interface LoginFormData {
   email: string;

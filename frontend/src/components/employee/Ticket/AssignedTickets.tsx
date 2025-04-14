@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { Messages } from "@/enums/Messages";
 import { fetchTicketsEmployeeWise } from "@/api/services/ticketService";
 import { useSelector } from "react-redux";
-import { Rootstate } from "@/redux/store";
+import { Rootstate } from "@/redux store/store";
 import TicketStaticsCards from "@/components/common/TicketStaticsCards";
 import Pagination from "@/components/common/Pagination";
 import TicketTable from "@/components/common/TicketTable";

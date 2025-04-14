@@ -17,6 +17,7 @@ import { deleteRedisData, getRedisData, setRedisData } from "../../../utils/redi
 import { generateAccessToken, generateRefreshToken } from "../../../utils/jwtUtils";
 import { basicResponse } from "../../interfaces/basicResponse";
 import { nanoid } from "nanoid";
+import { generatesubscriptionEndDate } from "../../../utils/dateUtilFunctions";
 
 export class AuthService implements IAuthService {
   constructor(private userRepository: UserRepository) {}
@@ -61,9 +62,12 @@ export class AuthService implements IAuthService {
       //Generate a UUID V4
       const authUserUUID = uuidv4();
 
+      // get subscriptionEndDate
+      const subscriptionEndDate = generatesubscriptionEndDate();
+
       //store user data in auth-service db.
       const role = UserRoles.Company;
-      const storeUser = await this.userRepository.create(email, hashedPassword, role, authUserUUID);
+      const storeUser = await this.userRepository.create(email, hashedPassword, role, authUserUUID,subscriptionEndDate);
       if (!storeUser) {
         return {
           message: Messages.FAIL_TRY_AGAIN,
@@ -71,6 +75,7 @@ export class AuthService implements IAuthService {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         };
       }
+
 
       const companyData = {
         authUserUUID: storeUser.authUserUUID,
@@ -81,6 +86,7 @@ export class AuthService implements IAuthService {
         corporatedId,
         originCountry,
         role,
+        subscriptionEndDate : generatesubscriptionEndDate()
       };
 
       //delete user data from reddis

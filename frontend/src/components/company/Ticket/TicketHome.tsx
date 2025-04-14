@@ -4,7 +4,7 @@ import GifImage from "../../../assets/gif/star.gif";
 import DynamicCard from "@/components/utility/DynamicCard";
 import AllTickets from "./AllTickets";
 import { useSelector } from "react-redux";
-import { Rootstate } from "@/redux/store";
+import { Rootstate } from "@/redux store/store";
 import MyTicketProgress from "./MyTicketProgress";
 import ViewMyTicketProgress from "@/components/employee/Ticket/ViewMyTicketProgress";
 import TicketChat from "@/components/employee/chat/TicketChat";

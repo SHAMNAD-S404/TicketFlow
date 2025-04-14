@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import GifImage from "../../../assets/gif/star.gif";
 import DynamicCard from "@/components/utility/DynamicCard";
 import { useSelector } from "react-redux";
-import { Rootstate } from "@/redux/store";
+import { Rootstate } from "@/redux store/store";
 import AssignedTickets from "./AssignedTickets";
 import { EManageTickets } from "./EManageTickets";
 import TicketChat from "../chat/TicketChat";

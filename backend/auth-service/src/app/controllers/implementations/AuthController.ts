@@ -8,7 +8,6 @@ import { publishToQueue } from "../../../queues/publisher";
 import { RabbitMQConfig } from "../../../config/rabbitmq";
 import { validateEmailSchema } from "../../dtos/basicValidation.schema";
 import { changePasswordSchema, resetPasswordSchema } from "../../dtos/baseFormValidation.schema";
-import { json } from "stream/consumers";
 
 export class AuthController implements IAuthController {
   private authService: IAuthService;

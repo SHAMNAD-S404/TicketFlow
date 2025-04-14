@@ -3,9 +3,9 @@ import { useForm } from "react-hook-form";
 import { updateCompanyProfile } from "../../../../api/services/companyService";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { Rootstate ,AppDispatch } from "../../../../redux/store";
+import { Rootstate ,AppDispatch } from "../../../../redux store/store";
 import { useDispatch } from "react-redux";
-import { fetchCompany } from "../../../../redux/userSlice";
+import { fetchCompany } from "../../../../redux store/userSlice";
 
 interface ProfileEditProps {
   onCancel: () => void;
