@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Check } from "lucide-react";
 import { BiCrown } from "react-icons/bi";
 import getErrMssg from "@/components/utility/getErrMssg";
@@ -34,14 +34,21 @@ const PricingCard: React.FC<PricingCardProps> = ({
   isPopular = false,
   buttonVariant = "default",
 }) => {
+
+  //**********component states */
+  const [loading, setLoading] = useState<boolean>(false);
+
+
   //redux store value
   const company = useSelector((state: Rootstate) => state.company.company);
+
 
   //****component functions
 
   //fn to handle subscription purchase
   const handlePurchase = async (amount: string, plan: string, validity: string) => {
     try {
+      setLoading(true);
       if (!company) {
         toast.error(Messages.COMPANY_DETAILS_NOT_FOUND);
         return;
@@ -68,11 +75,14 @@ const PricingCard: React.FC<PricingCardProps> = ({
       }
       //send to backend
       const response = await createCheckoutSession(getPurchaseData);
-      if (response.data.sessionUrl) {
-        window.location.href = response.data.sessionUrl;
+      
+      if (response.sessionUrl) {
+        window.location.href=response.sessionUrl;
       }
     } catch (error: any) {
       toast.error(getErrMssg(error));
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -108,8 +118,9 @@ const PricingCard: React.FC<PricingCardProps> = ({
             ? "bg-white text-black hover:bg-yellow-500 "
             : "border border-gray-600 text-white hover:bg-white hover:text-black"
         }`}
+        disabled={loading}
         onClick={() => handlePurchase(price.toString(), title, period)}>
-        Get Started
+        {loading ? "Loading..." : "Get Started"}
       </button>
     </div>
   );

@@ -46,8 +46,9 @@ app.use(
 );
 
 app.use("/communication", authenticateToken, proxy(config.communicationServiceUrl));
+//subscription service
 app.use("/subscription",proxy(config.subscription_service,{
-  parseReqBody : false
+  parseReqBody : false,
 }))
 
 

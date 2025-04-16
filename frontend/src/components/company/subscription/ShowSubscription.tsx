@@ -39,12 +39,12 @@ const ShowSubscription: React.FC = () => {
               <h1 className=" text-red-500 text-center font-semibold">{ company?.subscriptionEndDate }</h1>
             </div>
           </div>
-          {/* <div className="overflow-hidden whitespace-nowrap mt-2">
+          <div className="overflow-hidden whitespace-nowrap mt-2">
             <h2 className="inline-block animate-marquee pause-on-hover text-center bg-gradient-to-l from-purple-500 via-orange-500 to-yellow-500 text-transparent bg-clip-text font-semibold text-sm">
               Purchase a subscription plan to continue or extend your subscription validity and access our app support
               and services. Thank you for choosing us!
             </h2>
-          </div> */}
+          </div>
         </div>
       </header>
       <main>
@@ -52,14 +52,7 @@ const ShowSubscription: React.FC = () => {
           <PricingTable />
         </div>
       </main>
-      <footer>
-      <div className="overflow-hidden whitespace-nowrap mt-2">
-            <h2 className="inline-block animate-marquee pause-on-hover text-center bg-gradient-to-l from-purple-500 via-orange-500 to-yellow-500 text-transparent bg-clip-text font-semibold text-sm">
-              Purchase a subscription plan to continue or extend your subscription validity and access our app support
-              and services. Thank you for choosing us!
-            </h2>
-          </div>
-      </footer>
+ 
     </div>
     </>
     

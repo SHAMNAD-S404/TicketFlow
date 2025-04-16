@@ -1,7 +1,6 @@
-import { Request , Response } from "express";
-
-
+import { Request, Response } from "express";
 
 export interface IPaymentController {
-    createStripeSession (req : Request , res : Response ) : Promise<void>
+  createCheckoutSession(req: Request, res: Response): Promise<void>;
+  handleStripeWebhook(req: Request, res: Response): Promise<void>;
 }

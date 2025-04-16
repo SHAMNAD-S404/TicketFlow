@@ -20,6 +20,13 @@ export const Messages = {
     REQ_EXIST : "The Request already exist ! try again",
     REQ_SUBMITED : "Request submitted successfully ! ",
     REQ_REJECTED : "Request reject successfully !",
+    ERROR_WHILE : "❌ Error while processing  ",
+    SESSION_SUCCESS : "Session created successfully",
+    WEBHOOK_SIGN_FAIL : "Webhook signature verification failed",
+    VERIFICATION_FAIL : "verification failed !",
+    METADATA_MISSING : "metadata is missing",
+    PURCHASE_SUCCESS : "Purchase verified successfully",
+    ORDER_SAVING_FAILED : "Something went wrong in order saving , please try again",
 
   } as const;
   
