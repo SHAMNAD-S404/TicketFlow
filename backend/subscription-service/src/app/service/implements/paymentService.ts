@@ -25,7 +25,7 @@ export class PaymentService implements IPaymentService {
         line_items: [
           {
             price_data: {
-              currency: "usd",
+              currency: "inr",
               unit_amount: parseInt(data.amount) * 100,
               product_data: {
                 name: `${data.plan} Plan`,

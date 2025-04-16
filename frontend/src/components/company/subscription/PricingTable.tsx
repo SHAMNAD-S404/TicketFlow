@@ -4,7 +4,7 @@ import PricingCard from "./PricingCard";
 const pricingData = {
   silver: {
     title: "6 Months Silver Plan",
-    price: 10,
+    price: 5999,
     period: "6 months",
     features: [
       { text: "Basic Analytics Dashboard" },
@@ -14,7 +14,7 @@ const pricingData = {
   },
   premium: {
     title: "24 months Pro Plan",
-    price: 12,
+    price: 15999,
     period: "24 months",
     features: [
       { text: "All feature can access" },
@@ -25,7 +25,7 @@ const pricingData = {
   },
   gold: {
     title: "12 Months Gold Plan",
-    price: 11,
+    price: 10999,
     period: "12 months",
     features: [
       { text: "All feature can access" },
