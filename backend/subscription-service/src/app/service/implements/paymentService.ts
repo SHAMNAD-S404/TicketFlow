@@ -15,6 +15,7 @@ const stipe = new Stripe(secrets.stripe_secret_key, {
 });
 
 export class PaymentService implements IPaymentService {
+  
   async createCheckoutSession(data: CreateCheckoutDTO): Promise<any> {
     try {
 
@@ -43,7 +44,7 @@ export class PaymentService implements IPaymentService {
           planEndDate: data.planEndDate,
           planValidity: data.planValidity,
         },
-        success_url: data.successUrl,
+        success_url: `${data.successUrl}?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: data.cancelUrl,
       });
       return session;

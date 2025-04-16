@@ -35,6 +35,7 @@ export const TicketHome: React.FC = () => {
   const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
   const [getTicketID, setTicketID] = useState<string>("");
   const [shiftReqHome, setShiftReqHome] = useState<boolean>(false);
+  const [getTicketUUID, setTicketUUID] = useState<string>(""); //ticketuuid is passing for chat , ref : employee/ticketHome
 
   //*****************functions*****************/
   const company = useSelector((state: Rootstate) => state.company.company);
@@ -143,6 +144,7 @@ export const TicketHome: React.FC = () => {
             handleCancle={handleCancelButtonAction}
             handleChatSubMenu={setChatState}
             ticketId={getTicketID}
+            handleTicketUUID={(value: string) => setTicketUUID(value)}
           />
         );
 
@@ -158,7 +160,7 @@ export const TicketHome: React.FC = () => {
 
       default:
         return (
-          <div className="flex flex-wrap gap-12 justify-start p-6">
+          <div className="flex flex-wrap gap-12 justify-ce p-6">
             {subMenuList.map((menu, index) => (
               <DynamicCard
                 key={index}

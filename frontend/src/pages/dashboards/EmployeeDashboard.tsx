@@ -1,12 +1,12 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import Sidebar from "../../components/common/Sidebar";
 import DashboardHeader from "../../components/common/DashboardHeader";
 import EmployeeMainContent from "../../components/employee/EmployeeMainContent";
 import { useDispatch, useSelector } from "react-redux";
-import {  clearUserData } from "../../redux store/employeeSlice";
+import { clearUserData } from "../../redux store/employeeSlice";
 import { Rootstate, AppDispatch } from "../../redux store/store";
 import { logoutUser } from "../../api/services/authService";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 import Swal from "sweetalert2";
 import { showCustomeAlert } from "../../components/utility/swalAlertHelper";
 import { toast } from "react-toastify";
@@ -19,8 +19,10 @@ const EmployeeDashboard: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [activeMenu, setActiveMenu] = useState("dashboard");
 
-  const handleMenuSelect = (menu: string) => setActiveMenu(menu);
-
+  const handleMenuSelect = (menu: string) => {
+    setActiveMenu(menu);
+    navigate(`/employee/dashboard/${menu.toLowerCase().replace(/\s/g, "")}`);
+  };
 
   //user logout
   const handleLogout = async () => {
@@ -50,7 +52,7 @@ const EmployeeDashboard: React.FC = () => {
       }
     } catch (error: any) {
       const errMsg = error.response?.data?.message || Messages.SOMETHING_TRY_AGAIN;
-      toast.error(errMsg)
+      toast.error(errMsg);
     }
   };
 
@@ -61,13 +63,11 @@ const EmployeeDashboard: React.FC = () => {
       <Sidebar role={role} onMenuSelect={handleMenuSelect} />
 
       <div className="flex-1 flex flex-col w-full ">
-        <DashboardHeader 
-        name={employee.name}
-        onLogout={handleLogout}
-        profileImage={employee.imageUrl}
-          />
+        <DashboardHeader name={employee.name} onLogout={handleLogout} profileImage={employee.imageUrl} />
 
-        <EmployeeMainContent activeMenu={activeMenu} />
+        <div className="p-2 bg-gray-100  flex-1">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

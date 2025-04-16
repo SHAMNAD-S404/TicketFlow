@@ -7,9 +7,10 @@ import { clearUserData } from "../../redux store/sudoSlice";
 import { Rootstate, AppDispatch } from "../../redux store/store";
 import { toast } from "react-toastify";
 import { logoutUser } from "../../api/services/authService";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,Outlet } from "react-router-dom";
 import Swal from "sweetalert2";
 import { showCustomeAlert } from "../../components/utility/swalAlertHelper";
+import getErrMssg from "@/components/utility/getErrMssg";
 
 const SuperAdminDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -19,7 +20,11 @@ const SuperAdminDashboard: React.FC = () => {
 
   const [activeMenu, setActiveMenu] = useState("Dashboard");
 
-  const handleMenuSelect = (menu: string) => setActiveMenu(menu);
+  const handleMenuSelect = (menu: string) => {
+    setActiveMenu(menu);
+    navigate(`/sudo/dashboard/${menu.toLowerCase().replace(/\s/g, "")}`);
+  };
+
 
   const handleLogout = async () => {
     try {
@@ -42,16 +47,10 @@ const SuperAdminDashboard: React.FC = () => {
               dispatch(clearUserData());
               navigate("/");
           });
-        } else {
-          toast.error(response.message);
-        }
+        } 
       }
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        alert("error while logout");
-      }
+      toast.error(getErrMssg(error))
     }
   };
 
@@ -67,7 +66,9 @@ const SuperAdminDashboard: React.FC = () => {
         profileImage="https://img.freepik.com/free-photo/androgynous-avatar-non-binary-queer-person_23-2151100205.jpg?t=st=1741444634~exp=1741448234~hmac=b187f1a3d68f5e45ce1ab6c7d130f4f8eb779b4136513619e07a28130596166d&w=826"
          />
 
-        <SAdminMainContent activeMenu={activeMenu} />
+<div className="p-2 bg-gray-100  flex-1">
+                  <Outlet />
+                </div>
       </div>
     </div>
   );

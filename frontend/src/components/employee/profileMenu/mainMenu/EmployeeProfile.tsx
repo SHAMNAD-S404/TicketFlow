@@ -92,12 +92,12 @@ const ProfileUI: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-1 lg:h-[800px] bg-gradient-to-b from-blue-50 to-blue-100 justify-center p-2 rounded-2xl shadow-xl ">
+    <div className="flex flex-1 lg:h-[840px] bg-gradient-to-b from-blue-50 to-blue-100 justify-center p-2 rounded-2xl shadow-xl ">
       <div className="w-full h-fit p-2">
         <h1 className="text-center  text-3xl font-semibold underline underline-offset-8 mb-4 ">Profile</h1>
 
         {/* Main Container */}
-        <div className="bg-white lg:h-[700px] rounded-3xl shadow-2xl p-12 lg:mt-8`">
+        <div className="bg-white lg:h-[650px] rounded-3xl shadow-2xl p-12 lg:mt-8`">
           <header>
             {/* Header */}
             <div className="flex justify-between items-center mb-8">

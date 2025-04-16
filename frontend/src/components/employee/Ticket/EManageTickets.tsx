@@ -105,8 +105,8 @@ export const EManageTickets: React.FC<EManageTickets> = ({
   }, [ticketData]);
 
   return (
-    <div>
-      <div className="flex items-center justify-stretch">
+    <div className="">
+      <div className="flex items-center justify-between p-2">
         <div
           className="text-2xl w-10 bg-white p-2 rounded-2xl shadow-lg shadow-gray-400 hover:bg-blue-500 hover:text-white"
           onClick={handleCancle}>
@@ -114,6 +114,9 @@ export const EManageTickets: React.FC<EManageTickets> = ({
         </div>
         <div>
           <h1 className="text-2xl font-semibold">Manage Tickets</h1>
+        </div>
+        <div>
+          <h1>{""}</h1>
         </div>
       </div>
 

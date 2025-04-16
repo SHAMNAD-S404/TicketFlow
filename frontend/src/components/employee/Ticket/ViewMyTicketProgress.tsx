@@ -4,6 +4,7 @@ import TicketProgressHeader from "@/components/common/TicketProgressHeader";
 import { DockDemo } from "@/components/magicui/DockDemo";
 import { Skeleton } from "@/components/ui/skeleton";
 import getDate from "@/components/utility/getDate";
+import getErrMssg from "@/components/utility/getErrMssg";
 import useTicketData from "@/customHooks/useTicketData";
 import { Messages } from "@/enums/Messages";
 import { ITicketDocument } from "@/interfaces/ITicketDocument";
@@ -74,11 +75,7 @@ const ViewMyTicketProgress: React.FC<IViewMyTicketProgress> = ({ handleCancle, h
         setIsVisible(false);
       }
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error(Messages.SOMETHING_TRY_AGAIN);
-      }
+      toast.error(getErrMssg(error));
     }
   };
 
@@ -92,15 +89,17 @@ const ViewMyTicketProgress: React.FC<IViewMyTicketProgress> = ({ handleCancle, h
 
   return (
     <div>
-     
-      <div className="flex items-center justify-stretch">
+      <div className="flex items-center justify-between   p-2">
         <div
           className="text-2xl w-10 bg-white p-2 rounded-2xl shadow-lg shadow-gray-400 hover:bg-blue-500 hover:text-white"
           onClick={handleCancle}>
           <IoMdArrowRoundBack />{" "}
         </div>
+        <div className="">
+          <h1 className="text-2xl  font-semibold">My Ticket Progress</h1>
+        </div>
         <div>
-          <h1 className="text-2xl font-semibold">My Ticket Progress</h1>
+          <h1>{""}</h1>
         </div>
       </div>
 
