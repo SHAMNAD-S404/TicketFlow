@@ -6,5 +6,6 @@ export const secrets = {
     mongoURL : process.env.MONGOURL as string,
     stripe_secret_key : process.env.STRIPE_SECRET_KEY as string,
     stripe_webhook_secret : process.env.STRIPE_WEBHOOK_SECRET as string,
+    jwt_secret : process.env.JWT_SECRET as string,
     
 }

@@ -27,6 +27,8 @@ export const Messages = {
     METADATA_MISSING : "metadata is missing",
     PURCHASE_SUCCESS : "Purchase verified successfully",
     ORDER_SAVING_FAILED : "Something went wrong in order saving , please try again",
+    TOKEN_INVALID : "Token invalid or not found !",
+    SESSION_ID_MISSING : "Payment referece is missing , try after some time",
 
   } as const;
   

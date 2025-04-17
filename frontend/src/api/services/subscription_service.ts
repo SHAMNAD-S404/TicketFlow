@@ -9,3 +9,12 @@ export const createCheckoutSession = async (data : IHandlePurchaseData ) => {
         throw error;
     }
 }
+
+export const getOrderDetails = async (sessionId : string) => {
+    try {
+        const response = await axiosInstance.get(`/subscription/get-order-details?sessionId=${sessionId}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}

@@ -7,6 +7,7 @@ import { IPaymentService } from "../../service/interface/IPaymentService";
 import { CreateCheckoutDTO } from "../../dtos/paymentDto";
 import Stripe from "stripe";
 import { secrets } from "../../../config/secrets";
+import Roles from "../../../constants/Roles";
 
 //stripe new instance
 const stripe = new Stripe(secrets.stripe_secret_key, {
@@ -39,8 +40,6 @@ export class PaymentController implements IPaymentController {
     }
   };
 
-
-  
   // hanle webhook
   public handleStripeWebhook = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -67,6 +66,30 @@ export class PaymentController implements IPaymentController {
       }
     } catch (error) {
       console.log(`${Messages.ERROR_WHILE} hanlde Stripe webhook : `, error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+    }
+  };
+
+  public getOrderDetails = async (req: Request, res: Response): Promise<void> => {
+    try {
+      
+      const { sessionId } = req.query;
+      const { role } = res.locals.userData;
+      
+      if (role !== Roles.Company) {
+        res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.NO_ACCESS, success: false });
+        return;
+      }
+      if (!sessionId) {
+        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.SESSION_ID_MISSING, success: false });
+        return;
+      }
+
+      const result = await this.paymentService.getOrderDetailsService(sessionId as string);
+      const { message, statusCode, success, data } = result;
+      res.status(statusCode).json({ message, success, data });
+    } catch (error) {
+      console.log(`${Messages.ERROR_WHILE} get order details : `, error);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
     }
   };

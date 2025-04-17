@@ -14,5 +14,13 @@ export class PaymentRepo implements IPaymentRepo {
     }
   }
 
+  async findOneDocument(data: Record<string, string>): Promise<IPayment | null> {
+    try {
+      return await PaymentModel.findOne(data);
+    } catch (error) {
+      throw error
+    }
+  }
+
   
 }

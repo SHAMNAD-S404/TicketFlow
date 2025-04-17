@@ -1,11 +1,11 @@
-
 import { Request , Response , NextFunction } from "express"
 
 export interface UserData {
-    role : string,
-    authUserUUID: string
-    email : string;
-}
+    role: string;
+    authUserUUID: string;
+    email: string;
+  }
+
 
 export const extractUserData = (req:Request,res:Response,next:NextFunction) =>  {
     

@@ -13,7 +13,9 @@ export enum Messages {
     SELECT_A_DEPT = "Select a department to continue!",
     EMPLOYEE_ID_MISSING = "oops issue with selected employee data ! try again!",
     COMPANY_DETAILS_NOT_FOUND = "Company details didn't found ! please try again !",
-    
+    SESSION_ID_MISSING = "Session id is missing please check your req and try again !",
+    FETCH_ORDER_ERROR = "Unable to fetch order details. Please contact support team." ,
+    INVALID_PAY_REFERENCE = "Invalid payment reference.",
 
     
 }

@@ -3,7 +3,7 @@ import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
 import { CreateCheckoutDTO } from "../../dtos/paymentDto";
 import { IPayment, PaymentStatus } from "../../models/interface/IPayment";
-import { IBaseResponse, IPaymentService } from "../interface/IPaymentService";
+import { IBaseResponse, IPaymentService, orderDetailsResponse } from "../interface/IPaymentService";
 import Stripe from "stripe";
 import { PaymentRepo } from "../../repositories/implements/paymentRepo";
 import { IPaymentRepo } from "../../repositories/interface/IPaymentRepo";
@@ -15,10 +15,8 @@ const stipe = new Stripe(secrets.stripe_secret_key, {
 });
 
 export class PaymentService implements IPaymentService {
-  
   async createCheckoutSession(data: CreateCheckoutDTO): Promise<any> {
     try {
-
       const session = await stipe.checkout.sessions.create({
         payment_method_types: ["card"],
         mode: "payment",
@@ -90,6 +88,29 @@ export class PaymentService implements IPaymentService {
         return {
           message: Messages.ORDER_SAVING_FAILED,
           statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+  
+
+  async getOrderDetailsService(sessionId: string): Promise<orderDetailsResponse> {
+    try {
+      const result = await paymentRepo.findOneDocument({ stripeSessionId: sessionId });
+      if (result) {
+        return {
+          message: Messages.FETCH_SUCCESS,
+          statusCode: HttpStatus.OK,
+          success: true,
+          data: result,
+        };
+      } else {
+        return {
+          message: Messages.DATA_NOT_FOUND,
+          statusCode: HttpStatus.NOT_FOUND,
           success: false,
         };
       }

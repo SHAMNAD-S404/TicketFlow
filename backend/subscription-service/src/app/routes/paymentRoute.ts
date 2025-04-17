@@ -3,7 +3,9 @@ import { PaymentController } from "../controllers/implementations/paymentControl
 import { IPaymentController } from "../controllers/interface/IPaymentController";
 import { PaymentService } from "../service/implements/paymentService";
 import { IPaymentService } from "../service/interface/IPaymentService";
-import bodyParser from "body-parser";
+import { authenticateToken } from "../middlewares/authenticateToken";
+import { extractUserData } from "../middlewares/extractUserData";
+
 
 //dependency injection
 const paymentService: IPaymentService = new PaymentService();
@@ -19,6 +21,8 @@ router.post("/webhook",express.raw({ type: "application/json" }), paymentControl
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
-router.post("/create-checkout-session", paymentController.createCheckoutSession);
+
+router.post("/create-checkout-session",authenticateToken,paymentController.createCheckoutSession)
+      .get("/get-order-details",authenticateToken,extractUserData,paymentController.getOrderDetails)
 
 export default router;
