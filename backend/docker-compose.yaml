@@ -173,6 +173,7 @@ services:
     volumes:
       - ./subscription-service:/app
       - /app/node_modules
+      - /app/src/generated
     depends_on:
       rabbitmq:
         condition: service_healthy

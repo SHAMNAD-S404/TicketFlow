@@ -2,11 +2,14 @@ import { secrets } from "../../../config/secrets";
 import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
 import { CreateCheckoutDTO } from "../../dtos/paymentDto";
-import { IPayment, PaymentStatus } from "../../models/interface/IPayment";
+import { IPayment } from "../../models/interface/IPayment";
 import { IBaseResponse, IPaymentService, orderDetailsResponse } from "../interface/IPaymentService";
 import Stripe from "stripe";
 import { PaymentRepo } from "../../repositories/implements/paymentRepo";
 import { IPaymentRepo } from "../../repositories/interface/IPaymentRepo";
+import { paymentStatus } from "../../../generated/prisma";
+
+
 
 const paymentRepo: IPaymentRepo = new PaymentRepo();
 
@@ -62,7 +65,7 @@ export class PaymentService implements IPaymentService {
         };
       }
 
-      const paymentData: Partial<IPayment> = {
+      const paymentData: IPayment = {
         authUserUUID: metadata.authUserUUID,
         companyName: metadata.companyName,
         companyEmail: session.customer_email as string,
@@ -72,12 +75,12 @@ export class PaymentService implements IPaymentService {
         planValidity: metadata.planValidity,
         planStartDate: metadata.planStartDate,
         planEndDate: metadata.planEndDate,
-        paymentStatus: PaymentStatus.SUCCEEDED,
+        paymentStatus: paymentStatus.succeeded,
         stripeSessionId: session.id,
         stripePaymentIntentId: session.payment_intent?.toString() || "",
       };
 
-      const storeData = await paymentRepo.create(paymentData as IPayment);
+      const storeData = await paymentRepo.create(paymentData );
       if (storeData) {
         return {
           message: Messages.PURCHASE_SUCCESS,

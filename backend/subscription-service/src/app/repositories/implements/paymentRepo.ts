@@ -1,26 +1,31 @@
-import { PaymentModel } from "../../models/implements/payment";
+import { PrismaClient } from "../../../generated/prisma";
 import { IPayment } from "../../models/interface/IPayment";
 import { IPaymentRepo } from "../interface/IPaymentRepo";
 
-export class PaymentRepo implements IPaymentRepo {
-  constructor() {}
+const prisma = new PrismaClient();
 
+export class PaymentRepo implements IPaymentRepo {
   async create(payment: IPayment): Promise<IPayment> {
     try {
-      const createDocument = new PaymentModel(payment);
-      return await createDocument.save();
+      const createdPayment = await prisma.payment.create({
+        data: payment,
+      });
+      return createdPayment;
     } catch (error) {
       throw error;
     }
   }
+  
 
-  async findOneDocument(data: Record<string, string>): Promise<IPayment | null> {
+  async findOneDocument(filter: { stripeSessionId: string }): Promise<IPayment | null> {
     try {
-      return await PaymentModel.findOne(data);
+      return await prisma.payment.findFirst({
+        where: {
+          stripeSessionId: filter.stripeSessionId,
+        },
+      });
     } catch (error) {
-      throw error
+      throw error;
     }
   }
-
-  
 }

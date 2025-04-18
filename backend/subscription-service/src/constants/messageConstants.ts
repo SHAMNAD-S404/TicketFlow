@@ -16,10 +16,6 @@ export const Messages = {
     ERROR_PUBLISH_MSSG :  "Error in publishing the message to queue !",
     CHANNEL_NOT_AVILABLE :  "Channle is not avilable",
     SOMETHING_WRONG : "Something went wrong ! please try again",
-    REOPEN_SUCCESS  : "Ticket re-opened successfully !",
-    REQ_EXIST : "The Request already exist ! try again",
-    REQ_SUBMITED : "Request submitted successfully ! ",
-    REQ_REJECTED : "Request reject successfully !",
     ERROR_WHILE : "❌ Error while processing  ",
     SESSION_SUCCESS : "Session created successfully",
     WEBHOOK_SIGN_FAIL : "Webhook signature verification failed",
@@ -29,6 +25,9 @@ export const Messages = {
     ORDER_SAVING_FAILED : "Something went wrong in order saving , please try again",
     TOKEN_INVALID : "Token invalid or not found !",
     SESSION_ID_MISSING : "Payment referece is missing , try after some time",
+    DATABASE_CONNECT_SUCCESS : "🚀 Database connnection established !!",
+    DATABASE_CONNECT_FAIL : "❌ Database connnection establishion failed !!",
+    START_SERVER_ERROR : "❌ Error starting server:",
 
   } as const;
   
