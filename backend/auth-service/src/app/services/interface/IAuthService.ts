@@ -8,6 +8,10 @@ export interface IChangePassData {
   newPassword : string
 }
 
+export interface IUpdateOneDocResp  extends basicResponse{
+   data  ? : any
+}
+
 
 
 export interface IAuthService {
@@ -68,4 +72,6 @@ export interface IAuthService {
   handleResetPassword (token:string,password:string) : Promise <basicResponse>;
 
   changePasswordService (data: IChangePassData) : Promise<basicResponse>
+
+  updateDocumentService ( searchQuery : Record<string,any> , updateQuery : Record<string,any>) : Promise<IUpdateOneDocResp>
 }

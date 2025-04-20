@@ -7,5 +7,5 @@ export interface IUser {
     authUserUUID: string,
     isFirstLogin:boolean,
     isBlock:boolean;
-    subscriptionEndDate? : string;
+    subscriptionEndDate ? : string;
 }

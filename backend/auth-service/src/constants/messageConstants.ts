@@ -31,6 +31,9 @@ export const Messages = {
     PASSWORD_NOT_MATCHING : "Current password is not matching !",
     INPUT_INVALID_OR_MISSING_SOME_FIELD : "Given input are invalid or some of fields are missing ! try again",
     SOMETHING_WENT_WRONG : "Something went wrong try again later",
+    DATA_NOT_FOUND : "requested data not found",
+    
+
 
     
   

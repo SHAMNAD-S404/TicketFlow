@@ -49,8 +49,13 @@ export class EmployeeController implements IEmployeeController {
       }
 
       const { message, success, authData } = saveEmployeeData;
+      //payload data to send to auth consumer 
+      const authservicePayload = {
+        eventType : "create-user-employee",
+        userData : authData
+      }
       //sending data to company service
-      await publishToQueue(RabbitMQConfig.authConsumerQueue, authData as object);
+      await publishToQueue(RabbitMQConfig.authConsumerQueue, authservicePayload);
 
       res.status(201).json({ message, success });
       return;

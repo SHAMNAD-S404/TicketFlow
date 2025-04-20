@@ -1,6 +1,6 @@
 import { UserRepository } from "../../repositories/implements/userRepository";
 import { RegisterUserDTO } from "../../dtos/registerUserDTO";
-import { IAuthService, IChangePassData } from "../../services/interface/IAuthService";
+import { IAuthService, IChangePassData, IUpdateOneDocResp } from "../../services/interface/IAuthService";
 import { hashPassword, comparePassword } from "../../../utils/hashUtils";
 import { generateOTP } from "../../../utils/otpUtils";
 import { RabbitMQConfig } from "../../../config/rabbitmq";
@@ -67,7 +67,13 @@ export class AuthService implements IAuthService {
 
       //store user data in auth-service db.
       const role = UserRoles.Company;
-      const storeUser = await this.userRepository.create(email, hashedPassword, role, authUserUUID,subscriptionEndDate);
+      const storeUser = await this.userRepository.create(
+        email,
+        hashedPassword,
+        role,
+        authUserUUID,
+        subscriptionEndDate
+      );
       if (!storeUser) {
         return {
           message: Messages.FAIL_TRY_AGAIN,
@@ -75,7 +81,6 @@ export class AuthService implements IAuthService {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         };
       }
-
 
       const companyData = {
         authUserUUID: storeUser.authUserUUID,
@@ -86,7 +91,7 @@ export class AuthService implements IAuthService {
         corporatedId,
         originCountry,
         role,
-        subscriptionEndDate : generatesubscriptionEndDate()
+        subscriptionEndDate: generatesubscriptionEndDate(),
       };
 
       //delete user data from reddis
@@ -593,11 +598,11 @@ export class AuthService implements IAuthService {
     try {
       const { currentPassword, email, newPassword } = data;
       console.log("im servide eee ");
-      
-      console.log(data)
+
+      console.log(data);
       const isExist = await this.userRepository.findByEmail(email);
       console.log(isExist);
-      
+
       if (!isExist) {
         return {
           message: Messages.USER_NOT_FOUND,
@@ -616,7 +621,10 @@ export class AuthService implements IAuthService {
       }
 
       const getHashedPassword = await hashPassword(newPassword);
-      const updatePassword = await this.userRepository.changePasswordRepo({ email: email }, { password: getHashedPassword });
+      const updatePassword = await this.userRepository.changePasswordRepo(
+        { email: email },
+        { password: getHashedPassword }
+      );
       if (!updatePassword) {
         return {
           message: Messages.SOMETHING_WENT_WRONG,
@@ -628,6 +636,31 @@ export class AuthService implements IAuthService {
         message: Messages.PASSWORD_UPDATED,
         statusCode: HttpStatus.OK,
         success: true,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //updae one doucment
+  async updateDocumentService(
+    searchQuery: Record<string, any>,
+    updateQuery: Record<string, any>
+  ): Promise<IUpdateOneDocResp> {
+    try {
+      const response = await this.userRepository.updateOneDocument(searchQuery, updateQuery);
+      if (!response) {
+        return {
+          message: Messages.DATA_NOT_FOUND,
+          success: false,
+          statusCode: HttpStatus.BAD_REQUEST,
+        };
+      }
+      return {
+        message: Messages.USER_UPDATE_SUCCESS,
+        statusCode: HttpStatus.OK,
+        success: true,
+        data: response,
       };
     } catch (error) {
       throw error;

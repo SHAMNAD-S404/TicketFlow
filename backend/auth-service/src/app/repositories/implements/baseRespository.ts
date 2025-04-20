@@ -24,10 +24,16 @@ export class BaseRepository<T extends Document> {
    * @param role The role of the user.
    * @returns The user document.
    */
-  async create(email: string, password: string, role: string,authUserUUID:string,subscriptionEndDate:string): Promise<T> {
+  async create(
+    email: string,
+    password: string,
+    role: string,
+    authUserUUID: string,
+    subscriptionEndDate: string
+  ): Promise<T> {
     try {
       // Create a new user document
-      const userData = { email, password, role , authUserUUID,subscriptionEndDate };
+      const userData = { email, password, role, authUserUUID, subscriptionEndDate };
       const document = new this.model(userData);
 
       // Save the user document
@@ -37,7 +43,6 @@ export class BaseRepository<T extends Document> {
       throw error;
     }
   }
-
 
   //========================================================================================================================
   /**
@@ -107,7 +112,6 @@ export class BaseRepository<T extends Document> {
     }
   }
 
-
   //========================================================================================================================
   /**
    * Deletes a document by its ID.
@@ -126,30 +130,28 @@ export class BaseRepository<T extends Document> {
   }
 
   //========================================================================================================================
-  async findByAuthUserUUID(authUserUUID : string) : Promise<T | null>{
+  async findByAuthUserUUID(authUserUUID: string): Promise<T | null> {
     try {
-      return await this.model.findOne({authUserUUID: authUserUUID});
+      return await this.model.findOne({ authUserUUID: authUserUUID });
     } catch (error) {
       throw error;
     }
   }
 
-  async blockAndUnblockUserWithEmail(email : string , status:boolean) : Promise<T | null> {
+  async blockAndUnblockUserWithEmail(email: string, status: boolean): Promise<T | null> {
     try {
-      return await  this.model.findOneAndUpdate({email:email},{isBlock:status},{new:true});
-    } catch (error) {
-      throw error
-    }
-  }
-
-  async updateOneDocument<T>(query: Record<string, any>, updateQuery: Record<string, any>): Promise<T | null> {
-    try {
-      return await this.model.findOneAndUpdate(query,
-        {$set : updateQuery},{new : true});
+      return await this.model.findOneAndUpdate({ email: email }, { isBlock: status }, { new: true });
     } catch (error) {
       throw error;
     }
   }
 
-  
+  //UPDATE ONE DOCUMEMT
+  async updateOneDocument(query: Record<string, any>, updateQuery: Record<string, any>): Promise<T | null> {
+    try {
+      return await this.model.findOneAndUpdate(query, { $set: updateQuery }, { new: true });
+    } catch (error) {
+      throw error;
+    }
+  }
 }

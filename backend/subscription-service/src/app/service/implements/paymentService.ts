@@ -97,9 +97,17 @@ export class PaymentService implements IPaymentService {
           subscriptionEndDate : storeData.planEndDate,
           isSubscriptionExpired : false
         }
+        //payload for sending to auth service queue
+        const authservicePayload = {
+          eventType : "subscription-date-update",
+          companyEmail : storeData.companyEmail,
+          subscriptionEndDate : storeData.planEndDate
+        }
 
         //publish to company queue
         publishToQueue(RabbitMQConfig.COMPANY_QUEUE,companyPayload)
+        //publish to auth service queue
+        publishToQueue(RabbitMQConfig.AUTH_QUEUE,authservicePayload)
         
 
         return {
