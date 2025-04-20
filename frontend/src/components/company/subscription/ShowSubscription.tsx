@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { GiMoneyStack } from "react-icons/gi";
 import { MdOutlineWorkspacePremium } from "react-icons/md";
 import { useSelector } from "react-redux";
@@ -6,6 +6,10 @@ import { Rootstate } from "@/redux store/store";
 import PricingTable from "./PricingTable";
 import { FaFileAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux store/store";
+import { fetchCompany } from "@/redux store/userSlice";
+
 
 const ShowSubscription: React.FC = () => {
   //redux store data
@@ -14,6 +18,13 @@ const ShowSubscription: React.FC = () => {
   const isFreeTierPlan: boolean = company?.subscriptionPlan === "Free Tier";
 
   const navigate = useNavigate();
+  //dispatch fn to fetch new data
+  const dispatch = useDispatch<AppDispatch>();
+  
+
+  useEffect (() => {
+    dispatch(fetchCompany());
+  },[])
 
   return (
     <>

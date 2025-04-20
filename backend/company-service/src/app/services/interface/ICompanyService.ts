@@ -11,8 +11,13 @@ export interface ISubStaticResp extends IBaseResponse  {
     }
 }
 
+export interface IUpdateCompanyResp extends IBaseResponse{
+    data : ICompany | null;
+}
+
 
 export interface ICompanyService  {
+
     createCompany(companyData : ICompany): Promise<{message : string,data?:ICompany, success : boolean}>;
     fetchCompanyData(email : string) : Promise<{message : string, data?:ICompany,success:boolean}>
     getCompanyIdWithAuthUserUUID(userUUID:string) : Promise<string>;
@@ -21,5 +26,6 @@ export interface ICompanyService  {
     companyStatusChange(email : string ,isBlock : boolean)  : Promise<IBaseResponse>
     updateProfileImage (email : string , imageUrl : string) : Promise<IUpdateProfileImage>
     getSubsStaticService () : Promise<ISubStaticResp>
+    updateCompanyService (searchQuery : Record<string,any> , updateQuery : Record<string,any>) : Promise<IUpdateCompanyResp>;
     
 }

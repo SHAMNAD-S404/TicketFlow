@@ -1,9 +1,8 @@
 import { ICompany } from "../../models/interface/IcompanyModel";
 import CompanyRepository from "../../repositories/implements/company";
-import { ICompanyService, ISubStaticResp } from "../interface/ICompanyService";
+import { ICompanyService, ISubStaticResp, IUpdateCompanyResp } from "../interface/ICompanyService";
 import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
-import { promise } from "zod";
 
 export default class CompanyService implements ICompanyService {
   async createCompany(companyData: ICompany): Promise<{ message: string; data?: ICompany; success: boolean }> {
@@ -208,6 +207,33 @@ export default class CompanyService implements ICompanyService {
           activeUserCount,
           expiredUserCount,
         },
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //udpate company subscription status
+
+  async updateCompanyService(
+    searchQuery: Record<string, any>,
+    updateQuery: Record<string, any>
+  ): Promise<IUpdateCompanyResp> {
+    try {
+      const update = await CompanyRepository.updateOneDocument(searchQuery, updateQuery);
+      if (!update) {
+        return {
+          message: Messages.DATA_NOT_FOUND,
+          success: false,
+          statusCode: HttpStatus.BAD_REQUEST,
+          data: null,
+        };
+      }
+      return {
+        message: Messages.UPDATE_SUCCESS,
+        statusCode: HttpStatus.OK,
+        success: true,
+        data: update,
       };
     } catch (error) {
       throw error;

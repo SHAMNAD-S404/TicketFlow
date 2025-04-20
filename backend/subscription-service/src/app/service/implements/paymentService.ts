@@ -14,6 +14,8 @@ import Stripe from "stripe";
 import { PaymentRepo } from "../../repositories/implements/paymentRepo";
 import { IPaymentRepo } from "../../repositories/interface/IPaymentRepo";
 import { paymentStatus } from "../../../generated/prisma";
+import { publishToQueue } from "../../../queues/publisher";
+import { RabbitMQConfig } from "../../../config/rabbitMQConfig";
 
 const paymentRepo: IPaymentRepo = new PaymentRepo();
 
@@ -86,6 +88,20 @@ export class PaymentService implements IPaymentService {
 
       const storeData = await paymentRepo.create(paymentData);
       if (storeData) {
+
+        //payload for sending to company queue
+        const companyPayload = {
+          eventType : "subscription-purchase-update",
+          companyUUID : storeData.authUserUUID,
+          subscriptionPlan : storeData.plan,
+          subscriptionEndDate : storeData.planEndDate,
+          isSubscriptionExpired : false
+        }
+
+        //publish to company queue
+        publishToQueue(RabbitMQConfig.COMPANY_QUEUE,companyPayload)
+        
+
         return {
           message: Messages.PURCHASE_SUCCESS,
           statusCode: HttpStatus.OK,

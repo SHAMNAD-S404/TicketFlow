@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { Rootstate ,AppDispatch } from "../../../../redux store/store";
 import { useDispatch } from "react-redux";
 import { fetchCompany } from "../../../../redux store/userSlice";
+import getErrMssg from "@/components/utility/getErrMssg";
 
 interface ProfileEditProps {
   onCancel: () => void;
@@ -50,15 +51,9 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ onCancel }) => {
         //update the context to store latest date
         dispatch(fetchCompany())
         
-      } else {
-        toast.error(response.message);
       }
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        alert("Error on register employee. Please try again later.");
-      }
+      toast.error(getErrMssg(error))
     }
   };
 

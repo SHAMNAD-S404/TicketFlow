@@ -1,14 +1,15 @@
 import { RabbitMQConfig } from "../../config/rabbitMQ";
 import { EventType } from "../../constants/queueEventsType";
 import { channel } from "../rabbitConnection";
-import { companyStatusUpdate } from "../eventHandlers/companyHandler";
-import { employeeStatusUpdate ,updateEmployeeTicketStatus} from "../eventHandlers/employeeHandler";
+import { companyStatusUpdate, companySubscriptionUpdate } from "../eventHandlers/companyHandler";
+import { employeeStatusUpdate, updateEmployeeTicketStatus } from "../eventHandlers/employeeHandler";
 
 const evnetHandler: { [key: string]: (data: any) => void } = {
   //@EventType is  enum const
   [EventType.COMPANY_STATUS_UPDATE]: companyStatusUpdate,
+  [EventType.SUBSCRIPTION_UPDATE]: companySubscriptionUpdate,
   [EventType.EMPLOYEE_STATUS_UPDATE]: employeeStatusUpdate,
-  [EventType.EMPLOYEE_TICKET_UPDATE] : updateEmployeeTicketStatus,
+  [EventType.EMPLOYEE_TICKET_UPDATE]: updateEmployeeTicketStatus,
 };
 
 export const mainConsumer = async (): Promise<void> => {

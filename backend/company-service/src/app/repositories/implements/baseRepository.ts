@@ -69,7 +69,7 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
     }
   }
 
-  async updateOneDocument(searchQuery: Record<string, string>, updateData: Record<string, string>): Promise<T | null> {
+  async updateOneDocument(searchQuery: Record<string, string>, updateData: Partial<T>): Promise<T | null> {
     try {
       return await this.model.findOneAndUpdate(searchQuery, { $set: updateData }, { new: true });
     } catch (error) {

@@ -21,7 +21,8 @@ export const Messages = {
     DEPT_DELETE_SUCCESS : "Department deleted successfully",
     DEPT_HAVE_EMPLOYEES : "Department have employees !. first Manage them and try again !",
     ERROR_WHILE : "❌ Error while processing  ",
-    
+    COMPANY_SUBS_UPDATE_ERROR : "Error in company subscirption update rabbit queue",
+    UPDATE_SUCCESS : "successfully updatd ",
 
   };
   
