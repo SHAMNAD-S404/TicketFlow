@@ -16,6 +16,7 @@ export enum Messages {
     SESSION_ID_MISSING = "Session id is missing please check your req and try again !",
     FETCH_ORDER_ERROR = "Unable to fetch order details. Please contact support team." ,
     INVALID_PAY_REFERENCE = "Invalid payment reference.",
+    FETCH_ID_FAIL_RETRY = "Fetching Id is failed , please try again !",
 
     
 }

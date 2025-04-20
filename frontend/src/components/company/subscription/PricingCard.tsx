@@ -11,7 +11,7 @@ import secrets from "@/config/secrets";
 import { findMaxDate } from "@/components/utility/getMaxDate";
 import { getPlanEndDate } from "@/components/utility/getFutureDate";
 import { validatePurchaseData } from "@/components/utility/validateData";
-import { createCheckoutSession } from "@/api/services/subscription_service";
+import { createCheckoutSession } from "@/api/services/subscriptionService";
 
 interface PricingFeature {
   text: string;

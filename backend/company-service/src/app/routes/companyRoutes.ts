@@ -23,6 +23,7 @@ router.get("/get-user",extractUserData,adminController.getUserData)
       .patch("/update-profile",adminController.updateCompany)
       .get("/get-all-companies",extractUserData,adminController.fetchAllCompany)
       .post("/upload-dp",extractUserData,upload.single('file'),adminController.uploadProfileImage)
+      .get ("/get-company-subs-statics",extractUserData,adminController.fetchSubsStats)
      
 
 

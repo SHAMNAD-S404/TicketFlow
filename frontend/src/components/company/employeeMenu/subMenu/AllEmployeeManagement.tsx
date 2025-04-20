@@ -241,7 +241,8 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({ handleCan
                             <FaEye className="w-5 h-5 text-gray-600 hover:text-blue-600" />
                           </button>
                         </SheetTrigger>
-                        <SheetContent className="bg-black border-none text-center text-white ">
+                        <SheetContent   className="bg-black border-none text-center text-white ">
+
                           <SheetHeader>
                             <SheetTitle className="text-center text-white text-2xl mt-8"> Employee Details</SheetTitle>
                             <SheetDescription className="text-center text-sm text-white  font-thin">

@@ -22,7 +22,9 @@ router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
 
-router.post("/create-checkout-session",authenticateToken,paymentController.createCheckoutSession)
-      .get("/get-order-details",authenticateToken,extractUserData,paymentController.getOrderDetails)
+router.post ("/create-checkout-session",authenticateToken,paymentController.createCheckoutSession)
+      .get  ("/get-order-details",authenticateToken,extractUserData,paymentController.getOrderDetails)
+      .get  ("/get-purchase-history",authenticateToken,extractUserData,paymentController.fetchOrderHistory)
+      .get  ("/get-subscription-statics",authenticateToken,extractUserData,paymentController.fetchSubsStatics)
 
 export default router;

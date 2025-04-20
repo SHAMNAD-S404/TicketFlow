@@ -1,20 +1,15 @@
 import { ICompany } from "../../models/interface/IcompanyModel";
 import CompanyRepository from "../../repositories/implements/company";
-import { ICompanyService } from "../interface/ICompanyService";
+import { ICompanyService, ISubStaticResp } from "../interface/ICompanyService";
 import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
+import { promise } from "zod";
 
 export default class CompanyService implements ICompanyService {
- 
-
-  async createCompany(
-    companyData: ICompany
-  ): Promise<{ message: string; data?: ICompany; success: boolean }> {
+  async createCompany(companyData: ICompany): Promise<{ message: string; data?: ICompany; success: boolean }> {
     try {
       // check if company with the same email already exists
-      const existingCompany = await CompanyRepository.findOneWithEmail(
-        companyData.email
-      );
+      const existingCompany = await CompanyRepository.findOneWithEmail(companyData.email);
       if (existingCompany) {
         return {
           message: Messages.USER_ALREADY_EXIST,
@@ -37,7 +32,6 @@ export default class CompanyService implements ICompanyService {
       return { message: String(error), success: false };
     }
   }
-
 
   async fetchCompanyData(email: string): Promise<{
     message: string;
@@ -83,30 +77,31 @@ export default class CompanyService implements ICompanyService {
     try {
       const isExist = await CompanyRepository.findOneByEmail(email);
       if (!isExist) {
-        return { message:Messages.USER_NOT_FOUND, success: false };
+        return { message: Messages.USER_NOT_FOUND, success: false };
       }
-      const updateCompany = await CompanyRepository.updateProfileByEmail(
-        email,
-        upateData
-      );
+      const updateCompany = await CompanyRepository.updateProfileByEmail(email, upateData);
       if (!updateCompany) {
-        return { message:Messages.FAIL_TRY_AGAIN, success: false };
+        return { message: Messages.FAIL_TRY_AGAIN, success: false };
       }
 
-      return { message:Messages.USER_STATUS_UPDATED, success: true };
+      return { message: Messages.USER_STATUS_UPDATED, success: true };
     } catch (error) {
       return { message: String(error), success: false };
     }
   }
 
-  async getAllCompany(page:number,sort:string,searchKey:string): Promise<{
+  async getAllCompany(
+    page: number,
+    sort: string,
+    searchKey: string
+  ): Promise<{
     message: string;
     successs: boolean;
-    data?: {companies:ICompany[] | null,totalPages:number}
+    data?: { companies: ICompany[] | null; totalPages: number };
     statusCode: number;
   }> {
     try {
-      const result = await CompanyRepository.findAllCompany(page,sort,searchKey);
+      const result = await CompanyRepository.findAllCompany(page, sort, searchKey);
       if (result) {
         return {
           message: Messages.FETCH_SUCCESS,
@@ -150,10 +145,7 @@ export default class CompanyService implements ICompanyService {
           success: false,
         };
       }
-      const updateStatus = await CompanyRepository.updateCompanyStatus(
-        email,
-        isBlock
-      );
+      const updateStatus = await CompanyRepository.updateCompanyStatus(email, isBlock);
       if (!updateStatus) {
         return {
           message: Messages.FAIL_TRY_AGAIN,
@@ -176,29 +168,49 @@ export default class CompanyService implements ICompanyService {
     }
   }
 
-  async updateProfileImage(email: string, imageUrl: string): Promise<{ message: string; success: boolean; statusCode: number; imageUrl?: string; }> {
+  async updateProfileImage(
+    email: string,
+    imageUrl: string
+  ): Promise<{ message: string; success: boolean; statusCode: number; imageUrl?: string }> {
     try {
-
-      const result = await CompanyRepository.updateImageUrl(email,imageUrl);
-      if(result){
+      const result = await CompanyRepository.updateImageUrl(email, imageUrl);
+      if (result) {
         return {
-          message : Messages.IMAGE_UPDATED,
-          success : true,
-          statusCode : HttpStatus.OK,
-          imageUrl : result
-        }
-      }else{
+          message: Messages.IMAGE_UPDATED,
+          success: true,
+          statusCode: HttpStatus.OK,
+          imageUrl: result,
+        };
+      } else {
         return {
-          message : Messages.DATA_NOT_FOUND,
-          statusCode:HttpStatus.BAD_REQUEST,
-          success : false
-        }
+          message: Messages.DATA_NOT_FOUND,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
       }
-
     } catch (error) {
-      throw error
+      throw error;
     }
   }
 
-
+  //to get the subs statics of company
+  async getSubsStaticService(): Promise<ISubStaticResp> {
+    try {
+      const [activeUserCount, expiredUserCount] = await Promise.all([
+        CompanyRepository.getDocumentCount({ isSubscriptionExpired: false }),
+        CompanyRepository.getDocumentCount({ isSubscriptionExpired: true }),
+      ]);
+      return {
+        message: Messages.FETCH_SUCCESS,
+        success: true,
+        statusCode: HttpStatus.OK,
+        data: {
+          activeUserCount,
+          expiredUserCount,
+        },
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }

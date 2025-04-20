@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { OrderDetails } from "@/interfaces/orderDetails.interface";
-import { getOrderDetails } from "@/api/services/subscription_service";
+import { getOrderDetails } from "@/api/services/subscriptionService";
 import { toast } from "react-toastify";
 import { Messages } from "@/enums/Messages";
 import { Check, FileText, User, Calendar, CreditCard } from "lucide-react";

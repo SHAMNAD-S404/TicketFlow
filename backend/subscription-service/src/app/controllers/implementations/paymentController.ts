@@ -72,16 +72,17 @@ export class PaymentController implements IPaymentController {
 
   public getOrderDetails = async (req: Request, res: Response): Promise<void> => {
     try {
-      
       const { sessionId } = req.query;
       const { role } = res.locals.userData;
-      
+
       if (role !== Roles.Company) {
-        res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.NO_ACCESS, success: false });
+        res.status(HttpStatus.UNAUTHORIZED)
+        .json({ message: Messages.NO_ACCESS, success: false });
         return;
       }
       if (!sessionId) {
-        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.SESSION_ID_MISSING, success: false });
+        res.status(HttpStatus.BAD_REQUEST)
+        .json({ message: Messages.SESSION_ID_MISSING, success: false });
         return;
       }
 
@@ -93,4 +94,57 @@ export class PaymentController implements IPaymentController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
     }
   };
+
+  // to get the all payment history by  authUserUUID
+  public fetchOrderHistory = async (req: Request, res: Response): Promise<void> => {
+    try {
+
+      const { role , authUserUUID } = res.locals.userData;
+      if (role !== Roles.Company) {
+        res.status(HttpStatus.UNAUTHORIZED).
+        json({ message: Messages.NO_ACCESS, success: false });
+        return;
+      }
+      if (!authUserUUID) {
+        res.status(HttpStatus.BAD_REQUEST).
+        json({ message: Messages.SESSION_ID_MISSING, success: false });
+        return;
+      }
+      
+      const getData = await this.paymentService.getAllPaymentHistoryService(authUserUUID as string);
+      const { message, statusCode, success, data } = getData;
+      res.status(statusCode).
+      json({ message, success, data });
+    } catch (error) {
+      console.log(`${Messages.ERROR_WHILE} fetch order history : `, error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR)
+      .json({ message: Messages.SERVER_ERROR, success: false });
+    }
+  };
+
+  //to fetch the subscription statics 
+  public fetchSubsStatics  = async (req: Request, res: Response): Promise<void> => {
+    try {
+
+      const { role } = res.locals.userData;
+      if (role !== Roles.Admin) {
+        res.status(HttpStatus.UNAUTHORIZED).
+        json({ message: Messages.NO_ACCESS, success: false });
+        return;
+      }
+
+      const result = await this.paymentService.getRevanueAndCount();
+      const { message, statusCode,success,data } = result;
+      res.status(statusCode).json({message,success,data})
+      
+    } catch (error) {
+      console.log(`${Messages.ERROR_WHILE} fetch sub statics : `, error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR)
+      .json({ message: Messages.SERVER_ERROR, success: false });
+    }
+  }
+
+
 }
+
+

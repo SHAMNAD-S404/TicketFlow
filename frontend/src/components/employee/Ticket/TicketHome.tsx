@@ -1,6 +1,6 @@
 import TicketForm from "@/components/common/TicketForm";
 import React, { useState } from "react";
-import GifImage from "../../../assets/gif/star.gif";
+import GifImage from "../../../assets/images/black.png";
 import DynamicCard from "@/components/utility/DynamicCard";
 import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux store/store";

@@ -27,6 +27,7 @@ import EmployeeManagement from '@/components/company/employeeMenu/mainMenu/Emplo
 import DepartmentManagement from '@/components/company/departmentMenu/mainMenu/DepartmentManagement';
 import DashHome from '@/components/company/dashboard/DashHome';
 import PaymentCancel from '@/pages/payment/PaymentCancel';
+import PurchaseHistory from '@/components/company/subscription/PurchaseHistory';
 
 const CompanyAdminRoutes : React.FC = () => {
   return (
@@ -36,6 +37,7 @@ const CompanyAdminRoutes : React.FC = () => {
           <Route path="subscription" element={<ShowSubscription/>} />
           <Route path='payment/success'  element={<PaymentSuccess/>} />
           <Route path='payment/cancel' element={<PaymentCancel/>} />
+          <Route path='purchase-history' element={<PurchaseHistory/>} />
           <Route path='profile' element={<ProfileUI/>} />
           <Route path='tickets' element={<TicketHome/>} />
           <Route path='employeemanagement' element={<EmployeeManagement/>} />

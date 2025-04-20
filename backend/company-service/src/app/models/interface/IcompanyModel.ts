@@ -12,6 +12,7 @@ export interface ICompany extends Document {
   role : string ;
   subscriptionPlan:string;
   subscriptionEndDate : string;
+  isSubscriptionExpired : boolean;
   isBlock : boolean;
   imageUrl : string;
 }

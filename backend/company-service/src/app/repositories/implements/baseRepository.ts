@@ -84,4 +84,14 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
       throw error
     }
   }
+
+  //to count the documents based on conditioin
+  async getDocumentCount(filter: Record<string, any>): Promise<number> {
+    try {
+        return await this.model.countDocuments(filter)
+    } catch (error) {
+      throw error
+    }
+  }
+
 }

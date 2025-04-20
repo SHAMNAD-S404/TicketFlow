@@ -4,6 +4,12 @@ import { IBaseResponse } from "../../interfaces/IBaseResponse";
 interface IUpdateProfileImage extends IBaseResponse {
     imageUrl ? : string
 }
+export interface ISubStaticResp extends IBaseResponse  {
+    data : {
+        activeUserCount : number,
+        expiredUserCount : number,
+    }
+}
 
 
 export interface ICompanyService  {
@@ -14,5 +20,6 @@ export interface ICompanyService  {
     getAllCompany(page:number,sort:string,searchKey:string) : Promise<{message:string , successs:boolean , data ? : {companies:ICompany[] | null,totalPages:number} , statusCode : number}>
     companyStatusChange(email : string ,isBlock : boolean)  : Promise<IBaseResponse>
     updateProfileImage (email : string , imageUrl : string) : Promise<IUpdateProfileImage>
+    getSubsStaticService () : Promise<ISubStaticResp>
     
 }

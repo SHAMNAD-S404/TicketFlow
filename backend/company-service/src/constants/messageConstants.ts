@@ -20,6 +20,7 @@ export const Messages = {
     DEPT_CHANGE_SUCCESS : "Department changed successfully",
     DEPT_DELETE_SUCCESS : "Department deleted successfully",
     DEPT_HAVE_EMPLOYEES : "Department have employees !. first Manage them and try again !",
+    ERROR_WHILE : "❌ Error while processing  ",
     
 
   };

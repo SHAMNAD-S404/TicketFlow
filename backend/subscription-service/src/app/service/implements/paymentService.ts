@@ -3,13 +3,17 @@ import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
 import { CreateCheckoutDTO } from "../../dtos/paymentDto";
 import { IPayment } from "../../models/interface/IPayment";
-import { IBaseResponse, IPaymentService, orderDetailsResponse } from "../interface/IPaymentService";
+import {
+  IBaseResponse,
+  IPaymentHistoryRes,
+  IPaymentService,
+  IRevanuAndCountResp,
+  orderDetailsResponse,
+} from "../interface/IPaymentService";
 import Stripe from "stripe";
 import { PaymentRepo } from "../../repositories/implements/paymentRepo";
 import { IPaymentRepo } from "../../repositories/interface/IPaymentRepo";
 import { paymentStatus } from "../../../generated/prisma";
-
-
 
 const paymentRepo: IPaymentRepo = new PaymentRepo();
 
@@ -80,7 +84,7 @@ export class PaymentService implements IPaymentService {
         stripePaymentIntentId: session.payment_intent?.toString() || "",
       };
 
-      const storeData = await paymentRepo.create(paymentData );
+      const storeData = await paymentRepo.create(paymentData);
       if (storeData) {
         return {
           message: Messages.PURCHASE_SUCCESS,
@@ -98,7 +102,6 @@ export class PaymentService implements IPaymentService {
       throw error;
     }
   }
-  
 
   async getOrderDetailsService(sessionId: string): Promise<orderDetailsResponse> {
     try {
@@ -117,6 +120,58 @@ export class PaymentService implements IPaymentService {
           success: false,
         };
       }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // to fetch the all payment history by authUserUUID
+
+  async getAllPaymentHistoryService(authUserUUID: string): Promise<IPaymentHistoryRes> {
+    try {
+      const result = await paymentRepo.getAllPaymentsByAuthUUID(authUserUUID);
+      if (result) {
+        return {
+          message: Messages.FETCH_SUCCESS,
+          success: true,
+          statusCode: HttpStatus.OK,
+          data: result,
+        };
+      } else {
+        return {
+          message: Messages.DATA_NOT_FOUND,
+          success: false,
+          statusCode: HttpStatus.NOT_FOUND,
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //to get the total orders and total revanue
+  async getRevanueAndCount(): Promise<IRevanuAndCountResp> {
+    try {
+      const [revenue, order] = await Promise.all([
+        paymentRepo.getTotalRevanue(),
+         paymentRepo.getTotalOrdersCount()
+        ]);
+      if (!revenue || !order) {
+        return {
+          message: Messages.DATA_NOT_FOUND,
+          success: false,
+          statusCode: HttpStatus.BAD_REQUEST,
+        };
+      }
+      return {
+        message: Messages.FETCH_SUCCESS,
+        success: true,
+        statusCode: HttpStatus.OK,
+        data: {
+          totalOrders: order,
+          totalRevenue: revenue,
+        },
+      };
     } catch (error) {
       throw error;
     }

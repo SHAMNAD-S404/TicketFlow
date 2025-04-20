@@ -210,3 +210,14 @@ export const deleteDepartment  = async (id:string) => {
     throw error;
   }
 }
+
+
+//api call to fetch company subscription statics in the sudo subs management
+export const fetchCompanySubStatics = async () => {
+   try {
+     const response = await axiosInstance.get("/company/comp/get-company-subs-statics");
+     return response.data;
+   } catch (error) {
+    throw error
+   }
+}

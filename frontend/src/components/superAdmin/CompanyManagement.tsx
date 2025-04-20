@@ -2,29 +2,16 @@ import React, { useEffect, useState, useCallback } from "react";
 import { ICompanyData } from "../../types/ICompanyData";
 import { fetchAllCompanies } from "../../api/services/companyService";
 import { toast } from "react-toastify";
-import { MessageConst } from "../../utils/constants/messageConstants";
 import { MdWorkspacePremium, MdOutlineEmail } from "react-icons/md";
 import { GrMapLocation } from "react-icons/gr";
 import { debounce } from "lodash";
 import { handleblockCompany } from "../../api/services/authService";
-import { Messages } from "../../enums/Messages";
 import { showCustomeAlert } from "../utility/swalAlertHelper";
-
-import {
-  FaEye,
-  FaChevronDown,
-  FaChevronLeft,
-  FaChevronRight,
-} from "react-icons/fa";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "../common/Sheet";
+import { FaEye, FaChevronDown } from "react-icons/fa";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "../common/Sheet";
 import { searchInputValidate } from "../utility/searchInputValidateNameEmail";
+import getErrMssg from "../utility/getErrMssg";
+import Pagination from "../common/Pagination";
 
 const CompanyManagement: React.FC = () => {
   const [sort, setSortBy] = useState<string>("recent");
@@ -34,7 +21,6 @@ const CompanyManagement: React.FC = () => {
 
   const [companyData, setCompanyData] = useState<ICompanyData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
 
   const handleBlockUser = useCallback(
     debounce(
@@ -57,19 +43,13 @@ const CompanyManagement: React.FC = () => {
 
               setCompanyData((prevCompany) =>
                 prevCompany.map((company) =>
-                  company.email === email
-                    ? { ...company, isBlock: !company.isBlock }
-                    : company
+                  company.email === email ? { ...company, isBlock: !company.isBlock } : company
                 )
               );
-            } 
+            }
           }
         } catch (error: any) {
-          if (error.response && error.response.data) {
-            toast.error(error.response.data.message);
-          } else {
-            toast.error(Messages.SOMETHING_TRY_AGAIN);
-          }
+          toast.error(getErrMssg(error));
         }
       },
       4000,
@@ -88,6 +68,11 @@ const CompanyManagement: React.FC = () => {
     []
   );
 
+  //pagination handle function to liftup state
+  const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const handleCurrentPage = (page: number) => setCurrentPage(page);
+  const handleNextPage = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+
   useEffect(() => {
     const getAllCompanies = async () => {
       try {
@@ -98,11 +83,7 @@ const CompanyManagement: React.FC = () => {
           setIsLoading(false);
         }
       } catch (error: any) {
-        if (error.response && error.response.data) {
-          toast.error(error.response.data.message);
-        } else {
-          alert(MessageConst.FETCH_ERROR_AXIOX);
-        }
+        toast.error(getErrMssg(error))
       }
     };
 
@@ -111,13 +92,12 @@ const CompanyManagement: React.FC = () => {
 
   return (
     <div className="p-6  space-y-6 ">
-      <div className="flex justify-between mb-6">
+      <div className="flex justify-between mb-6 items-center">
         <div className="relative ">
           <select
             className="appearance-none bg-white px-8 py-2 rounded-full  shadow-lg border border-gray-200 
             focus:outline-none focus:ring-2 focus:ring-blue-400 font-medium "
-            onChange={(e) => setSortBy(e.target.value)}
-          >
+            onChange={(e) => setSortBy(e.target.value)}>
             <option value="createdAt">Recent</option>
             <option value="companyName">Name</option>
             <option value="email">Email</option>
@@ -128,7 +108,10 @@ const CompanyManagement: React.FC = () => {
 
           <FaChevronDown className="absolute right-3 top-3 w-4 h-4 text-gray-400  " />
         </div>
-
+        <div>
+          <h1 className=" text-xl font-semibold" >COMPANY MANAGEMENT</h1>
+        </div>
+        {/* search bar */}
         <div className="relative">
           <input
             type="text"
@@ -140,8 +123,7 @@ const CompanyManagement: React.FC = () => {
             className="absolute right-3 top-2.5 w-5 h-5 text-gray-600"
             fill="none"
             stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+            viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -161,9 +143,7 @@ const CompanyManagement: React.FC = () => {
             <div className="text-sm font-semibold">Company name</div>
             <div className="text-sm font-semibold">Company type</div>
             <div className="text-sm font-semibold ">Email ID</div>
-            <div className="text-sm font-semibold text-center">
-              Subscription plan
-            </div>
+            <div className="text-sm font-semibold text-center">Subscription plan</div>
             <div className="text-sm font-semibold text-center">View</div>
             <div className="text-sm font-semibold text-center">Status</div>
           </div>
@@ -173,8 +153,7 @@ const CompanyManagement: React.FC = () => {
             {companyData.map((company, index) => (
               <div
                 key={company._id || index}
-                className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-7 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 "
-              >
+                className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-7 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 ">
                 <div>{0 + index + 1}</div>
                 <div className="flex items-center gap-3">
                   <img src={company.imageUrl} alt="" className="w-8 h-8 rounded-full" />
@@ -186,12 +165,7 @@ const CompanyManagement: React.FC = () => {
                 </div>
                 <div className="text-center">
                   <span className="flex justify-center items-center gap-2">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -212,59 +186,35 @@ const CompanyManagement: React.FC = () => {
                     </SheetTrigger>
                     <SheetContent className="bg-black border-none text-center text-white ">
                       <SheetHeader>
-                        <SheetTitle className="text-center text-white text-2xl mt-8">
-                          {" "}
-                          Company Details
-                        </SheetTitle>
+                        <SheetTitle className="text-center text-white text-2xl mt-8"> Company Details</SheetTitle>
                         <SheetDescription className="text-center text-sm font-thin ">
                           View company information
                         </SheetDescription>
                       </SheetHeader>
 
                       <div className="mt-6 flex flex-col justify-center items-center ">
-                        <img
-                          src={company.imageUrl}
-                          alt="company dp"
-                          className="rounded-full w-44 h-44"
-                        />
-                        <h3 className="text-xl  font-bold  mt-3">
-                          {company.companyName.toUpperCase()}
-                        </h3>
-                        <p className="text-sm font-medium">
-                          {company.companyType}
-                        </p>
+                        <img src={company.imageUrl} alt="company dp" className="rounded-full w-44 h-44" />
+                        <h3 className="text-xl  font-bold  mt-3">{company.companyName.toUpperCase()}</h3>
+                        <p className="text-sm font-medium">{company.companyType}</p>
                         {/*  company information */}
                         <div className="mt-3 space-y-4">
                           <div>
-                            <label className="text-sm font-semibold">
-                              Company corporate id :
-                            </label>
+                            <label className="text-sm font-semibold">Company corporate id :</label>
                             <p className="mt-1"> {company.corporatedId}</p>
                           </div>
                           <div>
-                            <label className="text-lg font-semibold underlin">
-                              Contact Details
-                            </label>
+                            <label className="text-lg font-semibold underlin">Contact Details</label>
                             <div className="flex justify-center items-center gap-2">
                               <MdOutlineEmail className="text-xl mt-1" />
-                              <p className="mt-1 text-lg font-semibold text-blue-400 underline">
-                                {company.email}
-                              </p>
+                              <p className="mt-1 text-lg font-semibold text-blue-400 underline">{company.email}</p>
                             </div>
-                            <p className="mt-1 text-lg font-medium">
-                              Phone : {company.phoneNumber}
-                            </p>
+                            <p className="mt-1 text-lg font-medium">Phone : {company.phoneNumber}</p>
                           </div>
                           <div>
-                            <label className="text-sm font-semibold underlin">
-                              Subscription plan
-                            </label>
+                            <label className="text-sm font-semibold underlin">Subscription plan</label>
                             <div className="flex  items-center justify-center gap-2">
                               <MdWorkspacePremium />
-                              <p className="mt-1 ">
-                                {" "}
-                                {company.subscriptionPlan}
-                              </p>
+                              <p className="mt-1 "> {company.subscriptionPlan}</p>
                             </div>
                           </div>
                           <div className=" flex items-center justify-center gap-2">
@@ -275,10 +225,7 @@ const CompanyManagement: React.FC = () => {
                           </div>
 
                           <div>
-                            <p className="mt-1">
-                              Joined on :
-                              {new Date(company.createdAt).toLocaleDateString()}
-                            </p>
+                            <p className="mt-1">Joined on :{new Date(company.createdAt).toLocaleDateString()}</p>
                           </div>
                         </div>
                       </div>
@@ -288,12 +235,9 @@ const CompanyManagement: React.FC = () => {
                 <div className="flex justify-center">
                   <button
                     className={`px-4 py-1 text-sm font-semibold rounded-full transition-colors text-white ${
-                      company.isBlock
-                        ? "bg-lime-500 hover:bg-green-500"
-                        : " bg-orange-600  hover:bg-violet-600"
+                      company.isBlock ? "bg-lime-500 hover:bg-green-500" : " bg-orange-600  hover:bg-violet-600"
                     }   `}
-                    onClick={() => handleBlockUser(company.email)}
-                  >
+                    onClick={() => handleBlockUser(company.email)}>
                     {company.isBlock ? "Unblock" : "Block"}
                   </button>
                 </div>
@@ -304,42 +248,15 @@ const CompanyManagement: React.FC = () => {
       </div>
 
       {/* pagination */}
-
-      <div className="flex items-center justify-between px-6 py-4 bg-white rounded-2xl shadow-lg mt-6">
-        <button
-          className="flex items-center gap-1 px-3 py-1 text-sm text-gray-600 hover:text-gray-900"
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-        >
-          <FaChevronLeft className="w-4 h-4" /> Previous
-        </button>
-
-        <div className=" flex items-center gap-2">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`w-8 h-8 rounded-full ${
-                currentPage === page
-                  ? "bg-gray-900 text-white"
-                  : "text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-        </div>
-
-        <button
-          className="flex items-center gap-1 px-3 py-1 text-sm text-gray-600 hover:text-gray-900"
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-          disabled={currentPage === totalPages}
-        >
-          Next <FaChevronRight className="w-4 h-4" />
-        </button>
-      </div>
+      <footer>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          handlePrevPage={handlePrevPage}
+          handleCurrentPage={handleCurrentPage}
+          handleNextPage={handleNextPage}
+        />
+      </footer>
     </div>
   );
 };

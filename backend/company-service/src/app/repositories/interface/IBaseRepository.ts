@@ -8,6 +8,7 @@ export interface IBaseRepository<T> {
     updatByEmail(email:string,updateData:Partial<T>) : Promise<T | null>
     updateUserStatus(email:string,blockStatus:boolean) : Promise<T | null>
     updateOneDocument(searchQuery:Record<string,string>,updateData:Record<string,string>) : Promise<T|null>
+    getDocumentCount(filter:Record<string,any>) : Promise<number>
    
 
 }

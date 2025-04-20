@@ -5,5 +5,6 @@ export interface IAdminController {
     updateCompany(req:Request,res:Response) : Promise<void>;
     fetchAllCompany(req:Request,res:Response) : Promise<void>;
     uploadProfileImage (req : Request , res : Response) : Promise <void>;
+    fetchSubsStats (req : Request , res : Response) : Promise<void>
       
 }
