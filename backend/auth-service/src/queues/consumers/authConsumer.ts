@@ -1,11 +1,11 @@
 import { RabbitMQConfig } from "../../config/rabbitmq";
 import { ConsumerEventType } from "../../constants/consumerEventTypes";
 import { channel } from "../connection";
-import { createAuthUserHandler, updateSubscriptionEndDate } from "../eventHandlers/authHandler";
+import { createAuthUserHandler,  } from "../eventHandlers/authHandler";
 
 const eventHandlerMap: { [key: string]: (data: any) => Promise<void> } = {
   [ConsumerEventType.CREATE_AUTH_USER]: createAuthUserHandler,
-  [ConsumerEventType.UPDATE_SUBSCRIPTION] : updateSubscriptionEndDate,
+  
 };
 
 export const authMainConsumer = async (): Promise<void> => {

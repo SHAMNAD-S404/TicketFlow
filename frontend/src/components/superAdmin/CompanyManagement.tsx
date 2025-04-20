@@ -164,8 +164,8 @@ const CompanyManagement: React.FC = () => {
                   <a className="underline text-blue-600">{company.email}</a>
                 </div>
                 <div className="text-center">
-                  <span className="flex justify-center items-center gap-2">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span className="flex justify-center items-center  text-sm font-semibold gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" color="blue" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -173,8 +173,8 @@ const CompanyManagement: React.FC = () => {
                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    {/* {company.subscriptionPlan} */}
-                    Free tier
+                    {company.subscriptionPlan}
+                   
                   </span>
                 </div>
                 <div className="flex justify-center">

@@ -11,5 +11,6 @@ export interface IAdminContext   {
     role : string,
     imageUrl:string
     subscriptionPlan : string;
-    subscriptionEndDate : string
+    subscriptionEndDate : string;
+    isSubscriptionExpired  :boolean;
   }

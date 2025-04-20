@@ -53,13 +53,4 @@ export const createAuthUserHandler = async (data: any) => {
   }
 };
 
-// UDPATE THE USER SUBSCRIPTION END DATE
-export const updateSubscriptionEndDate = async (data: IUpdateSubsData) => {
-  try {
-    const { companyEmail, subscriptionEndDate } = data;
-    const updateUser = await authService.updateDocumentService({ email: companyEmail }, { subscriptionEndDate });
-    console.log("user subscription got udpated ", updateUser);
-  } catch (error) {
-    console.error("❌ Error updating auth user data:", error);
-  }
-};
+

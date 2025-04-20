@@ -3,6 +3,7 @@ import CompanyRepository from "../../repositories/implements/company";
 import { ICompanyService, ISubStaticResp, IUpdateCompanyResp } from "../interface/ICompanyService";
 import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
+import { isPlanExpired } from "../../../utils/isExpiredCheck";
 
 export default class CompanyService implements ICompanyService {
   async createCompany(companyData: ICompany): Promise<{ message: string; data?: ICompany; success: boolean }> {
@@ -32,6 +33,7 @@ export default class CompanyService implements ICompanyService {
     }
   }
 
+  //to fetch the individual company data 
   async fetchCompanyData(email: string): Promise<{
     message: string;
     data?: ICompany;
@@ -39,18 +41,30 @@ export default class CompanyService implements ICompanyService {
   }> {
     try {
       // Find the company data by user ID
-      const fetchCompanyData = await CompanyRepository.findOneByEmail(email);
-      if (!fetchCompanyData) {
+      const getData = await CompanyRepository.findOneByEmail(email);
+      if (!getData) {
         // Return an error if company data is not found
         return { message: "Comapny data not found !", success: false };
-      } else {
-        // Return the fetched company data if successful
-        return {
-          message: `Welcome ${fetchCompanyData.companyName}`,
-          data: fetchCompanyData,
-          success: true,
-        };
       }
+      let companyData: ICompany = getData;
+      //checking for plan is expired or not
+      const isSubsExpired = isPlanExpired(getData.subscriptionEndDate);
+      //if its expired then updating the fields
+      if (isSubsExpired) {
+        const updateCompany = await CompanyRepository.updateOneDocument(
+          { email: getData.email },
+          { isSubscriptionExpired: true }
+        );
+        //updating latest value 
+        companyData = updateCompany || getData;
+      }
+
+      // Return the fetched company data if successful
+      return {
+        message: `Welcome ${getData.companyName}`,
+        data: companyData,
+        success: true,
+      };
     } catch (error) {
       // Return an error if fetching fails
       return { message: String(error), success: false };
