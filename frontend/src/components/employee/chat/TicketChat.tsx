@@ -11,9 +11,11 @@ import { Rootstate } from "@/redux store/store";
 
 const communicationServer = import.meta.env.VITE_COMMUNICATION_SERVER;
 
+//initializing a connection with socket
 const socket: Socket = io(communicationServer, {
   withCredentials: true,
   transports: ["websocket"],
+  
 });
 
 interface IMessage {
@@ -137,8 +139,6 @@ const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName }) => {
 
         setLoading(false);
       } catch (error: any) {
-        if (!error.response.data.data) {
-        }
         toast.error(getErrMssg(error));
       }
     };

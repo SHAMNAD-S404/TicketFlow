@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "../../components/common/Sidebar";
 import DashboardHeader from "../../components/common/DashboardHeader";
-import EmployeeMainContent from "../../components/employee/EmployeeMainContent";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUserData } from "../../redux store/employeeSlice";
 import { Rootstate, AppDispatch } from "../../redux store/store";
@@ -46,8 +45,6 @@ const EmployeeDashboard: React.FC = () => {
             dispatch(clearUserData());
             navigate("/");
           });
-        } else {
-          toast.error(response.message);
         }
       }
     } catch (error: any) {

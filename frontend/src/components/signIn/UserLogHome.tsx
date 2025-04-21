@@ -51,7 +51,7 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
         const getEmployee = await dispatch(fetchEmployee()).unwrap();
         if (getEmployee) toast.success(response.message);
 
-        navigate("/employee/dashboard");
+        navigate("/employee/dashboard/dashboard");
       }
     } catch (error: any) {
       const errMsg = error.response?.data?.message || error || Messages.SOMETHING_TRY_AGAIN;

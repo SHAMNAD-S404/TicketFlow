@@ -11,13 +11,12 @@ const server = http.createServer(app);
 
 //creating socket io instance with cors
 const io = new Server(server, {
-  cors: { 
+  cors: {
     origin: config.FRONTEND_URL,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   },
 });
-
 
 const chatService = new ChatService();
 
@@ -31,10 +30,10 @@ io.on("connection", (socket) => {
     console.log(`User ${socket.id} joined room ${ticketID}`);
   });
 
-  //handle sending a message 
+  //handle sending a message
   socket.on("send_message", async (data: IMessageData) => {
     try {
-      console.log("im here ",data)
+      console.log("im here ", data);
       const savedMessage = await chatService.saveMessage(data);
       io.to(data.ticketID).emit("receive_message", savedMessage);
     } catch (error) {

@@ -10,7 +10,7 @@ import { TiTicket } from "react-icons/ti";
 interface SidebarProps {
   role: string;
   onMenuSelect: (menu: string) => void;
-  isSubscriptionExpired: boolean;
+  isSubscriptionExpired ? : boolean;
 }
 
 const menuConfig: { [key: string]: { name: string; icon: React.ReactNode }[] } = {
