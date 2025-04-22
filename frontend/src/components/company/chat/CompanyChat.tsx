@@ -1,40 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import { Socket, io } from "socket.io-client";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+
 import ChatSidebar from "@/components/chat/ChatSidebar";
 import ChatWindow from "@/components/chat/ChatWindow";
 import { Chat, Message } from "../../../types/chat";
-import { Socket, io } from "socket.io-client";
 import { fetchAllMessages, fetchAllRooms } from "@/api/services/communicationService";
-import { toast } from "react-toastify";
 import getErrMssg from "@/components/utility/getErrMssg";
-import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux store/store";
-
-const communicationServer = import.meta.env.VITE_COMMUNICATION_SERVER;
-
-//initializing a connection with socket
-const socket: Socket = io(communicationServer, {
-  withCredentials: true,
-  transports: ["websocket"],
-});
-
-interface IMessage {
-  _id: string;
-  ticketID: string;
-  sender: string;
-  message: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface IChatRoom {
-  _id: string;
-  ticketID: string;
-  participants: string[];
-  lastMessage: string;
-  lastMessageTimestamp: Date;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { IChatRoom, IMessage } from "@/interfaces/chat.interfaces";
 
 interface ChatProps {
   ticketID?: string;
@@ -45,87 +20,130 @@ interface ChatProps {
 }
 
 const CompanyChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1, user2 }) => {
+  // Socket reference to maintain singleton instance
+  const socketRef = useRef<Socket | null>(null);
+  const communicationServer = import.meta.env.VITE_COMMUNICATION_SERVER;
+
+  // Redux state
   const company = useSelector((state: Rootstate) => state.company.company);
 
-  sender = sender ? sender : company?._id;
-  senderName = senderName ? senderName : company?.companyName;
-  const participantsId: string = company?._id as string;
+  // Derived values
+  const currentSender = sender || company?._id;
+  const currentSenderName = senderName || company?.companyName;
+  const participantsId = company?._id as string;
 
-  //******component states************
-  //for responsive design
+  // Component states
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
   const [chatRooms, setChatRooms] = useState<IChatRoom[]>([]);
   const [selectedTicketID, setSelectedTicketID] = useState<string | undefined>(ticketID);
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const [isRoomEmpty, SetRoomEmpty] = useState<boolean>(false);
-  const [newMessage, setNewMessage] = useState<string>("");
+  const [isRoomEmpty, setIsRoomEmpty] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
-  //format chat rooms to match the chat interface for the sidebar
-  const formatChatRooms = (rooms: IChatRoom[]): Chat[] => {
-    return rooms.map((rooms) => ({
-      id: rooms.ticketID,
+  // Initialize socket connection
+  useEffect(() => {
+    // Only create socket if it doesn't exist
+    if (!socketRef.current) {
+      socketRef.current = io(communicationServer, {
+        withCredentials: true,
+        transports: ["websocket"],
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+      });
+
+      // Global listeners
+      socketRef.current.on("connect", () => {
+        console.log("Socket connected:", socketRef.current?.id);
+      });
+
+      socketRef.current.on("connect_error", (err) => {
+        console.error("Socket connection error:", err);
+        toast.error("Connection error. Please refresh the page.");
+      });
+    }
+
+    // Cleanup socket on component unmount
+    return () => {
+      if (socketRef.current) {
+        console.log("Disconnecting socket");
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+    };
+  }, [communicationServer]);
+
+  // Format chat rooms to match the chat interface for the sidebar
+  const formatChatRooms = useCallback((rooms: IChatRoom[]): Chat[] => {
+    return rooms.map((room) => ({
+      id: room.ticketID,
       user: {
-        id: rooms.participants[0] || "unknown",
-        name: `Ticket #${rooms.ticketID}`,
+        id: room.participants[0] || "unknown",
+        name: `Ticket #${room.ticketID}`,
         avatar: "https://cdn-icons-png.flaticon.com/512/6858/6858504.png",
-        lastSeen: new Date(rooms.lastMessageTimestamp).toLocaleString(),
+        lastSeen: new Date(room.lastMessageTimestamp).toLocaleString(),
       },
-      lastMessage: rooms.lastMessage,
-      timestamp: new Date(rooms.lastMessageTimestamp).toLocaleTimeString([], {
+      lastMessage: room.lastMessage,
+      timestamp: new Date(room.lastMessageTimestamp).toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
       }),
     }));
-  };
+  }, []);
 
-  //format messages for the chat window
-  const formatMessages = (messageList: IMessage[]): Message[] => {
-    return messageList.map((msg) => ({
-      id: msg._id,
-      senderId: msg.sender === sender ? "me" : "other",
-      content: msg.message,
-      timestamp: new Date(msg.createdAt).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    }));
-  };
+  // Format messages for the chat window
+  const formatMessages = useCallback(
+    (messageList: IMessage[]): Message[] => {
+      return messageList.map((msg) => ({
+        id: msg._id,
+        senderId: msg.sender === currentSender ? "me" : "other",
+        content: msg.message,
+        timestamp: new Date(msg.createdAt).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      }));
+    },
+    [currentSender]
+  );
 
-  //fn to create new chat room if didn't exist
-  const initializeChat = async (ticketID: string, sender: string) => {
-    try {
-      const hasMessages = messages.length > 0;
-      if (!hasMessages && ticketID && sender) {
+  // Function to create new chat room if it doesn't exist
+  const initializeChat = useCallback(
+    async (chatTicketID: string, chatSender: string) => {
+      if (!socketRef.current) return;
+
+      try {
         // Send an initial system message to create the room
-        socket.emit("send_message", {
-          ticketID: ticketID,
+        socketRef.current.emit("send_message", {
+          ticketID: chatTicketID,
           sender: participantsId,
-          message: `Chat started by ${senderName} for ticket #${ticketID}`,
-          user1: user1,
-          user2: user2,
+          message: `Chat started by ${currentSenderName} for ticket #${chatTicketID}`,
+          user1,
+          user2,
         });
 
-        // Fetch messages again after a short delay to make sure our message was saved
+        // Fetch messages again after a short delay
         setTimeout(async () => {
           try {
-            const roomsData = await fetchAllRooms(participantsId);
-            const response = await fetchAllMessages(ticketID);
-            setChatRooms(roomsData.data);
-            setMessages(response.data);
+            const [messagesResponse, roomsResponse] = await Promise.all([
+              fetchAllMessages(chatTicketID),
+              fetchAllRooms(participantsId),
+            ]);
+
+            setChatRooms(roomsResponse.data);
+            setMessages(messagesResponse.data);
           } catch (error) {
             toast.error("Error fetching messages after initialization");
           }
         }, 1500);
+      } catch (error) {
+        toast.error(getErrMssg(error));
       }
-    } catch (error) {
-      toast.error(getErrMssg(error));
-    }
-  };
+    },
+    [participantsId, currentSenderName, user1, user2]
+  );
 
-  //fetch all chat rooms
+  // Fetch all chat rooms
   useEffect(() => {
-    //fn to fetch chat rooms
     const fetchChatRooms = async () => {
       try {
         setLoading(true);
@@ -143,20 +161,25 @@ const CompanyChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1,
 
         setLoading(false);
       } catch (error: any) {
-        if (error.response.status === 400) {
-          SetRoomEmpty(true);
+        if (error.response?.status === 400) {
+          setIsRoomEmpty(true);
         } else {
           toast.warn(getErrMssg(error));
         }
+        setLoading(false);
       }
     };
 
     fetchChatRooms();
+  }, [ticketID, participantsId, isMobileView]);
 
-    //fn to select tikcet id and responsive ui logic
+  // Handle window resize for responsive design
+  useEffect(() => {
     const handleResize = () => {
-      setIsMobileView(window.innerWidth < 768);
-      if (window.innerWidth < 768) {
+      const newIsMobileView = window.innerWidth < 768;
+      setIsMobileView(newIsMobileView);
+
+      if (newIsMobileView) {
         if (!ticketID) {
           setSelectedTicketID(undefined);
         }
@@ -167,72 +190,84 @@ const CompanyChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1,
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [ticketID]);
+  }, [ticketID, chatRooms, selectedTicketID]);
 
-  //join room and fetch message when selectedTicketID changes
+  // Join room and fetch messages when selectedTicketID changes
   useEffect(() => {
-    console.log("sleec id ", selectedTicketID);
-    if (!selectedTicketID) return;
+    if (!selectedTicketID || !socketRef.current) return;
 
-    //join the chat room
-    socket.emit("join_room", selectedTicketID);
+    // Clean up previous room listeners
+    socketRef.current.off("receive_message");
 
-    // fetch messages for the selected ticket
+    // Join the chat room
+    socketRef.current.emit("join_room", selectedTicketID);
+
+    // Set up message listener for this room
+    socketRef.current.on("receive_message", (newMessage: IMessage) => {
+      setMessages((prevMessages) => {
+        // Check if message already exists to prevent duplicates
+        if (prevMessages.some((msg) => msg._id === newMessage._id)) {
+          return prevMessages;
+        }
+        return [...prevMessages, newMessage];
+      });
+    });
+
+    // Fetch messages for the selected ticket
     const fetchMessages = async () => {
       try {
         const response = await fetchAllMessages(selectedTicketID);
         setMessages(response.data);
       } catch (error: any) {
-        //if no messages exist , initialize the new chat
-        if (!error.response?.data?.data && sender) {
-          initializeChat(selectedTicketID, sender);
-          // return;
+        // If no messages exist, initialize the new chat
+        if (!error.response?.data?.data && currentSender) {
+          initializeChat(selectedTicketID, currentSender);
         }
-
-        //toast.error(getErrMssg(error));
       }
     };
 
     fetchMessages();
 
-    //listen for the new messages
-    socket.on("receive_message", (newMessages: IMessage) => {
-      setMessages((prevMessages) => [...prevMessages, newMessages]);
-    });
-
-    //cleanup fn
+    // Cleanup function
     return () => {
-      socket.off("receive_message");
+      if (socketRef.current) {
+        socketRef.current.off("receive_message");
+      }
     };
-  }, [selectedTicketID, sender]);
+  }, [selectedTicketID, currentSender, initializeChat]);
 
-  //fn to send messages through socket io
-  const sendMessage = (messageContent: string) => {
-    if (selectedTicketID && sender && messageContent.trim()) {
-      socket.emit("send_message", {
+  // Function to send messages through Socket.IO
+  const sendMessage = useCallback(
+    (messageContent: string) => {
+      if (!socketRef.current || !selectedTicketID || !currentSender || !messageContent.trim()) return;
+
+      socketRef.current.emit("send_message", {
         ticketID: selectedTicketID,
-        sender,
+        sender: currentSender,
         message: messageContent,
       });
-      setNewMessage("");
-    }
-  };
+    },
+    [selectedTicketID, currentSender]
+  );
 
-  const handleChatSelect = (chatId: string) => setSelectedTicketID(chatId);
+  const handleChatSelect = useCallback((chatId: string) => {
+    setSelectedTicketID(chatId);
+  }, []);
 
-  const handleBack = () => setSelectedTicketID(undefined);
+  const handleBack = useCallback(() => {
+    setSelectedTicketID(undefined);
+  }, []);
 
+  // Prepare data for rendering
   const formattedChats = formatChatRooms(chatRooms);
   const formattedMessages = formatMessages(messages);
-
-  //find the selected user info
   const selectedChat = formattedChats.find((chat) => chat.id === selectedTicketID);
   const selectedUser = selectedChat?.user || null;
 
   // For mobile: show either chat list or chat window
   if (isMobileView) {
     return (
-      <div className="h-screen ">
+      <div className="h-screen">
         {!selectedTicketID ? (
           <ChatSidebar chats={formattedChats} selectedChatId={selectedTicketID || ""} onChatSelect={handleChatSelect} />
         ) : (
@@ -241,8 +276,8 @@ const CompanyChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1,
             messages={formattedMessages}
             onSendMessage={sendMessage}
             onBack={handleBack}
-            isMobile={true}
             isRoomEmpty={isRoomEmpty}
+            isMobile={true}
           />
         )}
       </div>
@@ -251,11 +286,11 @@ const CompanyChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1,
 
   // For desktop: show both side by side
   return (
-    <div className="h-screen flex overflow-hidden ">
-      <div className="w-[320px]  ">
+    <div className="h-screen flex overflow-hidden mt-6">
+      <div className="w-[320px]">
         <ChatSidebar chats={formattedChats} selectedChatId={selectedTicketID || ""} onChatSelect={handleChatSelect} />
       </div>
-      <div className="flex-1 overflow-hidden ">
+      <div className="flex-1 overflow-hidden">
         <ChatWindow
           selectedUser={selectedUser}
           messages={formattedMessages}
