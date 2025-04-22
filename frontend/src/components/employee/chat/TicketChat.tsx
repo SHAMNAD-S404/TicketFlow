@@ -44,7 +44,7 @@ interface ChatProps {
   user2?: string;
 }
 
-const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName,user1,user2 }) => {
+const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1, user2 }) => {
   const employee = useSelector((state: Rootstate) => state.employee.employee);
 
   sender = sender ? sender : employee?._id;
@@ -143,10 +143,10 @@ const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName,user1,us
 
         setLoading(false);
       } catch (error: any) {
-        if(error.response.status === 400){
-          SetRoomEmpty(true)
-        }else{
-          toast.warn(getErrMssg(error))
+        if (error.response.status === 400) {
+          SetRoomEmpty(true);
+        } else {
+          toast.warn(getErrMssg(error));
         }
       }
     };
@@ -241,6 +241,7 @@ const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName,user1,us
             messages={formattedMessages}
             onSendMessage={sendMessage}
             onBack={handleBack}
+            isRoomEmpty={isRoomEmpty}
             isMobile={true}
           />
         )}

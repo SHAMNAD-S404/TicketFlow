@@ -57,6 +57,7 @@ const CompanyChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1,
   const [chatRooms, setChatRooms] = useState<IChatRoom[]>([]);
   const [selectedTicketID, setSelectedTicketID] = useState<string | undefined>(ticketID);
   const [messages, setMessages] = useState<IMessage[]>([]);
+  const [isRoomEmpty, SetRoomEmpty] = useState<boolean>(false);
   const [newMessage, setNewMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -142,7 +143,11 @@ const CompanyChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1,
 
         setLoading(false);
       } catch (error: any) {
-        toast.error(getErrMssg(error));
+        if (error.response.status === 400) {
+          SetRoomEmpty(true);
+        } else {
+          toast.warn(getErrMssg(error));
+        }
       }
     };
 
@@ -237,6 +242,7 @@ const CompanyChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1,
             onSendMessage={sendMessage}
             onBack={handleBack}
             isMobile={true}
+            isRoomEmpty={isRoomEmpty}
           />
         )}
       </div>
@@ -255,6 +261,7 @@ const CompanyChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1,
           messages={formattedMessages}
           onSendMessage={sendMessage}
           isMobile={false}
+          isRoomEmpty={isRoomEmpty}
         />
       </div>
     </div>
