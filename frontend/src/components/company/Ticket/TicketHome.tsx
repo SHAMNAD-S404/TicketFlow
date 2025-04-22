@@ -7,9 +7,9 @@ import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux store/store";
 import MyTicketProgress from "./MyTicketProgress";
 import ViewMyTicketProgress from "@/components/employee/Ticket/ViewMyTicketProgress";
-import TicketChat from "@/components/employee/chat/TicketChat";
 import { EManageTickets } from "@/components/employee/Ticket/EManageTickets";
 import ShiftReq from "./ShiftReq";
+import CompanyChat from "../chat/CompanyChat";
 
 interface ISubMenuList {
   header: string;
@@ -36,19 +36,27 @@ export const TicketHome: React.FC = () => {
   const [getTicketID, setTicketID] = useState<string>("");
   const [shiftReqHome, setShiftReqHome] = useState<boolean>(false);
   const [getTicketUUID, setTicketUUID] = useState<string>(""); //ticketuuid is passing for chat , ref : employee/ticketHome
+  const [user1, setUser1] = useState<string>("");
+  const [user2, setuser2] = useState<string>("");
 
   //*****************functions*****************/
   const company = useSelector((state: Rootstate) => state.company.company);
   const onCancel = () => setActiveSubMenu(null); // go to home
   //go to detail view ticket progress
   const onViewMyTicketProgress = () => setActiveSubMenu(subMenuItems.VIEW_TICKET_PROGRESS);
-  const setChatState = () => setActiveSubMenu(subMenuItems.SHOW_CHAT);
+  //go to chat with values
+  const setChatState = (ticketUUID: string, ticketRaisedEmployeeId: string, ticketHandlingEmployeeId: string) => {
+    setTicketUUID(ticketUUID);
+    setUser1(ticketRaisedEmployeeId);
+    setuser2(ticketHandlingEmployeeId);
+    setActiveSubMenu(subMenuItems.SHOW_CHAT);
+  };
   //go to manage ticket ui
   const onManageTicket = () => setActiveSubMenu(subMenuItems.MANAGE_TICKETS);
   //go to shift req home
   const handleShiftReqHome = () => setShiftReqHome(true);
 
-  //handle cancel button action
+  //handle cancel button action based on shift req condition
   const handleCancelButtonAction = () => {
     if (shiftReqHome) {
       setActiveSubMenu(subMenuItems.SHIFT_REQUESTS);
@@ -136,7 +144,15 @@ export const TicketHome: React.FC = () => {
         );
 
       case subMenuItems.SHOW_CHAT:
-        return <TicketChat />;
+        return (
+          <CompanyChat
+            sender={company?._id}
+            senderName={company?.companyName}
+            ticketID={getTicketUUID}
+            user1={user1}
+            user2={user2}
+          />
+        );
 
       case subMenuItems.MANAGE_TICKETS:
         return (

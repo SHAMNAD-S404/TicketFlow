@@ -31,7 +31,10 @@ const subMenuItems = {
 export const TicketHome: React.FC = () => {
   const [activeSubMenu, setActiveSubMenu] = useState<string | null>(null);
   const [getTicketID, setTicketID] = useState<string>("");
-  const [ticketUUID , setTicketUUID ] = useState<string>("");
+  const [ticketUUID, setTicketUUID] = useState<string>("");
+  const [user1, setUser1] = useState<string>("");
+  const [user2, setuser2] = useState<string>("");
+
   const employee = useSelector((state: Rootstate) => state.employee.employee);
   const subMenuList: ISubMenuList[] = [
     {
@@ -71,7 +74,12 @@ export const TicketHome: React.FC = () => {
   //go to view my ticketProgress Page
   const onViewMyTicketProgress = () => setActiveSubMenu(subMenuItems.VIEW_TICKET_PROGRESS);
   //go to chat
-  const setChatState = () => setActiveSubMenu(subMenuItems.SHOW_CHAT);
+  const setChatState = (ticketUUID: string, ticketRaisedEmployeeId: string, ticketHandlingEmployeeId: string) => {
+    setTicketUUID(ticketUUID);
+    setUser1(ticketRaisedEmployeeId);
+    setuser2(ticketHandlingEmployeeId);
+    setActiveSubMenu(subMenuItems.SHOW_CHAT);
+  };
 
   const renderSubContent = () => {
     switch (activeSubMenu) {
@@ -101,18 +109,21 @@ export const TicketHome: React.FC = () => {
             handleCancle={() => setActiveSubMenu(subMenuItems.ASSIGNED_TICKETS)}
             ticketId={getTicketID}
             handleChatSubMenu={setChatState}
-            handleTicketUUID={(uuid:string) => setTicketUUID(uuid)}
+            handleTicketUUID={(uuid: string) => setTicketUUID(uuid)}
             enableShowReq={true}
           />
         );
 
       case subMenuItems.SHOW_CHAT:
-        return <TicketChat
-         sender={employee?._id}
-         senderName={employee?.name}
-         ticketID={ticketUUID}
-         
-         />;
+        return (
+          <TicketChat
+            sender={employee?._id}
+            senderName={employee?.name}
+            ticketID={ticketUUID}
+            user1={user1}
+            user2={user2}
+          />
+        );
 
       case subMenuItems.MY_TICKET_PROGRESS:
         return (

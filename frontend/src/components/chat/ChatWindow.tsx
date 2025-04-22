@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Paperclip, Send, Phone, Video, MoreVertical, ArrowLeft } from "lucide-react";
+import {  Send, Phone, Video, MoreVertical, ArrowLeft } from "lucide-react";
 import { User, Message } from "../../types/chat";
-import ChatBgImage from "../../assets/images/chat bg image new.png"
+import ChatBgImage from "../../assets/images/helpdesk2.png"
+import { GiClick } from "react-icons/gi";
+
 
 interface ChatWindowProps {
   selectedUser: User | null;
@@ -9,6 +11,7 @@ interface ChatWindowProps {
   onSendMessage: (content: string) => void;
   onBack?: () => void;
   isMobile: boolean;
+  isRoomEmpty : boolean;
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({
@@ -17,9 +20,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   onSendMessage,
   onBack,
   isMobile,
+  isRoomEmpty
 }: ChatWindowProps) => {
-
-  console.log("chhat window test",messages);
   
 
   const [newMessage, setNewMessage] = useState("");
@@ -27,7 +29,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
   // Scroll to bottom when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      const container = messagesEndRef.current;
+      container.scrollTop = container.scrollHeight;
+    }
   }, [messages]);
 
   const handleSend = () => {
@@ -39,9 +44,29 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
   if (!selectedUser) {
     return (
-      <div className="flex items-center justify-center bg-gray-50 h-5/6 ms-2 rounded-xl shadow-xl">
-        {/* <p className="text-gray-500">Select a chat to start messaging</p> */}
-        <img src={ChatBgImage} className="object-fill h-full opacity-70 rounded-2xl" alt="" />
+      <div className="relative flex items-center justify-center bg-gray-50 h-5/6 ms-2 rounded-xl shadow-xl overflow-hidden">
+        {/* Background Image */}
+        <img
+          src={ChatBgImage}
+          className="absolute inset-0 w-full h-full object-cover opacity-80 rounded-xl"
+          alt="Chat background"
+        />
+    
+        {/* Text on top of image */}
+         {isRoomEmpty ? (
+           <h1 className="relative z-10 flex items-center gap-2 text-2xl font-semibold text-white text-center bg-black px-4 py-3 rounded-xl">
+           haiiii <GiClick className="text-4xl text-blue-400" />
+ 
+         </h1>
+         ) : (
+          <h1 className="relative z-10 flex items-center gap-2 text-2xl font-semibold text-white text-center bg-black px-4 py-3 rounded-xl">
+          Select a chat to start <GiClick className="text-4xl text-blue-400" />
+
+        </h1>
+         )}
+    
+        {/* Optional overlay for darkening the image slightly */}
+        <div className="absolute inset-0 bg-black opacity-20 rounded-xl"></div>
       </div>
     );
   }
@@ -81,7 +106,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
       {/* Messages */}
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div 
+      ref={messagesEndRef}
+      className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
         
           
@@ -95,15 +122,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
             </div>
           </div>
         ))}
-        <div ref={messagesEndRef} />
+       
       </div>
 
       {/* Message Input */}
       <div className="border-t border-gray-200 p-4">
         <div className="flex items-center gap-2">
-          <button className="p-2 hover:bg-gray-100 rounded-full">
-            <Paperclip className="h-5 w-5 text-gray-600" />
-          </button>
+        
           <input
             type="text"
             value={newMessage}

@@ -14,9 +14,9 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ chats, selectedChatId, onChat
       <header>
         <div className="p-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold">Chats</h1>
-          <button className="bg-purple-600 p-2 rounded-full text-white shadow-md hover:bg-purple-700 transition">
+          <span className="bg-purple-600 p-2 rounded-full text-white shadow-md  transition cursor-default">
             <MessageSquareMore className="h-5 w-5" />
-          </button>
+          </span>
         </div>
 
         {/* Search Bar */}

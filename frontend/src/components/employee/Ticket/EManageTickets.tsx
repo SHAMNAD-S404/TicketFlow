@@ -14,7 +14,7 @@ import getErrMssg from "@/components/utility/getErrMssg";
 
 interface EManageTickets {
   handleCancle: () => void;
-  handleChatSubMenu: () => void;
+  handleChatSubMenu: (ticketuuid: string, ticketRaisedEmployeeId: string, ticketHandlingEmployeeId: string) => void;
   ticketId: string;
   handleTicketUUID: (uuid: string) => void;
   enableShowReq?: boolean;
@@ -96,10 +96,14 @@ export const EManageTickets: React.FC<EManageTickets> = ({
   };
 
   useEffect(() => {
+    console.log(2656666666666666);
+
     if (ticketData) {
+      console.log("im emange ticket uuid : ", ticketData.ticketID);
+
       setTicketStatus(ticketData.status);
       setCurrentProgress(ticketData.status);
-      handleTicketUUID(ticketData.ticketID)
+      handleTicketUUID(ticketData.ticketID);
       setIsVisible(false);
     }
   }, [ticketData]);
@@ -165,9 +169,20 @@ export const EManageTickets: React.FC<EManageTickets> = ({
                 any additional support
                 <hr className="border-gray-400" />
               </h2>
-              <div>
-                <DockDemo ticketId={ticketData?.ticketID as string} handleChat={handleChatSubMenu} />
-              </div>
+              {ticketData && (
+                <div>
+                  <DockDemo
+                    ticketId={ticketData.ticketID}
+                    handleChat={() =>
+                      handleChatSubMenu(
+                        ticketData.ticketID,
+                        ticketData.ticketRaisedEmployeeId,
+                        ticketData.ticketHandlingEmployeeId
+                      )
+                    }
+                  />
+                </div>
+              )}
             </div>
           </footer>
         </div>

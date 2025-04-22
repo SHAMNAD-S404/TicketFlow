@@ -32,7 +32,15 @@ export class ChatController implements IChatController {
 
   public getAllChatRooms = async (req: Request, res: Response): Promise<void> => {
     try {
-      const chatRooms = await this.chatService.getAllChatRooms();
+      const {participantsId} = req.query;
+      if(!participantsId){
+        res.status(HttpStatus.BAD_REQUEST).json({
+          message : Messages.PARTICIPIANTS_ID_MISSING,
+          success : false,
+        })
+        return;
+      }
+      const chatRooms = await this.chatService.getAllChatRooms(participantsId as string);
       const { message, statusCode, success, data } = chatRooms;
       res.status(statusCode).json({ message, success, data });
     } catch (error) {

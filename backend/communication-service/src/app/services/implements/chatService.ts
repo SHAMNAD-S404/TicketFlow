@@ -13,13 +13,12 @@ import ChatRoomRepo from "../../repositories/implements/ChatRoomRepo";
 export default class ChatService implements IChatService {
   async saveMessage(data: IMessageData): Promise<any> {
     try {
-      console.log("IM reached service");
 
       const savedMessg = await messageRepo.createMessage(data);
 
       //update or creating chat room with last message
-      const { ticketID, sender, message } = data;
-      const result = await ChatRoomRepo.updateWithLastMessage(ticketID, message, sender);
+      const { ticketID, sender, message,user1,user2 } = data;
+      const result = await ChatRoomRepo.updateWithLastMessage(ticketID, message, sender,user1,user2);
       console.log("what happened , ",result);
       
       return savedMessg;
@@ -50,9 +49,9 @@ export default class ChatService implements IChatService {
     }
   }
 
-  async getAllChatRooms(): Promise<getAllChatRoomsRes> {
+  async getAllChatRooms(participantId: string): Promise<getAllChatRoomsRes> {
     try {
-      const result = await ChatRoomRepo.findAllChatRooms();
+      const result = await ChatRoomRepo.findAllChatRooms(participantId);
       if (result.length > 0) {
         return {
           message: Messages.DATA_FETCHED,

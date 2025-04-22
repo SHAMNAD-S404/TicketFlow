@@ -44,12 +44,12 @@ interface ChatProps {
   user2?: string;
 }
 
-const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName,user1,user2 }) => {
-  const employee = useSelector((state: Rootstate) => state.employee.employee);
+const CompanyChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1, user2 }) => {
+  const company = useSelector((state: Rootstate) => state.company.company);
 
-  sender = sender ? sender : employee?._id;
-  senderName = senderName ? senderName : employee?.name;
-  const participantsId: string = employee?._id as string;
+  sender = sender ? sender : company?._id;
+  senderName = senderName ? senderName : company?.companyName;
+  const participantsId: string = company?._id as string;
 
   //******component states************
   //for responsive design
@@ -57,7 +57,6 @@ const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName,user1,us
   const [chatRooms, setChatRooms] = useState<IChatRoom[]>([]);
   const [selectedTicketID, setSelectedTicketID] = useState<string | undefined>(ticketID);
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const [isRoomEmpty, SetRoomEmpty] = useState<boolean>(false);
   const [newMessage, setNewMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -109,8 +108,8 @@ const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName,user1,us
         // Fetch messages again after a short delay to make sure our message was saved
         setTimeout(async () => {
           try {
-            const response = await fetchAllMessages(ticketID);
             const roomsData = await fetchAllRooms(participantsId);
+            const response = await fetchAllMessages(ticketID);
             setChatRooms(roomsData.data);
             setMessages(response.data);
           } catch (error) {
@@ -143,11 +142,7 @@ const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName,user1,us
 
         setLoading(false);
       } catch (error: any) {
-        if(error.response.status === 400){
-          SetRoomEmpty(true)
-        }else{
-          toast.warn(getErrMssg(error))
-        }
+        toast.error(getErrMssg(error));
       }
     };
 
@@ -250,7 +245,7 @@ const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName,user1,us
 
   // For desktop: show both side by side
   return (
-    <div className="h-screen flex overflow-hidden mt-6 ">
+    <div className="h-screen flex overflow-hidden ">
       <div className="w-[320px]  ">
         <ChatSidebar chats={formattedChats} selectedChatId={selectedTicketID || ""} onChatSelect={handleChatSelect} />
       </div>
@@ -260,11 +255,10 @@ const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName,user1,us
           messages={formattedMessages}
           onSendMessage={sendMessage}
           isMobile={false}
-          isRoomEmpty={isRoomEmpty}
         />
       </div>
     </div>
   );
 };
 
-export default TicketChat;
+export default CompanyChat;

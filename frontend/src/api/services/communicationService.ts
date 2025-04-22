@@ -12,9 +12,9 @@ export const fetchAllMessages = async (ticketID : string) => {
 
 
 //api call to fetch all rooms
-export const fetchAllRooms = async () => {
+export const fetchAllRooms = async (participantsId : string) => {
     try {
-        const response = await axiosInstance.get("/communication/get-all-rooms");
+        const response = await axiosInstance.get(`/communication/get-all-rooms?participantsId=${participantsId}`);
         return response.data;
     } catch (error) {
         throw error

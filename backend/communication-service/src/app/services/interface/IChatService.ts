@@ -6,6 +6,9 @@ export interface IMessageData {
   ticketID: string;
   sender: string;
   message: string;
+  user1?: string; 
+  user2?: string; 
+
 }
 
 export interface saveMessageResponse extends IBasicResponse {
@@ -22,6 +25,6 @@ export interface getAllChatRoomsRes extends IBasicResponse {
 export interface IChatService {
   saveMessage(data: IMessageData): Promise<any>;
   getMessagesByTicketID(ticketId : string) : Promise<fetchMessageRes>
-  getAllChatRooms() : Promise<getAllChatRoomsRes>
+  getAllChatRooms(participantId: string) : Promise<getAllChatRoomsRes>
   getChatRoomByTicketID(ticketID : string) : Promise<any>
 }

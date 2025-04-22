@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 
 interface IViewMyTicketProgress {
   handleCancle: () => void;
-  handleChatSubMenu: () => void;
+  handleChatSubMenu: (uuid: string, ticketRaisedEmployeeId: string, ticketHandlingEmployeeId: string) => void;
   ticketId: string;
 }
 
@@ -145,9 +145,21 @@ const ViewMyTicketProgress: React.FC<IViewMyTicketProgress> = ({ handleCancle, h
                 any additional support
                 <hr className="border-gray-400" />
               </h2>
-              <div>
-                <DockDemo ticketId={ticketData?.ticketID as string} handleChat={handleChatSubMenu} />
-              </div>
+              {/* only show if the ticketData is avilable */}
+              {ticketData && (
+                <div>
+                  <DockDemo
+                    ticketId={ticketData.ticketID}
+                    handleChat={() =>
+                      handleChatSubMenu(
+                        ticketData.ticketID,
+                        ticketData.ticketRaisedEmployeeId,
+                        ticketData.ticketHandlingEmployeeId
+                      )
+                    }
+                  />
+                </div>
+              )}
             </div>
           </footer>
         </div>

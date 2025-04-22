@@ -28,6 +28,7 @@ import DepartmentManagement from '@/components/company/departmentMenu/mainMenu/D
 import DashHome from '@/components/company/dashboard/DashHome';
 import PaymentCancel from '@/pages/payment/PaymentCancel';
 import PurchaseHistory from '@/components/company/subscription/PurchaseHistory';
+import CompanyChat from '@/components/company/chat/CompanyChat';
 
 const CompanyAdminRoutes : React.FC = () => {
   return (
@@ -43,6 +44,7 @@ const CompanyAdminRoutes : React.FC = () => {
           <Route path='employeemanagement' element={<EmployeeManagement/>} />
           <Route path='departmentmanagement' element={<DepartmentManagement/>} />
           <Route path='dashboard' element={<DashHome/>} />
+          <Route path='chat' element={<CompanyChat/>} />
         </Route>
 
     </Routes>

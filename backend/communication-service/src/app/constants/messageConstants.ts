@@ -19,7 +19,7 @@ export const Messages = {
     MSSG_SENDED : "Message sended successfully,",
     SOMETHING_WENT_WRONG : "something went wrogn try again !",
     DATA_FETCHED : "Data fetched successfully",
-    
+    PARTICIPIANTS_ID_MISSING : "Participiants id is missing" ,
   
   };
   
