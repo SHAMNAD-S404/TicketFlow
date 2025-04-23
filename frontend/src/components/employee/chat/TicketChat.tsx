@@ -10,6 +10,7 @@ import { fetchAllMessages, fetchAllRooms } from "@/api/services/communicationSer
 import getErrMssg from "@/components/utility/getErrMssg";
 import { Rootstate } from "@/redux store/store";
 import { IChatRoom, IMessage } from "@/interfaces/chat.interfaces";
+import secrets from "@/config/secrets";
 
 // Define interfaces
 
@@ -46,11 +47,12 @@ const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1, 
   useEffect(() => {
     // Only create socket if it doesn't exist
     if (!socketRef.current) {
-      socketRef.current = io(communicationServer, {
+      socketRef.current = io(secrets.APIGATEWAY_URL, {
         withCredentials: true,
         transports: ["websocket"],
         reconnectionAttempts: 5,
         reconnectionDelay: 1000,
+        path: "/socket.io",
       });
 
       // Global listeners

@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, MessageSquareMore } from "lucide-react";
+import { MousePointerClick, MessageSquareMore } from "lucide-react";
 import { Chat } from "@/types/chat";
 
 interface ChatSidebarProps {
@@ -22,22 +22,16 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ chats, selectedChatId, onChat
         {/* Search Bar */}
         <div className="px-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <MousePointerClick className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <input
+              disabled
               type="text"
-              placeholder="Search"
+              placeholder="Select a chat to continue"
               className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
         </div>
       </header>
-
-      {/* Chat Filters */}
-      {/* <div className="flex gap-4 mt-4 px-4">
-        <button className="text-sm font-semibold text-purple-600 border-b-2 border-purple-600 pb-1">DIRECT</button>
-        <button className="text-sm font-semibold text-gray-500">GROUPS</button>
-        <button className="text-sm font-semibold text-gray-500">PUBLIC</button>
-      </div> */}
 
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto mt-2">

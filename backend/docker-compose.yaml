@@ -157,10 +157,9 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-    ports:
-      - "4600:4600"
     networks:
       - ticketFlow-internal
+
 
   subscription-service:
     build: 
