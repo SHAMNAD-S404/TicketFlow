@@ -11,6 +11,7 @@ import ManageTicketUI from "@/components/common/ManageTicketUI";
 import useTicketData from "@/customHooks/useTicketData";
 import ManageTicketHeader from "@/components/common/ManageTicketHeader";
 import getErrMssg from "@/components/utility/getErrMssg";
+import { useNavigate } from "react-router-dom";
 
 interface EManageTickets {
   handleCancle: () => void;
@@ -35,11 +36,23 @@ export const EManageTickets: React.FC<EManageTickets> = ({
   const createdDate = getDate(ticketData?.createdAt as string);
   const lastUpdatedOn = getDate(ticketData?.updatedAt as string);
   const ticketStatusArr: string[] = ["pending", "in-progress", "resolved"];
+
   const currentIndex = ticketStatusArr.indexOf(ticketStatus);
   const nextTicketStatus =
     currentIndex !== -1 && currentIndex < ticketStatusArr.length - 1
       ? ticketStatusArr[currentIndex + 1]
       : ticketStatusArr[2];
+
+  const navigate = useNavigate();
+  const handleVideoCall = () => {
+    if (!ticketData) return;
+
+    const roomID = ticketData.ticketID;
+    const userID = ticketData.ticketHandlingEmployeeId.toString() || "user1";
+    const userName = ticketData.ticketHandlingEmployeeName.toString() || "ticketFlow user";
+
+    navigate(`video-call?ticketID=${roomID}&userID=${userID}&userName=${userName}`);
+  };
 
   const handleStatusChange = (value: string) => {
     setTicketStatus(value);
@@ -96,11 +109,7 @@ export const EManageTickets: React.FC<EManageTickets> = ({
   };
 
   useEffect(() => {
-    console.log(2656666666666666);
-
     if (ticketData) {
-      console.log("im emange ticket uuid : ", ticketData.ticketID);
-
       setTicketStatus(ticketData.status);
       setCurrentProgress(ticketData.status);
       handleTicketUUID(ticketData.ticketID);
@@ -180,6 +189,7 @@ export const EManageTickets: React.FC<EManageTickets> = ({
                         ticketData.ticketHandlingEmployeeId
                       )
                     }
+                    handleVideoCall={handleVideoCall}
                   />
                 </div>
               )}

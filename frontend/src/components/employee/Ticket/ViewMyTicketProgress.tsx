@@ -11,6 +11,7 @@ import { ITicketDocument } from "@/interfaces/ITicketDocument";
 import React, { useEffect, useState } from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 interface IViewMyTicketProgress {
   handleCancle: () => void;
@@ -27,6 +28,19 @@ const ViewMyTicketProgress: React.FC<IViewMyTicketProgress> = ({ handleCancle, h
   const createdDate = getDate(ticketData?.createdAt as string);
   const lastUpdatedOn = getDate(ticketData?.updatedAt as string);
 
+  //to handle video call
+  const navigate = useNavigate();
+
+  const handleVideoCall = () => {
+    if (!ticketData) return;
+
+    const roomID = ticketData.ticketID;
+    const userID = ticketData.ticketRaisedEmployeeId.toString() || "user2";
+    const userName = ticketData.ticketRaisedEmployeeName.toString() || "ticketFlow user2";
+
+    navigate(`video-call?ticketID=${roomID}&userID=${userID}&userName=${userName}`);
+  };
+
   const handleModalOpen = () => setModalOpen(false);
 
   //left up state to get data from child
@@ -40,11 +54,7 @@ const ViewMyTicketProgress: React.FC<IViewMyTicketProgress> = ({ handleCancle, h
         setIsVisible(false);
       }
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error(Messages.SOMETHING_TRY_AGAIN);
-      }
+     toast.error(getErrMssg(error))
     }
   };
 
@@ -157,6 +167,7 @@ const ViewMyTicketProgress: React.FC<IViewMyTicketProgress> = ({ handleCancle, h
                         ticketData.ticketHandlingEmployeeId
                       )
                     }
+                    handleVideoCall={handleVideoCall}
                   />
                 </div>
               )}

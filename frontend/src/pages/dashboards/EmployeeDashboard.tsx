@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 import { showCustomeAlert } from "../../components/utility/swalAlertHelper";
 import { toast } from "react-toastify";
 import { Messages } from "@/enums/Messages";
+import getErrMssg from "@/components/utility/getErrMssg";
 
 const EmployeeDashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -48,8 +49,8 @@ const EmployeeDashboard: React.FC = () => {
         }
       }
     } catch (error: any) {
-      const errMsg = error.response?.data?.message || Messages.SOMETHING_TRY_AGAIN;
-      toast.error(errMsg);
+      
+      toast.error(getErrMssg(error));
     }
   };
 

@@ -137,3 +137,14 @@ export const rejectShiftRequest = async (id : string) => {
     throw(error)
   }
 }
+
+//AIzaSyCzWaUzUy9fi3P9QbCphluInCI0V3o3PIo
+export const Aichatbot = async (prompt : string) => {
+  try {
+    const response = await axiosInstance.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=GEMINI_API_KEY`);
+    return response.data;
+  } catch (error) {
+    throw(error)
+  }
+}
+

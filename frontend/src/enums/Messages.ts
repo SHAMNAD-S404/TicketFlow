@@ -17,6 +17,7 @@ export enum Messages {
     FETCH_ORDER_ERROR = "Unable to fetch order details. Please contact support team." ,
     INVALID_PAY_REFERENCE = "Invalid payment reference.",
     FETCH_ID_FAIL_RETRY = "Fetching Id is failed , please try again !",
+    ALL_FIELD_REQUIRED = "All fields are required !",
 
     
 }

@@ -12,9 +12,10 @@ export type IconProps = React.HTMLAttributes<HTMLImageElement>;
 interface IDockDemo {
   ticketId : string;
   handleChat : () => void;
+  handleVideoCall: () => void;
 }
 
-export const  DockDemo : React.FC<IDockDemo> = ({ticketId , handleChat}) => {
+export const  DockDemo : React.FC<IDockDemo> = ({ticketId , handleChat,handleVideoCall}) => {
   return (
     <div className="relative ">
       <Dock iconMagnification={90} iconDistance={140}>
@@ -25,10 +26,10 @@ export const  DockDemo : React.FC<IDockDemo> = ({ticketId , handleChat}) => {
            />
         </DockIcon>
         <DockIcon className="bg-black/10 dark:bg-white/10">
-          <Icons.videoCall className="size-full" />
+          <Icons.videoCall onClick={handleVideoCall}  className="size-full" />
         </DockIcon>
         <DockIcon className="bg-black/10 dark:bg-white/10">
-          <Icons.screenShare className="size-full" />
+          <Icons.screenShare onClick={handleVideoCall}  className="size-full" />
         </DockIcon>
       </Dock>
     </div>

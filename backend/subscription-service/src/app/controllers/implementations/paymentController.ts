@@ -22,6 +22,9 @@ export class PaymentController implements IPaymentController {
 
   public createCheckoutSession = async (req: Request, res: Response): Promise<void> => {
     try {
+
+      console.log(req.body);
+      
       const validateData = CreateCheckoutSchema.safeParse(req.body);
       if (!validateData.success) {
         res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.INVALID_FILED_OR_MISSING_FIELD, success: false });
