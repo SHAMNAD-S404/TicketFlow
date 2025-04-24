@@ -153,8 +153,8 @@ const ChatBot = () => {
                 <div className="mt-20 text-lg text-center text-gray-400">No messages yet.!</div>
               ) : (
                 messages.map((msg, index) => {
-                  const isLastBotMessage =
-                    index === messages.length - 1 && msg.sender === "chatbot" && msg.text !== "Thinking";
+                  // const isLastBotMessage =
+                  //   index === messages.length - 1 && msg.sender === "chatbot" && msg.text !== "Thinking";
                   return (
                     <div key={index} className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
                       <div
