@@ -6,6 +6,7 @@ const secrets = {
     PAYMENT_CANCEL_URL      : import.meta.env.VITE_PAYMENT_CANCEL_URL,
     ZEGO_APPID              : import.meta.env.VITE_ZEGO_APPID,
     ZEGO_SERVER_SECRET      : import.meta.env.VITE_ZEGO_SERVER_SECRET,
+    GEMINIKEY : import.meta.env.VITE_GEMINI_APPID
 
 }
 

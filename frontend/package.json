@@ -39,6 +39,7 @@
     "sweetalert2": "^11.15.2",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
+    "uuid": "^11.1.0",
     "vaul": "^1.1.2"
   },
   "devDependencies": {

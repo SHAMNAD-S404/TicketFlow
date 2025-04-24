@@ -31,6 +31,8 @@ const AppRoutes: React.FC = () => {
         {/* Unauthorized Routes */}
         <Route path="/unauthorized" element={<Unauthorized />} />
 
+       
+
         {/* Authentication Routes */}
         <Route
           path="/auth/*"

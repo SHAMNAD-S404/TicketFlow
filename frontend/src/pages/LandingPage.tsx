@@ -11,6 +11,7 @@ import DetailFeature from "../components/user/home/DetailFeature";
 import TrialComponent from "../components/user/home/TrialComponent";
 import FAQComponent from "../components/user/home/FAQComponent";
 import Footer from "../components/user/layout/Footer";
+import ChatBot from "@/components/chatBot/ChatBot";
 
 const LandingPage: React.FC = () => {
   const faqData = [
@@ -96,6 +97,7 @@ const LandingPage: React.FC = () => {
       <FAQComponent faqs={faqData} />
 
       <Footer />
+      <ChatBot/>
     </div>
   );
 };

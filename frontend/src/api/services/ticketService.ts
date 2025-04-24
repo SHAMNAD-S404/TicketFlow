@@ -1,6 +1,17 @@
 import { IUpdateReassignTicketData } from "@/components/company/Ticket/ReassignTicket";
 import axiosInstance from "../axiosInstance";
 import { IPayloadShiftReq } from "@/components/common/ManageTicketHeader";
+import axios from "axios";
+import secrets from "@/config/secrets";
+
+interface GeminiResponse {
+  candidates?: {
+    content?: {
+      parts?: { text: string }[];
+    };
+  }[];
+}
+
 
 export const createTicket = async (data: FormData) => {
   try {
@@ -138,11 +149,21 @@ export const rejectShiftRequest = async (id : string) => {
   }
 }
 
-//AIzaSyCzWaUzUy9fi3P9QbCphluInCI0V3o3PIo
+
 export const Aichatbot = async (prompt : string) => {
   try {
-    const response = await axiosInstance.post(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=GEMINI_API_KEY`);
-    return response.data;
+    const response = await axios.post<GeminiResponse>(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${secrets.GEMINIKEY}`,
+      {
+        contents: [{ parts: [{ text: `User: ${prompt}\nBot:` }] }],
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    const reply = response.data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't respond.";
+    return { success: true, data: reply };
   } catch (error) {
     throw(error)
   }
