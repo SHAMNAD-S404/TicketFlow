@@ -15,6 +15,7 @@ const EmployeeRoutes: React.FC = () => {
         <Route path="tickets" element={<TicketHome />} />
         <Route path="profile" element={<ProfileUI />} />
         <Route path="chat" element={<TicketChat />} />
+       
         <Route path="*" element={<NotFound/>} />
       </Route>
     </Routes>
