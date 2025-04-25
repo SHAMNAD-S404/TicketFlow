@@ -24,5 +24,5 @@ const MessageSchema: Schema = new Schema<IMessage>(
   { timestamps: true }
 );
 
-const MessageModel = mongoose.model<IMessage & Document>("Messages", MessageSchema);
+const MessageModel = mongoose.model<IMessage >("Messages", MessageSchema);
 export default MessageModel;

@@ -19,8 +19,6 @@ export default class ChatService implements IChatService {
       //update or creating chat room with last message
       const { ticketID, sender, message,user1,user2 } = data;
       const result = await ChatRoomRepo.updateWithLastMessage(ticketID, message, sender,user1,user2);
-      console.log("what happened , ",result);
-      
       return savedMessg;
     } catch (error) {
       throw error;

@@ -5,6 +5,12 @@ import ChatService from "./app/services/implements/chatService";
 import { IMessageData } from "./app/services/interface/IChatService";
 import { SoketMsg } from "./constants/SoketMssg";
 import { config } from "./config";
+import NotificationService from "./app/services/implements/notificationService";
+import { INotificationService } from "./app/services/interface/INotificationService";
+import Messages from "./constants/Messages";
+
+
+
 
 // Creating http server from express app
 const server = http.createServer(app);
@@ -18,7 +24,6 @@ const io = new Server(server, {
   },
   // Set the path to match what's expected from the gateway
   path: "/socket.io",
-  // Performance optimizations
   pingTimeout: 60000,
   pingInterval: 25000,
   // Prevent multiple connections per client
@@ -28,9 +33,14 @@ const io = new Server(server, {
 });
 
 const chatService = new ChatService();
+//instance of notificaiton service
+const notificationService : INotificationService = new NotificationService();
 
 // Track active rooms for each socket
 const socketRooms = new Map<string, Set<string>>();
+
+// Track user IDs to socket IDs for direct notifications
+const userSockets = new Map<string, Set<string>>();
 
 // Socket event handling
 io.on("connection", (socket: Socket) => {
@@ -38,6 +48,34 @@ io.on("connection", (socket: Socket) => {
 
   // Initialize rooms set for this socket
   socketRooms.set(socket.id, new Set());
+
+//**********************************  NOTIFICATION  */
+  //register user for notifications
+  socket.on("register_user",(userId : string) => {
+    if(!userId) return;
+
+    // add this socket to the user's set of sockets
+    if(!userSockets.has(userId)){
+      userSockets.set(userId,new Set())
+    }
+
+    userSockets.get(userId)?.add(socket.id);
+
+    console.log(`User ${userId} registered for notifications with socket ${socket.id}`);
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // Join room based on the ticketID
   socket.on("join_room", (ticketID: string) => {
@@ -61,6 +99,8 @@ io.on("connection", (socket: Socket) => {
     console.log(`User ${socket.id} joined room ${ticketID}`);
   });
 
+
+//****************************************     SOCKET FN FOR MESSAGE       */
   // Handle sending a message
   socket.on("send_message", async (data: IMessageData) => {
     try {
@@ -84,18 +124,101 @@ io.on("connection", (socket: Socket) => {
     }
   });
 
+  //************************* NOTIFICATOIN EVENTS  */
+
+  //fetch notifications for a user
+  socket.on("fetch_notifications" , async(userId : string,limit : number=10) => {
+    try {
+      
+      const notificaiton = await notificationService.getNotifications(userId,limit);
+      const unreadCount = await notificationService.getUnreadCount(userId);
+
+      socket.emit("notification_list",{notificaiton,unreadCount});
+
+    } catch (error) {
+      console.error(Messages.NOTIFICATION_FETCH_ERR,error);
+      socket.emit("notification_error" , {error : Messages.FAILED_NOTIFICATION_FETCH})
+    }
+  })
+
+  //mark notificattion as read
+  socket.on("mark_notification_read" , async (notificationId : string) => {
+    try {
+      const updatedNotification = await notificationService.markAsRead(notificationId);
+      if(updatedNotification){
+        socket.emit("notification_marked_read", updatedNotification);
+      }
+    } catch (error) {
+      console.error(Messages.MARKING_NOTIFICATION_ERR,error);
+    }
+  });
+
+  //mark all notification as read
+  socket.on("mark_all_notificatons_read" , async (userId : string) => {
+    try {
+      await notificationService.markAllAsRead(userId);
+      socket.emit("all_notifications_marked_read");
+    } catch (error) {
+      console.error(Messages.MARK_ALL_NOTIFICATION_ERR,error);
+    }
+  });
+
+
+
+
+
+
+
   // Handle client disconnect
   socket.on("disconnect", () => {
     console.log(SoketMsg.USER_DISCONNECTED, socket.id);
+
     // Clean up rooms for this socket
     socketRooms.delete(socket.id);
+
+    //Remove  this socket from user mapping
+    userSockets.forEach((sockets, userId) => {
+      if(sockets.has(socket.id)) {
+        sockets.delete(socket.id);
+      }
+      if(sockets.size === 0) {
+        userSockets.delete(userId);
+      }
+    });
   });
 });
+
+
+
+// function to send a notification to a specific user
+export const sendUserNotification = async (userId : string , notificaitonData : any) => {
+  try {
+    //save notification to db
+    const notification = await notificationService.createNotification({
+      recipient : userId,
+      ...notificaitonData
+    });
+
+    // Send to all the sockets of that user
+    const userSocketIds = userSockets.get(userId);
+    if(userSocketIds && userSocketIds.size > 0 ){
+      userSocketIds.forEach(socketId => {
+        io.to(socketId).emit("new_notification",notification)
+      })
+    }
+
+    return notification;
+  } catch (error) {
+    console.error(Messages.ERROR_SENDING_NOTIFICATION);
+  }
+}
+
+
 
 // Add server monitoring
 setInterval(() => {
   const connections = io.sockets.sockets.size;
   console.log(`Active connections: ${connections}`);
-}, 60000);
+}, 180000);
 
-export { server, io };
+export { server, io  };

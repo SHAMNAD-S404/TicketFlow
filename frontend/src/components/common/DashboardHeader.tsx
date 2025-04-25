@@ -2,14 +2,13 @@ import React from "react";
 import { FaBell, FaSearch } from "react-icons/fa";
 import { FaPowerOff as FaPow } from "react-icons/fa6";
 
-
 interface DashboardHeaderProps {
   name: string;
   profileImage: string;
   onLogout: () => void;
 }
 
-const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name, onLogout,profileImage }) => {
+const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name, onLogout, profileImage }) => {
   return (
     <header className="bg-gradient-to-r from-gray-100 via-gray-200 to-gray-200 border-b border-gray-200 px-6 py-2 rounded-xl w-full ">
       <div className="flex items-center justify-between ">
@@ -47,7 +46,11 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name, onLogout,profil
           <div className="flex items-center  bg-gray-100 rounded-xl shadow-2xl shadow-gray-600 ">
             <div className="flex flex-col items-end  "></div>
             <img
-              src={profileImage ? profileImage : "https://imgs.search.brave.com/YH7ay2TlJuJ4PGUTGS-GmsnCPqYehMWwx13lWbFYQnk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS1wc2QvM2Qt/cmVuZGVyaW5nLWhh/aXItc3R5bGUtYXZh/dGFyLWRlc2lnbl8y/My0yMTUxODY5MTUz/LmpwZz9zZW10PWFp/c19oeWJyaWQ"}
+              src={
+                profileImage
+                  ? profileImage
+                  : "https://imgs.search.brave.com/YH7ay2TlJuJ4PGUTGS-GmsnCPqYehMWwx13lWbFYQnk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS1wc2QvM2Qt/cmVuZGVyaW5nLWhh/aXItc3R5bGUtYXZh/dGFyLWRlc2lnbl8y/My0yMTUxODY5MTUz/LmpwZz9zZW10PWFp/c19oeWJyaWQ"
+              }
               alt="Profile"
               className="h-10 w-10 rounded-full object-cover ring-2 ring-white shadow-xl shadow-gray-500 "
             />

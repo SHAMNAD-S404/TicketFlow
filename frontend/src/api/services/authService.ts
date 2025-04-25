@@ -123,21 +123,20 @@ export const forgotPasswordReq = async (email: string) => {
   }
 };
 
-export const resetPasswordReq = async (token:string,password:string) => {
+export const resetPasswordReq = async (token: string, password: string) => {
   try {
-    const response = await axiosInstance.post("/auth/reset-password",{token,password});
+    const response = await axiosInstance.post("/auth/reset-password", { token, password });
     return response.data;
   } catch (error) {
     throw error;
   }
-}
+};
 
-
-export const changePassword = async (data : Record<string,string>) => {
+export const changePassword = async (data: Record<string, string>) => {
   try {
-    const response = await axiosInstance.patch("/auth/change-password",{data});
-    return response.data
+    const response = await axiosInstance.patch("/auth/change-password", { data });
+    return response.data;
   } catch (error) {
     throw error;
   }
-}
+};

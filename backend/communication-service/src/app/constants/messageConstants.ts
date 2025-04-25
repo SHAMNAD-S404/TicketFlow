@@ -20,6 +20,9 @@ export const Messages = {
     SOMETHING_WENT_WRONG : "something went wrogn try again !",
     DATA_FETCHED : "Data fetched successfully",
     PARTICIPIANTS_ID_MISSING : "Participiants id is missing" ,
+    ERROR_WHILE : "Error while in the ",
+    NOTIFICATION_UPDATED : "Notification updated successfully",
+    NOTIFICATION_CREATED : "Notification created successfully",
   
   };
   
