@@ -3,7 +3,7 @@ import { INotification } from "../../models/interface/INotification";
 export interface INotificationData {
     recipient : string;
     type : string;
-    tittle : string;
+    title : string;
     message : string;
     relatedId : string;
 }

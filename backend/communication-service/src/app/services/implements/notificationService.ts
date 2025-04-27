@@ -3,17 +3,18 @@ import NotificationModel from "../../models/implements/NotificationSchema";
 import { INotification } from "../../models/interface/INotification";
 import { INotificationRepo } from "../../repositories/interface/INotificationRepo";
 import NotificationRepo from "../../repositories/implements/notificationRepo";
+import { read } from "fs";
 
 const notificationRepo: INotificationRepo = new NotificationRepo();
 
 export default class NotificationService implements INotificationService {
   async createNotification(data: INotificationData): Promise<INotification> {
     try {
-      const { message, recipient, relatedId, tittle, type } = data;
+      const { message, recipient, relatedId, title, type } = data;
       const notification = new NotificationModel({
         recipient,
         type,
-        title: tittle,
+        title,
         message,
         relatedId,
       });
@@ -27,7 +28,7 @@ export default class NotificationService implements INotificationService {
 
   async getNotifications(userId: string, limit: number = 10): Promise<INotification[]> {
     try {
-      return await notificationRepo.findNotifications({ recipient: userId }, limit);
+      return await notificationRepo.findNotifications({ recipient: userId , read :false }, limit);
     } catch (error) {
       throw error;
     }

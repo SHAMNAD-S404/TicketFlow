@@ -1,9 +1,8 @@
 import dotenv from "dotenv";
 import express, { Request, Response, NextFunction } from "express";
 import validateEnvVariables from "./utils/validateEnvVariables";
-import Routes from "./app/routes/routes";
-import cors from "cors";
-import { config } from "./config";
+import chatRoutes from "./app/routes/routes";
+import notoificatoinRoutes from "./app/routes/notificationRoutes"
 
 dotenv.config();
 validateEnvVariables();
@@ -20,6 +19,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-app.use("/", Routes);
+app.use("/chat", chatRoutes );
+app.use("/notification", notoificatoinRoutes );
 
 export default app;

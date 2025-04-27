@@ -9,9 +9,7 @@ import { RabbitMQConfig } from "../../../config/rabbitMQConfig";
 import getResolutionTime from "../../../utils/getResolutionTime";
 import ticketShiftReqRepo from "../../repositories/implements/ticketShiftReqRepo";
 
-
 export default class TicketService implements ITicketService {
-
   async createTicketDocument(
     ticketData: ITicket
   ): Promise<{ message: string; success: boolean; statusCode: number; data?: ITicket }> {
@@ -43,6 +41,19 @@ export default class TicketService implements ITicketService {
 
         //update ticketcount in employee collection
         publishToQueue(RabbitMQConfig.companyMainQueue, employeeUpdate);
+
+        //communication service payload
+        const communicationServicePayload = {
+          type: "TICKET_ASSIGNED",
+          eventType : "ticket-assigned",
+          userId: newTicket.ticketHandlingEmployeeId,
+          ticketId: newTicket.ticketID,
+          title: "New Ticket Assigned",
+          message: `Ticket #${newTicket.ticketID} has been assigned to you by ${newTicket.ticketRaisedEmployeeName}`,
+        };
+
+        //publish to commmunication servie
+        publishToQueue(RabbitMQConfig.communicationServiceQueue, communicationServicePayload);
 
         return {
           message: Messages.TICKET_CREATED,
@@ -217,6 +228,19 @@ export default class TicketService implements ITicketService {
           };
           //reduce ticketcount in employee collection
           publishToQueue(RabbitMQConfig.companyMainQueue, employeeUpdate);
+
+          //payload for the communication service notification
+          const communicationServicePayload = {
+            type: "TICKET_STATUS_CHANGED",
+            eventType :"ticket-status-changed",
+            userId: updateDoc.ticketRaisedEmployeeId,
+            ticketId: updateDoc.ticketID,
+            title: "Ticket Status Updated",
+            message: `Ticket #${updateDoc.ticketID} status has been changed to ${updateDoc.status} `,
+          };
+
+          //publish to communication service
+          publishToQueue(RabbitMQConfig.communicationServiceQueue, communicationServicePayload);
         }
         return {
           message: Messages.TICKET_STATUS_UPDATED,

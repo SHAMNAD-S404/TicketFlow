@@ -9,9 +9,6 @@ import NotificationService from "./app/services/implements/notificationService";
 import { INotificationService } from "./app/services/interface/INotificationService";
 import Messages from "./constants/Messages";
 
-
-
-
 // Creating http server from express app
 const server = http.createServer(app);
 
@@ -34,7 +31,7 @@ const io = new Server(server, {
 
 const chatService = new ChatService();
 //instance of notificaiton service
-const notificationService : INotificationService = new NotificationService();
+const notificationService: INotificationService = new NotificationService();
 
 // Track active rooms for each socket
 const socketRooms = new Map<string, Set<string>>();
@@ -49,33 +46,20 @@ io.on("connection", (socket: Socket) => {
   // Initialize rooms set for this socket
   socketRooms.set(socket.id, new Set());
 
-//**********************************  NOTIFICATION  */
+  //**********************************  NOTIFICATION  */
   //register user for notifications
-  socket.on("register_user",(userId : string) => {
-    if(!userId) return;
+  socket.on("register_user", (userId: string) => {
+    if (!userId) return;
 
     // add this socket to the user's set of sockets
-    if(!userSockets.has(userId)){
-      userSockets.set(userId,new Set())
+    if (!userSockets.has(userId)) {
+      userSockets.set(userId, new Set());
     }
 
     userSockets.get(userId)?.add(socket.id);
 
     console.log(`User ${userId} registered for notifications with socket ${socket.id}`);
   });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   // Join room based on the ticketID
   socket.on("join_room", (ticketID: string) => {
@@ -99,8 +83,7 @@ io.on("connection", (socket: Socket) => {
     console.log(`User ${socket.id} joined room ${ticketID}`);
   });
 
-
-//****************************************     SOCKET FN FOR MESSAGE       */
+  //****************************************     SOCKET FN FOR MESSAGE       */
   // Handle sending a message
   socket.on("send_message", async (data: IMessageData) => {
     try {
@@ -127,47 +110,41 @@ io.on("connection", (socket: Socket) => {
   //************************* NOTIFICATOIN EVENTS  */
 
   //fetch notifications for a user
-  socket.on("fetch_notifications" , async(userId : string,limit : number=10) => {
+  socket.on("fetch_notification", async (userId: string, limit: number = 10) => {
     try {
-      
-      const notificaiton = await notificationService.getNotifications(userId,limit);
-      const unreadCount = await notificationService.getUnreadCount(userId);
+      const [notifications, unreadCount] = await Promise.all([
+        notificationService.getNotifications(userId, limit),
+        notificationService.getUnreadCount(userId),
+      ]);
 
-      socket.emit("notification_list",{notificaiton,unreadCount});
-
+      socket.emit("notification_list", { notifications, unreadCount });
     } catch (error) {
-      console.error(Messages.NOTIFICATION_FETCH_ERR,error);
-      socket.emit("notification_error" , {error : Messages.FAILED_NOTIFICATION_FETCH})
+      console.error(Messages.NOTIFICATION_FETCH_ERR, error);
+      socket.emit("notification_error", { error: Messages.FAILED_NOTIFICATION_FETCH });
     }
-  })
+  });
 
   //mark notificattion as read
-  socket.on("mark_notification_read" , async (notificationId : string) => {
+  socket.on("mark_notification_read", async (notificationId: string) => {
     try {
       const updatedNotification = await notificationService.markAsRead(notificationId);
-      if(updatedNotification){
+      if (updatedNotification) {
         socket.emit("notification_marked_read", updatedNotification);
       }
     } catch (error) {
-      console.error(Messages.MARKING_NOTIFICATION_ERR,error);
+      console.error(Messages.MARKING_NOTIFICATION_ERR, error);
     }
   });
 
   //mark all notification as read
-  socket.on("mark_all_notificatons_read" , async (userId : string) => {
+  socket.on("mark_all_notifications_read", async (userId: string) => {
     try {
       await notificationService.markAllAsRead(userId);
       socket.emit("all_notifications_marked_read");
     } catch (error) {
-      console.error(Messages.MARK_ALL_NOTIFICATION_ERR,error);
+      console.error(Messages.MARK_ALL_NOTIFICATION_ERR, error);
     }
   });
-
-
-
-
-
-
 
   // Handle client disconnect
   socket.on("disconnect", () => {
@@ -178,42 +155,38 @@ io.on("connection", (socket: Socket) => {
 
     //Remove  this socket from user mapping
     userSockets.forEach((sockets, userId) => {
-      if(sockets.has(socket.id)) {
+      if (sockets.has(socket.id)) {
         sockets.delete(socket.id);
       }
-      if(sockets.size === 0) {
+      if (sockets.size === 0) {
         userSockets.delete(userId);
       }
     });
   });
 });
 
-
-
 // function to send a notification to a specific user
-export const sendUserNotification = async (userId : string , notificaitonData : any) => {
+export const sendUserNotification = async (userId: string, notificaitonData: any) => {
   try {
     //save notification to db
     const notification = await notificationService.createNotification({
-      recipient : userId,
-      ...notificaitonData
+      recipient: userId,
+      ...notificaitonData,
     });
 
     // Send to all the sockets of that user
     const userSocketIds = userSockets.get(userId);
-    if(userSocketIds && userSocketIds.size > 0 ){
-      userSocketIds.forEach(socketId => {
-        io.to(socketId).emit("new_notification",notification)
-      })
+    if (userSocketIds && userSocketIds.size > 0) {
+      userSocketIds.forEach((socketId) => {
+        io.to(socketId).emit("new_notification", notification);
+      });
     }
 
     return notification;
   } catch (error) {
-    console.error(Messages.ERROR_SENDING_NOTIFICATION);
+    console.error(Messages.ERROR_SENDING_NOTIFICATION, error);
   }
-}
-
-
+};
 
 // Add server monitoring
 setInterval(() => {
@@ -221,4 +194,4 @@ setInterval(() => {
   console.log(`Active connections: ${connections}`);
 }, 180000);
 
-export { server, io  };
+export { server, io };

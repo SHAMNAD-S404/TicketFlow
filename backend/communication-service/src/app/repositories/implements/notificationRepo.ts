@@ -9,7 +9,7 @@ export default class NotificationRepo extends BaseRepo<INotification> implements
         super(NotificationModel)
     }
 
-    async findNotifications(searchQuery: Record<string, string>, limit: number): Promise<INotification[]> {
+    async findNotifications(searchQuery: Record<string, any>, limit: number): Promise<INotification[]> {
         try {
             return await NotificationModel
             .find(searchQuery)

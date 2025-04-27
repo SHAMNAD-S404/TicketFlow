@@ -64,6 +64,7 @@ const SuperAdminDashboard: React.FC = () => {
         <DashboardHeader name={"ADMIN"} 
         onLogout={handleLogout}
         profileImage="https://img.freepik.com/free-photo/androgynous-avatar-non-binary-queer-person_23-2151100205.jpg?t=st=1741444634~exp=1741448234~hmac=b187f1a3d68f5e45ce1ab6c7d130f4f8eb779b4136513619e07a28130596166d&w=826"
+        userId={"admin"}
          />
 
 <div className="p-2 bg-gray-100  flex-1">

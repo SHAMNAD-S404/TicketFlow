@@ -66,7 +66,12 @@ const CompanyDashboard: React.FC = () => {
       <Sidebar role={role} isSubscriptionExpired={company.isSubscriptionExpired}  onMenuSelect={handleMenuSelect} />
 
       <div className="flex-1 flex flex-col w-full ">
-        <DashboardHeader name={company.companyName} onLogout={handleLogout} profileImage={company.imageUrl} />
+        <DashboardHeader 
+        name={company.companyName}
+         onLogout={handleLogout}
+          profileImage={company.imageUrl} 
+          userId={company._id}
+          />
 
         <div className="p-2 bg-gray-100  flex-1">
           <Outlet />

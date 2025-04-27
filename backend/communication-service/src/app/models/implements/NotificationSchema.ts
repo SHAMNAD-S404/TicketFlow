@@ -11,7 +11,6 @@ const NotificationSchema: Schema = new Schema<INotification>(
     type: {
       type: String,
       required: true,
-      enum: ["TICKET ASSIGNED", "TICKET_STATUS_CHANGED", "OTHER"],
     },
     title: {
       type: String,

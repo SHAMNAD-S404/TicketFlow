@@ -23,6 +23,8 @@ export const Messages = {
     ERROR_WHILE : "Error while in the ",
     NOTIFICATION_UPDATED : "Notification updated successfully",
     NOTIFICATION_CREATED : "Notification created successfully",
+    ERROR_PUBLISH_MSSG :  "Error in publishing the message to queue !",
+    CHANNEL_NOT_AVILABLE :  "Channle is not avilable",
   
   };
   

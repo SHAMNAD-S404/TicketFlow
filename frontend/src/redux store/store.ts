@@ -4,6 +4,7 @@ import employeeReducer from "./employeeSlice";
 import sudoReducer from './sudoSlice';
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import notificationReducer from "./notificatoinSlice";
 
 const persistConfig = {
   key: "root",
@@ -19,6 +20,7 @@ const store = configureStore({
     company: persistCompanyReducer,
     employee: persistEmployeeReducer,
     sudo : persistSudoReducer,
+    notification : notificationReducer,
   },
 });
 

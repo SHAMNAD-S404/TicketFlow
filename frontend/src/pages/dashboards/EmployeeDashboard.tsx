@@ -61,7 +61,12 @@ const EmployeeDashboard: React.FC = () => {
       <Sidebar role={role} onMenuSelect={handleMenuSelect} />
 
       <div className="flex-1 flex flex-col w-full ">
-        <DashboardHeader name={employee.name} onLogout={handleLogout} profileImage={employee.imageUrl} />
+        <DashboardHeader 
+        name={employee.name}
+          onLogout={handleLogout}
+          profileImage={employee.imageUrl}
+          userId={employee._id}
+           />
 
         <div className="p-2 bg-gray-100  flex-1">
           <Outlet />
