@@ -12,7 +12,6 @@ interface GeminiResponse {
   }[];
 }
 
-
 export const createTicket = async (data: FormData) => {
   try {
     const response = await axiosInstance.post("/tickets/create-ticket", data, {
@@ -26,18 +25,18 @@ export const createTicket = async (data: FormData) => {
   }
 };
 
-export const editTicket = async (data:FormData) => {
+export const editTicket = async (data: FormData) => {
   try {
-      const response = await axiosInstance.patch("/tickets/edit-ticket",data,{
-        headers : {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return response.data;
+    const response = await axiosInstance.patch("/tickets/edit-ticket", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
   } catch (error) {
     throw error;
   }
-}
+};
 
 export const fetchAllTickets = async (currentPage: number, sortBy: string, searchQuery: string) => {
   try {
@@ -50,16 +49,17 @@ export const fetchAllTickets = async (currentPage: number, sortBy: string, searc
   }
 };
 
-
 //api call to fetch all the shift req from db
-export const fetchlAllShiftReq = async (currentPage : number , sortBy : string,searchQuery : string) => {
+export const fetchlAllShiftReq = async (currentPage: number, sortBy: string, searchQuery: string) => {
   try {
-    const response = await axiosInstance.get(`/tickets/get-all-shift-req?page=${currentPage}&sortBy=${sortBy}&searchQuery=${searchQuery}`);
+    const response = await axiosInstance.get(
+      `/tickets/get-all-shift-req?page=${currentPage}&sortBy=${sortBy}&searchQuery=${searchQuery}`
+    );
     return response.data;
   } catch (error) {
     throw error;
   }
-}
+};
 
 export const fetchTicketsEmployeeWise = async (
   currentPage: number,
@@ -120,52 +120,82 @@ export const updateTicketStatus = async (id: string, status: string, ticketResol
   }
 };
 
-export const reOpenTicket = async (id:string,reason : string) => {
+export const reOpenTicket = async (id: string, reason: string) => {
   try {
-    const response = await axiosInstance.patch("/tickets/re-open-ticket",{id,reason});
-    return response.data;
-  } catch (error) {
-    throw error
-  }
-}
-
-//api call to ticket shift request made
-export const ticketShiftRequest = async (data : IPayloadShiftReq) => {
-  try {
-    const response = await axiosInstance.post("/tickets/ticket-shift-request",{data});
+    const response = await axiosInstance.patch("/tickets/re-open-ticket", { id, reason });
     return response.data;
   } catch (error) {
     throw error;
   }
-}
+};
+
+//api call to ticket shift request made
+export const ticketShiftRequest = async (data: IPayloadShiftReq) => {
+  try {
+    const response = await axiosInstance.post("/tickets/ticket-shift-request", { data });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 //api call to reject and delete shift req
-export const rejectShiftRequest = async (id : string) => {
+export const rejectShiftRequest = async (id: string) => {
   try {
     const response = await axiosInstance.delete(`/tickets/reject-shift-req?id=${id}`);
     return response.data;
   } catch (error) {
-    throw(error)
+    throw error;
   }
-}
+};
 
-
-export const Aichatbot = async (prompt : string) => {
+//api call for fetch all tickets statics
+export const fetchAllTicketStatics = async () => {
   try {
-    const response = await axios.post<GeminiResponse>(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${secrets.GEMINIKEY}`,
+    const response = await axiosInstance.get("/tickets/fetch-all-ticket-statics");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+//api call for fetch all my ticket progrss statics
+export const fetchMyTicketStatics = async () => {
+  try {
+    const response = await axiosInstance.get("/tickets/fetch-my-ticket-statics");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+//for fetch get assigned tickets statics
+export const fetchAssignedTicketStatics = async () => {
+  try {
+    const response = await axiosInstance.get("/tickets/fetch-assigned-ticket-statics");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+//api call for the chat bot
+export const Aichatbot = async (prompt: string) => {
+  try {
+    const response = await axios.post<GeminiResponse>(
+      secrets.GEMINIAPIURL,
       {
         contents: [{ parts: [{ text: `User: ${prompt}\nBot:` }] }],
       },
       {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       }
     );
     const reply = response.data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't respond.";
     return { success: true, data: reply };
   } catch (error) {
-    throw(error)
+    throw error;
   }
-}
-
+};

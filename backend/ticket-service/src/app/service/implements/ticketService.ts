@@ -1,6 +1,5 @@
 import { ITicket, TicketStatus } from "../../models/interface/ITicketModel";
 import TicketRepository from "../../repositories/implements/ticketRepository";
-import { IfetchAllTicketsEmployeeWise, IReassignedTicketResponse, ITicketService } from "../interface/ITicketService";
 import { HttpStatus } from "../../../constants/httpStatus";
 import { Messages } from "../../../constants/messageConstants";
 import { IBasicResponse, ITicketReassignData } from "../../interface/userTokenData";
@@ -8,6 +7,12 @@ import { publishToQueue } from "../../../queues/publisher";
 import { RabbitMQConfig } from "../../../config/rabbitMQConfig";
 import getResolutionTime from "../../../utils/getResolutionTime";
 import ticketShiftReqRepo from "../../repositories/implements/ticketShiftReqRepo";
+import {
+  AllTicketStaticsResp,
+  IfetchAllTicketsEmployeeWise,
+  IReassignedTicketResponse,
+  ITicketService,
+} from "../interface/ITicketService";
 
 export default class TicketService implements ITicketService {
   async createTicketDocument(
@@ -45,7 +50,7 @@ export default class TicketService implements ITicketService {
         //communication service payload
         const communicationServicePayload = {
           type: "TICKET_ASSIGNED",
-          eventType : "ticket-assigned",
+          eventType: "ticket-assigned",
           userId: newTicket.ticketHandlingEmployeeId,
           ticketId: newTicket.ticketID,
           title: "New Ticket Assigned",
@@ -232,7 +237,7 @@ export default class TicketService implements ITicketService {
           //payload for the communication service notification
           const communicationServicePayload = {
             type: "TICKET_STATUS_CHANGED",
-            eventType :"ticket-status-changed",
+            eventType: "ticket-status-changed",
             userId: updateDoc.ticketRaisedEmployeeId,
             ticketId: updateDoc.ticketID,
             title: "Ticket Status Updated",
@@ -414,6 +419,32 @@ export default class TicketService implements ITicketService {
         message: Messages.REOPEN_SUCCESS,
         statusCode: HttpStatus.OK,
         success: true,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getFetchTicketStatics(fieldName: string, fieldValue: string): Promise<AllTicketStaticsResp> {
+    try {
+      const filter = { [fieldName]: fieldValue };
+      const [totalTickets, openTickets, closedTickets, highPriorityTickets] = await Promise.all([
+        TicketRepository.getDocumentCount(filter),
+        TicketRepository.getDocumentCount({ ...filter, status: { $ne: "resolved" } }),
+        TicketRepository.getDocumentCount({ ...filter, status: "resolved" }),
+        TicketRepository.getDocumentCount({ ...filter, priority: "High priority" }),
+      ]);
+
+      return {
+        message: Messages.FETCH_SUCCESS,
+        statusCode: HttpStatus.OK,
+        success: true,
+        data: {
+          closedTickets,
+          highPriorityTickets,
+          openTickets,
+          totalTickets,
+        },
       };
     } catch (error) {
       throw error;

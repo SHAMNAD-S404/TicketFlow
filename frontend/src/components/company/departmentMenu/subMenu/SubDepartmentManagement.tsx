@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { IDepartmentData } from "../../../../types/IDepartmentData";
 import { toast } from "react-toastify";
-import { Messages } from "../../../../enums/Messages";
 import { fetchAllDepartemtsDetails } from "../../../../api/services/companyService";
 import DepartmentCard from "../../../common/DepartmentCard";
-import GifImage from "../../../../assets/gif/star.gif";
+import GifImage from "../../../../assets/images/black.png";
 import DepartemntEmployeeManagment from "./DepartmentEmployeeManage";
+import getErrMssg from "@/components/utility/getErrMssg";
 
 export const SubDepartmentManagement: React.FC = () => {
   const [departmentData, setDepartmentData] = useState<IDepartmentData[]>([]);
   const [departmentView, setDepartmentView] = useState<string | null>(null);
   const [refresh, setRefresh] = useState<boolean>(false)
+  const [departmentName , setDepartmentName] = useState<string>("");
 
   const handleDepartmentView = (_id: string) => {
     setDepartmentView(_id);
@@ -22,11 +23,7 @@ export const SubDepartmentManagement: React.FC = () => {
         const response = await fetchAllDepartemtsDetails();
         setDepartmentData(response.data);
       } catch (error: any) {
-        if (error.response && error.response.data) {
-          toast.error(error.response.data.message);
-        } else {
-          toast.error(Messages.SOMETHING_TRY_AGAIN);
-        }
+        toast.error(getErrMssg(error))
       }
     };
     getDepartmentData();
@@ -38,6 +35,7 @@ export const SubDepartmentManagement: React.FC = () => {
       {departmentView ? (
         <DepartemntEmployeeManagment
          departmentId={departmentView} 
+         departmentName={departmentName}
          handleCancel ={()=> setDepartmentView(null)}
          />
       ) : (
@@ -51,6 +49,7 @@ export const SubDepartmentManagement: React.FC = () => {
               image={GifImage}
               handleView={() => handleDepartmentView(department._id)}
               twickParent={()=> setRefresh(!refresh)}
+              setDepartmentName={()=> setDepartmentName(department.departmentName)}
             />
           ))}
         </div>

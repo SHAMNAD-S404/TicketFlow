@@ -2,6 +2,7 @@ import React from "react";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { FaChevronDown, FaEye } from "react-icons/fa";
 import { ITicketContext } from "@/types/ITicketContext";
+import { IoIosSearch } from "react-icons/io";
 
 interface ITicketTable {
   handleCancel: () => void;
@@ -10,9 +11,11 @@ interface ITicketTable {
   tikcetData: ITicketContext[];
   manageTicketHandle: (value: string) => void;
   showRaisedBy?: boolean;
+  tableHeading? : string;
 }
 
 const TicketTable: React.FC<ITicketTable> = ({
+  tableHeading = "My Ticket Progress",
   handleCancel,
   handleSort,
   handleSearch,
@@ -46,6 +49,9 @@ const TicketTable: React.FC<ITicketTable> = ({
               <FaChevronDown className="absolute right-3 top-3 w-4 h-4 text-gray-400  " />
             </div>
           </div>
+          <div>
+            <h1 className="font-semibold text-2xl underline underline-offset-3">{tableHeading } </h1>
+          </div>
 
           <div className="relative">
             <input
@@ -54,18 +60,7 @@ const TicketTable: React.FC<ITicketTable> = ({
               className="ms-1 pl-4 pr-10 py-2 rounded-full shadow-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 "
               onChange={(e) => handleSearch(e.target.value)}
             />
-            <svg
-              className="absolute right-3 top-2.5 w-5 h-5 text-gray-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+            <IoIosSearch className="absolute right-3 top-2.5 w-6 h-6 text-gray-800" />
           </div>
         </div>
       </nav>

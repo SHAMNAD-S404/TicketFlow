@@ -11,7 +11,6 @@ import { isPlanExpired } from "../utility/dateFunctions.ts/isPlanExpired";
 import { RowsSkelton } from "../common/RowsSkelton";
 import TableStaticCards, { IStatsCardData } from "../common/TableStaticCards";
 import { fetchSubscriptionStatics } from "@/api/services/subscriptionService";
-import { FaTruckFast,FaMoneyBillTrendUp ,FaUserTie,FaUserSlash } from "react-icons/fa6";
 
 
 const heading: string[] = [
@@ -59,22 +58,18 @@ const SubscriptionManagement: React.FC = () => {
           {
             title: "Total Orders",
             value: res1.data.totalOrders,
-            icon : <FaTruckFast className=" text-xl text-red-600 font-semibold "/>
           },
           {
             title: "Total Revenue",
             value: res1.data.totalRevenue,
-            icon : <FaMoneyBillTrendUp className="text-xl text-green-600" />
           },
           {
             title: "Plan Active Users",
             value: res2.data.activeUserCount,
-            icon : <FaUserTie  className="text-xl text-violet-600" />
           },
           {
-            title: "Plan Expired Users",
-            value: res2.data.expiredUserCount,
-            icon : <FaUserSlash className="text-xl text-red-600" />
+            title: "Avilable Plans",
+            value: "3",
           },
         ];
         setCardStats(stats);
@@ -115,7 +110,7 @@ const SubscriptionManagement: React.FC = () => {
         </header>
         <nav>
           <div className="flex justify-between mb-6 items-center">
-            <div className="relative ">
+            <div className="relative mt-4 ">
               <select
                 className="appearance-none bg-white px-8 py-2 rounded-full  shadow-lg border border-gray-200 
             focus:outline-none focus:ring-2 focus:ring-blue-400 font-medium "

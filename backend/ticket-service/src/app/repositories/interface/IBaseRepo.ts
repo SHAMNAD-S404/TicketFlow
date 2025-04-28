@@ -11,4 +11,6 @@ export interface IBaseRepository<T> {
     updateQuery: Record<string, string | number>
   ): Promise<T | null>;
 
+  getDocumentCount(searchQuery:Record<string,any>) : Promise<number>;
+
 }

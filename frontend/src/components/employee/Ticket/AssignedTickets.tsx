@@ -3,13 +3,17 @@ import { debounce } from "lodash";
 import { searchInputValidate } from "@/components/utility/searchInputValidateNameEmail";
 import { ITicketContext } from "@/types/ITicketContext";
 import { toast } from "react-toastify";
-import { Messages } from "@/enums/Messages";
-import { fetchTicketsEmployeeWise } from "@/api/services/ticketService";
+import { fetchAssignedTicketStatics, fetchMyTicketStatics, fetchTicketsEmployeeWise } from "@/api/services/ticketService";
 import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux store/store";
-import TicketStaticsCards from "@/components/common/TicketStaticsCards";
 import Pagination from "@/components/common/Pagination";
 import TicketTable from "@/components/common/TicketTable";
+import getErrMssg from "@/components/utility/getErrMssg";
+import TableStaticCards, { IStatsCardData } from "@/components/common/TableStaticCards";
+import { FetchAllTicketStaticReponse } from "@/interfaces/response.interfaces";
+import { IoTicketOutline } from "react-icons/io5";
+import { GoAlert } from "react-icons/go";
+
 
 interface IManageTickets {
   handleCancel: () => void;
@@ -23,6 +27,9 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageT
   const [tikcetData, setTicketData] = useState<ITicketContext[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [cardLoading, setCardLoading] = useState<boolean>(true);
+  const [cardStats, setCardStats] = useState<IStatsCardData[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const employee = useSelector((state: Rootstate) => state.employee.employee);
 
@@ -51,6 +58,47 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageT
     handleManageTicket();
   };
 
+
+
+    //ticket static card data fetch
+    useEffect(() => {
+      const fetchCardStats = async () => {
+        try {
+          setIsLoading(true);
+          const response: FetchAllTicketStaticReponse = await fetchAssignedTicketStatics();
+  
+          const stats: IStatsCardData[] = [
+            {
+              title: "My tickets",
+              value: response.data.totalTickets,
+              icon: <IoTicketOutline className="text-xl" />,
+            },
+            {
+              title: "Pending tickets",
+              value: response.data.openTickets,
+              icon: <IoTicketOutline className="text-xl" />,
+            },
+            {
+              title: "Closed Tickets",
+              value: response.data.closedTickets,
+              icon: <IoTicketOutline className="text-xl" />,
+            },
+            {
+              title: "High Priority Tickets",
+              value: response.data.highPriorityTickets,
+              icon: <GoAlert className="text-xl " />,
+            },
+          ];
+          setCardStats(stats);
+          setCardLoading(false);
+        } catch (error) {
+          setIsLoading(true);
+        }
+      };
+  
+      fetchCardStats();
+    }, []);
+
   useEffect(() => {
     const getAllTickets = async () => {
       try {
@@ -61,11 +109,7 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageT
           setTotalPages(response.data.totalPages);
         }
       } catch (error: any) {
-        if (error.response && error.response.data) {
-          toast.error(error.response.data.message);
-        } else {
-          toast.error(Messages.SOMETHING_TRY_AGAIN);
-        }
+        toast.error(getErrMssg(error))
       }
     };
     getAllTickets();
@@ -73,11 +117,11 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageT
 
   return (
     <div className="bg-blue-50">
-      {/* header card slides */}
+      <header className="py-6">
+        {/* header card slides */}
 
-      <TicketStaticsCards />
-
-      {/* table section */}
+        <TableStaticCards loading={cardLoading} data={cardStats} />
+      </header>
 
       <div className="p-6  space-y-6 ">
         <TicketTable
@@ -86,6 +130,7 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageT
           handleSearch={handleSearch}
           handleSort={handleSort}
           manageTicketHandle={manageTicketHandle}
+          tableHeading="Assigned Tickets for me"
         />
 
         {/* pagination */}

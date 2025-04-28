@@ -13,6 +13,15 @@ export interface IfetchAllTicketsEmployeeWise extends IBasicResponse {
   };
 }
 
+export interface AllTicketStaticsResp extends IBasicResponse {
+  data: {
+    totalTickets: number;
+    openTickets: number;
+    closedTickets: number;
+    highPriorityTickets: number;
+  };
+}
+
 export interface ITicketService {
   createTicketDocument(
     ticketData: ITicket
@@ -50,9 +59,11 @@ export interface ITicketService {
 
   getTicketData(id: string): Promise<IReassignedTicketResponse>;
 
-  getUpdatedTicketStatus(id: string, status: string,ticketResolutions?:string): Promise<IReassignedTicketResponse>;
+  getUpdatedTicketStatus(id: string, status: string, ticketResolutions?: string): Promise<IReassignedTicketResponse>;
 
-  editTicketService(id:string,data:Record<string,string>) : Promise<IReassignedTicketResponse>
+  editTicketService(id: string, data: Record<string, string>): Promise<IReassignedTicketResponse>;
 
-  tiketReOpenService (id:string,data:Record<string,string>) : Promise<IBasicResponse>
+  tiketReOpenService(id: string, data: Record<string, string>): Promise<IBasicResponse>;
+
+  getFetchTicketStatics(fieldName: string, fieldValue: string): Promise<AllTicketStaticsResp>;
 }

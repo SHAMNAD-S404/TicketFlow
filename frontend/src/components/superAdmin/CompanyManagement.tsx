@@ -13,6 +13,8 @@ import { searchInputValidate } from "../utility/searchInputValidateNameEmail";
 import getErrMssg from "../utility/getErrMssg";
 import Pagination from "../common/Pagination";
 
+const heading: string[] = ["NO:", "Company name", "Company type", "Email ID", "Subscription plan", "View", "Status"];
+
 const CompanyManagement: React.FC = () => {
   const [sort, setSortBy] = useState<string>("recent");
   const [SearchKey, setSearchKey] = useState<string>("");
@@ -83,7 +85,7 @@ const CompanyManagement: React.FC = () => {
           setIsLoading(false);
         }
       } catch (error: any) {
-        toast.error(getErrMssg(error))
+        toast.error(getErrMssg(error));
       }
     };
 
@@ -91,7 +93,7 @@ const CompanyManagement: React.FC = () => {
   }, [currentPage, sort, SearchKey]);
 
   return (
-    <div className="p-6  space-y-6 ">
+    <div className="p-6  space-y-6 sm:mt-2 md:mt-12 ">
       <div className="flex justify-between mb-6 items-center">
         <div className="relative ">
           <select
@@ -109,7 +111,7 @@ const CompanyManagement: React.FC = () => {
           <FaChevronDown className="absolute right-3 top-3 w-4 h-4 text-gray-400  " />
         </div>
         <div>
-          <h1 className=" text-xl font-semibold" >COMPANY MANAGEMENT</h1>
+          <h1 className=" text-xl font-semibold">COMPANY MANAGEMENT</h1>
         </div>
         {/* search bar */}
         <div className="relative">
@@ -139,13 +141,11 @@ const CompanyManagement: React.FC = () => {
         <div className="min-w-[1000px]">
           {/* Header session */}
           <div className="bg-blue-100 rounded-2xl px-6 py-6 grid grid-cols-7 gap-4 mb-4">
-            <div className="text-sm font-semibold">No:</div>
-            <div className="text-sm font-semibold">Company name</div>
-            <div className="text-sm font-semibold">Company type</div>
-            <div className="text-sm font-semibold ">Email ID</div>
-            <div className="text-sm font-semibold text-center">Subscription plan</div>
-            <div className="text-sm font-semibold text-center">View</div>
-            <div className="text-sm font-semibold text-center">Status</div>
+            {heading.map((heading, index) => (
+              <div key={index} className="text-sm font-semibold text-center">
+                {heading}
+              </div>
+            ))}
           </div>
 
           {/* Rows */}
@@ -153,19 +153,21 @@ const CompanyManagement: React.FC = () => {
             {companyData.map((company, index) => (
               <div
                 key={company._id || index}
-                className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-7 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 ">
-                <div>{0 + index + 1}</div>
+                className=" bg-white rounded-2xl px-6 py-6 grid grid-cols-7 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 ">
+                <div className="text-center">{0 + index + 1}</div>
                 <div className="flex items-center gap-3">
                   <img src={company.imageUrl} alt="" className="w-8 h-8 rounded-full" />
                   {company.companyName}
                 </div>
-                <div>{company.companyType}</div>
+                <div className="text-center">{company.companyType}</div>
                 <div>
-                  <a className="underline text-blue-600">{company.email}</a>
+                  <a className="underline text-center text-blue-600">{company.email}</a>
                 </div>
                 <div className="text-center">
-                  <span className="flex justify-center items-center  text-sm font-semibold gap-2">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" color="blue" viewBox="0 0 24 24">
+                  <span className="flex justify-center items-center  text-sm font-semibold gap-1">
+                   
+                    {company.subscriptionPlan}
+                     <svg className="w-5 h-5" fill="none" stroke="currentColor" color="blue" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -173,8 +175,6 @@ const CompanyManagement: React.FC = () => {
                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    {company.subscriptionPlan}
-                   
                   </span>
                 </div>
                 <div className="flex justify-center">
@@ -214,7 +214,7 @@ const CompanyManagement: React.FC = () => {
                             <label className="text-sm font-semibold underlin">Subscription plan</label>
                             <div className="flex  items-center justify-center gap-2">
                               <MdWorkspacePremium />
-                              <p className="mt-1 "> {company.subscriptionPlan}</p>
+                              <p className="mt-1"> {company.subscriptionPlan}</p>
                             </div>
                           </div>
                           <div className=" flex items-center justify-center gap-2">

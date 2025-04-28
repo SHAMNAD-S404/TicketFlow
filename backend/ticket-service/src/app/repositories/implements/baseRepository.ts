@@ -32,5 +32,9 @@ export class BaseRepository<T extends Document> implements IBaseRepository<T> {
       throw error
     }
   }
+
+  async getDocumentCount(searchQuery: Record<string, any>): Promise<number> {
+    return await this.model.countDocuments(searchQuery)
+  }
   
 }

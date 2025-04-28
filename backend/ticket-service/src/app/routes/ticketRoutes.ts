@@ -38,5 +38,8 @@ router.post  ("/create-ticket", extractUserData, upload.single("file"), ticketCo
       .patch ("/re-open-ticket",ticketController.ticketReOpen)
       .post  ("/ticket-shift-request",extractUserData,shiftReqController.createRequest)
       .delete("/reject-shift-req",extractUserData,shiftReqController.rejectRequest)
+      .get   ("/fetch-all-ticket-statics",extractUserData,ticketController.fetchAllTicketStatics)
+      .get   ("/fetch-my-ticket-statics",extractUserData,ticketController.fetchMyTicketStatics)
+      .get   ("/fetch-assigned-ticket-statics",extractUserData,ticketController.fetchAssignedTicketStatics)
 
 export default router;

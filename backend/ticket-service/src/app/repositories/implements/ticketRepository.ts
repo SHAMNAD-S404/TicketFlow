@@ -32,7 +32,7 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
     searchQuery: string
   ): Promise<{ tickets: ITicket[] | null; totalPages: number }> {
     try {
-      const limit = 4;
+      const limit = 5;
       const filter: Record<string, 1 | -1> = {
         [sortBy]: sortBy === "createdAt" ? -1 : 1,
       };
@@ -155,7 +155,7 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
     try {
       const { authUserUUID, page, searchQuery, sortBy, ticketRaisedEmployeeId } = data;
       console.log(ticketRaisedEmployeeId);
-      const limit = 4;
+      const limit = 5;
       const filter: Record<string, 1 | -1> = {
         [sortBy]: sortBy === "createdAt" ? -1 : 1,
       };

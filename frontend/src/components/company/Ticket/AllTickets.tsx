@@ -5,12 +5,15 @@ import { debounce } from "lodash";
 import { searchInputValidate } from "@/components/utility/searchInputValidateNameEmail";
 import { ITicketContext } from "@/types/ITicketContext";
 import { toast } from "react-toastify";
-
-import { fetchAllTickets } from "@/api/services/ticketService";
+import { fetchAllTickets, fetchAllTicketStatics } from "@/api/services/ticketService";
 import { ReassignTicket } from "./ReassignTicket";
-import TicketStaticsCards from "@/components/common/TicketStaticsCards";
 import Pagination from "@/components/common/Pagination";
 import getErrMssg from "@/components/utility/getErrMssg";
+import { IoIosSearch } from "react-icons/io";
+import TableStaticCards, { IStatsCardData } from "@/components/common/TableStaticCards";
+import { FetchAllTicketStaticReponse } from "@/interfaces/response.interfaces";
+import { IoTicketOutline } from "react-icons/io5";
+import { GoAlert } from "react-icons/go";
 
 interface IAllTickets {
   handleCancel: () => void;
@@ -18,8 +21,16 @@ interface IAllTickets {
   handleSetTicketId: (value: string) => void;
 }
 
-const tableHeaders : string[] = ["Ticket ID","Ticket Raised by","Assigned Department","Assigned Employee","Priority","Status","Reassign Ticket","View"];
-
+const tableHeaders: string[] = [
+  "Ticket ID",
+  "Ticket Raised by",
+  "Assigned Department",
+  "Assigned Employee",
+  "Priority",
+  "Status",
+  "Reassign Ticket",
+  "View",
+];
 
 const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, handleSetTicketId }) => {
   const [sortBy, setSortBy] = useState<string>("createdAt");
@@ -28,6 +39,9 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [refreshState, setRefreshState] = useState<boolean>(false);
+  const [cardLoading, setCardLoading] = useState<boolean>(true);
+  const [cardStats, setCardStats] = useState<IStatsCardData[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   //pagination handle function to liftup state
   const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -52,6 +66,45 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
     handleManageTicket();
   };
 
+  //ticket static card data fetch
+  useEffect(() => {
+    const fetchCardStats = async () => {
+      try {
+        setIsLoading(true);
+        const response: FetchAllTicketStaticReponse = await fetchAllTicketStatics();
+
+        const stats: IStatsCardData[] = [
+          {
+            title: "Total tickets",
+            value: response.data.totalTickets,
+            icon: <IoTicketOutline className="text-xl" />,
+          },
+          {
+            title: "Open tickets",
+            value: response.data.openTickets,
+            icon: <IoTicketOutline className="text-xl" />,
+          },
+          {
+            title: "Closed Tickets",
+            value: response.data.closedTickets,
+            icon: <IoTicketOutline className="text-xl" />,
+          },
+          {
+            title: "High Priority Tickets",
+            value: response.data.highPriorityTickets,
+            icon: <GoAlert className="text-xl " />,
+          },
+        ];
+        setCardStats(stats);
+        setCardLoading(false);
+      } catch (error) {
+        setIsLoading(true);
+      }
+    };
+
+    fetchCardStats();
+  }, []);
+
   useEffect(() => {
     const getAllTickets = async () => {
       try {
@@ -61,24 +114,24 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
           setTotalPages(response.data.totalPages);
         }
       } catch (error: any) {
-        toast.error(getErrMssg(error))
+        toast.error(getErrMssg(error));
       }
     };
     getAllTickets();
   }, [currentPage, sortBy, searchQuery, refreshState]);
 
   return (
-    <div className="bg-blue-50">
+    <div className="bg-blue-50 ">
       {/* card slides */}
       <header>
-        <TicketStaticsCards />
+        <div className="p-1">
+          <TableStaticCards loading={cardLoading} data={cardStats} />
+        </div>
       </header>
-
       {/* table section */}
-
-      <div className="p-6  space-y-6 ">
-        <div className="flex justify-between mb-6">
-          <div className="relative ">
+      <div className="p-6  space-y-6 sm:mt-2 md:mt-6 ">
+        <header className="flex justify-between mb-6">
+          <section className="relative ">
             <div className="flex justify-center items-center gap-2">
               <div
                 className="text-2xl bg-white p-2 rounded-2xl shadow-lg shadow-gray-400 hover:bg-blue-300"
@@ -93,47 +146,37 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
                 <option value="ticketRaisedDepartmentName">Department Raised</option>
                 <option value="ticketHandlingDepartmentName">Department Handling</option>
                 <option value="priority">Priority</option>
-               
                 <option value="status">Status</option>
               </select>
 
               <FaChevronDown className="absolute right-3 top-3 w-4 h-4 text-gray-400  " />
             </div>
-          </div>
+          </section>
 
-          <div className="relative">
+          <div className="text-2xl font-semibold bg-white rounded-xl px-4 py-1 shadow-xl">All Tickets Management</div>
+
+          <section className="relative">
             <input
               type="text"
               placeholder="search by ticket, dept, employee"
               className="ms-1 pl-4 pr-10 py-2 rounded-full shadow-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 "
               onChange={(e) => handleSearchQuery(e.target.value)}
             />
-            <svg
-              className="absolute right-3 top-2.5 w-5 h-5 text-gray-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-        </div>
+            <IoIosSearch className="absolute right-3 top-2.5 w-6 h-6 text-gray-800" />
+          </section>
+        </header>
 
         {/*scrollable container*/}
         <div className="overflow-x-auto">
           <div className="min-w-[1000px]">
             {/* Header session */}
             <div className="bg-blue-100 rounded-2xl px-6 py-6 grid grid-cols-8 gap-4 mb-4">
-             
-               {tableHeaders.map((header,index) => (
-                 <div key={index} className="text-sm font-semibold text-center ">{header}</div>
-               ))}
+              {tableHeaders.map((header, index) => (
+                <div key={index} className="text-sm font-semibold text-center ">
+                  {header}
+                </div>
+              ))}
             </div>
-
 
             {/* Rows */}
             <div className="space-y-4 ">
@@ -159,11 +202,11 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
                       {ticket.priority}
                     </span>
                   </div>
-                 
+
                   <div className="flex justify-center">{ticket.status}</div>
-                 {/* reassign ticket */}
+                  {/* reassign ticket */}
                   <ReassignTicket
-                     selectedDepartmentId={ticket.ticketHandlingDepartmentId}
+                    selectedDepartmentId={ticket.ticketHandlingDepartmentId}
                     selectedEmployeeId={ticket.ticketHandlingEmployeeId}
                     selectedTicketId={ticket._id}
                     twickParent={() => setRefreshState(!refreshState)}

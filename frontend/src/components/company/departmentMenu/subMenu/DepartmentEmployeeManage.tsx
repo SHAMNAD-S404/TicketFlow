@@ -15,10 +15,12 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescri
 import getErrMssg from "@/components/utility/getErrMssg";
 import Pagination from "@/components/common/Pagination";
 import DeptChangeModal from "@/components/common/DeptChangeModal";
+import { IoIosSearch } from "react-icons/io";
 
 interface IDepartmentEmployee {
   departmentId: string;
   handleCancel: () => void;
+  departmentName: string;
 }
 
 const headerItem: string[] = [
@@ -32,13 +34,12 @@ const headerItem: string[] = [
   "View",
 ];
 
-const DepartemntEmployeeManagment: React.FC<IDepartmentEmployee> = ({ departmentId, handleCancel }) => {
+const DepartemntEmployeeManagment: React.FC<IDepartmentEmployee> = ({ departmentId, handleCancel, departmentName }) => {
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [employeeData, setEmployeeData] = useState<IEmployeeContext[]>([]);
-
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("");
   const [currentDepartment, setCurrentDepartment] = useState<string>("");
@@ -132,10 +133,10 @@ const DepartemntEmployeeManagment: React.FC<IDepartmentEmployee> = ({ department
     };
 
     getAllEmployees();
-  }, [currentPage, sortBy, searchQuery,twickParent]);
+  }, [currentPage, sortBy, searchQuery, twickParent]);
 
   return (
-    <div className="p-6  space-y-6 ">
+    <div className="p-6  space-y-6 mt-8 ">
       <header>
         <div className="flex justify-between mb-6">
           <div className="relative ">
@@ -160,6 +161,7 @@ const DepartemntEmployeeManagment: React.FC<IDepartmentEmployee> = ({ department
               <FaChevronDown className="absolute right-3 top-3 w-4 h-4 text-gray-400  " />
             </div>
           </div>
+          <div className="text-3xl font-semibold">{departmentName}</div>
 
           <div className="relative">
             <input
@@ -168,18 +170,8 @@ const DepartemntEmployeeManagment: React.FC<IDepartmentEmployee> = ({ department
               className="ms-1 pl-4 pr-10 py-2 rounded-full shadow-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 "
               onChange={(e) => handleSearchQuery(e.target.value)}
             />
-            <svg
-              className="absolute right-3 top-2.5 w-5 h-5 text-gray-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+
+            <IoIosSearch className="absolute right-3 top-2.5 w-6 h-6 text-gray-800" />
           </div>
         </div>
       </header>

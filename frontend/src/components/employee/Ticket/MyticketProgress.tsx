@@ -1,15 +1,18 @@
-import { fetchMyTicketProgress } from "@/api/services/ticketService";
+import { fetchMyTicketProgress, fetchMyTicketStatics } from "@/api/services/ticketService";
 import Pagination from "@/components/common/Pagination";
-import TicketStaticsCards from "@/components/common/TicketStaticsCards";
+import TableStaticCards, { IStatsCardData } from "@/components/common/TableStaticCards";
 import TicketTable from "@/components/common/TicketTable";
 import getErrMssg from "@/components/utility/getErrMssg";
 import { searchInputValidate } from "@/components/utility/searchInputValidateNameEmail";
+import { FetchAllTicketStaticReponse } from "@/interfaces/response.interfaces";
 import { Rootstate } from "@/redux store/store";
 import { ITicketContext } from "@/types/ITicketContext";
 import { debounce } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { IoTicketOutline } from "react-icons/io5";
+import { GoAlert } from "react-icons/go";
 
 interface IMyTicketProgress {
   handleCancel: () => void;
@@ -27,6 +30,9 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [cardLoading, setCardLoading] = useState<boolean>(true);
+  const [cardStats, setCardStats] = useState<IStatsCardData[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const employee = useSelector((state: Rootstate) => state.employee.employee);
 
@@ -55,6 +61,45 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
     handleViewTicketProgress();
   };
 
+  //ticket static card data fetch
+  useEffect(() => {
+    const fetchCardStats = async () => {
+      try {
+        setIsLoading(true);
+        const response: FetchAllTicketStaticReponse = await fetchMyTicketStatics();
+
+        const stats: IStatsCardData[] = [
+          {
+            title: "Raised tickets",
+            value: response.data.totalTickets,
+            icon: <IoTicketOutline className="text-xl" />,
+          },
+          {
+            title: "Pending tickets",
+            value: response.data.openTickets,
+            icon: <IoTicketOutline className="text-xl" />,
+          },
+          {
+            title: "Closed Tickets",
+            value: response.data.closedTickets,
+            icon: <IoTicketOutline className="text-xl" />,
+          },
+          {
+            title: "High Priority Tickets",
+            value: response.data.highPriorityTickets,
+            icon: <GoAlert className="text-xl " />,
+          },
+        ];
+        setCardStats(stats);
+        setCardLoading(false);
+      } catch (error) {
+        setIsLoading(true);
+      }
+    };
+
+    fetchCardStats();
+  }, []);
+
   useEffect(() => {
     const getAllTickets = async () => {
       try {
@@ -65,7 +110,7 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
           setTotalPages(response.data.totalPages);
         }
       } catch (error: any) {
-        toast.error(getErrMssg(error))
+        toast.error(getErrMssg(error));
       }
     };
     getAllTickets();
@@ -73,10 +118,10 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
 
   return (
     <div className="bg-blue-50">
-      <header>
+      <header className="py-6">
         {/* header card slides */}
 
-        <TicketStaticsCards />
+        <TableStaticCards loading={cardLoading} data={cardStats} />
       </header>
       {/* table section */}
 

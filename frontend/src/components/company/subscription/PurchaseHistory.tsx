@@ -26,8 +26,8 @@ const PurchaseHistory: React.FC = () => {
     navigate(`/company/dashboard/payment/success?session_id=${id}`);
   };
   const handleBack = () => {
-    navigate("/company/dashboard/subscription")
-  }
+    navigate("/company/dashboard/subscription");
+  };
 
   useEffect(() => {
     const getHistory = async () => {
@@ -49,20 +49,18 @@ const PurchaseHistory: React.FC = () => {
   return (
     <>
       <header>
-        <div className="flex justify-between items-center ">
-           <div
-          className="text-2xl bg-white px-4 py-2 rounded-2xl shadow-lg shadow-gray-400 hover:bg-blue-300"
-          onClick={handleBack}>
-          <IoMdArrowRoundBack />{" "}
+        <div className="flex justify-between items-center mt-8 ">
+          <div
+            className="text-2xl bg-white px-4 py-2 rounded-2xl shadow-lg shadow-gray-400 hover:bg-blue-300"
+            onClick={handleBack}>
+            <IoMdArrowRoundBack />{" "}
+          </div>
+          <div>
+            <h1 className="text-center font-semibold text-2xl mt-3 underline underline-offset-2 ">Purchase History</h1>
+          </div>
+          <div>{""}</div>
         </div>
-        <div>
-          <h1 className="text-center font-semibold text-2xl mt-3 underline underline-offset-2 ">Purchase History</h1>
-        </div>
-        <div>
-          {""}
-        </div>
-        </div>
-       
+
         <div className="  space-y-4 mt-4 px-8  ">
           <div
             className={`bg-blue-100 rounded-2xl font-semibold px-6 py-4 grid grid-cols-4 gap-4  items-center shadow-lg hover:shadow-xl  transition-transform ease-in-out duration-500 `}>

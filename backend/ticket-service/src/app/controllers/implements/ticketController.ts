@@ -16,7 +16,6 @@ import {
   TicketFormValidation,
   ticketReassignSchema,
   ticketReopenValidation,
-
 } from "../../dtos/basicValidation";
 import { TicketStatus } from "../../models/interface/ITicketModel";
 
@@ -54,7 +53,6 @@ export class TicketController implements ITicketController {
       const saveTicket = await this.ticketService.createTicketDocument(ticketData);
       const { message, statusCode, success, data } = saveTicket;
       res.status(statusCode).json({ message, success, data });
-
     } catch (error) {
       console.error(error);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -265,5 +263,58 @@ export class TicketController implements ITicketController {
     }
   };
 
+  public fetchAllTicketStatics = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { role, authUserUUID } = req.query;
+      if (role !== Roles.Company) {
+        res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.NO_ACCESS, success: false });
+        return;
+      }
 
+      const result = await this.ticketService.getFetchTicketStatics("authUserUUID", authUserUUID as string);
+      const { data, message, statusCode, success } = result;
+      res.status(statusCode).json({
+        message,
+        success,
+        data,
+      });
+    } catch (error) {
+      console.error("error while fetchAllTicketStatics :", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+    }
+  };
+
+  public fetchMyTicketStatics = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { email } = req.query;
+
+      const result = await this.ticketService.getFetchTicketStatics("ticketRaisedEmployeeEmail", email as string);
+      const { data, message, statusCode, success } = result;
+      res.status(statusCode).json({
+        message,
+        success,
+        data,
+      });
+    } catch (error) {
+      console.error("error while fetch my  Ticket progress Statics :", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+    }
+  };
+
+  public fetchAssignedTicketStatics = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { email } = req.query;
+
+      const result = await this.ticketService.getFetchTicketStatics("ticketHandlingEmployeeEmail", email as string);
+      const { data, message, statusCode, success } = result;
+      res.status(statusCode).json({
+        message,
+        success,
+        data,
+      });
+    } catch (error) {
+      console.error("error while fetch my  Ticket progress Statics :", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+    }
+  };
 }
