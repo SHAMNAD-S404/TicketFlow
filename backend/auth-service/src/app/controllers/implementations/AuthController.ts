@@ -89,7 +89,7 @@ export class AuthController implements IAuthController {
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
           secure: false,
-          maxAge: 2 * 60 * 1000,
+          maxAge: 30 * 60 * 1000,
           sameSite: "lax",
         });
 
@@ -278,7 +278,7 @@ export class AuthController implements IAuthController {
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
           secure: false,
-          maxAge: 2 * 60 * 1000, //for 15 min
+          maxAge: 30 * 60 * 1000, //for 15 min
           sameSite: "lax",
         });
 
@@ -314,7 +314,7 @@ export class AuthController implements IAuthController {
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
           secure: false,
-          maxAge: 2 * 60 * 1000,
+          maxAge: 30 * 60 * 1000,
           sameSite: "lax",
         });
       }
@@ -344,6 +344,7 @@ export class AuthController implements IAuthController {
 
       const updateCompany = await this.authService.updateUserBlockStatus(email);
       const { message, statusCode, success, userDataPayload } = updateCompany;
+
 
       //sending to company service queue
       if (success && userDataPayload) {
@@ -378,6 +379,8 @@ export class AuthController implements IAuthController {
 
       const updateEmployee = await this.authService.updateUserBlockStatus(email);
       const { message, statusCode, success, userDataPayload } = updateEmployee;
+
+
       //sending to company service queue
       if (success && userDataPayload) {
         await publishToQueue(RabbitMQConfig.companyMainConsumer, {

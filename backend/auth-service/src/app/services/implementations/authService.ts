@@ -533,6 +533,15 @@ export class AuthService implements IAuthService {
         isBlock: updateUser.isBlock,
       };
 
+      //store the email id blacklist user in reddis
+      const key = `blacklist:user:${email}`;
+      if(updateUser.isBlock){
+         await setRedisData(key, { blacklisted: true }, 1800); // 30 min
+      }else {
+        await deleteRedisData(key)
+      }
+     
+
       return { message: Messages.USER_UPDATE_SUCCESS, statusCode: HttpStatus.OK, success: true, userDataPayload };
     } catch (error) {
       console.error("error while udpate user status", error);

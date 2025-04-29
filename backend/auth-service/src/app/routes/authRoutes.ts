@@ -16,21 +16,21 @@ const authController = new AuthController(authService);
 
 
 //Route
-router.post("/signup",authController.registerUser)
-      .post("/verify-otp",authController.verifyOTP)
-      .post("/login",authController.verifyLogin)
-      .post("/sudo-login",authController.verifySudoLogin)
-      .post("/verify-email",authController.verifyEmail)
+router.post ("/signup",authController.registerUser)
+      .post ("/verify-otp",authController.verifyOTP)
+      .post ("/login",authController.verifyLogin)
+      .post ("/sudo-login",authController.verifySudoLogin)
+      .post ("/verify-email",authController.verifyEmail)
       .patch("/reset-password",authenticateToken,authController.updateUserPassword)
-      .get("/get-user-role",authenticateToken,extractUserData,authController.fetchUserRole)
-      .post("/logout",authenticateToken,extractUserData,authController.logoutUser)
-      .post("/google",authController.googleSignIn)
-      .post("/resend-otp",authController.resendOtp)
-      .post("/refreshToken",verifyRefreshToken,extractUserData,authController.verifyRefreshToken)
+      .get  ("/get-user-role",authenticateToken,extractUserData,authController.fetchUserRole)
+      .post ("/logout",authenticateToken,extractUserData,authController.logoutUser)
+      .post ("/google",authController.googleSignIn)
+      .post ("/resend-otp",authController.resendOtp)
+      .post ("/refreshToken",verifyRefreshToken,extractUserData,authController.verifyRefreshToken)
       .patch("/block-company",authenticateToken,extractUserData,authController.handleCompanyBlockStatus)
       .patch("/block-employee",authenticateToken,extractUserData,authController.handleEmployeeBlockStatus)
-      .post('/forgot-password',authController.forgotPasswordHandle)
-      .post("/reset-password",authController.resetPassword)
+      .post ('/forgot-password',authController.forgotPasswordHandle)
+      .post ("/reset-password",authController.resetPassword)
       .patch("/change-password",authenticateToken,authController.changePassword)
 
 

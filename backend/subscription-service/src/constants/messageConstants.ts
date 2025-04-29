@@ -28,6 +28,7 @@ export const Messages = {
     DATABASE_CONNECT_SUCCESS : "🚀 Database connnection established !!",
     DATABASE_CONNECT_FAIL : "❌ Database connnection establishion failed !!",
     START_SERVER_ERROR : "❌ Error starting server:",
+    USER_BLOCKED: "Your are blocked from TicketFlow, Please contact support",
 
   } as const;
   
