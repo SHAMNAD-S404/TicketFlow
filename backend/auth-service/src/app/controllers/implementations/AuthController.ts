@@ -8,6 +8,7 @@ import { publishToQueue } from "../../../queues/publisher";
 import { RabbitMQConfig } from "../../../config/rabbitmq";
 import { validateEmailSchema } from "../../dtos/basicValidation.schema";
 import { changePasswordSchema, resetPasswordSchema } from "../../dtos/baseFormValidation.schema";
+import { setRedisData } from "../../../utils/redisUtils";
 
 export class AuthController implements IAuthController {
   private authService: IAuthService;
@@ -88,14 +89,14 @@ export class AuthController implements IAuthController {
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
           secure: false,
-          maxAge: 1 * 60 * 1000,
+          maxAge: 2 * 60 * 1000,
           sameSite: "lax",
         });
 
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
           secure: false,
-          maxAge: 7 * 24 * 60 * 60 * 1000,
+          maxAge: 2 * 24 * 60 * 60 * 1000,
           sameSite: "lax",
         });
 
@@ -188,12 +189,17 @@ export class AuthController implements IAuthController {
 
   public logoutUser = async (req: Request, res: Response): Promise<void> => {
     try {
-      const authUserUUID = req.query.authUserUUID;
-      if (!authUserUUID) {
-        res.status(401).json({ message: "user not authenticated", success: false });
-        return;
+      
+      //Get refresh token from the cookie
+      const refreshToken = req.cookies?.refreshToken;
+      //black list token
+      if(refreshToken){
+        //store it on redis with 48 hours of expiration time
+        const key = `blacklist:token:${refreshToken}`;
+        await setRedisData(key,{blacklisted:true},172800);
       }
 
+      //clear cookies
       res.clearCookie("accessToken", {
         httpOnly: true,
         secure: false,
@@ -272,14 +278,14 @@ export class AuthController implements IAuthController {
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
           secure: false,
-          maxAge: 90 * 60 * 1000, //for 90 min
+          maxAge: 2 * 60 * 1000, //for 15 min
           sameSite: "lax",
         });
 
         res.cookie("refreshToken", refreshToken, {
           httpOnly: true,
           secure: false,
-          maxAge: 9 * 24 * 60 * 60 * 1000, //for 9 days
+          maxAge: 2 * 24 * 60 * 60 * 1000, //for 2 days
           sameSite: "lax",
         });
 
@@ -308,7 +314,7 @@ export class AuthController implements IAuthController {
         res.cookie("accessToken", accessToken, {
           httpOnly: true,
           secure: false,
-          maxAge: 1 * 60 * 1000,
+          maxAge: 2 * 60 * 1000,
           sameSite: "lax",
         });
       }

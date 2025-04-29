@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { config } from "../../config";
 import { HttpStatus } from "../../constants/httpStatus";
 import { Messages } from "../../constants/messageConstants";
+import { getRedisData } from "../../utils/redisUtils";
 
 interface JwtPayload {
   authUserUUID: string;
@@ -11,12 +12,13 @@ interface JwtPayload {
   [key: string]: any;
 }
 
-export const verifyRefreshToken = (
+export const verifyRefreshToken = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
+    //extraction the token from the cookie
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
@@ -26,6 +28,17 @@ export const verifyRefreshToken = (
         return;
     }
 
+    //checking for the refresh token is black listed or not
+    const key = `blacklist:token:${refreshToken}`;
+    const tokenStatus = await getRedisData(key);
+
+    if(tokenStatus?.blacklisted) {
+      res.status(HttpStatus.UNAUTHORIZED)
+      .json({message : Messages.TOKEN_INVALID,success : false});
+      return;
+    }
+
+    //decoding user info
     const decode = jwt.verify(
       refreshToken,
       config.jwtRefreshSecret
