@@ -6,6 +6,11 @@ export interface IReassignedTicketResponse extends IBasicResponse {
   data?: ITicket | null;
 }
 
+export interface IDashboardData extends IBasicResponse {
+  data ? : Record <string,any>
+}
+
+
 export interface IfetchAllTicketsEmployeeWise extends IBasicResponse {
   data?: {
     tickets: ITicket[] | null;
@@ -66,4 +71,10 @@ export interface ITicketService {
   tiketReOpenService(id: string, data: Record<string, string>): Promise<IBasicResponse>;
 
   getFetchTicketStatics(fieldName: string, fieldValue: string): Promise<AllTicketStaticsResp>;
+
+  getTicketResolutionTime (fieldName : string, fieldValue : string) : Promise<string>
+
+  getCompanyDashboardData (authUserUUID:string) : Promise<IDashboardData>
+
+  getEmployeeDashboardData (email : string,authUserUUID : string) : Promise<IDashboardData>;
 }

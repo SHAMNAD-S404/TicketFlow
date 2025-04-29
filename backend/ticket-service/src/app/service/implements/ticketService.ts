@@ -9,10 +9,12 @@ import getResolutionTime from "../../../utils/getResolutionTime";
 import ticketShiftReqRepo from "../../repositories/implements/ticketShiftReqRepo";
 import {
   AllTicketStaticsResp,
+  IDashboardData,
   IfetchAllTicketsEmployeeWise,
   IReassignedTicketResponse,
   ITicketService,
 } from "../interface/ITicketService";
+import { error } from "console";
 
 export default class TicketService implements ITicketService {
   async createTicketDocument(
@@ -450,4 +452,70 @@ export default class TicketService implements ITicketService {
       throw error;
     }
   }
+
+  //get the avg ticket resolution time
+  async getTicketResolutionTime(fieldName: string, fieldValue: string): Promise<string> {
+    return await TicketRepository.getAverageResolutionTime(fieldName, fieldValue);
+  }
+
+  async getCompanyDashboardData(authUserUUID: string): Promise<IDashboardData> {
+    try {
+      const status = ["pending", "in-progress", "re-opened"];
+
+      const [ticketCountByStatus, ticketsCountByDepartment, ticketCountByPrioriy, topEmployee, topDepartment] =
+        await Promise.all([
+          TicketRepository.getDynamicTicketStatusCounts("authUserUUID", authUserUUID, status),
+          TicketRepository.getDepartmentTicketCounts("authUserUUID", authUserUUID),
+          TicketRepository.getUnResolvedTicketsByPriority("authUserUUID", authUserUUID),
+          TicketRepository.getTopGroupCount("authUserUUID", authUserUUID, "ticketHandlingEmployeeName"),
+          TicketRepository.getTopGroupCount("authUserUUID", authUserUUID, "ticketHandlingDepartmentName"),
+        ]);
+
+      return {
+        message: Messages.FETCH_SUCCESS,
+        success: true,
+        statusCode: HttpStatus.OK,
+        data: {
+          ticketCountByPrioriy,
+          ticketCountByStatus,
+          ticketsCountByDepartment,
+          topEmployee,
+          topDepartment,
+        },
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getEmployeeDashboardData(email: string, authUserUUID: string): Promise<IDashboardData> {
+    try {
+      const status = ["pending", "in-progress", "re-opened"];
+
+      const [ticketCountByStatus, ticketsCountByDepartment, ticketCountByPrioriy, topEmployee, topDepartment] =
+        await Promise.all([
+          TicketRepository.getDynamicTicketStatusCounts("ticketHandlingEmployeeEmail", email, status),
+          TicketRepository.getDepartmentTicketCounts("authUserUUID", authUserUUID),
+          TicketRepository.getUnResolvedTicketsByPriority("ticketHandlingEmployeeEmail", email),
+          TicketRepository.getTopGroupCount("authUserUUID", authUserUUID, "ticketHandlingEmployeeName"),
+          TicketRepository.getTopGroupCount("authUserUUID", authUserUUID, "ticketHandlingDepartmentName"),
+        ]);
+
+      return {
+        message: Messages.FETCH_SUCCESS,
+        success: true,
+        statusCode: HttpStatus.OK,
+        data: {
+          ticketCountByPrioriy,
+          ticketCountByStatus,
+          ticketsCountByDepartment,
+          topEmployee,
+          topDepartment,
+        },
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }

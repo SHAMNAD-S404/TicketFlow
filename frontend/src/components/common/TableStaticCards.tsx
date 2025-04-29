@@ -13,16 +13,17 @@ export interface IStatsCardData {
 interface ITableStaticCards {
   loading: boolean;
   data: IStatsCardData[];
+  cardNo ? : number;
 }
 
-const TableStaticCards: React.FC<ITableStaticCards> = ({ loading, data }) => {
+const TableStaticCards: React.FC<ITableStaticCards> = ({ loading, data , cardNo = 4 }) => {
   return (
     <div className="flex items-center justify-evenly mt-4 flex-wrap gap-4">
-      {(loading ? Array(4).fill(null) : data).map((card, index) => (
+      {(loading ? Array(cardNo).fill(null) : data).map((card, index) => (
         <Card key={index} className="w-72 h-40 bg-white border-none shadow-lg shadow-gray-400">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 justify-center text-lg text-center font-semibold">
-              {loading ? <Skeleton className="h-6 w-32 bg-gray-200" /> :
+              {loading ? <Skeleton className="h-6 w-full bg-gray-200" /> :
               <>
               { card?.title}
               { card.icon }
@@ -31,14 +32,14 @@ const TableStaticCards: React.FC<ITableStaticCards> = ({ loading, data }) => {
             </CardTitle>
             <CardDescription>
               {loading ? (
-                <Skeleton className="h-[125px] w-[250px] rounded-xl bg-gray-200" />
+                <Skeleton className="h-[90px] w-full rounded-xl bg-gray-200" />
               ) : (
                 <p className="text-4xl text-center font-bold mt-4 text-blue-600 font-mono ">  {card?.value}</p>
               )}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p>{loading ? <Skeleton className="h-4 w-[200px]" /> : card?.description ?? ""}</p>
+            <p>{loading ? "" : card?.description ?? ""}</p>
           </CardContent>
           <CardFooter></CardFooter>
         </Card>

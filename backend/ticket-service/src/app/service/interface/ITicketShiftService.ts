@@ -16,4 +16,5 @@ export interface ITicketShiftService {
   createTicketShiftReqService(data: ITicketShiftReq): Promise<IBasicResponse>;
   fetchAllRequestService(params: IfetchAllRequestServiceParams): Promise<IfetchAllRequestServiceResult>;
   rejectRequestService (id:string) : Promise<IBasicResponse>
+  
 }

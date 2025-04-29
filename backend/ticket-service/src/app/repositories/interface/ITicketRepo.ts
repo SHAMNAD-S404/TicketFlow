@@ -10,6 +10,10 @@ export interface IupdateOnTicketClose {
   resolutionTime: string;
 }
 
+export interface StatusCount {
+  [key: string]: number;
+}
+
 export interface IFindAllTicketForEmployeeRaised {
   authUserUUID: string;
   page: number;
@@ -50,5 +54,14 @@ export interface ITicketRepository extends IBaseRepository<ITicket> {
 
   editTicketRepo(id:string,udpateData : Record<string,string>) : Promise<ITicket | null>;
 
+  getAverageResolutionTime (fieldName : string,fieldValue : string) : Promise<string>
+
+  getDynamicTicketStatusCounts ( fieldName : string, fieldValue : string, statuses : string[] ) : Promise<StatusCount>
+
+  getDepartmentTicketCounts ( filedName : string, fieldValue : string ) : Promise<StatusCount>;
+
+  getUnResolvedTicketsByPriority (fieldName : string,fieldValue : string) : Promise<StatusCount>;
+
+  getTopGroupCount (mathchField : string, matchValue : string,groupField : string) : Promise<{name:string,count:number}>
 
 }

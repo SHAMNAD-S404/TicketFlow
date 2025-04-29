@@ -36,7 +36,7 @@ const SuperAdminLogin: React.FC = () => {
         };
         dispatch(setUser(userData));
         toast.success(response.message);
-        navigate("/sudo/dashboard");
+        navigate("/sudo/dashboard/subscription");
       }
     } catch (error: any) {
       if (error.response && error.response.data) {

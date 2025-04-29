@@ -41,5 +41,9 @@ router.post  ("/create-ticket", extractUserData, upload.single("file"), ticketCo
       .get   ("/fetch-all-ticket-statics",extractUserData,ticketController.fetchAllTicketStatics)
       .get   ("/fetch-my-ticket-statics",extractUserData,ticketController.fetchMyTicketStatics)
       .get   ("/fetch-assigned-ticket-statics",extractUserData,ticketController.fetchAssignedTicketStatics)
+      .get   ("/fetch-all-ticket-stats-dashboard",extractUserData,ticketController.getTicketStatsForDashboard)
+      .get   ("/fetch-all-ticket-employee-dashboard",extractUserData,ticketController.getTicketStatsForEmployee)
+      .get   ("/fetch-dashboard-data",extractUserData,ticketController.getDashboardData)
+      .get   ("/fetch-employee-dashbaord-data",extractUserData,ticketController.getEmployeeDashboardData)
 
 export default router;

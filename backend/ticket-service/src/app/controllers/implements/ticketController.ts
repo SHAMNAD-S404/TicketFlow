@@ -317,4 +317,72 @@ export class TicketController implements ITicketController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
     }
   };
+
+  public getTicketStatsForDashboard = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { authUserUUID } = req.query;
+      const [ticketStatics, resolutionTime] = await Promise.all([
+        this.ticketService.getFetchTicketStatics("authUserUUID", authUserUUID as string),
+        this.ticketService.getTicketResolutionTime("authUserUUID", authUserUUID as string),
+      ]);
+      //destructure
+      const { data, message, statusCode, success } = ticketStatics;
+      res.status(statusCode).json({
+        message,
+        success,
+        data,
+        averageResolutionTime: resolutionTime,
+      });
+    } catch (error) {
+      console.error("error while get ticket status for dashboard :", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+    }
+  };
+
+  public getTicketStatsForEmployee = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { email } = req.query;
+      const [ticketStatics, resolutionTime] = await Promise.all([
+        this.ticketService.getFetchTicketStatics("ticketHandlingEmployeeEmail", email as string),
+        this.ticketService.getTicketResolutionTime("ticketHandlingEmployeeEmail", email as string),
+      ]);
+      //destructure
+      const { data, message, statusCode, success } = ticketStatics;
+      res.status(statusCode).json({
+        message,
+        success,
+        data,
+        averageResolutionTime: resolutionTime,
+      });
+    } catch (error) {
+      console.error("error while get ticket status for dashboard :", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+    }
+  }
+
+  public getDashboardData = async (req: Request, res: Response): Promise<void> => {
+    try {
+       const {authUserUUID} = req.query;
+       const response = await this.ticketService.getCompanyDashboardData(authUserUUID as string)
+       const {message,statusCode,success,data} = response;
+       res.status(statusCode).json({message,success,data})
+    } catch (error) {
+      console.error("error while get ticket status for dashboard :", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+    }
+  }
+
+  public getEmployeeDashboardData = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const {authUserUUID ,email} = req.query;
+      const response = await this.ticketService.getEmployeeDashboardData(email as string,authUserUUID as string)
+      const {message,statusCode,success,data} = response;
+      res.status(statusCode).json({message,success,data})
+   } catch (error) {
+     console.error("error while get ticket status for dashboard :", error);
+     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+   }
+  }
+
+
 }

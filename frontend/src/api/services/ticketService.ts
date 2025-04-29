@@ -179,6 +179,47 @@ export const fetchAssignedTicketStatics = async () => {
   }
 };
 
+//for fetching ticket stats data for dashboard
+export const fetchTicketCardStatsForDashboard = async () => {
+  try {
+    const response = await axiosInstance.get("/tickets/fetch-all-ticket-stats-dashboard");
+    return response.data;
+  } catch (error) {
+    throw error
+  }
+}
+
+//for fetching ticket stats data for dashboard
+export const fetchTicketCardStatsForEmployee = async () => {
+  try {
+    const response = await axiosInstance.get("/tickets/fetch-all-ticket-employee-dashboard");
+    return response.data;
+  } catch (error) {
+    throw error
+  }
+}
+
+//for fetching the dashboard chart and graph data
+export const fetchCompanyDashboardData = async () => {
+  try {
+      const response = await axiosInstance.get("/tickets/fetch-dashboard-data");
+      return response.data;
+  } catch (error) {
+    throw error
+  }
+}
+
+//for fetching the dashboard chart and graph data
+export const fetchEmployeeDashboardData = async () => {
+  try {
+    const response  = await axiosInstance.get("/tickets/fetch-employee-dashbaord-data");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+
 //api call for the chat bot
 export const Aichatbot = async (prompt: string) => {
   try {

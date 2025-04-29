@@ -15,7 +15,6 @@ interface SidebarProps {
 
 const menuConfig: { [key: string]: { name: string; icon: React.ReactNode }[] } = {
   sudo: [
-    { name: "Dashboard", icon: <FaHome /> },
     { name: "Company Management", icon: <FaUsers /> },
     { name: "Subscription", icon: <FaHandHoldingDollar /> },
   ],
@@ -23,18 +22,18 @@ const menuConfig: { [key: string]: { name: string; icon: React.ReactNode }[] } =
     { name: "Dashboard", icon: <FaHome /> },
     { name: "Department Management", icon: <FaHospitalUser /> },
     { name: "Employee Management", icon: <FaUsers /> },
-    { name: "Profile", icon: <FaUserTie /> },
     { name: "Tickets", icon: <TiTicket /> },
     { name: "Subscription", icon: <FaHandHoldingDollar /> },
     { name: "Chat", icon: <IoChatbubblesOutline /> },
-    { name: "Join Call", icon:<MdOutlineVideoCall/>}
+    { name: "Join Call", icon:<MdOutlineVideoCall/>},
+    { name: "Profile", icon: <FaUserTie /> },
   ],
   employee: [
     { name: "Dashboard", icon: <FaHome /> },
     { name: "Tickets", icon: <TiTicket /> },
-    { name: "Profile", icon: <MdOutlineAccountCircle /> },
     { name: "Chat", icon: <IoChatbubblesOutline /> },
-    { name: "Join Call", icon:<MdOutlineVideoCall/>}
+    { name: "Join Call", icon:<MdOutlineVideoCall/>},
+    { name: "Profile", icon: <MdOutlineAccountCircle /> },
   ],
 };
 

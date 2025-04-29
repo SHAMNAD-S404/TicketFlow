@@ -135,7 +135,8 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name, userId, onLogou
         </section>
 
         {/* Middle - Search Bar */}
-        <section className="flex-1 max-w-2xl mx-8    ">
+
+        {/* <section className="flex-1 max-w-2xl mx-8    ">
           <div className="relative">
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             <input
@@ -144,7 +145,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name, userId, onLogou
               className="w-full lg:w-2/3 pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-2xl shadow-xl focus:outline-none focus:ring-1 focus:ring-gray-300 hover:shadow-gray-400 transition-all duration-200 font-inter placeholder:text-gray-400"
             />
           </div>
-        </section>
+        </section> */}
 
         {/* Right side - User Profile & Notifications */}
         <aside className="flex items-center space-x-10">

@@ -38,13 +38,7 @@ const DepartmentManagement: React.FC = () => {
               image={CardImage2}
             />
 
-            <DynamicCard
-              header="Departmen analytics"
-              description="View department performance "
-              buttonText="view"
-              onButtonClick={() => setActiveSubMenu("Mange Employees")}
-              image={CardImage2}
-            />
+          
           </div>
         );
     }

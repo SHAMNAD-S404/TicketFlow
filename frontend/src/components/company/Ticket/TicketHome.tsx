@@ -88,13 +88,6 @@ export const TicketHome: React.FC = () => {
       onButtonClick: () => setActiveSubMenu(subMenuItems.MY_TICKET_PROGRESS),
     },
     {
-      header: "Ticket analyse",
-      description: "Click here to view detailed ticket and department performance",
-      buttonText: "View",
-      image: GifImage,
-      onButtonClick: () => setActiveSubMenu(subMenuItems.ANALYSE_TICKETS),
-    },
-    {
       header: "Shift Requests",
       description: "Enter to view ticket shift requests submitted by employees",
       buttonText: "Manage Requests",

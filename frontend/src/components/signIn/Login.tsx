@@ -48,7 +48,7 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
         const getCompanyData = await dispatch(fetchCompany()).unwrap();
         if (getCompanyData) toast.success(response.message);
 
-        navigate("/company/dashboard");
+        navigate("/company/dashboard/dashboard");
       }
     } catch (error: any) {
       const errMsg = error.response?.data?.message || error || Messages.SOMETHING_TRY_AGAIN;

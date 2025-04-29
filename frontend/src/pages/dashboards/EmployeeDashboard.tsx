@@ -9,7 +9,6 @@ import { useNavigate, Outlet } from "react-router-dom";
 import Swal from "sweetalert2";
 import { showCustomeAlert } from "../../components/utility/swalAlertHelper";
 import { toast } from "react-toastify";
-import { Messages } from "@/enums/Messages";
 import getErrMssg from "@/components/utility/getErrMssg";
 
 const EmployeeDashboard: React.FC = () => {
