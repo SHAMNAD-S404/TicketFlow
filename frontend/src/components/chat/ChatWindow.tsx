@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Phone, Video, MoreVertical, ArrowLeft } from "lucide-react";
+import { Send, Video,  ArrowLeft } from "lucide-react";
 import { User, Message } from "../../types/chat";
 import ChatBgImage from "../../assets/images/helpdesk2.png";
 import { GiClick } from "react-icons/gi";
 import { HiChatBubbleLeftRight } from "react-icons/hi2";
 import { TbHistoryOff } from "react-icons/tb";
 import { FaArrowAltCircleRight } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 interface ChatWindowProps {
   selectedUser: User | null;
@@ -27,6 +28,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+
+  const navigate = useNavigate();
   // Scroll to bottom when messages change
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -101,15 +104,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <button className="p-2 hover:bg-gray-100 rounded-full">
-              <Phone className="h-5 w-5 text-gray-600" />
-            </button>
-            <button className="p-2 hover:bg-gray-100 rounded-full">
+            
+            <button 
+             onClick={() =>navigate("/company/dashboard/joincall")}
+            className="p-2 hover:bg-gray-100 rounded-full">
               <Video className="h-5 w-5 text-gray-600" />
             </button>
-            <button className="p-2 hover:bg-gray-100 rounded-full">
-              <MoreVertical className="h-5 w-5 text-gray-600" />
-            </button>
+           
           </div>
         </div>
       </header>

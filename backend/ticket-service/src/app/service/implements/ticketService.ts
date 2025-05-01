@@ -14,7 +14,6 @@ import {
   IReassignedTicketResponse,
   ITicketService,
 } from "../interface/ITicketService";
-import { error } from "console";
 
 export default class TicketService implements ITicketService {
   async createTicketDocument(
@@ -22,6 +21,9 @@ export default class TicketService implements ITicketService {
   ): Promise<{ message: string; success: boolean; statusCode: number; data?: ITicket }> {
     try {
       //create ticket
+      console.log("I am ticketData in service :" , ticketData);
+    
+      
       const newTicket = await TicketRepository.createTicket(ticketData);
       if (!newTicket) {
         return { message: Messages.DATA_NOT_FOUND, success: false, statusCode: HttpStatus.BAD_REQUEST };

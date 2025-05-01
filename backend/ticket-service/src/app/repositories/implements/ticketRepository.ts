@@ -8,8 +8,7 @@ import {
 } from "../interface/ITicketRepo";
 import TicketModel from "../../models/implements/ticket";
 import { ITicketReassignData } from "../../interface/userTokenData";
-import mongoose from "mongoose";
-import { count } from "console";
+
 
 class TicketRepository extends BaseRepository<ITicket> implements ITicketRepository {
   constructor() {
@@ -119,6 +118,19 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
     sortBy: string,
     searchQuery: string
   ): Promise<{ tickets: ITicket[] | null; totalPages: number }> {
+    console.log(
+      "auth : ",
+      authUserUUID,
+      "tickeHanEmID : ",
+      ticketHandlingEmployeeId,
+      "page :",
+      page,
+      "sort by",
+      sortBy,
+      "searchQuery",
+      searchQuery
+    );
+
     try {
       const limit = 4;
       const filter: Record<string, 1 | -1> = {
@@ -150,6 +162,7 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
         ...searchFilter,
       });
       const totalPages = Math.ceil(totalFilteredDocuments / limit);
+      console.log("test 2 tickes : ", fetchTickets);
       return { tickets: fetchTickets, totalPages };
     } catch (error) {
       throw error;
@@ -161,7 +174,6 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
   ): Promise<{ tickets: ITicket[] | null; totalPages: number }> {
     try {
       const { authUserUUID, page, searchQuery, sortBy, ticketRaisedEmployeeId } = data;
-      console.log(ticketRaisedEmployeeId);
       const limit = 5;
       const filter: Record<string, 1 | -1> = {
         [sortBy]: sortBy === "createdAt" ? -1 : 1,
@@ -363,7 +375,7 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
       const priorityTicketCounts: StatusCount = {};
 
       //add zero as default value
-      const defaultPriorities = ["medium priority","high priority","low priority"];
+      const defaultPriorities = ["medium priority", "high priority", "low priority"];
       defaultPriorities.forEach((priority) => {
         priorityTicketCounts[priority] = 0;
       });
@@ -383,56 +395,56 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
     }
   }
 
-  async getTopGroupCount(mathchField: string, matchValue: string, groupField: string): Promise<{ name: string; count: number; }> {
+  async getTopGroupCount(
+    mathchField: string,
+    matchValue: string,
+    groupField: string
+  ): Promise<{ name: string; count: number }> {
     try {
-      const filter = {[mathchField] : matchValue};
+      const filter = { [mathchField]: matchValue };
 
       const result = await this.model.aggregate([
         {
-          $match : {
+          $match: {
             ...filter,
-            [groupField] : {$exists : true,$ne : null}
-          }
+            [groupField]: { $exists: true, $ne: null },
+          },
         },
         //group by specific field
         {
-          $group : {
-            _id : `$${groupField}`,
-            count : {$sum : 1}
-          }
+          $group: {
+            _id: `$${groupField}`,
+            count: { $sum: 1 },
+          },
         },
         //sort by count
         {
-          $sort : {
-            count : -1
-          }
+          $sort: {
+            count: -1,
+          },
         },
         //get top result
         {
-          $limit : 1
-        }
+          $limit: 1,
+        },
       ]);
 
       //return default for no results
       if (!result.length) {
         return {
           name: "Didn't Selected",
-          count: 0
+          count: 0,
         };
       }
-  
+
       return {
         name: result[0]._id,
-        count: result[0].count
+        count: result[0].count,
       };
-  
     } catch (error) {
-      throw error
+      throw error;
     }
   }
-
-
-
 }
 
 export default new TicketRepository();

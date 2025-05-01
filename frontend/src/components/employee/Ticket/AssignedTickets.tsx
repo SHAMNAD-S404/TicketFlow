@@ -3,7 +3,7 @@ import { debounce } from "lodash";
 import { searchInputValidate } from "@/components/utility/searchInputValidateNameEmail";
 import { ITicketContext } from "@/types/ITicketContext";
 import { toast } from "react-toastify";
-import { fetchAssignedTicketStatics, fetchMyTicketStatics, fetchTicketsEmployeeWise } from "@/api/services/ticketService";
+import { fetchAssignedTicketStatics, fetchTicketsEmployeeWise } from "@/api/services/ticketService";
 import { useSelector } from "react-redux";
 import { Rootstate } from "@/redux store/store";
 import Pagination from "@/components/common/Pagination";

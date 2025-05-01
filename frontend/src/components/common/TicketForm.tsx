@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {  Paperclip, ChevronDown, Image, TicketsPlane } from "lucide-react";
+import { Paperclip, ChevronDown, Image, TicketsPlane } from "lucide-react";
 import { fetchAllDepartemts, fetchAllEmployeeWithLessTicket } from "@/api/services/companyService";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
@@ -164,14 +164,12 @@ const TicketForm: React.FC<TicketFormProps> = ({
       try {
         const response = await fetchAllEmployeeWithLessTicket(SelectedDepartmentId);
         if (response.success) {
+          console.log("selected employee with less tikcet : ",response.data);
+          
           setEmployees(response.data);
         }
       } catch (error: any) {
-        if (error.response && error.response.data) {
-          toast.error(Messages.NO_EMPLOYEES || error.response.data.message);
-        } else {
-          toast.error(Messages.SOMETHING_TRY_AGAIN);
-        }
+        toast.error(getErrMssg(error))
       }
     };
 

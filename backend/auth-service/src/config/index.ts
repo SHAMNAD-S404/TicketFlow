@@ -18,3 +18,8 @@ export const config: Iconfig = {
   superAdminEmail: process.env.SUDO_EMAIL_ID as string,
   resetPasswordUrlLink : process.env.RESET_PASSWORD_LINK_URL as string,
 };
+
+export const loggingConfig = {
+  NODE_ENV : process.env.NODE_ENV as string,
+  LOKI_HOST : process.env.LOKI_HOST as string,
+}

@@ -205,6 +205,11 @@ export class TicketController implements ITicketController {
         sortBy,
         searchQuery
       );
+
+      console.log("test 1 result ;" , result);
+      
+
+
       const { message, statusCode, success, data } = result;
       res.status(statusCode).json({ message, success, data });
     } catch (error) {
