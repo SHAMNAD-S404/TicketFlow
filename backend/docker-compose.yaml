@@ -2,6 +2,41 @@
 
 services:
 
+  # Logging Services
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: ticketflow-loki
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml
+      - loki-data:/loki
+    networks:
+      - ticketFlow-internal
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --try-concat -T 1 -O - http://ticketflow-loki:3100/ready || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ticketflow-grafana
+    ports:
+      - "3600:3600"
+    env_file:
+      - .env.grafana
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      loki:
+        condition: service_healthy
+    networks:
+      - ticketFlow-internal
+      - ticketFlow-external
+
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -58,11 +93,14 @@ services:
     volumes:
       - ./api-gateway:/app
       - /app/node_modules
+      - ./api-gateway/logs:/app/logs
     restart: unless-stopped
     depends_on:
       rabbitmq:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      loki:
         condition: service_healthy
       auth-service:
         condition: service_started
@@ -72,7 +110,6 @@ services:
         condition: service_started
       notification-service:
         condition: service_started
-     
     networks:
       - ticketFlow-internal
       - ticketFlow-external
@@ -90,10 +127,13 @@ services:
     volumes:
       - ./auth-service:/app
       - /app/node_modules
+      - ./api-gateway/logs:/app/logs
     depends_on:
       rabbitmq:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      loki:
         condition: service_healthy
     networks:
       - ticketFlow-internal
@@ -111,10 +151,13 @@ services:
     volumes:
       - ./company-service:/app
       - /app/node_modules
+      - ./api-gateway/logs:/app/logs
     depends_on:
       rabbitmq:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      loki:
         condition: service_healthy
     networks:
       - ticketFlow-internal
@@ -132,10 +175,13 @@ services:
     volumes:
       - ./ticket-service:/app
       - /app/node_modules
+      - ./api-gateway/logs:/app/logs
     depends_on:
       rabbitmq:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      loki:
         condition: service_healthy
     networks:
       - ticketFlow-internal
@@ -152,10 +198,13 @@ services:
     volumes:
       - ./communication-service:/app
       - /app/node_modules
+      - ./api-gateway/logs:/app/logs
     depends_on:
       rabbitmq:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      loki:
         condition: service_healthy
     networks:
       - ticketFlow-internal
@@ -173,10 +222,13 @@ services:
       - ./subscription-service:/app
       - /app/node_modules
       - /app/src/generated
+      - ./api-gateway/logs:/app/logs
     depends_on:
       rabbitmq:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      loki:
         condition: service_healthy
     networks:
       - ticketFlow-internal
@@ -194,10 +246,13 @@ services:
     volumes:
       - ./notification-service:/app
       - /app/node_modules
+      - ./api-gateway/logs:/app/logs
     depends_on:
       rabbitmq:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      loki:
         condition: service_healthy
     networks:
       - ticketFlow-internal
@@ -213,4 +268,6 @@ networks:
 volumes:
   rabbitmq_data:
   redis_data:
+  loki-data:
+  grafana-data:
 
