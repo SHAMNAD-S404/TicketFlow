@@ -29,8 +29,6 @@ ruler:
 
 limits_config:
   retention_period: 744h # 31 days
-
-query_range:
   split_queries_by_interval: 24h
 
 table_manager:

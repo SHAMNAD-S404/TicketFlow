@@ -1,5 +1,29 @@
 #version: '3.9'
 
+
+# Common Resource configuration
+x-minimal-resources: &minimal-resources
+  deploy:
+    resources:
+      limits:
+        cpus: '0.2'
+        memory: 200M
+      reservations:
+        cpus: '0.1'
+        memory: 100M
+
+# Resourse allocation for the standard service
+x-standard-resources: &standard-resources
+  deploy:
+    resources:
+      limits:
+        cpus: '0.3'
+        memory: 300M
+      reservations:
+        cpus: '0.15'
+        memory: 150M
+
+
 services:
 
   # Logging Services
@@ -7,35 +31,63 @@ services:
     image: grafana/loki:2.9.0
     container_name: ticketflow-loki
     command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
     volumes:
       - ./loki-config.yaml:/etc/loki/local-config.yaml
       - loki-data:/loki
     networks:
       - ticketFlow-internal
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 750M
+        reservations:
+          cpus: '0.2'
+          memory: 500M
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --try-concat -T 1 -O - http://ticketflow-loki:3100/ready || exit 1"]
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://ticketflow-loki:3100/ready || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 15s
+      start_period: 20s
+    restart: unless-stopped
+   
 
   
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:10.2.3
     container_name: ticketflow-grafana
     ports:
-      - "3600:3600"
+      - "3600:3000"
     env_file:
       - .env.grafana
     volumes:
       - grafana-data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/etc/grafana/dashboards 
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 400M
+        reservations:
+          cpus: '0.15'
+          memory: 200M
     depends_on:
       loki:
         condition: service_healthy
     networks:
       - ticketFlow-internal
       - ticketFlow-external
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
 
   rabbitmq:
@@ -44,6 +96,14 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 800M
+        reservations:
+          cpus: '0.2'
+          memory: 400M
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -62,10 +122,18 @@ services:
   
 
   redis:
-    image: redis:latest
+    image: redis:7.2.4-alpine
     container_name: ticketFlow-redis
     ports:
       - "6379:6379"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 300M
+        reservations:
+          cpus: '0.15'
+          memory: 150M
     command: ["redis-server" , "--appendonly" , "yes"]
     volumes:
       - redis_data:/data
@@ -87,6 +155,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    <<: *standard-resources
     env_file:
       - ./api-gateway/.env
     container_name: ticketFlow-apiGateway
@@ -127,7 +196,7 @@ services:
     volumes:
       - ./auth-service:/app
       - /app/node_modules
-      - ./api-gateway/logs:/app/logs
+      - ./auth-service/logs:/app/logs
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -144,6 +213,7 @@ services:
     build: 
       context: ./company-service
       dockerfile: Dockerfile
+    <<: *standard-resources
     env_file:
       - ./company-service/.env
     container_name: ticketFlow-companyService
@@ -151,7 +221,7 @@ services:
     volumes:
       - ./company-service:/app
       - /app/node_modules
-      - ./api-gateway/logs:/app/logs
+      - ./company-service/logs:/app/logs
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -168,6 +238,7 @@ services:
     build: 
       context: ./ticket-service
       dockerfile: Dockerfile
+    <<: *standard-resources
     env_file:
       - ./ticket-service/.env
     container_name: ticketFlow-ticketService
@@ -175,7 +246,7 @@ services:
     volumes:
       - ./ticket-service:/app
       - /app/node_modules
-      - ./api-gateway/logs:/app/logs
+      - ./ticket-service/logs:/app/logs
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -191,6 +262,7 @@ services:
     build: 
       context: ./communication-service
       dockerfile: Dockerfile
+    <<: *minimal-resources
     env_file:
       - ./communication-service/.env
     container_name: ticketFlow-communicationService
@@ -198,7 +270,7 @@ services:
     volumes:
       - ./communication-service:/app
       - /app/node_modules
-      - ./api-gateway/logs:/app/logs
+      - ./communication-service/logs:/app/logs
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -214,6 +286,7 @@ services:
     build: 
       context: ./subscription-service
       dockerfile: Dockerfile
+    <<: *minimal-resources
     env_file:
       - ./subscription-service/.env
     container_name: ticketFlow-subscriptionService
@@ -222,7 +295,7 @@ services:
       - ./subscription-service:/app
       - /app/node_modules
       - /app/src/generated
-      - ./api-gateway/logs:/app/logs
+      - ./subscription-service/logs:/app/logs
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -239,6 +312,7 @@ services:
     build:
       context: ./notification-service
       dockerfile: Dockerfile
+    <<: *minimal-resources
     env_file:
       - ./notification-service/.env
     container_name: ticketFlow-notificationService
@@ -246,7 +320,7 @@ services:
     volumes:
       - ./notification-service:/app
       - /app/node_modules
-      - ./api-gateway/logs:/app/logs
+      - ./notification-service/logs:/app/logs
     depends_on:
       rabbitmq:
         condition: service_healthy

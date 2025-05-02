@@ -9,5 +9,5 @@ datasources:
       maxLines: 1000
       derivedFields:
         - name: "service"
-          matcherRegex: "service=\"(.*?)\""
-          url: "http://localhost:3000/explore?orgId=1&left=[\"now-1h\",\"now\",\"Loki\",{\"expr\":\"{service=\"$1\"}\"}]"
+          matcherRegex: "service=\\\"(.*?)\\\""
+          url: "http://localhost:3600/explore?orgId=1&left=[\"now-1h\",\"now\",\"Loki\",{\"expr\":\"{service=\\\"$1\\\"}\"}]"
