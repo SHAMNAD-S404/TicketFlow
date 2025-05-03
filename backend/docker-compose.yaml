@@ -1,29 +1,6 @@
 #version: '3.9'
 
 
-# Common Resource configuration
-x-minimal-resources: &minimal-resources
-  deploy:
-    resources:
-      limits:
-        cpus: '0.2'
-        memory: 200M
-      reservations:
-        cpus: '0.1'
-        memory: 100M
-
-# Resourse allocation for the standard service
-x-standard-resources: &standard-resources
-  deploy:
-    resources:
-      limits:
-        cpus: '0.3'
-        memory: 300M
-      reservations:
-        cpus: '0.15'
-        memory: 150M
-
-
 services:
 
   # Logging Services
@@ -83,7 +60,7 @@ services:
       - ticketFlow-external
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
+      test: ["CMD-SHELL", "wget -q --no-verbose --tries=1 --spider http://ticketflow-grafana:3000/api/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -155,7 +132,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    <<: *standard-resources
     env_file:
       - ./api-gateway/.env
     container_name: ticketFlow-apiGateway
@@ -191,6 +167,8 @@ services:
       dockerfile: Dockerfile
     env_file:
       - ./auth-service/.env
+    ports:
+      - "4000:4000"
     container_name: ticketFlow-authService
     restart: unless-stopped
     volumes:
@@ -213,7 +191,6 @@ services:
     build: 
       context: ./company-service
       dockerfile: Dockerfile
-    <<: *standard-resources
     env_file:
       - ./company-service/.env
     container_name: ticketFlow-companyService
@@ -238,7 +215,6 @@ services:
     build: 
       context: ./ticket-service
       dockerfile: Dockerfile
-    <<: *standard-resources
     env_file:
       - ./ticket-service/.env
     container_name: ticketFlow-ticketService
@@ -262,7 +238,6 @@ services:
     build: 
       context: ./communication-service
       dockerfile: Dockerfile
-    <<: *minimal-resources
     env_file:
       - ./communication-service/.env
     container_name: ticketFlow-communicationService
@@ -286,7 +261,6 @@ services:
     build: 
       context: ./subscription-service
       dockerfile: Dockerfile
-    <<: *minimal-resources
     env_file:
       - ./subscription-service/.env
     container_name: ticketFlow-subscriptionService
@@ -312,7 +286,6 @@ services:
     build:
       context: ./notification-service
       dockerfile: Dockerfile
-    <<: *minimal-resources
     env_file:
       - ./notification-service/.env
     container_name: ticketFlow-notificationService

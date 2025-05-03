@@ -4,12 +4,14 @@ import cors from "cors";
 import proxy from "express-http-proxy";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { config } from "./config/index";
-import { logger } from "./middleware/logger";
 import { validateEnvVariables } from "./util/validateEnv";
 import cookieParser from "cookie-parser";
 import { authenticateToken } from "./middleware/authenticateToken";
 import morgan from "morgan";
 import http from "http";
+import morganMiddleware from "./middleware/morgan";
+import { logger,requestContext } from "./util/logger";
+
 
 dotenv.config();
 validateEnvVariables();
@@ -18,7 +20,7 @@ const app = express();
 
 app.use(cookieParser());
 
-app.use(logger);
+
 app.use(morgan("dev"));
 
 // Set up CORS

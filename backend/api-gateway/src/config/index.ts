@@ -22,3 +22,9 @@ export const config: Iconfig = {
   communicationServiceUrl : process.env.COMMUNICATION_SERVICE_URL as string,
   subscription_service : process.env.SUBSCRIPTION_SERVICE_URL as string
 };
+
+
+export const loggingConfig = {
+  NODE_ENV : process.env.NODE_ENV as string,
+  LOKI_HOST : process.env.LOKI_HOST as string,
+}
