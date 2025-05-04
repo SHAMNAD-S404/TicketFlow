@@ -1,2 +1,13 @@
+#Node
 node_modules
 .env
+npm-debug.log
+yarn.lock
+
+# General
+*.log
+.vscode
+.git
+.gitignore
+
+dist/
