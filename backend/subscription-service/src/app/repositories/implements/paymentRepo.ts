@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../../generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { IPaymentResponseDTO } from "../../dtos/paymentHistory.dto";
 import { IPayment } from "../../models/interface/IPayment";
 import { IPaymentRepo } from "../interface/IPaymentRepo";

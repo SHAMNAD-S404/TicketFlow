@@ -27,7 +27,7 @@ spec:
           livenessProbe:
             exec:
               command: ["redis-cli", "ping"]
-            inititalDelaySeconds: 15
+            initialDelaySeconds: 15
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 5
@@ -38,7 +38,7 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
-    volumes:
-      - name : redis-storage
-        persistentVolumeClaim:
-          claimName: redis-pvc 
+      volumes:
+        - name : redis-storage
+          persistentVolumeClaim:
+            claimName: redis-pvc 

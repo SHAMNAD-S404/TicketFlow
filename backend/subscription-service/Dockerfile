@@ -14,6 +14,10 @@ RUN npx prisma generate --schema=./src/prisma/schema.prisma
 
 COPY . .
 
+
+
+
+
 EXPOSE 4800
 
 ENV NODE_ENV=development

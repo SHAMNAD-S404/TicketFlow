@@ -12,5 +12,5 @@ export interface IPayment {
   planEndDate: string;
   paymentStatus: paymentStatus;
   stripeSessionId: string;
-  stripePaymentIntentId : string | null
+  stripePaymentIntentId : string ;
 }

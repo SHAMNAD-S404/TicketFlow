@@ -9,7 +9,7 @@ metadata:
 spec:
   replicas: 1
   selector:
-    matchLabes:
+    matchLabels:
       app: rabbitmq
   template:
     metadata:
