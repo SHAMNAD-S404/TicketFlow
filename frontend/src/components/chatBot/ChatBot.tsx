@@ -5,12 +5,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Aichatbot } from "@/api/services/ticketService";
 import TypewriterText from "./TypeWriter";
 import { getAIPrompt } from "@/utils/constants/aiPrompts";
+import { toast } from "react-toastify";
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputText, setInputText] = useState("");
   const [messages, setMessages] = useState<{ sender: string; text: string; fullText?: string }[]>([]);
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showDefaultQuestions, setShowDefaultQuestions] = useState(true); // State to control showing default questions
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -40,10 +40,9 @@ const ChatBot = () => {
 
   const sendMessage = async () => {
     if (countWords(inputText) > 100) {
-      setError("Message cannot exceed 100 words.");
+      toast.error("Message cannot exceed 100 words.");
       return;
     }
-    setError("");
 
     const { shortText, fullText } = truncateText(inputText);
     const updatedMessages = [...messages, { sender: "user", text: shortText, fullText }];
@@ -65,7 +64,7 @@ const ChatBot = () => {
         setMessages([...updatedMessages, { sender: "chatbot", text: "Error communicating with chatbot." }]);
       }
     } catch (error) {
-      setMessages([...updatedMessages, { sender: "chatbot", text: "Network error." }]);
+      setMessages([...updatedMessages, { sender: "chatbot", text: `Network error.: ${error}` }]);
     } finally {
       setIsLoading(false);
     }

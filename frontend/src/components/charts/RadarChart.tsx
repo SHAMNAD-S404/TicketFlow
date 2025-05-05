@@ -45,8 +45,6 @@ export function RadarChartComponent({
   title = "Department Ticket Distribution",
   departmentData,
   isLoading = false,
-  currentTime = "2025-04-29 01:21:00",
-  currentUser = "SHAMNAD-S404",
 }: RadarChartProps) {
   // Check if all values are zero or if there's no data
   const hasNoTickets = React.useMemo(() => {

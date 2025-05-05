@@ -20,6 +20,7 @@ const EmployeeDashboard: React.FC = () => {
 
   const handleMenuSelect = (menu: string) => {
     setActiveMenu(menu);
+    console.log(activeMenu);
     navigate(`/employee/dashboard/${menu.toLowerCase().replace(/\s/g, "")}`);
   };
 
@@ -47,8 +48,7 @@ const EmployeeDashboard: React.FC = () => {
           });
         }
       }
-    } catch (error: any) {
-      
+    } catch (error) {
       toast.error(getErrMssg(error));
     }
   };
@@ -60,12 +60,12 @@ const EmployeeDashboard: React.FC = () => {
       <Sidebar role={role} onMenuSelect={handleMenuSelect} />
 
       <div className="flex-1 flex flex-col w-full ">
-        <DashboardHeader 
-        name={employee.name}
+        <DashboardHeader
+          name={employee.name}
           onLogout={handleLogout}
           profileImage={employee.imageUrl}
           userId={employee._id}
-           />
+        />
 
         <div className="p-2 bg-gray-100  flex-1">
           <Outlet />

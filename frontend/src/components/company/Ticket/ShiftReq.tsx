@@ -87,7 +87,7 @@ const ShiftReq: React.FC<IShiftReq> = ({ handleCancel, handleManageTicket, handl
           toast.success(response.message);
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
     }
   };
@@ -100,7 +100,7 @@ const ShiftReq: React.FC<IShiftReq> = ({ handleCancel, handleManageTicket, handl
           setTicketData(response.data.tickets);
           setTotalPages(response.data.totalPages);
         }
-      } catch (error: any) {
+      } catch (error) {
         toast.error(getErrMssg(error));
       }
     };

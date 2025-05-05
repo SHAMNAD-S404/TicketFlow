@@ -22,7 +22,6 @@ const CompanyManagement: React.FC = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
 
   const [companyData, setCompanyData] = useState<ICompanyData[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const handleBlockUser = useCallback(
     debounce(
@@ -50,7 +49,7 @@ const CompanyManagement: React.FC = () => {
               );
             }
           }
-        } catch (error: any) {
+        } catch (error) {
           toast.error(getErrMssg(error));
         }
       },
@@ -82,9 +81,8 @@ const CompanyManagement: React.FC = () => {
         if (response && response.data) {
           setCompanyData(response.data.companies);
           setTotalPages(response.data.totalPages);
-          setIsLoading(false);
         }
-      } catch (error: any) {
+      } catch (error) {
         toast.error(getErrMssg(error));
       }
     };

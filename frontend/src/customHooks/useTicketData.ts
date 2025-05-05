@@ -24,7 +24,7 @@ const useTicketData = (ticketId: string): IUseTicketDataResult => {
         setTicketData(response.data);
         setError(null);
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
       setError(getErrMssg(error));
     } finally {

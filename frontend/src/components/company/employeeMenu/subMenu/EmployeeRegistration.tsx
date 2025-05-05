@@ -26,7 +26,6 @@ interface EmployeeRegistrationProps {
 
 const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({ handleCancel }) => {
   const [departments, setDepartments] = useState<Departement[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   const company = useSelector((state: Rootstate) => state.company.company);
 
@@ -51,8 +50,6 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({ handleCance
         } else {
           toast.error(Messages.SOMETHING_TRY_AGAIN);
         }
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -79,7 +76,7 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({ handleCance
         toast.success(response.message);
         reset(); //Reset the form fields
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
     }
   };
@@ -171,9 +168,7 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({ handleCance
                     },
                   })}
                 />
-                {errors.email && (
-                  <p className="text-sm font-semibold text-red-500">{errors.email.message}</p>
-                )}
+                {errors.email && <p className="text-sm font-semibold text-red-500">{errors.email.message}</p>}
               </div>
 
               {/* Phone Field */}

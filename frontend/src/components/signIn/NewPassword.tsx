@@ -6,6 +6,7 @@ import regexPatterns, { RegexMessages } from "../../utils/regexPattern";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { resetPassword } from "../../api/services/authService";
+import getErrMssg from "../utility/getErrMssg";
 
 interface NewPasswordProps {
   userType: "admin" | "employee";
@@ -39,12 +40,8 @@ const NewPassword: React.FC<NewPasswordProps> = ({ loginHandler, userType }) => 
       } else {
         toast.error(response.message);
       }
-    } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        alert("Error logging in account. Please try again.");
-      }
+    } catch (error) {
+        toast.error(getErrMssg(error))
     }
 
     loginHandler;

@@ -12,7 +12,7 @@ export const getAIPrompt = (userInput: string): string => {
   - TicketFlow is a modern IT ticketing system designed to streamline issue reporting, tracking, and resolution within an organization. It allows employees to raise technical issues, service requests, or general IT concerns, which are then managed by support teams through a structured workflow.
   - TicketFlow is built to empower both employees and IT teams with tools that reduce friction, speed up problem-solving, and ultimately improve overall satisfaction across the organization.
   - The primary motive of TicketFlow is to simplify and enhance the way organizations manage internal IT support.
-  - TicketFlow was founded by Shamad S, a software developer passionate about creating efficient IT solutions. He envisioned a streamlined platform to enhance internal IT support processes, leading to the development of TicketFlow.​
+  - TicketFlow was founded by Shamad S, a software developer passionate about creating efficient IT solutions. He envisioned a streamlined platform to enhance internal IT support processes, leading to the development of TicketFlow.
   - TicketFlow handles a wide range of organizational issues, including IT support tickets like hardware or software malfunctions and network outages; departmental requests such as resource approvals or task assignments; 
       - alerts from monitoring tools like SEIM and Grafana; 
       - employee-related concerns including feedback, leave adjustments, and performance queries; and general operational issues like workflow disruptions and communication breakdowns. 

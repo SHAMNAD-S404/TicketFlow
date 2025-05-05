@@ -7,6 +7,7 @@ import { Messages } from "@/enums/Messages";
 import { forgotPasswordReq } from "@/api/services/authService";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import getErrMssg from "../utility/getErrMssg";
 
 interface ForgotPassEmailProps {
   userType: "admin" | "user";
@@ -34,12 +35,8 @@ const ForgotPassEmail: React.FC<ForgotPassEmailProps> = ({ onBacktoLogin }) => {
         }).then(()=>navigate("/"))
         
       }
-    } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error(Messages.SOMETHING_TRY_AGAIN);
-      }
+    } catch (error) {
+      toast.error(getErrMssg(error))
     }
   };
 

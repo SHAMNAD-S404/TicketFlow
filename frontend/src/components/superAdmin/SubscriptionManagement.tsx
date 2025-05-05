@@ -76,6 +76,8 @@ const SubscriptionManagement: React.FC = () => {
         setCardLoading(false);
       } catch (error) {
         setIsLoading(true);
+        console.log(error);
+        
       }
     };
 
@@ -90,7 +92,7 @@ const SubscriptionManagement: React.FC = () => {
           setCompanyData(response.data.companies);
           setTotalPages(response.data.totalPages);
         }
-      } catch (error: any) {
+      } catch (error) {
         toast.error(getErrMssg(error));
       } finally {
         setIsLoading(false);

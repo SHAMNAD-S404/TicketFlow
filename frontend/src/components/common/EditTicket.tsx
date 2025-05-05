@@ -80,7 +80,7 @@ const EditTicket: React.FC<IEditTicket> = ({ isOpen, onClose, ticketData, refetc
         reset();
         refetch();
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
     }
   };
@@ -134,7 +134,7 @@ const EditTicket: React.FC<IEditTicket> = ({ isOpen, onClose, ticketData, refetc
         if (response && response.data) {
           setDepartments(response.data);
         }
-      } catch (error: any) {
+      } catch (error:any) {
         if (error.response && error.response.data) {
           Swal.fire({
             title: "oops",

@@ -79,7 +79,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
       if (response.sessionUrl) {
         window.location.href=response.sessionUrl;
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
     } finally {
       setLoading(false)

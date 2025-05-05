@@ -52,7 +52,7 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ onCancel }) => {
         dispatch(fetchCompany())
         
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error))
     }
   };

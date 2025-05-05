@@ -22,7 +22,6 @@ export interface IemployeeLoginFormData {
 
 const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>();
 
   const navigate = useNavigate();
@@ -37,7 +36,6 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
   } = useForm<IemployeeLoginFormData>();
 
   const handleLogin = async (data: IemployeeLoginFormData) => {
-    setLoading(true);
     try {
       const response = await loginUser(data.email, data.password);
 
@@ -57,8 +55,6 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
       const errMsg = error.response?.data?.message || error || Messages.SOMETHING_TRY_AGAIN;
       toast.error(errMsg);
       navigate("/auth/login?role=employee");
-    } finally {
-      setLoading(false);
     }
   };
 

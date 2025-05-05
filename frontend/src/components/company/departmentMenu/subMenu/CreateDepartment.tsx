@@ -29,7 +29,7 @@ const CreateDepartment: React.FC<CreateDepartmentProps> = ({ setActiveSubMenu })
         toast.success(response.message);
         reset();
       }
-    } catch (error: any) {
+    } catch (error) {
      toast.error(getErrMssg(error))
     }
   };

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { FaBell, FaSearch } from "react-icons/fa";
+import { FaBell } from "react-icons/fa";
 import { FaPowerOff as FaPow } from "react-icons/fa6";
 import { Socket, io } from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
@@ -117,7 +117,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name, userId, onLogou
         await markAllNotificationAsRead(userId);
         dispatch(markAllAsRead());
         socketRef.current?.emit("mark_all_notifications_read", userId);
-      } catch (error: any) {
+      } catch (error) {
         toast.error(getErrMssg(error));
       }
     }

@@ -43,7 +43,7 @@ const ChangePassword: React.FC<IChangePassword> = ({ userEmail }) => {
         reset();
         toast.success(response.message);
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
     }
   };

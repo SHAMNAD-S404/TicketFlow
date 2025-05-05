@@ -13,52 +13,36 @@ interface GeminiResponse {
 }
 
 export const createTicket = async (data: FormData) => {
-  try {
-    const response = await axiosInstance.post("/tickets/create-ticket", data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.post("/tickets/create-ticket", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
 };
 
 export const editTicket = async (data: FormData) => {
-  try {
-    const response = await axiosInstance.patch("/tickets/edit-ticket", data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.patch("/tickets/edit-ticket", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
 };
 
 export const fetchAllTickets = async (currentPage: number, sortBy: string, searchQuery: string) => {
-  try {
-    const response = await axiosInstance.get(
-      `/tickets/get-all-tickets?page=${currentPage}&sortBy=${sortBy}&searchQuery=${searchQuery}`
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.get(
+    `/tickets/get-all-tickets?page=${currentPage}&sortBy=${sortBy}&searchQuery=${searchQuery}`
+  );
+  return response.data;
 };
 
 //api call to fetch all the shift req from db
 export const fetchlAllShiftReq = async (currentPage: number, sortBy: string, searchQuery: string) => {
-  try {
-    const response = await axiosInstance.get(
-      `/tickets/get-all-shift-req?page=${currentPage}&sortBy=${sortBy}&searchQuery=${searchQuery}`
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.get(
+    `/tickets/get-all-shift-req?page=${currentPage}&sortBy=${sortBy}&searchQuery=${searchQuery}`
+  );
+  return response.data;
 };
 
 export const fetchTicketsEmployeeWise = async (
@@ -67,14 +51,10 @@ export const fetchTicketsEmployeeWise = async (
   sortBy: string,
   searchQuery: string
 ) => {
-  try {
-    const response = await axiosInstance.get(
-      `/tickets/get-ticket-employee-wise?page=${currentPage}&sortBy=${sortBy}&searchQuery=${searchQuery}&employeeId=${employeeId}`
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.get(
+    `/tickets/get-ticket-employee-wise?page=${currentPage}&sortBy=${sortBy}&searchQuery=${searchQuery}&employeeId=${employeeId}`
+  );
+  return response.data;
 };
 
 export const fetchMyTicketProgress = async (
@@ -83,160 +63,99 @@ export const fetchMyTicketProgress = async (
   sortBy: string,
   searchQuery: string
 ) => {
-  try {
-    const response = await axiosInstance.get(
-      `/tickets/get-myticket-progress?page=${currentPage}&sortBy=${sortBy}&searchQuery=${searchQuery}&employeeId=${employeeId}`
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.get(
+    `/tickets/get-myticket-progress?page=${currentPage}&sortBy=${sortBy}&searchQuery=${searchQuery}&employeeId=${employeeId}`
+  );
+  return response.data;
 };
 
 export const ticketReassign = async (data: IUpdateReassignTicketData) => {
-  try {
-    const response = await axiosInstance.patch("/tickets/ticket-reassign", data);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.patch("/tickets/ticket-reassign", data);
+  return response.data;
 };
 
 export const fetchOneTicket = async (id: string) => {
-  try {
-    const response = await axiosInstance.get(`/tickets/get-ticket?id=${id}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.get(`/tickets/get-ticket?id=${id}`);
+  return response.data;
 };
 
 export const updateTicketStatus = async (id: string, status: string, ticketResolutions?: string) => {
-  try {
-    const response = await axiosInstance.patch("/tickets/update-status", { id, status, ticketResolutions });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.patch("/tickets/update-status", { id, status, ticketResolutions });
+  return response.data;
 };
 
 export const reOpenTicket = async (id: string, reason: string) => {
-  try {
-    const response = await axiosInstance.patch("/tickets/re-open-ticket", { id, reason });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.patch("/tickets/re-open-ticket", { id, reason });
+  return response.data;
 };
 
 //api call to ticket shift request made
 export const ticketShiftRequest = async (data: IPayloadShiftReq) => {
-  try {
-    const response = await axiosInstance.post("/tickets/ticket-shift-request", { data });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.post("/tickets/ticket-shift-request", { data });
+  return response.data;
 };
 
 //api call to reject and delete shift req
 export const rejectShiftRequest = async (id: string) => {
-  try {
-    const response = await axiosInstance.delete(`/tickets/reject-shift-req?id=${id}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.delete(`/tickets/reject-shift-req?id=${id}`);
+  return response.data;
 };
 
 //api call for fetch all tickets statics
 export const fetchAllTicketStatics = async () => {
-  try {
-    const response = await axiosInstance.get("/tickets/fetch-all-ticket-statics");
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.get("/tickets/fetch-all-ticket-statics");
+  return response.data;
 };
 
 //api call for fetch all my ticket progrss statics
 export const fetchMyTicketStatics = async () => {
-  try {
-    const response = await axiosInstance.get("/tickets/fetch-my-ticket-statics");
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.get("/tickets/fetch-my-ticket-statics");
+  return response.data;
 };
 
 //for fetch get assigned tickets statics
 export const fetchAssignedTicketStatics = async () => {
-  try {
-    const response = await axiosInstance.get("/tickets/fetch-assigned-ticket-statics");
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await axiosInstance.get("/tickets/fetch-assigned-ticket-statics");
+  return response.data;
 };
 
 //for fetching ticket stats data for dashboard
 export const fetchTicketCardStatsForDashboard = async () => {
-  try {
-    const response = await axiosInstance.get("/tickets/fetch-all-ticket-stats-dashboard");
-    return response.data;
-  } catch (error) {
-    throw error
-  }
-}
+  const response = await axiosInstance.get("/tickets/fetch-all-ticket-stats-dashboard");
+  return response.data;
+};
 
 //for fetching ticket stats data for dashboard
 export const fetchTicketCardStatsForEmployee = async () => {
-  try {
-    const response = await axiosInstance.get("/tickets/fetch-all-ticket-employee-dashboard");
-    return response.data;
-  } catch (error) {
-    throw error
-  }
-}
+  const response = await axiosInstance.get("/tickets/fetch-all-ticket-employee-dashboard");
+  return response.data;
+};
 
 //for fetching the dashboard chart and graph data
 export const fetchCompanyDashboardData = async () => {
-  try {
-      const response = await axiosInstance.get("/tickets/fetch-dashboard-data");
-      return response.data;
-  } catch (error) {
-    throw error
-  }
-}
+  const response = await axiosInstance.get("/tickets/fetch-dashboard-data");
+  return response.data;
+};
 
 //for fetching the dashboard chart and graph data
 export const fetchEmployeeDashboardData = async () => {
-  try {
-    const response  = await axiosInstance.get("/tickets/fetch-employee-dashbaord-data");
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-}
-
+  const response = await axiosInstance.get("/tickets/fetch-employee-dashbaord-data");
+  return response.data;
+};
 
 //api call for the chat bot
 export const Aichatbot = async (prompt: string) => {
-  try {
-    const response = await axios.post<GeminiResponse>(
-      secrets.GEMINIAPIURL,
-      {
-        contents: [{ parts: [{ text: `User: ${prompt}\nBot:` }] }],
+  const response = await axios.post<GeminiResponse>(
+    secrets.GEMINIAPIURL,
+    {
+      contents: [{ parts: [{ text: `User: ${prompt}\nBot:` }] }],
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
       },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const reply = response.data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't respond.";
-    return { success: true, data: reply };
-  } catch (error) {
-    throw error;
-  }
+    }
+  );
+  const reply = response.data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't respond.";
+  return { success: true, data: reply };
 };

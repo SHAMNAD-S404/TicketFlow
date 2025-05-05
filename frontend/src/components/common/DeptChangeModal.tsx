@@ -73,7 +73,7 @@ const DeptChangeModal: React.FC<IDeptChangeModal> = ({
         twickParent();
         onModalClose();
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
     }
   };
@@ -85,7 +85,7 @@ const DeptChangeModal: React.FC<IDeptChangeModal> = ({
         if (response?.data) {
           setAllDepartments(response.data);
         }
-      } catch (error: any) {
+      } catch (error) {
         toast.error(getErrMssg(error));
       }
     };

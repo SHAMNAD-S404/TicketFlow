@@ -20,7 +20,7 @@ interface IViewMyTicketProgress {
 }
 
 const ViewMyTicketProgress: React.FC<IViewMyTicketProgress> = ({ handleCancle, handleChatSubMenu, ticketId }) => {
-  const { ticketData, loading, error, refetch } = useTicketData(ticketId);
+  const { ticketData, loading, refetch } = useTicketData(ticketId);
   const [ticketStatus, setTicketStatus] = useState<string>("");
   const [currentProgress, setCurrentProgress] = useState<string>("");
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -53,7 +53,7 @@ const ViewMyTicketProgress: React.FC<IViewMyTicketProgress> = ({ handleCancle, h
         toast.success(response.message);
         setIsVisible(false);
       }
-    } catch (error: any) {
+    } catch (error) {
      toast.error(getErrMssg(error))
     }
   };
@@ -84,7 +84,7 @@ const ViewMyTicketProgress: React.FC<IViewMyTicketProgress> = ({ handleCancle, h
         toast.success(response.message);
         setIsVisible(false);
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
     }
   };

@@ -28,7 +28,7 @@ export const EManageTickets: React.FC<EManageTickets> = ({
   handleChatSubMenu,
   enableShowReq,
 }) => {
-  const { ticketData, loading, error, refetch } = useTicketData(ticketId);
+  const { ticketData, loading, refetch } = useTicketData(ticketId);
   const [ticketStatus, setTicketStatus] = useState<string>("");
   const [currentProgress, setCurrentProgress] = useState<string>("");
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -72,7 +72,7 @@ export const EManageTickets: React.FC<EManageTickets> = ({
         setIsVisible(false);
         refetch();
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
     }
   };
@@ -103,7 +103,7 @@ export const EManageTickets: React.FC<EManageTickets> = ({
         toast.success(response.message);
         setIsVisible(false);
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
     }
   };

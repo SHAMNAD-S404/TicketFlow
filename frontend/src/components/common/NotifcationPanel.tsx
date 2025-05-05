@@ -21,7 +21,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ notifications, on
     try {
       await markNotificationAsRead(notificationId);
       dispatch(markAsRead(notificationId));
-    } catch (error :any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
     }
     

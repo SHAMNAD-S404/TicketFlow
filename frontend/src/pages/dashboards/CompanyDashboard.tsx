@@ -14,13 +14,14 @@ import getErrMssg from "@/components/utility/getErrMssg";
 const CompanyDashboard: React.FC = () => {
   const navigate = useNavigate();
   //Access Redux state
-  const { company, error, loading, role } = useSelector((state: Rootstate) => state.company);
+  const { company, role } = useSelector((state: Rootstate) => state.company);
   const dispatch = useDispatch<AppDispatch>();
 
   const [activeMenu, setActiveMenu] = useState("Dashboard");
 
   const handleMenuSelect = (menu: string) => {
     setActiveMenu(menu);
+    console.log(activeMenu);
     navigate(`/company/dashboard/${menu.toLowerCase().replace(/\s/g, "")}`);
   };
 
@@ -47,7 +48,7 @@ const CompanyDashboard: React.FC = () => {
           });
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
     }
   };

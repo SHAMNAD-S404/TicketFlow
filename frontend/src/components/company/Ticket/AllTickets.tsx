@@ -41,7 +41,6 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
   const [refreshState, setRefreshState] = useState<boolean>(false);
   const [cardLoading, setCardLoading] = useState<boolean>(true);
   const [cardStats, setCardStats] = useState<IStatsCardData[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   //pagination handle function to liftup state
   const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -70,7 +69,7 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
   useEffect(() => {
     const fetchCardStats = async () => {
       try {
-        setIsLoading(true);
+       
         const response: FetchAllTicketStaticReponse = await fetchAllTicketStatics();
 
         const stats: IStatsCardData[] = [
@@ -98,7 +97,7 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
         setCardStats(stats);
         setCardLoading(false);
       } catch (error) {
-        setIsLoading(true);
+        console.log(error)
       }
     };
 
@@ -113,8 +112,9 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
           setTicketData(response.data.tickets);
           setTotalPages(response.data.totalPages);
         }
-      } catch (error: any) {
+      } catch (error) {
         toast.error(getErrMssg(error));
+
       }
     };
     getAllTickets();

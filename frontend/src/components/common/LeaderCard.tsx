@@ -20,8 +20,6 @@ const LeaderCard: React.FC<LeaderCardProps> = ({
   subTitle,
   ticketCount,
   isLoading = false,
-  currentTime = "2025-04-29 01:25:28",
-  currentUser = "SHAMNAD-S404"
 }) => {
   // Check if there's no data
   const hasNoData = !name || !imageUrl || !ticketCount;

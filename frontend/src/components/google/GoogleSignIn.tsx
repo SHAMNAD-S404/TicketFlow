@@ -21,7 +21,7 @@ const GoogleSignIn: React.FC = () => {
           window.location.reload()
 
         }
-      } catch (error: any) {
+      } catch (error) {
        toast.error(getErrMssg(error))
       }
     }

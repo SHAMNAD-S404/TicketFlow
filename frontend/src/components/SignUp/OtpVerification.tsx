@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { showCustomeAlert } from "../utility/swalAlertHelper";
 import Swal from "sweetalert2";
+import getErrMssg from "../utility/getErrMssg";
 
 interface OtpVerificationProps {
   onSignupForm: () => void;
@@ -71,15 +72,9 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignupForm }) => {
       if (response.success) {
         setTimer(3 * 60 + 59);
         toast.success(response.message);
-      } else {
-        toast.error(response.message);
       }
-    } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        alert("error while resend otp!");
-      }
+    } catch (error) {
+      toast.error(getErrMssg(error));
     } finally {
       setIsResending(false);
     }
@@ -100,23 +95,16 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignupForm }) => {
           },
         });
       }
-      console.log("otp verification", otpValue, email);
       const response = await otpVerification(otpValue, email as string);
 
       if (response.success) {
-        onSignupForm()
+        onSignupForm();
         toast.success(response.message);
-      } else {
-        toast.error(response.message);
       }
 
       //navigate("/login?role=admin");
-    } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        alert("Error creating account . Please try again later");
-      }
+    } catch (error) {
+      toast.error(getErrMssg(error));
     }
   };
 

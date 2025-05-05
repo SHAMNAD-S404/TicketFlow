@@ -39,7 +39,6 @@ const CompanyChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1,
   const [selectedTicketID, setSelectedTicketID] = useState<string | undefined>(ticketID);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [isRoomEmpty, setIsRoomEmpty] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
 
   // Initialize socket connection
   useEffect(() => {
@@ -133,8 +132,12 @@ const CompanyChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1,
 
             setChatRooms(roomsResponse.data);
             setMessages(messagesResponse.data);
+            console.log(chatSender);
+            
           } catch (error) {
             toast.error("Error fetching messages after initialization");
+            console.log(error);
+            
           }
         }, 1500);
       } catch (error) {
@@ -148,7 +151,6 @@ const CompanyChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1,
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
-        setLoading(true);
         const response = await fetchAllRooms(participantsId);
         setChatRooms(response.data);
 
@@ -160,15 +162,12 @@ const CompanyChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1,
         if (ticketID) {
           setSelectedTicketID(ticketID);
         }
-
-        setLoading(false);
       } catch (error: any) {
         if (error.response?.status === 400) {
           setIsRoomEmpty(true);
         } else {
           toast.warn(getErrMssg(error));
         }
-        setLoading(false);
       }
     };
 

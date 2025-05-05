@@ -7,9 +7,8 @@ import { useForm } from "react-hook-form";
 import regexPatterns from "../../utils/regexPattern";
 import { IsignupForm } from "../../types/auth";
 import { signupUser } from "../../api/services/authService";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import getErrMssg from "../utility/getErrMssg";
-
 
 const SignupForm: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
@@ -29,16 +28,14 @@ const SignupForm: React.FC = () => {
   const navigate = useNavigate();
 
   const formSubmit = async (data: IsignupForm) => {
-
     try {
       const response = await signupUser(data);
-      if(response.success){
-        toast.success(response.message );
+      if (response.success) {
+        toast.success(response.message);
         navigate("/auth/login?role=admin");
       }
-          
-    } catch (error : any) {
-     toast.error(getErrMssg(error))
+    } catch (error) {
+      toast.error(getErrMssg(error));
     }
   };
 
@@ -56,11 +53,10 @@ const SignupForm: React.FC = () => {
         {/* Right Section - Form */}
         <div className="w-full md:w-1/2 px-6 py-10 bg-blue-50 ">
           <h2 className="text-3xl font-bold text-gray-800 mb-2 text-center ">
-           <span className="text-blue-500"> Register</span> Your Company
+            <span className="text-blue-500"> Register</span> Your Company
           </h2>
           <p className="text-gray-600 text-sm mb-6 text-center">
-            Let’s get you all set up so you can start creating your company
-            account.
+            Let’s get you all set up so you can start creating your company account.
           </p>
           {/*Form*/}
           <form className="space-y-4 " onSubmit={handleSubmit(formSubmit)}>
@@ -83,23 +79,16 @@ const SignupForm: React.FC = () => {
                     },
                   })}
                 />
-                {errors.companyName && (
-                  <p className="text-red-500 text-sm">
-                    {errors.companyName.message}
-                  </p>
-                )}
+                {errors.companyName && <p className="text-red-500 text-sm">{errors.companyName.message}</p>}
               </div>
               <div>
-                <label className="text-sm font-semibold text-gray-600">
-                  Choose company type
-                </label>
+                <label className="text-sm font-semibold text-gray-600">Choose company type</label>
                 <select
                   className="w-full p-2 mt-1  bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 "
                   defaultValue=""
                   {...register("companyType", {
                     required: "Please select a company type",
-                  })}
-                >
+                  })}>
                   <option value="" disabled>
                     Select a company type
                   </option>
@@ -110,11 +99,7 @@ const SignupForm: React.FC = () => {
                   <option value="Manufacturing">Manufacturing</option>
                   <option value="Retail">Retail</option>
                 </select>
-                {errors.companyType && (
-                  <p className="text-red-500 text-sm">
-                    {errors.companyType.message}
-                  </p>
-                )}
+                {errors.companyType && <p className="text-red-500 text-sm">{errors.companyType.message}</p>}
               </div>
 
               <div>
@@ -134,12 +119,7 @@ const SignupForm: React.FC = () => {
                     },
                   })}
                 />
-                {errors.phoneNumber && (
-                  <p className="text-red-500 text-sm">
-                    {" "}
-                    {errors.phoneNumber.message}{" "}
-                  </p>
-                )}
+                {errors.phoneNumber && <p className="text-red-500 text-sm"> {errors.phoneNumber.message} </p>}
               </div>
 
               <div>
@@ -159,17 +139,11 @@ const SignupForm: React.FC = () => {
                     },
                   })}
                 />
-                {errors.corporatedId && (
-                  <p className="text-red-500 text-sm">
-                    {errors.corporatedId.message}
-                  </p>
-                )}
+                {errors.corporatedId && <p className="text-red-500 text-sm">{errors.corporatedId.message}</p>}
               </div>
 
               <div>
-                <label className="text-sm text-green-600 font-semibold">
-                  Verified  email
-                </label>
+                <label className="text-sm text-green-600 font-semibold">Verified email</label>
                 <input
                   type="email"
                   value={verifiedEmail}
@@ -183,9 +157,7 @@ const SignupForm: React.FC = () => {
                     },
                   })}
                 />
-                {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email.message}</p>
-                )}
+                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
               </div>
 
               <div>
@@ -205,11 +177,7 @@ const SignupForm: React.FC = () => {
                     },
                   })}
                 />
-                {errors.originCountry && (
-                  <p className="text-red-500 text-sm">
-                    {errors.originCountry.message}
-                  </p>
-                )}
+                {errors.originCountry && <p className="text-red-500 text-sm">{errors.originCountry.message}</p>}
               </div>
 
               <div>
@@ -234,8 +202,7 @@ const SignupForm: React.FC = () => {
                       },
                       pattern: {
                         value: regexPatterns.password,
-                        message:
-                          "Password must contain both letters and numbers",
+                        message: "Password must contain both letters and numbers",
                       },
                     })}
                   />
@@ -243,17 +210,11 @@ const SignupForm: React.FC = () => {
                   <button
                     type="button"
                     onClick={togglePasswordVisibility}
-                    className=" absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-blue-600 "
-                  >
+                    className=" absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-blue-600 ">
                     {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
-                {errors.password && (
-                  <p className="text-red-500 text-sm">
-                    {" "}
-                    {errors.password.message}{" "}
-                  </p>
-                )}
+                {errors.password && <p className="text-red-500 text-sm"> {errors.password.message} </p>}
               </div>
 
               <div>
@@ -268,23 +229,17 @@ const SignupForm: React.FC = () => {
                     className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                     {...register("confirmPassword", {
                       required: "Confirm password is required ",
-                      validate: (value) =>
-                        value === password || "Passwords do not match",
+                      validate: (value) => value === password || "Passwords do not match",
                     })}
                   />
                   <button
                     type="button"
                     onClick={togglePasswordVisibility}
-                    className=" absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-blue-600 "
-                  >
+                    className=" absolute inset-y-0 right-2 flex items-center text-gray-500 hover:text-blue-600 ">
                     {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
-                {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm">
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
+                {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
               </div>
             </div>
 
@@ -292,8 +247,7 @@ const SignupForm: React.FC = () => {
             <div className="mt-6">
               <button
                 type="submit"
-                className="w-full bg-purple-600 text-white py-2 rounded-md  hover:font-bold hover:bg-gradient-to-r from-blue-500 to-green-600 font-medium transition"
-              >
+                className="w-full bg-purple-600 text-white py-2 rounded-md  hover:font-bold hover:bg-gradient-to-r from-blue-500 to-green-600 font-medium transition">
                 Create account
               </button>
               <hr className="my-3 " />
@@ -302,8 +256,7 @@ const SignupForm: React.FC = () => {
                 Already have an account?{" "}
                 <Link
                   to="/auth/login?role=admin"
-                  className="text-purple-500 hover:underline font-medium hover:font-bold "
-                >
+                  className="text-purple-500 hover:underline font-medium hover:font-bold ">
                   Login
                 </Link>
               </p>

@@ -101,7 +101,7 @@ const DepartemntEmployeeManagment: React.FC<IDepartmentEmployee> = ({ department
               );
             }
           }
-        } catch (error: any) {
+        } catch (error) {
           toast.error(getErrMssg(error));
         }
       },
@@ -127,7 +127,7 @@ const DepartemntEmployeeManagment: React.FC<IDepartmentEmployee> = ({ department
           setEmployeeData(response.data.employees);
           setTotalPages(response.data.totalPages);
         }
-      } catch (error: any) {
+      } catch (error) {
         toast.error(getErrMssg(error));
       }
     };

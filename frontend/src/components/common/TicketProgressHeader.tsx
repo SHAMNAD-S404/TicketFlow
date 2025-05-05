@@ -39,7 +39,7 @@ const TicketProgressHeader: React.FC<ITicketProgressHeader> = ({
         refetch(); //to refetch latest ticket info from parent
         toast.success(response.message);
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
     }
   };

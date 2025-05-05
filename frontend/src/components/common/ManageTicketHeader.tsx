@@ -64,7 +64,7 @@ const ManageTicketHeader: React.FC<IManageTicketHeader> = ({
         setIsRequested(true);
         toast.success(response.message);
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
     } finally {
       handleModalOpen(); //handle modal open

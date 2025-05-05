@@ -74,7 +74,7 @@ const DepartmentCard: React.FC<DepartmentCardProps> = ({
         toast.success(response.message);
         setModalOpen(false);
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
     }
   };
@@ -100,7 +100,7 @@ const DepartmentCard: React.FC<DepartmentCardProps> = ({
           toast.success(response.message);
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       Swal.fire({
         text: getErrMssg(error),
         icon: "error",

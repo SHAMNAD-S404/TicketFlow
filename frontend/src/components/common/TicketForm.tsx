@@ -97,7 +97,7 @@ const TicketForm: React.FC<TicketFormProps> = ({
         setEmployees(null);
         reset();
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
     }
   };
@@ -168,7 +168,7 @@ const TicketForm: React.FC<TicketFormProps> = ({
           
           setEmployees(response.data);
         }
-      } catch (error: any) {
+      } catch (error) {
         toast.error(getErrMssg(error))
       }
     };

@@ -14,7 +14,6 @@ import { FetchAllTicketStaticReponse } from "@/interfaces/response.interfaces";
 import { IoTicketOutline } from "react-icons/io5";
 import { GoAlert } from "react-icons/go";
 
-
 interface IManageTickets {
   handleCancel: () => void;
   handleManageTicket: () => void;
@@ -29,7 +28,6 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageT
   const [totalPages, setTotalPages] = useState<number>(1);
   const [cardLoading, setCardLoading] = useState<boolean>(true);
   const [cardStats, setCardStats] = useState<IStatsCardData[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const employee = useSelector((state: Rootstate) => state.employee.employee);
 
@@ -58,46 +56,43 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageT
     handleManageTicket();
   };
 
+  //ticket static card data fetch
+  useEffect(() => {
+    const fetchCardStats = async () => {
+      try {
+        const response: FetchAllTicketStaticReponse = await fetchAssignedTicketStatics();
 
+        const stats: IStatsCardData[] = [
+          {
+            title: "My tickets",
+            value: response.data.totalTickets,
+            icon: <IoTicketOutline className="text-xl" />,
+          },
+          {
+            title: "Pending tickets",
+            value: response.data.openTickets,
+            icon: <IoTicketOutline className="text-xl" />,
+          },
+          {
+            title: "Closed Tickets",
+            value: response.data.closedTickets,
+            icon: <IoTicketOutline className="text-xl" />,
+          },
+          {
+            title: "High Priority Tickets",
+            value: response.data.highPriorityTickets,
+            icon: <GoAlert className="text-xl " />,
+          },
+        ];
+        setCardStats(stats);
+        setCardLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
-    //ticket static card data fetch
-    useEffect(() => {
-      const fetchCardStats = async () => {
-        try {
-          setIsLoading(true);
-          const response: FetchAllTicketStaticReponse = await fetchAssignedTicketStatics();
-  
-          const stats: IStatsCardData[] = [
-            {
-              title: "My tickets",
-              value: response.data.totalTickets,
-              icon: <IoTicketOutline className="text-xl" />,
-            },
-            {
-              title: "Pending tickets",
-              value: response.data.openTickets,
-              icon: <IoTicketOutline className="text-xl" />,
-            },
-            {
-              title: "Closed Tickets",
-              value: response.data.closedTickets,
-              icon: <IoTicketOutline className="text-xl" />,
-            },
-            {
-              title: "High Priority Tickets",
-              value: response.data.highPriorityTickets,
-              icon: <GoAlert className="text-xl " />,
-            },
-          ];
-          setCardStats(stats);
-          setCardLoading(false);
-        } catch (error) {
-          setIsLoading(true);
-        }
-      };
-  
-      fetchCardStats();
-    }, []);
+    fetchCardStats();
+  }, []);
 
   useEffect(() => {
     const getAllTickets = async () => {
@@ -108,8 +103,8 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageT
           setTicketData(response.data.tickets);
           setTotalPages(response.data.totalPages);
         }
-      } catch (error: any) {
-        toast.error(getErrMssg(error))
+      } catch (error) {
+        toast.error(getErrMssg(error));
       }
     };
     getAllTickets();

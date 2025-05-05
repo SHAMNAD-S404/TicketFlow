@@ -15,21 +15,22 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { ticketReassign } from "@/api/services/ticketService";
+import getErrMssg from "@/components/utility/getErrMssg";
 
 interface IReassignTicketProps {
   selectedDepartmentId: string;
   selectedEmployeeId: string;
-  selectedTicketId:string;
+  selectedTicketId: string;
   handleCancel: () => void;
-  twickParent : () => void;
+  twickParent: () => void;
 }
 
-export interface IUpdateReassignTicketData  {
-  ticketId : string;
-  selectedDepartmentId : string;
-  selectedDepartmentName : string;
-  selectedEmployeeId : string;
-  selectedEmployeeName : string;
+export interface IUpdateReassignTicketData {
+  ticketId: string;
+  selectedDepartmentId: string;
+  selectedDepartmentName: string;
+  selectedEmployeeId: string;
+  selectedEmployeeName: string;
   selectedEmployeeEmail: string;
 }
 
@@ -41,45 +42,38 @@ export const ReassignTicket: React.FC<IReassignTicketProps> = ({
   twickParent,
 }) => {
   const [selectedDepartment, setSelectedDepartment] = useState<string>(selectedDepartmentId);
-  const [selectedEmployee, setSelectedEmployee] = useState<string >(selectedEmployeeId);
+  const [selectedEmployee, setSelectedEmployee] = useState<string>(selectedEmployeeId);
   const [allDepartment, setAllDepartment] = useState<IDepartement[]>([]);
   const [employees, setEmployees] = useState<IEmployeeList[]>([]);
-  const [isDrawerOpen , setIsDrawerOpen] = useState<boolean>(false)
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
-
-
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     try {
-      if(!selectedDepartment || employees.length === 0){
+      if (!selectedDepartment || employees.length === 0) {
         toast.error(Messages.SELECT_REQUIRED_FIELDS);
         return;
       }
       const departmentDetails = allDepartment.find((dept) => dept._id === selectedDepartment);
       const employeeDetails = employees.find((emp) => emp._id === selectedEmployee);
-      const ticketReassignData : IUpdateReassignTicketData = {
-        ticketId : selectedTicketId,
-        selectedDepartmentId : selectedDepartment,
-        selectedDepartmentName : departmentDetails?.departmentName as string,
-        selectedEmployeeId : selectedEmployee,
+      const ticketReassignData: IUpdateReassignTicketData = {
+        ticketId: selectedTicketId,
+        selectedDepartmentId: selectedDepartment,
+        selectedDepartmentName: departmentDetails?.departmentName as string,
+        selectedEmployeeId: selectedEmployee,
         selectedEmployeeName: employeeDetails?.name as string,
-        selectedEmployeeEmail : employeeDetails?.email as string,
-      }
+        selectedEmployeeEmail: employeeDetails?.email as string,
+      };
 
-      const response  = await ticketReassign(ticketReassignData);
-      if(response.success){
-       toast.success(response.message)
-       twickParent()
-       setIsDrawerOpen(false);
-       
-      }      
-    } catch (error : any) {
-      if(error.response && error.response.data){
-        toast.error(error.response.data.message);
-      }else{
-        toast.error(Messages.SOMETHING_TRY_AGAIN);
+      const response = await ticketReassign(ticketReassignData);
+      if (response.success) {
+        toast.success(response.message);
+        twickParent();
+        setIsDrawerOpen(false);
       }
+    } catch (error) {
+      toast.error(getErrMssg(error));
     }
-  }
+  };
 
   useEffect(() => {
     if (!selectedDepartment) {
@@ -92,17 +86,13 @@ export const ReassignTicket: React.FC<IReassignTicketProps> = ({
         if (response.success) {
           setEmployees(response.data);
           // If the current selectedEmployee is not in the new employee list, update it
-          const isEmployeeValid = response.data.some((emp:IEmployeeList) => emp._id === selectedEmployee);
-          if(!isEmployeeValid && response.data.length > 0){
+          const isEmployeeValid = response.data.some((emp: IEmployeeList) => emp._id === selectedEmployee);
+          if (!isEmployeeValid && response.data.length > 0) {
             setSelectedEmployee(response.data[0]._id);
           }
         }
-      } catch (error: any) {
-        if (error.response && error.response.data) {
-          toast.error(error.response.data.message);
-        } else {
-          toast.error(Messages.SOMETHING_TRY_AGAIN);
-        }
+      } catch (error) {
+        toast.error(getErrMssg(error))
       }
     };
 
@@ -138,7 +128,7 @@ export const ReassignTicket: React.FC<IReassignTicketProps> = ({
   return (
     <div>
       <div className="flex justify-center">
-        <Drawer  open={isDrawerOpen} onOpenChange={setIsDrawerOpen} >
+        <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
           <DrawerTrigger asChild>
             <button className="bg-blue-500 p-1 rounded-2xl text-white text-sm w-2/4 hover:bg-red-600 shadow-xl shadow-gray-400 ">
               Reassign
@@ -174,7 +164,7 @@ export const ReassignTicket: React.FC<IReassignTicketProps> = ({
                 <select
                   name="ticketHandlingDepartmentName"
                   className="mt-1 p-2 rounded-lg text-black "
-                  value={selectedEmployee }
+                  value={selectedEmployee}
                   onChange={(e) => setSelectedEmployee(e.target.value)}>
                   {employees.map((employee, index) => (
                     <option value={employee._id} key={index}>
@@ -187,8 +177,11 @@ export const ReassignTicket: React.FC<IReassignTicketProps> = ({
 
             <DrawerFooter className="mb-20">
               <div className="text-center">
-                <button className="bg-blue-500 hover:bg-green-600 p-2 font-semibold rounded-xl w-1/5 "
-                onClick={handleSubmit}>Submit</button>
+                <button
+                  className="bg-blue-500 hover:bg-green-600 p-2 font-semibold rounded-xl w-1/5 "
+                  onClick={handleSubmit}>
+                  Submit
+                </button>
               </div>
               <DrawerClose>
                 <button className="bg-gray-100 hover:bg-red-600 hover:text-white  text-black p-2 font-semibold rounded-xl w-1/5 ">

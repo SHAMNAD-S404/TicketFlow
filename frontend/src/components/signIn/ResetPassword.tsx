@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 import {  resetPasswordReq } from "../../api/services/authService";
 import { Messages } from "@/enums/Messages";
+import getErrMssg from "../utility/getErrMssg";
 
 
 
@@ -40,12 +41,8 @@ const ResetPassword: React.FC= () => {
         toast.success(response.message);
         navigate("/")
       }
-    } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        alert(Messages.SOMETHING_TRY_AGAIN);
-      }
+    } catch (error) {
+      toast.error(getErrMssg(error))
     }
 
   };

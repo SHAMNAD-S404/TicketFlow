@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { useSelector , useDispatch } from "react-redux";
 import { Rootstate ,AppDispatch } from "../../../../redux store/store";
 import { fetchEmployee } from "../../../../redux store/employeeSlice";
+import getErrMssg from "@/components/utility/getErrMssg";
 
 export interface EmployeeEditForm {
   name: string;
@@ -47,12 +48,8 @@ const EmployeeProfileEdit: React.FC<EmployeeEditFormProps> = ({ onCancel }) => {
       } else {
         toast.error(response.message);
       }
-    } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        alert("Error on register employee. Please try again later.");
-      }
+    } catch (error) {
+      toast.error(getErrMssg(error))
     }
   };
 

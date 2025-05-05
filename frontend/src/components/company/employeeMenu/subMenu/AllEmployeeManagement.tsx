@@ -99,7 +99,7 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({ handleCan
               );
             }
           }
-        } catch (error: any) {
+        } catch (error) {
           toast.error(getErrMssg(error));
         }
       },
@@ -119,7 +119,7 @@ const AllEmployeeManagement: React.FC<AllEmployeeManagementProps> = ({ handleCan
           setEmployeeData(response.data.employees);
           setTotalPages(response.data.totalPages);
         }
-      } catch (error: any) {
+      } catch (error) {
         toast.error(getErrMssg(error));
       }
     };

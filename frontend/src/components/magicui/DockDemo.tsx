@@ -16,6 +16,8 @@ interface IDockDemo {
 }
 
 export const  DockDemo : React.FC<IDockDemo> = ({ticketId , handleChat,handleVideoCall}) => {
+  console.log(ticketId);
+  
   return (
     <div className="relative ">
       <Dock iconMagnification={90} iconDistance={140}>

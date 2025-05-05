@@ -22,7 +22,7 @@ export const SubDepartmentManagement: React.FC = () => {
       try {
         const response = await fetchAllDepartemtsDetails();
         setDepartmentData(response.data);
-      } catch (error: any) {
+      } catch (error) {
         toast.error(getErrMssg(error))
       }
     };

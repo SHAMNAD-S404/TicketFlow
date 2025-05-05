@@ -32,7 +32,6 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
   const [totalPages, setTotalPages] = useState<number>(1);
   const [cardLoading, setCardLoading] = useState<boolean>(true);
   const [cardStats, setCardStats] = useState<IStatsCardData[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const employee = useSelector((state: Rootstate) => state.employee.employee);
 
@@ -65,7 +64,6 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
   useEffect(() => {
     const fetchCardStats = async () => {
       try {
-        setIsLoading(true);
         const response: FetchAllTicketStaticReponse = await fetchMyTicketStatics();
 
         const stats: IStatsCardData[] = [
@@ -93,7 +91,8 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
         setCardStats(stats);
         setCardLoading(false);
       } catch (error) {
-        setIsLoading(true);
+        console.log(error);
+        
       }
     };
 
@@ -109,7 +108,7 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
           setTicketData(response.data.tickets);
           setTotalPages(response.data.totalPages);
         }
-      } catch (error: any) {
+      } catch (error) {
         toast.error(getErrMssg(error));
       }
     };

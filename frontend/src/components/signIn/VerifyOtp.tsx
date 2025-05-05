@@ -6,7 +6,7 @@ interface VerifyOtpProps {
   verifyHandler: () => void;
 }
 
-const VerifyOtp: React.FC<VerifyOtpProps> = ({ verifyHandler, userType }) => {
+const VerifyOtp: React.FC<VerifyOtpProps> = ({ verifyHandler }) => {
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [timer, setTimer] = useState(4 * 60 + 59); //initial countdown
   const [isResending, setIsResending] = useState<boolean>(false);

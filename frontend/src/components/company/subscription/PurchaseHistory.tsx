@@ -36,7 +36,7 @@ const PurchaseHistory: React.FC = () => {
         if (response.data) {
           setPurchaseHistory(response.data);
         }
-      } catch (error: any) {
+      } catch (error) {
         toast.error(getErrMssg(error));
       } finally {
         setLoading(false);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import VerifyEmail from "../../assets/images/verifyemail .png";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -7,6 +7,7 @@ import { IVerifyEmail } from "../../types/auth";
 import { verifyEmail } from "../../api/services/authService";
 import { toast } from "react-toastify";
 import GoogleSignIn from "../google/GoogleSignIn";
+import getErrMssg from "../utility/getErrMssg";
 
 interface SignupFormProps {
   onVerifyEmail: () => void;
@@ -28,15 +29,9 @@ const Singup_Email: React.FC<SignupFormProps> = ({ onVerifyEmail }) => {
       if (response.success) {
         onVerifyEmail();
         toast.success(response.message);
-      } else {
-        toast.error(response.message);
       }
-    } catch (error: any) {
-      if (error.response && error.response.data) {
-        toast.error(error.response.data.message);
-      } else {
-        alert("Error creating account. Please try again.");
-      }
+    } catch (error) {
+      toast.error(getErrMssg(error));
     }
   };
 
@@ -46,11 +41,7 @@ const Singup_Email: React.FC<SignupFormProps> = ({ onVerifyEmail }) => {
       <div className="bg-white  min-h-[600px] shadow-2xl my-20  phone:mt-4 rounded-xl flex  max-w-7xl w-full  overflow-hidden ">
         {/* Left section - Image */}
         <div className="hidden md:flex items-center justify-center bg-blue-100 w-1/2 ">
-          <img
-            src={VerifyEmail}
-            alt="Signup Illustration"
-            className="h-full object-contain"
-          />
+          <img src={VerifyEmail} alt="Signup Illustration" className="h-full object-contain" />
         </div>
         {/* Right Section - Form */}
         <div className="w-full md:w-1/2 phone:px-8 md:px-14 py-10 bg-blue-50 lex flex-col justify-between">
@@ -59,20 +50,15 @@ const Singup_Email: React.FC<SignupFormProps> = ({ onVerifyEmail }) => {
           </h2>
           <hr />
           <p className="text-gray-600 text-sm mt-1 mb-4 text-center">
-            Let’s get you all set up so you can start creating your company
-            account.
+            Let’s get you all set up so you can start creating your company account.
           </p>
-          <h4 className="text-center phone:text-lg md:text-xl font-semibold text-blue-600">
-            Verify your email
-          </h4>
+          <h4 className="text-center phone:text-lg md:text-xl font-semibold text-blue-600">Verify your email</h4>
 
           {/*Form*/}
           <form className="space-y-6 mt-4 " onSubmit={handleSubmit(formSubmit)}>
             <div className=" grid grid-cols-1 gap-2">
               <div>
-                <label className="text-sm font-semibold text-gray-600">
-                  Enter company email
-                </label>
+                <label className="text-sm font-semibold text-gray-600">Enter company email</label>
                 <input
                   type="email"
                   placeholder="name@company.com"
@@ -85,9 +71,7 @@ const Singup_Email: React.FC<SignupFormProps> = ({ onVerifyEmail }) => {
                     },
                   })}
                 />
-                {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email.message}</p>
-                )}
+                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
               </div>
             </div>
 
@@ -95,8 +79,7 @@ const Singup_Email: React.FC<SignupFormProps> = ({ onVerifyEmail }) => {
             <div className="mt-6">
               <button
                 type="submit"
-                className="w-full bg-purple-600 text-white py-2 rounded-md  hover:font-bold hover:bg-gradient-to-r from-blue-500 to-green-600 font-medium transition"
-              >
+                className="w-full bg-purple-600 text-white py-2 rounded-md  hover:font-bold hover:bg-gradient-to-r from-blue-500 to-green-600 font-medium transition">
                 Verify email
               </button>
               <hr className="my-3 " />
@@ -109,8 +92,7 @@ const Singup_Email: React.FC<SignupFormProps> = ({ onVerifyEmail }) => {
                 Already have an account?{" "}
                 <Link
                   to="/auth/login?role=admin"
-                  className="text-purple-500 hover:underline font-medium hover:font-bold hover:text-blue-600 "
-                >
+                  className="text-purple-500 hover:underline font-medium hover:font-bold hover:text-blue-600 ">
                   Login
                 </Link>
               </p>

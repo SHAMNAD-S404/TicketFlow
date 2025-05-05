@@ -68,7 +68,7 @@ const ProfileUI: React.FC = () => {
         toast.success(response.message);
         setLoading(false);
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error));
       setLoading(false);
     }

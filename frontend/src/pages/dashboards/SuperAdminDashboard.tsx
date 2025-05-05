@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "../../components/common/Sidebar";
 import DashboardHeader from "../../components/common/DashboardHeader";
-import SAdminMainContent from "../../components/superAdmin/SuperAdminMainContent";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUserData } from "../../redux store/sudoSlice";
 import { Rootstate, AppDispatch } from "../../redux store/store";
@@ -22,6 +21,7 @@ const SuperAdminDashboard: React.FC = () => {
 
   const handleMenuSelect = (menu: string) => {
     setActiveMenu(menu);
+    console.log(activeMenu);
     navigate(`/sudo/dashboard/${menu.toLowerCase().replace(/\s/g, "")}`);
   };
 
@@ -49,7 +49,7 @@ const SuperAdminDashboard: React.FC = () => {
           });
         } 
       }
-    } catch (error: any) {
+    } catch (error) {
       toast.error(getErrMssg(error))
     }
   };
