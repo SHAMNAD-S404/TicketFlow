@@ -16,6 +16,11 @@ validateEnvVariables();
 
 const app = express();
 
+// for health check
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 app.use(cookieParser());
 
 app.use(logger);
@@ -46,7 +51,12 @@ const socketProxy = createProxyMiddleware({
 app.use("/socket.io", socketProxy);
 
 // Standard REST API routes using express-http-proxy
+
+// AUTH SERVICE
 app.use("/auth", proxy(config.authServiceUrl));
+
+
+// COMPANY SERVICE
 app.use(
   "/company",
   authenticateToken,
@@ -54,6 +64,9 @@ app.use(
     parseReqBody: false,
   })
 );
+
+
+// TICKET SERVICE
 app.use(
   "/tickets",
   authenticateToken,
@@ -62,14 +75,18 @@ app.use(
   })
 );
 
+// COMMUNICATION SERVICE
 app.use("/communication", authenticateToken, proxy(config.communicationServiceUrl));
 
-//subscription service
+
+// SUBSCRIPTION SERVICE
 app.use(
   "/subscription",
   proxy(config.subscription_service, {
     parseReqBody: false,
   })
 );
+
+
 
 export { app, server };

@@ -8,7 +8,11 @@ validateEnvVariables();
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
+// FOR HEALT CHECK
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
 
 export default app;

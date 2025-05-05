@@ -19,6 +19,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+
+// FOR HEALT CHECK
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
 app.use("/chat", chatRoutes );
 app.use("/notification", notoificatoinRoutes );
 

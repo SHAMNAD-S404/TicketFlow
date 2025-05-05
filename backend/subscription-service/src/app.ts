@@ -9,14 +9,18 @@ validateEnvVariables();
 
 const app = express();
 
-app.use(cookieParser())
+app.use(cookieParser());
+
+// FOR HEALT CHECK
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   console.log("Incoming Request Path in ticket-service", req.path);
   console.log("Incoming Request Body in ticket-service", req.body);
   next();
 });
-
 
 // Register routes
 app.use("/", router);

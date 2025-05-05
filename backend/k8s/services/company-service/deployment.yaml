@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: company-service
+  namespace: ticketflow
+  labels:
+    app: company-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: company-service
+  template:
+    metadata:
+      labels:
+        app: company-service
+    spec:
+      containers:
+      - name: company-service
+        image: shamnads306/ticketflow-company-service:v1.0.1
+        ports:
+          - containerPort: 4100
+        envFrom:
+          - secretRef:
+              name: company-secret-env
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 4100
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 4100
+          initialDelaySeconds: 20
+          periodSeconds: 20

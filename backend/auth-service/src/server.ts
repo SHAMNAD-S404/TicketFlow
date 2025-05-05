@@ -3,7 +3,6 @@ import app from "./app";
 import { config } from "./config";
 import { connectRabbitMQ } from "./queues/connection";
 import { authMainConsumer } from "./queues/consumers/authConsumer";
-import { logger } from "./utils/logger";
 
 const startServer = async () => {
   try {
@@ -19,10 +18,6 @@ const startServer = async () => {
     });
   } catch (error) {
     console.error("❌ Error starting server:", error);
-    logger.error("Error in starting server", {
-      error: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
-    });
     process.exit(1);
   }
 };

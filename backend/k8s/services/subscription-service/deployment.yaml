@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscription-service
+  namespace: ticketflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: subscription-service
+  template:
+    metadata:
+      labels:
+        app: subscription-service
+    spec:
+      containers:
+        - name: subscription-service
+          image: shamnads306/ticketflow-subscription-service:v1.0.1
+          ports:
+            - containerPort: 4800
+          envFrom:
+            - secretRef:
+                name: subscription-secret-env
+          volumeMounts:
+            - name: generated-volume
+              mountPath: /app/src/generated
+      volumes:
+        - name: generated-volume
+          emptyDir: {}
