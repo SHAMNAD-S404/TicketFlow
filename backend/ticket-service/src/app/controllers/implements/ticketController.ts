@@ -268,6 +268,73 @@ export class TicketController implements ITicketController {
     }
   };
 
+ //*************************************************************************** */
+
+
+
+
+
+
+ public checkPriorityWise = async (req: Request, res: Response): Promise<void> => {
+  try {
+      const {employeeId,authUserUUID}   = req.query;
+      if(!employeeId || !authUserUUID) {
+        res.status(HttpStatus.BAD_REQUEST).json({message:Messages.ALL_FILED_REQUIRED_ERR,success:false})
+      }
+
+      
+
+  } catch (error) {
+    console.error("error while change department", error);
+    res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+ //*************************************************************************** */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   public fetchAllTicketStatics = async (req: Request, res: Response): Promise<void> => {
     try {
       const { role, authUserUUID } = req.query;

@@ -8,6 +8,7 @@ export interface Iconfig {
   cloudApiKey: string;
   cloudApiSecret: string;
   FRONTEND_URL : string;
+  FRONTEND_PRODUCTION_URL : string;
 }
 
 export const config: Iconfig = {
@@ -17,4 +18,5 @@ export const config: Iconfig = {
   cloudApiKey: process.env.CLOUDINARY_API_KEY as string,
   cloudApiSecret: process.env.CLOUDINARY_API_SECRET as string,
   FRONTEND_URL : process.env.FRONTEND_URL as string,
+  FRONTEND_PRODUCTION_URL : process.env.FRONTEND_PRODUCTION_URL as string,
 };

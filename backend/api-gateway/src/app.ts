@@ -29,7 +29,7 @@ app.use(morgan("dev"));
 // Set up CORS
 app.use(
   cors({
-    origin: config.frontend_URL,
+    origin: ["https://ticketflow.shamnad.site", config.frontend_URL, config.frontend_production_url],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],

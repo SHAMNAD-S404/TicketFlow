@@ -268,4 +268,17 @@ export class EmployeeController implements IEmployeeController {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
     }
   };
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

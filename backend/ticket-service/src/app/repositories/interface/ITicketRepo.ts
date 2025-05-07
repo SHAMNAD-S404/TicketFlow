@@ -64,4 +64,7 @@ export interface ITicketRepository extends IBaseRepository<ITicket> {
 
   getTopGroupCount (mathchField : string, matchValue : string,groupField : string) : Promise<{name:string,count:number}>
 
+
+  checkPriorityRepository (ticketHandlingEmployeeId : string , authUserUUID : string) : Promise<boolean>;
+
 }

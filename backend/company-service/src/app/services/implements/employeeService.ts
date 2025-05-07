@@ -258,6 +258,9 @@ export default class EmployeeService implements IEmployeeService {
   async getEmployeeWithlessTicket(id: string, authUserUUID: string): Promise<IGetEmployeeWithlessTicket> {
     try {
       const result = await EmployeeRepository.findEmployeeWithlessTicket(id, authUserUUID);
+      
+
+
       return result
         ? {
             message: Messages.FETCH_SUCCESS,

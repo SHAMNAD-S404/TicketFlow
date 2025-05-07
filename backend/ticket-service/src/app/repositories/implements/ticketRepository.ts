@@ -102,6 +102,37 @@ class TicketRepository extends BaseRepository<ITicket> implements ITicketReposit
     }
   }
 
+   //************************************************ */
+
+   async checkPriorityRepository(ticketHandlingEmployeeId: string, authUserUUID: string): Promise<boolean> {
+     try {
+      
+        const getTodayData = new Date()
+
+        const priorityCheck = await this.model.find()
+
+
+     } catch (error) {
+      throw error
+     }
+   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   async updateOnTicketClose(updateData: IupdateOnTicketClose): Promise<ITicket | null> {
     try {
       const { id, ...updateField } = updateData;

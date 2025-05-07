@@ -10,6 +10,7 @@ export interface Iconfig {
   ticketServiceUrl : string;
   communicationServiceUrl : string;
   subscription_service : string;
+  frontend_production_url : string
 }
 
 export const config: Iconfig = {
@@ -20,5 +21,6 @@ export const config: Iconfig = {
   frontend_URL: process.env.FRONTEND_URL as string,
   ticketServiceUrl : process.env.TICKET_SERVICE_URL as string,
   communicationServiceUrl : process.env.COMMUNICATION_SERVICE_URL as string,
-  subscription_service : process.env.SUBSCRIPTION_SERVICE_URL as string
+  subscription_service : process.env.SUBSCRIPTION_SERVICE_URL as string,
+  frontend_production_url : process.env.FRONTEND_PRODUCTION_URL as string
 };
