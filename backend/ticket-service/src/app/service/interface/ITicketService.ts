@@ -78,5 +78,5 @@ export interface ITicketService {
 
   getEmployeeDashboardData (email : string,authUserUUID : string) : Promise<IDashboardData>;
 
-  checkPriorityService (ticketHandlingEmployeeId:string , authUserUUID:string) : Promise<boolean>
+  
 }

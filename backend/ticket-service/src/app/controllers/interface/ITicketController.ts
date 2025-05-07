@@ -17,6 +17,5 @@ export interface ITicketController {
   getTicketStatsForEmployee ( req : Request , res : Response ) : Promise<void>;
   getDashboardData (req : Request , res: Response) : Promise<void>;
   getEmployeeDashboardData (req : Request , res: Response) : Promise<void>;
-
-  checkPriorityWise(req:Request,res:Response) : Promise<void>
+  
 }

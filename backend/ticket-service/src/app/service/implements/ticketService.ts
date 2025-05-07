@@ -110,38 +110,6 @@ export default class TicketService implements ITicketService {
 
 
 
-//*************************** */
-
-
-async checkPriorityService(ticketHandlingEmployeeId: string, authUserUUID: string): Promise<boolean> {
-  try {
-    
-    const isLimitExceed = await TicketRepository
-
-   return isLimitExceed;
-
-
-
-  } catch (error) {
-    throw error
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   async getReassignedTicket(data: ITicketReassignData): Promise<IReassignedTicketResponse> {
     try {
       const isExist = await TicketRepository.findOneDocument({ _id: data.ticketId });
