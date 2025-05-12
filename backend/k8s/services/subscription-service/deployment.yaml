@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: subscription-service
-          image: shamnads306/ticketflow-subscription-service:v1.0.6
+          image: shamnads306/ticketflow-subscription-service:v1.0.7
           ports:
             - containerPort: 4800
           envFrom:
