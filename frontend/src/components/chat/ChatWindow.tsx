@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Video, ArrowLeft } from "lucide-react";
+import { Send,  ArrowLeft } from "lucide-react";
 import { User, Message } from "../../types/chat";
 import ChatBgImage from "../../assets/images/helpdesk2.png";
 import { GiClick } from "react-icons/gi";
@@ -28,7 +28,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const navigate = useNavigate();
   // Scroll to bottom when messages change
   useEffect(() => {
     if (messagesEndRef.current) {

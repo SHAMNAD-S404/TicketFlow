@@ -10,7 +10,7 @@ import { RegexMessages } from "@/utils/regexPattern";
 import { createTicket } from "@/api/services/ticketService";
 import { TicketFormData } from "@/interfaces/formInterfaces";
 import getErrMssg from "../utility/getErrMssg";
-import { IoCloseCircleSharp, IoCreateOutline } from "react-icons/io5";
+import { IoCloseCircleSharp } from "react-icons/io5";
 import { IoMdCreate } from "react-icons/io";
 
 export interface IDepartement {

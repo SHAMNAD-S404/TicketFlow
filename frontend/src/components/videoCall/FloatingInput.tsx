@@ -7,7 +7,7 @@ interface FloatingInputProps extends React.InputHTMLAttributes<HTMLInputElement>
 }
 
 export const FloatingInput = forwardRef<HTMLInputElement, FloatingInputProps>(
-  ({ id, label, icon, className, ...props }, ref) => {
+  ({ id, label, icon, ...props }, ref) => {
     const [isFocused, setIsFocused] = useState(false);
     const hasValue = props.value !== undefined && String(props.value).trim() !== "";
 
