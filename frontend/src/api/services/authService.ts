@@ -53,6 +53,12 @@ export const googleSignIn = async (token: string) => {
   return response.data;
 };
 
+//google login api call 
+export const googleLoginAPI = async (token : string) => {
+  const response = await axiosInstance.post("/auth/google-sign-in",{ token});
+  return response.data;
+}
+
 //resend OTP API CALL ==========================================================================
 export const resendOTP = async (email: string) => {
   const response = await axiosInstance.post("/auth/resend-otp", { email });

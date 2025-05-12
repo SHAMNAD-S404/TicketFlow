@@ -32,11 +32,9 @@ export const Messages = {
     INPUT_INVALID_OR_MISSING_SOME_FIELD : "Given input are invalid or some of fields are missing ! try again",
     SOMETHING_WENT_WRONG : "Something went wrong try again later",
     DATA_NOT_FOUND : "requested data not found",
+    PAYLOAD_NOT_FOUND : "Payload data not found!",
+    EMAIL_STORED_AND_CONTINUE : "successfull, fill the form to continue", 
     
-
-
-    
-  
 
 
   };

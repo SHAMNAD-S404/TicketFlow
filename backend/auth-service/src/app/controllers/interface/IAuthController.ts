@@ -9,7 +9,7 @@ export interface IAuthController {
   updateUserPassword(req: Request, res: Response): Promise<void>;
   fetchUserRole(req: Request, res: Response): Promise<void>;
   logoutUser(req: Request, res: Response): Promise<void>;
-  googleSignIn(req: Request, res: Response): Promise<void>;
+  googleSignUp(req: Request, res: Response): Promise<void>;
   resendOtp(req: Request, res: Response): Promise<void>;
   verifyRefreshToken ( req:Request,res:Response) : Promise<void>;
   handleCompanyBlockStatus ( req: Request , res : Response) : Promise<void>;
@@ -17,5 +17,6 @@ export interface IAuthController {
   forgotPasswordHandle (req : Request , res : Response) : Promise < void >;
   resetPassword ( req : Request, res : Response) : Promise <void>;
   changePassword ( req : Request, res : Response) : Promise <void>;
+  googleSignIn (req:Request , res : Response) : Promise <void>
   
 }

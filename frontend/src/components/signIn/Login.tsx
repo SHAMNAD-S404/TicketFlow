@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux store/store";
 import { fetchCompany } from "../../redux store/userSlice";
 import getErrMssg from "../utility/getErrMssg";
+import { LoginWithGoogle } from "../google/GoogleLogin";
 
 interface LoginProps {
   handleforgotPass: () => void;
@@ -154,7 +155,13 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
               {error && <p className="text-red-500 mt-2">{error}</p>}
             </form>
 
-            <p className="mt-6 text-center text-gray-600  ">
+            <hr className="my-3 " />
+              <h4 className="text-center">OR</h4>
+              {/*Google sign up session*/}
+
+              <LoginWithGoogle />
+
+            <p className="mt-4 text-center text-gray-600  ">
               Don't have an account?{" "}
               <Link to="/auth/signup" className="text-red-500 font-semibold hover:underline hover:text-blue-500">
                 Register

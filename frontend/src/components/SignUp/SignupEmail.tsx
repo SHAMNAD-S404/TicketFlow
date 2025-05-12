@@ -6,7 +6,7 @@ import regexPatterns from "../../utils/regexPattern";
 import { IVerifyEmail } from "../../types/auth";
 import { verifyEmail } from "../../api/services/authService";
 import { toast } from "react-toastify";
-import GoogleSignIn from "../google/GoogleSignIn";
+import GoogleSignIn from "../google/GoogleSignup";
 import getErrMssg from "../utility/getErrMssg";
 
 interface SignupFormProps {

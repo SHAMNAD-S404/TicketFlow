@@ -1,6 +1,13 @@
 import { UserRepository } from "../../repositories/implements/userRepository";
 import { RegisterUserDTO } from "../../dtos/registerUserDTO";
-import { IAuthService, IChangePassData, IUpdateOneDocResp } from "../../services/interface/IAuthService";
+import {
+  IActiveUserResponse,
+  IAuthService,
+  IChangePassData,
+  IGenerateUserTokenResponse,
+  IGoogleTokenResponse,
+  IUpdateOneDocResp,
+} from "../../services/interface/IAuthService";
 import { hashPassword, comparePassword } from "../../../utils/hashUtils";
 import { generateOTP } from "../../../utils/otpUtils";
 import { RabbitMQConfig } from "../../../config/rabbitmq";
@@ -18,6 +25,7 @@ import { generateAccessToken, generateRefreshToken } from "../../../utils/jwtUti
 import { basicResponse } from "../../interfaces/basicResponse";
 import { nanoid } from "nanoid";
 import { generatesubscriptionEndDate } from "../../../utils/dateUtilFunctions";
+import { IUser } from "../../models/interface/IUser";
 
 export class AuthService implements IAuthService {
   constructor(private userRepository: UserRepository) {}
@@ -322,53 +330,96 @@ export class AuthService implements IAuthService {
       return { message: String(error), success: false };
     }
   }
-  //============================================================================================================================
 
-  /**
-   * Verify the Google sign-in token and return the user's email if successful.
-   * Store the user's email in Redis with a TTL of 20 minutes.
-   * @param token The Google sign-in token
-   * @returns An object containing the message, success status, and the user's email if successful
-   */
-  async verifyGoogleSignIn(token: string): Promise<{ message: string; success: boolean; email?: string }> {
+
+  //======================================================================================================
+
+  //Google token verification and extraction
+
+  async extractGoogleToken(token: string): Promise<IGoogleTokenResponse> {
     try {
       // Verify the token with the Google OAuth2 client
       const CLIENT_ID = config.OAuthClientId;
       const client = new OAuth2Client(CLIENT_ID);
-
       const ticket = await client.verifyIdToken({
         idToken: token,
         audience: CLIENT_ID,
       });
-
       // Get the payload from the verified token
       const payload = ticket.getPayload();
       if (!payload) {
-        return { message: "payload data not found!", success: false };
+        return { message: Messages.PAYLOAD_NOT_FOUND, success: false, statusCode: HttpStatus.BAD_REQUEST };
       }
-
       // Extract the user's email from the payload
-      const email = payload?.email;
-
-      const userExist = await this.userRepository.findByEmail(String(email));
-      if (userExist) {
-        return { message: "User already exist . Try to login", success: false };
-      }
-
-      // Store the user's email in Redis
-      await setRedisData(`tempEmail:${email}`, email, 1200);
-
-      // Return the success message and the user's email
-      return {
-        message: "successfull, fill the form to continue",
-        success: true,
-        email,
-      };
+      const email = payload.email;
+      return { statusCode: HttpStatus.OK, message: Messages.OK, success: true, email };
     } catch (error) {
-      // Return an error message if something goes wrong
-      return { message: String(error), success: false };
+      throw error;
     }
   }
+  //======================================================================================================
+  //CHECKING FOR USER IS EXIST AND IN ACTIVE STATE
+
+  async checkIsActiveUser(email: string): Promise<IActiveUserResponse> {
+    try {
+      const isUserExist = await this.userRepository.findUserByEmail(email);
+      //checking for user exist or not!
+      if (!isUserExist) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: Messages.USER_NOT_FOUND,
+          success: false,
+          userData: null,
+        };
+      }
+      //checking for user blocked or not!
+      if (isUserExist.isBlock) {
+        return {
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: Messages.USER_BLOCKED,
+          success: false,
+          userData: null,
+          isBlock : true,
+        };
+      }
+      //Is user is active then send response
+      return {
+        statusCode: HttpStatus.OK,
+        message: Messages.OK,
+        success: true,
+        userData: isUserExist,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //======================================================================================================
+  // To generate access tocken and refresh token for the user
+ async generateUserToken(userData: IUser): Promise<IGenerateUserTokenResponse> {
+   try {
+      const userPayload = {
+        authUserUUID : userData.authUserUUID,
+        email : userData.email,
+        role : userData.role
+      };
+      
+      //generating tokens
+      const [ accessToken, refreshToken] = await Promise.all([
+        generateAccessToken(userPayload),
+        generateRefreshToken(userPayload)
+      ]);
+      return {
+        statusCode : HttpStatus.OK,
+        message : Messages.LOGIN_SUCCESS,
+        success : true,
+        accessToken,
+        refreshToken
+      }
+   } catch (error) {
+    throw error;
+   }
+ }
 
   //======================================================================================================
 
@@ -535,16 +586,14 @@ export class AuthService implements IAuthService {
 
       //store the email id blacklist user in reddis
       const key = `blacklist:user:${email}`;
-      if(updateUser.isBlock){
-         await setRedisData(key, { blacklisted: true }, 1800); // 30 min
-      }else {
-        await deleteRedisData(key)
+      if (updateUser.isBlock) {
+        await setRedisData(key, { blacklisted: true }, 1800); // 30 min
+      } else {
+        await deleteRedisData(key);
       }
-     
 
       return { message: Messages.USER_UPDATE_SUCCESS, statusCode: HttpStatus.OK, success: true, userDataPayload };
     } catch (error) {
-      console.error("error while udpate user status", error);
       return { message: Messages.SERVER_ERROR, statusCode: HttpStatus.INTERNAL_SERVER_ERROR, success: false };
     }
   }
@@ -586,7 +635,6 @@ export class AuthService implements IAuthService {
     try {
       //fetching data from reddis
       const getEmail = await getRedisData(token);
-      console.log("email:", token, "getEmail : ", getEmail);
       if (!getEmail) {
         return { message: Messages.TOKEN_EXPIRED, success: false, statusCode: HttpStatus.BAD_REQUEST };
       }
@@ -606,9 +654,6 @@ export class AuthService implements IAuthService {
   async changePasswordService(data: IChangePassData): Promise<basicResponse> {
     try {
       const { currentPassword, email, newPassword } = data;
-      console.log("im servide eee ");
-
-      console.log(data);
       const isExist = await this.userRepository.findByEmail(email);
       console.log(isExist);
 

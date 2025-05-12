@@ -9,6 +9,7 @@ import { RabbitMQConfig } from "../../../config/rabbitmq";
 import { validateEmailSchema } from "../../dtos/basicValidation.schema";
 import { changePasswordSchema, resetPasswordSchema } from "../../dtos/baseFormValidation.schema";
 import { setRedisData } from "../../../utils/redisUtils";
+import { IUser } from "../../models/interface/IUser";
 
 export class AuthController implements IAuthController {
   private authService: IAuthService;
@@ -102,11 +103,6 @@ export class AuthController implements IAuthController {
 
         // Return a 200 status with the message, success status and isFirst
         res.status(200).json({ message, success, isFirst, role });
-        return;
-      } else {
-        // Return a 500 status with an error message if the tokens are not present
-        res.status(500).json({ message: "failed to assign tokens", success: false });
-        return;
       }
     } catch (error) {
       // Catch any errors and return a 400 status with an error message
@@ -189,14 +185,13 @@ export class AuthController implements IAuthController {
 
   public logoutUser = async (req: Request, res: Response): Promise<void> => {
     try {
-      
       //Get refresh token from the cookie
       const refreshToken = req.cookies?.refreshToken;
       //black list token
-      if(refreshToken){
+      if (refreshToken) {
         //store it on redis with 48 hours of expiration time
         const key = `blacklist:token:${refreshToken}`;
-        await setRedisData(key,{blacklisted:true},172800);
+        await setRedisData(key, { blacklisted: true }, 172800);
       }
 
       //clear cookies
@@ -218,19 +213,57 @@ export class AuthController implements IAuthController {
     }
   };
 
-  //google sign in ===================================================================================================
+  //google sign up ===================================================================================================
 
-  public googleSignIn = async (req: Request, res: Response): Promise<void> => {
+  public googleSignUp = async (req: Request, res: Response): Promise<void> => {
     try {
       const token = req.body.token;
       if (!token) {
-        res.status(400).json({ message: "token missing", success: false });
+        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.TOKEN_NOT_FOUND, success: false });
         return;
       }
+      //verify and extract user email from the token
+      const getEmail = await this.authService.extractGoogleToken(token);
+      if (!getEmail.success) {
+        const { message, statusCode, success } = getEmail;
+        res.status(statusCode).json({ message, success });
+        return;
+      }
+      //Checking for user is exist and active
+      const isUserActive = await this.authService.checkIsActiveUser(getEmail.email as string);
+      if (isUserActive.isBlock) {
+        const { message, statusCode, success } = isUserActive;
+        res.status(statusCode).json({ message, success });
+        return;
+      }
+      //if user with email id exist! generate tokens and  navigate to dashboard
+      if (isUserActive.userData) {
+        const getTokens = await this.authService.generateUserToken(isUserActive.userData as IUser);
+        const { accessToken, message, refreshToken, statusCode, success } = getTokens;
+        //assign tokens to cookies
+        res.cookie("accessToken", accessToken, {
+          httpOnly: true,
+          secure: false,
+          maxAge: 30 * 60 * 1000,
+          sameSite: "lax",
+        });
 
-      const verifySignIn = await this.authService.verifyGoogleSignIn(token);
-      const { message, email, success } = verifySignIn;
-      res.status(200).json({ message, email, success });
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: false,
+          maxAge: 2 * 24 * 60 * 60 * 1000,
+          sameSite: "lax",
+        });
+
+        res.status(statusCode).json({ message, success, isExistingUser: true });
+        return;
+      }
+      //If its a new user store email on redis
+      await setRedisData(`tempEmail:${getEmail.email}`, getEmail.email, 1200);
+      res.status(HttpStatus.OK).json({
+        message: Messages.EMAIL_STORED_AND_CONTINUE,
+        success: true,
+      });
       return;
     } catch (error) {
       res.status(400).json({ message: String(error), success: false });
@@ -327,6 +360,56 @@ export class AuthController implements IAuthController {
     }
   };
 
+  //google sign in ===================================================================================================
+
+  public googleSignIn = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const token = req.body.token;
+      if (!token) {
+        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.TOKEN_NOT_FOUND, success: false });
+        return;
+      }
+      //verify and extract user email from the token
+      const getEmail = await this.authService.extractGoogleToken(token);
+      if (!getEmail.success) {
+        const { message, statusCode, success } = getEmail;
+        res.status(statusCode).json({ message, success });
+        return;
+      }
+      //Checking for user is exist and active
+      const isUserActive = await this.authService.checkIsActiveUser(getEmail.email as string);
+      if (!isUserActive.success) {
+        const { message, statusCode, success } = isUserActive;
+        res.status(statusCode).json({ message, success });
+        return;
+      }
+      //if user with email id exist! generate tokens and  navigate to dashboard
+
+      const getTokens = await this.authService.generateUserToken(isUserActive.userData as IUser);
+      const { accessToken, message, refreshToken, statusCode, success } = getTokens;
+      //assign tokens to cookies
+      res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: false,
+        maxAge: 30 * 60 * 1000,
+        sameSite: "lax",
+      });
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: false,
+        maxAge: 2 * 24 * 60 * 60 * 1000,
+        sameSite: "lax",
+      });
+
+      res.status(statusCode).json({ message, success });
+      return;
+    } catch (error) {
+      console.error("error in google sign in", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR });
+    }
+  };
+
   // handle company block status refrsh Toekn ================================================================
 
   public handleCompanyBlockStatus = async (req: Request, res: Response): Promise<void> => {
@@ -344,7 +427,6 @@ export class AuthController implements IAuthController {
 
       const updateCompany = await this.authService.updateUserBlockStatus(email);
       const { message, statusCode, success, userDataPayload } = updateCompany;
-
 
       //sending to company service queue
       if (success && userDataPayload) {
@@ -379,7 +461,6 @@ export class AuthController implements IAuthController {
 
       const updateEmployee = await this.authService.updateUserBlockStatus(email);
       const { message, statusCode, success, userDataPayload } = updateEmployee;
-
 
       //sending to company service queue
       if (success && userDataPayload) {
