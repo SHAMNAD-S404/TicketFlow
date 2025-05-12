@@ -3,6 +3,7 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import { FaChevronDown, FaEye } from "react-icons/fa";
 import { ITicketContext } from "@/types/ITicketContext";
 import { IoIosSearch } from "react-icons/io";
+import { RowsSkelton } from "./RowsSkelton";
 
 interface ITicketTable {
   handleCancel: () => void;
@@ -11,7 +12,8 @@ interface ITicketTable {
   tikcetData: ITicketContext[];
   manageTicketHandle: (value: string) => void;
   showRaisedBy?: boolean;
-  tableHeading? : string;
+  tableHeading?: string;
+  isLoading: boolean;
 }
 
 const TicketTable: React.FC<ITicketTable> = ({
@@ -22,6 +24,7 @@ const TicketTable: React.FC<ITicketTable> = ({
   tikcetData,
   manageTicketHandle,
   showRaisedBy = true,
+  isLoading,
 }) => {
   const gridCols = showRaisedBy ? "grid-cols-7" : "grid-cols-6";
 
@@ -50,7 +53,7 @@ const TicketTable: React.FC<ITicketTable> = ({
             </div>
           </div>
           <div>
-            <h1 className="font-semibold text-2xl underline underline-offset-3">{tableHeading } </h1>
+            <h1 className="font-semibold text-2xl underline underline-offset-3">{tableHeading} </h1>
           </div>
 
           <div className="relative">
@@ -81,42 +84,51 @@ const TicketTable: React.FC<ITicketTable> = ({
               <div className="text-sm font-semibold text-center">Manage</div>
             </div>
 
-            {/* Rows */}
-            <div className="space-y-4 ">
-              {tikcetData.map((ticket, index) => (
-                <div
-                  key={ticket._id || index}
-                  className={`bg-white rounded-2xl px-6 py-4 grid ${gridCols} gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 `}>
-                  <div>{ticket.ticketID}</div>
-                  {showRaisedBy && <div className="flex items-center gap-3">{ticket.ticketRaisedDepartmentName}</div>}
-                  <div>{ticket.ticketHandlingDepartmentName.toLowerCase()}</div>
-                  <div>
-                    <a className=" text-blue-600">{ticket.ticketHandlingEmployeeName}</a>
-                  </div>
-                  <div className="text-center">
-                    <span
-                      className={`flex justify-center ms-2 items-center gap-2 ${
-                        ticket.priority === "High priority"
-                          ? "text-red-500 "
-                          : ticket.priority === "Medium priority"
-                          ? "text-orange-400"
-                          : ""
-                      }`}>
-                      {ticket.priority}
-                    </span>
-                  </div>
+            <section>
+              {isLoading ? (
+                <RowsSkelton lengthNo={5} />
+              ) : tikcetData.length === 0 ? (
+                <div className="text-center py-4  font-semibold text-red-500 ">No Tickets were found !</div>
+              ) : (
+                <div className="space-y-4 ">
+                  {tikcetData.map((ticket, index) => (
+                    <div
+                      key={ticket._id || index}
+                      className={`bg-white rounded-2xl px-6 py-4 grid ${gridCols} gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 `}>
+                      <div>{ticket.ticketID}</div>
+                      {showRaisedBy && (
+                        <div className="flex items-center gap-3">{ticket.ticketRaisedDepartmentName}</div>
+                      )}
+                      <div>{ticket.ticketHandlingDepartmentName.toLowerCase()}</div>
+                      <div>
+                        <a className=" text-blue-600">{ticket.ticketHandlingEmployeeName}</a>
+                      </div>
+                      <div className="text-center">
+                        <span
+                          className={`flex justify-center ms-2 items-center gap-2 ${
+                            ticket.priority === "High priority"
+                              ? "text-red-500 "
+                              : ticket.priority === "Medium priority"
+                              ? "text-orange-400"
+                              : ""
+                          }`}>
+                          {ticket.priority}
+                        </span>
+                      </div>
 
-                  <div className="flex justify-center">{ticket.status}</div>
+                      <div className="flex justify-center">{ticket.status}</div>
 
-                  {/* ticket view and manage */}
-                  <div className="flex justify-center">
-                    <button onClick={() => manageTicketHandle(ticket._id)}>
-                      <FaEye className="hover:text-blue-500" />{" "}
-                    </button>
-                  </div>
+                      {/* ticket view and manage */}
+                      <div className="flex justify-center">
+                        <button onClick={() => manageTicketHandle(ticket._id)}>
+                          <FaEye className="hover:text-blue-500" />{" "}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              )}
+            </section>
           </div>
         </div>
       </main>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Paperclip, ChevronDown, Image, TicketsPlane } from "lucide-react";
+import { Paperclip, ChevronDown, Image } from "lucide-react";
 import { fetchAllDepartemts, fetchAllEmployeeWithLessTicket } from "@/api/services/companyService";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
@@ -10,7 +10,8 @@ import { RegexMessages } from "@/utils/regexPattern";
 import { createTicket } from "@/api/services/ticketService";
 import { TicketFormData } from "@/interfaces/formInterfaces";
 import getErrMssg from "../utility/getErrMssg";
-import { IoCloseCircleSharp } from "react-icons/io5";
+import { IoCloseCircleSharp, IoCreateOutline } from "react-icons/io5";
+import { IoMdCreate } from "react-icons/io";
 
 export interface IDepartement {
   _id: string;
@@ -49,6 +50,7 @@ const TicketForm: React.FC<TicketFormProps> = ({
   const [departments, setDepartments] = useState<IDepartement[]>([]);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const {
     register,
@@ -89,6 +91,7 @@ const TicketForm: React.FC<TicketFormProps> = ({
     }
 
     try {
+      setLoading(true);
       const response = await createTicket(formData);
       if (response.success) {
         toast.success(response.message);
@@ -99,6 +102,8 @@ const TicketForm: React.FC<TicketFormProps> = ({
       }
     } catch (error) {
       toast.error(getErrMssg(error));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -164,12 +169,10 @@ const TicketForm: React.FC<TicketFormProps> = ({
       try {
         const response = await fetchAllEmployeeWithLessTicket(SelectedDepartmentId);
         if (response.success) {
-          console.log("selected employee with less tikcet : ",response.data);
-          
           setEmployees(response.data);
         }
       } catch (error) {
-        toast.error(getErrMssg(error))
+        toast.error(getErrMssg(error));
       }
     };
 
@@ -180,11 +183,11 @@ const TicketForm: React.FC<TicketFormProps> = ({
     <form onSubmit={handleSubmit(onSubmitForm)} className="max-w-6xl mx-auto p-2">
       <div className="bg-gradient-to-b from-blue-100 to-blue-200  rounded-3xl p-8 mt-8 shadow-xl">
         <div className="flex justify-center items-center gap-2 mb-2">
-          <h2 className="text-center font-semibold text-2xl text-blue-600 underline ">Create Ticket</h2>
-          <TicketsPlane className="text-blue-600 w-8 h-8" />
+          <h2 className="text-center font-semibold text-2xl  ">Create Ticket</h2>
+          <IoMdCreate className=" w-8 h-8" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mt-4">
           {/* Left Column */}
           <div className="space-y-2">
             <div>
@@ -383,13 +386,16 @@ const TicketForm: React.FC<TicketFormProps> = ({
           <button
             type="button"
             onClick={handleCancel}
-            className="px-12 py-4 bg-red-500 hover:bg-orange-600 font-semibold text-white rounded-full text-lg  transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+            className="px-12 py-4 bg-red-500 hover:bg-black font-semibold text-white rounded-full text-lg  transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
             Cancel
           </button>
           <button
+            disabled={loading}
             type="submit"
-            className="px-12 py-4 bg-green-500 text-white rounded-full text-lg font-semibold hover:bg-purple-700 transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
-            Send Ticket
+            className={`px-12 py-4 text-white   rounded-full text-lg font-semibold hover:bg-purple-700 transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 ${
+              loading ? "cursor-not-allowed  bg-black " : "cursor-pointer bg-blue-500 "
+            }`}>
+            {loading ? "Sending...." : "Send Ticket"}
           </button>
         </div>
       </div>

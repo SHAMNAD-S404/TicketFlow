@@ -32,6 +32,7 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
   const [totalPages, setTotalPages] = useState<number>(1);
   const [cardLoading, setCardLoading] = useState<boolean>(true);
   const [cardStats, setCardStats] = useState<IStatsCardData[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const employee = useSelector((state: Rootstate) => state.employee.employee);
 
@@ -64,8 +65,8 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
   useEffect(() => {
     const fetchCardStats = async () => {
       try {
+        setLoading(true);
         const response: FetchAllTicketStaticReponse = await fetchMyTicketStatics();
-
         const stats: IStatsCardData[] = [
           {
             title: "Raised tickets",
@@ -92,7 +93,8 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
         setCardLoading(false);
       } catch (error) {
         console.log(error);
-        
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -119,11 +121,9 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
     <div className="bg-blue-50">
       <header className="py-6">
         {/* header card slides */}
-
         <TableStaticCards loading={cardLoading} data={cardStats} />
       </header>
       {/* table section */}
-
       <div className="p-6  space-y-6 ">
         <TicketTable
           tikcetData={tikcetData}
@@ -132,6 +132,7 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
           handleSort={handleSort}
           manageTicketHandle={manageTicketHandle}
           showRaisedBy={false}
+          isLoading={loading}
         />
 
         {/* pagination */}

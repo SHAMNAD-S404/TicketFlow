@@ -16,6 +16,7 @@ import getErrMssg from "@/components/utility/getErrMssg";
 import Pagination from "@/components/common/Pagination";
 import DeptChangeModal from "@/components/common/DeptChangeModal";
 import { IoIosSearch } from "react-icons/io";
+import { RowsSkelton } from "@/components/common/RowsSkelton";
 
 interface IDepartmentEmployee {
   departmentId: string;
@@ -35,6 +36,7 @@ const headerItem: string[] = [
 ];
 
 const DepartemntEmployeeManagment: React.FC<IDepartmentEmployee> = ({ departmentId, handleCancel, departmentName }) => {
+  //component states
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -44,6 +46,7 @@ const DepartemntEmployeeManagment: React.FC<IDepartmentEmployee> = ({ department
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("");
   const [currentDepartment, setCurrentDepartment] = useState<string>("");
   const [twickParent, setTwickParent] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const company = useSelector((state: Rootstate) => state.company.company);
 
@@ -116,6 +119,7 @@ const DepartemntEmployeeManagment: React.FC<IDepartmentEmployee> = ({ department
     const getAllEmployees = async () => {
       try {
         const companyId = company?._id as string;
+        setLoading(true);
         const response = await fetchAllDepartemtsWiseEmployees(
           companyId,
           departmentId,
@@ -129,6 +133,8 @@ const DepartemntEmployeeManagment: React.FC<IDepartmentEmployee> = ({ department
         }
       } catch (error) {
         toast.error(getErrMssg(error));
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -195,86 +201,95 @@ const DepartemntEmployeeManagment: React.FC<IDepartmentEmployee> = ({ department
 
           {/* Rows */}
           <body>
-            <div className="space-y-4 ">
-              {employeeData.map((employee, index) => (
-                <div
-                  key={employee._id || index}
-                  className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-8 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 ">
-                  <div className="text-center">{0 + index + 1}</div>
-                  <div className="flex items-center text-center gap-3">
-                    <img src={employee.imageUrl} alt="" className="w-8 h-8 rounded-full" />
-                    {employee.name}
-                  </div>
-                  <div className="text-center">
-                    <a className="underline text-blue-600">{employee.email}</a>
-                  </div>
-                  <div className="text-center">
-                    <span className="flex justify-center items-center gap-2">{employee.role}</span>
-                  </div>
+            {loading ? (
+              <RowsSkelton lengthNo={5} />
+            ) : employeeData.length === 0 ? (
+              <div className="text-center py-4  font-semibold text-red-500 ">
+                No employees have been added to this department yet !
+              </div>
+            ) : (
+              <div className="space-y-4 ">
+                {employeeData.map((employee, index) => (
+                  <div
+                    key={employee._id || index}
+                    className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-8 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 ">
+                    <div className="text-center">{0 + index + 1}</div>
+                    <div className="flex items-center text-center gap-3">
+                      <img src={employee.imageUrl} alt="" className="w-8 h-8 rounded-full" />
+                      {employee.name}
+                    </div>
+                    <div className="text-center">
+                      <a className="underline text-blue-600">{employee.email}</a>
+                    </div>
+                    <div className="text-center">
+                      <span className="flex justify-center items-center gap-2">{employee.role}</span>
+                    </div>
 
-                  <div className="text-center">{employee.departmentName}</div>
-                  <div className="text-center">
-                    <button
-                      onClick={() => handleModalOpen(employee._id, employee.departmentName)}
-                      className="bg-blue-500 text-white rounded-xl px-2 py-1 text-sm font-semibold hover:bg-violet-600">
-                      Change
-                    </button>
-                  </div>
+                    <div className="text-center">{employee.departmentName}</div>
+                    <div className="text-center">
+                      <button
+                        onClick={() => handleModalOpen(employee._id, employee.departmentName)}
+                        className="bg-blue-500 text-white rounded-xl px-2 py-1 text-sm font-semibold hover:bg-violet-600">
+                        Change
+                      </button>
+                    </div>
 
-                  <div className="flex justify-center">
-                    <Sheet>
-                      <SheetTrigger asChild>
-                        <button className="hover:bg-gray-100  p-2 rounded-full transition-colors">
-                          <FaEye className="w-5 h-5 text-gray-600 hover:text-blue-600" />
-                        </button>
-                      </SheetTrigger>
-                      <SheetContent className="bg-black border-none text-center text-white ">
-                        <SheetHeader>
-                          <SheetTitle className="text-center text-white text-2xl mt-8"> Employee Details</SheetTitle>
-                          <SheetDescription className="text-center text-sm text-white  font-thin">
-                            View employee information
-                          </SheetDescription>
-                        </SheetHeader>
+                    <div className="flex justify-center">
+                      <Sheet>
+                        <SheetTrigger asChild>
+                          <button className="hover:bg-gray-100  p-2 rounded-full transition-colors">
+                            <FaEye className="w-5 h-5 text-gray-600 hover:text-blue-600" />
+                          </button>
+                        </SheetTrigger>
+                        <SheetContent className="bg-black border-none text-center text-white ">
+                          <SheetHeader>
+                            <SheetTitle className="text-center text-white text-2xl mt-8"> Employee Details</SheetTitle>
+                            <SheetDescription className="text-center text-sm text-white  font-thin">
+                              View employee information
+                            </SheetDescription>
+                          </SheetHeader>
 
-                        <div className="mt-6 flex flex-col justify-center items-center ">
-                          <img src={employee.imageUrl} alt="company dp" className="rounded-full w-44 h-44" />
-                          <h3 className="text-2xl font-semibold mt-3">{employee.name.toUpperCase()}</h3>
-                          <p className="text-sm font-medium">{employee.departmentName}</p>
-                          {/*  company information */}
-                          <div className="mt-3 space-y-4">
-                            <div>
-                              <label className="text-sm font-semibold">working as :</label>
-                              <p className="mt-1"> {employee.role}</p>
-                            </div>
-                            <div>
-                              <label className="text-lg font-semibold underlin">Contact Details</label>
-                              <div className="flex justify-center items-center gap-2">
-                                <MdOutlineEmail className="mt-2 text-xl" />
-                                <p className="mt-1 text-blue-500 underline text-lg font-semibold">{employee.email}</p>
+                          <div className="mt-6 flex flex-col justify-center items-center ">
+                            <img src={employee.imageUrl} alt="company dp" className="rounded-full w-44 h-44" />
+                            <h3 className="text-2xl font-semibold mt-3">{employee.name.toUpperCase()}</h3>
+                            <p className="text-sm font-medium">{employee.departmentName}</p>
+                            {/*  company information */}
+                            <div className="mt-3 space-y-4">
+                              <div>
+                                <label className="text-sm font-semibold">working as :</label>
+                                <p className="mt-1"> {employee.role}</p>
                               </div>
-                              <p className="mt-1 text-lg font-semibold">Phone : {employee.phone}</p>
-                            </div>
+                              <div>
+                                <label className="text-lg font-semibold underlin">Contact Details</label>
+                                <div className="flex justify-center items-center gap-2">
+                                  <MdOutlineEmail className="mt-2 text-xl" />
+                                  <p className="mt-1 text-blue-500 underline text-lg font-semibold">{employee.email}</p>
+                                </div>
+                                <p className="mt-1 text-lg font-semibold">Phone : {employee.phone}</p>
+                              </div>
 
-                            <div>
-                              <p className="mt-1">Joined on :{new Date(employee.createdAt).toLocaleDateString()}</p>
+                              <div>
+                                <p className="mt-1">Joined on :{new Date(employee.createdAt).toLocaleDateString()}</p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </SheetContent>
-                    </Sheet>
+                        </SheetContent>
+                      </Sheet>
+                    </div>
+                    <div className="flex justify-center">
+                      <button
+                        className={`px-4 py-1 text-sm font-semibold rounded-full transition-colors text-white ${
+                          employee.isBlock ? "bg-lime-500 hover:bg-green-500" : " bg-orange-600  hover:bg-violet-600"
+                        }   `}
+                        onClick={() => handleBlockUser(employee.email)}>
+                        {employee.isBlock ? "Unblock" : "Block"}
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex justify-center">
-                    <button
-                      className={`px-4 py-1 text-sm font-semibold rounded-full transition-colors text-white ${
-                        employee.isBlock ? "bg-lime-500 hover:bg-green-500" : " bg-orange-600  hover:bg-violet-600"
-                      }   `}
-                      onClick={() => handleBlockUser(employee.email)}>
-                      {employee.isBlock ? "Unblock" : "Block"}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
+
             {/* Modal for change department */}
             {selectedEmployeeId && (
               <DeptChangeModal

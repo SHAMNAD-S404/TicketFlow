@@ -39,7 +39,6 @@ export const EditTicketFormValidation = z.object({
   ticketReason: z.string().trim().min(5).max(40).regex(regexPatterns.textWithSpaceAndCommas),
   description: z.string().trim().min(10).max(200).regex(regexPatterns.textAreaValidation),
   priority: z.string().trim().min(4).max(40).regex(regexPatterns.textWithSpaceAndCommas),
-  dueDate: z.string().trim().min(5).max(30).regex(regexPatterns.textAreaValidation),
   supportType: z.string().trim().regex(regexPatterns.textAreaValidation),
   ticketHandlingDepartmentId: z.string().trim().regex(regexPatterns.objectIdRegex),
   ticketHandlingDepartmentName: z.string().trim().min(3).max(50).regex(regexPatterns.alphabatesAndSpaces),

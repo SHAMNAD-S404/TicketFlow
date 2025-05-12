@@ -11,6 +11,8 @@ import Swal from "sweetalert2";
 import { ITicketDocument } from "@/interfaces/ITicketDocument";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import getErrMssg from "../utility/getErrMssg";
+import { CiEdit } from "react-icons/ci";
+
 
 export interface IDepartement {
   _id: string;
@@ -39,11 +41,13 @@ const EditTicket: React.FC<IEditTicket> = ({ isOpen, onClose, ticketData, refetc
     reset,
   } = useForm<TicketFormData>();
 
+  // component states
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [departments, setDepartments] = useState<IDepartement[]>([]);
   const [employee, setEmployee] = useState<IEmployeeList | null>(null);
   const SelectedDepartmentId = watch("ticketHandlingDepartmentId");
+  const [loading, setLoading] = useState<boolean>(false)
 
   const onSubmitForm = async (data: TicketFormData) => {
     const selectedDepartment = departments.find((dept) => dept._id == data.ticketHandlingDepartmentId);
@@ -68,8 +72,8 @@ const EditTicket: React.FC<IEditTicket> = ({ isOpen, onClose, ticketData, refetc
     if (selectedImage) {
       formData.append("file", selectedImage);
     }
-
     try {
+      setLoading(true);
       const response = await editTicket(formData);
       if (response.success) {
         toast.success(response.message);
@@ -82,6 +86,8 @@ const EditTicket: React.FC<IEditTicket> = ({ isOpen, onClose, ticketData, refetc
       }
     } catch (error) {
       toast.error(getErrMssg(error));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -106,7 +112,6 @@ const EditTicket: React.FC<IEditTicket> = ({ isOpen, onClose, ticketData, refetc
         toast.error(Messages.IMAGE_MAX_SIZE_REACHED);
         return;
       }
-
       setSelectedImage(file);
       setPreviewUrl(URL.createObjectURL(file));
     }
@@ -134,7 +139,7 @@ const EditTicket: React.FC<IEditTicket> = ({ isOpen, onClose, ticketData, refetc
         if (response && response.data) {
           setDepartments(response.data);
         }
-      } catch (error:any) {
+      } catch (error: any) {
         if (error.response && error.response.data) {
           Swal.fire({
             title: "oops",
@@ -193,7 +198,9 @@ const EditTicket: React.FC<IEditTicket> = ({ isOpen, onClose, ticketData, refetc
           onInteractOutside={(e) => e.preventDefault()} // Prevents closing when clicking outside
         >
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl underline underline-offset-4">Edit Ticket</DialogTitle>
+            <DialogTitle className=" flex items-center gap-1 justify-center text-center text-2xl ">Edit ticket 
+              <CiEdit className="text-2xl" />
+            </DialogTitle>
             <DialogDescription className="text-center text-black">
               Make changes to your Ticket here. Click save when you're done.
             </DialogDescription>
@@ -396,13 +403,14 @@ const EditTicket: React.FC<IEditTicket> = ({ isOpen, onClose, ticketData, refetc
                 <button
                   type="button"
                   onClick={handleCancelButton}
-                  className="px-12 py-4 bg-red-600 hover:bg-violet-600 font-semibold text-white rounded-full text-lg  transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
+                  className="px-12 py-4 bg-red-600 hover:bg-violet-600 text-sm font-semibold text-white rounded-full  transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
                   Cancel
                 </button>
                 <button
+                  disabled={loading}
                   type="submit"
-                  className="px-8 py-4 bg-black text-white rounded-full text-lg font-semibold hover:bg-blue-600 transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2">
-                  Save changes
+                  className={`px-8 py-4  text-white rounded-full  font-semibold hover:bg-purple-600 transform transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 ${loading ? "cursor-wait bg-black" : "cursor-pointer bg-blue-500"}`}>
+                  {loading? "Saving...." : "Save changes"}
                 </button>
               </div>
             </div>

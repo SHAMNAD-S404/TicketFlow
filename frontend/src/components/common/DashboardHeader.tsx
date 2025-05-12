@@ -7,6 +7,9 @@ import { Rootstate } from "@/redux store/store";
 import secrets from "@/config/secrets";
 import NotificationPanel from "./NotifcationPanel";
 import { markAllNotificationAsRead } from "@/api/services/communicationService";
+import { toast } from "react-toastify";
+import getErrMssg from "../utility/getErrMssg";
+import { useNavigate } from "react-router-dom";
 import {
   setNotifications,
   addNotification,
@@ -14,8 +17,7 @@ import {
   closeNotificationPanel,
   markAllAsRead,
 } from "../../redux store/notificatoinSlice";
-import { toast } from "react-toastify";
-import getErrMssg from "../utility/getErrMssg";
+
 
 interface DashboardHeaderProps {
   name: string;
@@ -25,10 +27,11 @@ interface DashboardHeaderProps {
 }
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name, userId, onLogout, profileImage }) => {
+
   const dispatch = useDispatch();
   const socketRef = useRef<Socket | null>(null);
   const notificationPanelRef = useRef<HTMLDivElement>(null);
-
+  const navigate = useNavigate();
   const notification = useSelector((state: Rootstate) => state.notification);
   const { isOpen, notifications, unreadCount } = notification;
 
@@ -172,7 +175,9 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name, userId, onLogou
           </section>
 
           {/* User Profile */}
-          <section className="flex items-center  bg-gray-100 rounded-xl shadow-2xl shadow-gray-600 ">
+          <section className="flex items-center cursor-pointer  bg-gray-100 rounded-xl shadow-2xl shadow-gray-600 "
+            onClick={() => navigate(`profile`)}
+          >
             <div className="flex flex-col items-end  "></div>
             <img
               src={

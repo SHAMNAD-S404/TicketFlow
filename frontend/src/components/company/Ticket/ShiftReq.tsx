@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { IoMdArrowRoundBack } from "react-icons/io";
+import { IoMdArrowRoundBack, IoIosSearch } from "react-icons/io";
 import { FaChevronDown, FaEye } from "react-icons/fa";
 import { debounce } from "lodash";
 import { searchInputValidate } from "@/components/utility/searchInputValidateNameEmail";
@@ -12,6 +12,7 @@ import { fetchlAllShiftReq, rejectShiftRequest } from "@/api/services/ticketServ
 import { MdChangeCircle } from "react-icons/md";
 import { showCustomeAlert } from "@/components/utility/swalAlertHelper";
 import DataShowModal from "@/components/common/DataShowModal";
+import { RowsSkelton } from "@/components/common/RowsSkelton";
 
 interface IShiftReq {
   handleCancel: () => void;
@@ -39,6 +40,7 @@ const ShiftReq: React.FC<IShiftReq> = ({ handleCancel, handleManageTicket, handl
   const [totalPages, setTotalPages] = useState<number>(1);
   const [tikcetData, setTicketData] = useState<IShiftReqContext[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   //******* functions */
 
@@ -95,6 +97,7 @@ const ShiftReq: React.FC<IShiftReq> = ({ handleCancel, handleManageTicket, handl
   useEffect(() => {
     const getAllTickets = async () => {
       try {
+        setLoading(true);
         const response = await fetchlAllShiftReq(currentPage, sortBy, searchQuery);
         if (response && response.data) {
           setTicketData(response.data.tickets);
@@ -102,6 +105,8 @@ const ShiftReq: React.FC<IShiftReq> = ({ handleCancel, handleManageTicket, handl
         }
       } catch (error) {
         toast.error(getErrMssg(error));
+      } finally {
+        setLoading(false);
       }
     };
     getAllTickets();
@@ -127,7 +132,7 @@ const ShiftReq: React.FC<IShiftReq> = ({ handleCancel, handleManageTicket, handl
                 </div>
                 <select
                   className="appearance-none bg-white px-8 py-2 rounded-full  shadow-lg border border-gray-200 
-            focus:outline-none focus:ring-2 focus:ring-blue-400 font-medium "
+                              focus:outline-none focus:ring-2 focus:ring-blue-400 font-medium "
                   onChange={(e) => setSortBy(e.target.value)}>
                   <option value="createdAt">Recent</option>
                   <option value="ticketHandlingEmployeeName">Req by employee</option>
@@ -145,18 +150,7 @@ const ShiftReq: React.FC<IShiftReq> = ({ handleCancel, handleManageTicket, handl
                 className="ms-1 pl-4 pr-10 py-2 rounded-full shadow-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 "
                 onChange={(e) => handleSearchQuery(e.target.value)}
               />
-              <svg
-                className="absolute right-3 top-2.5 w-5 h-5 text-gray-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
+              <IoIosSearch className="absolute right-3 top-2.5 w-6 h-6 text-gray-800" />
             </div>
           </div>
         </header>
@@ -173,56 +167,63 @@ const ShiftReq: React.FC<IShiftReq> = ({ handleCancel, handleManageTicket, handl
                 ))}
               </div>
 
-              {/* Rows */}
-              <div className="space-y-4 ">
-                {tikcetData.map((ticket, index) => (
-                  <div
-                    key={ticket._id || index}
-                    className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-7 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 ">
-                    <div className="text-center">{ticket.ticketID}</div>
-                    <div className=" text-center">{ticket.ticketHandlingEmployeeName}</div>
-                    <div className="text-center">{ticket.ticketHandlingDepartmentName.toLocaleUpperCase()}</div>
-                    {/* view reason */}
-                    <div className="text-center">
-                      <button
-                        className="bg-blue-500 text-white px-4 py-1 rounded-xl shadow-xl hover:bg-green-600 hover:font-semibold "
-                        onClick={() => setIsModalOpen(true)}>
-                        view
-                      </button>
-                      <DataShowModal
-                        data={ticket.reason}
-                        isOpen={isModalOpen}
-                        onClose={() => setIsModalOpen(false)}
-                        heading="Ticket Shift  Reason"
-                      />
-                    </div>
-                    {/* reassign ticket */}
-                    <ReassignTicket
-                      selectedDepartmentId={ticket.ticketHandlingDepartmentId}
-                      selectedEmployeeId={ticket.ticketHandlingEmployeeId}
-                      selectedTicketId={ticket.ticketObjectId}
-                      twickParent={handleRefresh}
-                      handleCancel={handleCancel}
-                    />
-                    {/* reject request */}
-                    <div className="text-center">
-                      <button
-                        className="bg-blue-500 text-white text-sm px-3 py-1 rounded-xl  shadow-xl shadow-gray-300 hover:bg-red-500 "
-                        onClick={() => hanldeRejectShiftReq(ticket._id)}>
-                        Reject Request
-                      </button>
-                    </div>
+              <section>
+                {loading ? (
+                  <RowsSkelton lengthNo={5} />
+                ) : tikcetData.length === 0 ? (
+                  <div className="text-center py-4  font-semibold text-red-500 ">No Reassign Request were found !</div>
+                ) : (
+                  <div className="space-y-4 ">
+                    {tikcetData.map((ticket, index) => (
+                      <div
+                        key={ticket._id || index}
+                        className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-7 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 ">
+                        <div className="text-center">{ticket.ticketID}</div>
+                        <div className=" text-center">{ticket.ticketHandlingEmployeeName}</div>
+                        <div className="text-center">{ticket.ticketHandlingDepartmentName.toLocaleUpperCase()}</div>
+                        {/* view reason */}
+                        <div className="text-center">
+                          <button
+                            className="bg-blue-500 text-white px-4 py-1 rounded-xl shadow-xl hover:bg-green-600 hover:font-semibold "
+                            onClick={() => setIsModalOpen(true)}>
+                            view
+                          </button>
+                          <DataShowModal
+                            data={ticket.reason}
+                            isOpen={isModalOpen}
+                            onClose={() => setIsModalOpen(false)}
+                            heading="Ticket Shift  Reason"
+                          />
+                        </div>
+                        {/* reassign ticket */}
+                        <ReassignTicket
+                          selectedDepartmentId={ticket.ticketHandlingDepartmentId}
+                          selectedEmployeeId={ticket.ticketHandlingEmployeeId}
+                          selectedTicketId={ticket.ticketObjectId}
+                          twickParent={handleRefresh}
+                          handleCancel={handleCancel}
+                        />
+                        {/* reject request */}
+                        <div className="text-center">
+                          <button
+                            className="bg-blue-500 text-white text-sm px-3 py-1 rounded-xl  shadow-xl shadow-gray-300 hover:bg-red-500 "
+                            onClick={() => hanldeRejectShiftReq(ticket._id)}>
+                            Reject Request
+                          </button>
+                        </div>
 
-                    {/* ticket view and manage */}
+                        {/* ticket view and manage */}
 
-                    <div className="flex justify-center">
-                      <button onClick={() => manageTicketHandle(ticket.ticketObjectId)}>
-                        <FaEye className="hover:text-blue-600" />
-                      </button>
-                    </div>
+                        <div className="flex justify-center">
+                          <button onClick={() => manageTicketHandle(ticket.ticketObjectId)}>
+                            <FaEye className="hover:text-blue-600" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                )}
+              </section>
             </div>
           </div>
         </main>

@@ -68,13 +68,13 @@ const CompanyDashboard: React.FC = () => {
 
       <div className="flex-1 flex flex-col w-full ">
         <DashboardHeader 
-        name={company.companyName}
-         onLogout={handleLogout}
+          name={company.companyName}
+          onLogout={handleLogout}
           profileImage={company.imageUrl} 
           userId={company._id}
           />
 
-        <div className="p-2 bg-gray-100  flex-1">
+        <div className="p-2 bg-gray-100  flex-1 ">
           <Outlet />
         </div>
       </div>

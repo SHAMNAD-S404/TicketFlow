@@ -9,7 +9,7 @@ import regexPatterns, { RegexMessages } from "../../utils/regexPattern";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux store/store";
 import { fetchEmployee } from "../../redux store/employeeSlice";
-import { Messages } from "@/enums/Messages";
+import getErrMssg from "../utility/getErrMssg";
 
 interface UserLoginProps {
   forgotPassword: () => void;
@@ -22,6 +22,7 @@ export interface IemployeeLoginFormData {
 
 const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false)
   const dispatch = useDispatch<AppDispatch>();
 
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
 
   const handleLogin = async (data: IemployeeLoginFormData) => {
     try {
+      setLoading(true);
       const response = await loginUser(data.email, data.password);
 
       if (response.success && response.isFirst) {
@@ -51,10 +53,11 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
 
         navigate("/employee/dashboard/dashboard");
       }
-    } catch (error: any) {
-      const errMsg = error.response?.data?.message || error || Messages.SOMETHING_TRY_AGAIN;
-      toast.error(errMsg);
+    } catch (error) {
+      toast.error(getErrMssg(error))
       navigate("/auth/login?role=employee");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -74,7 +77,7 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
               <input
                 type="email"
                 id="email"
-                placeholder="flip2@gmail.com"
+                placeholder="jhonhonai@gmail.com"
                 className="w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 {...register("email", {
                   required: RegexMessages.FEILD_REQUIRED,
@@ -137,8 +140,9 @@ const UserLogHome: React.FC<UserLoginProps> = ({ forgotPassword }) => {
 
             <button
               type="submit"
-              className="w-full bg-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-              Log in
+              disabled={loading}
+              className={`w-full bg-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${loading ? "cursor-wait" : "cursor-pointer" } `}>
+              {loading ? "Logging...." : "Log in" }
             </button>
           </form>
         </div>

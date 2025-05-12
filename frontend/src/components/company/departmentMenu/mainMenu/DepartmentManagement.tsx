@@ -16,8 +16,8 @@ const DepartmentManagement: React.FC = () => {
     switch (activeSubMenu) {
       case "Add Department":
         return <CreateDepartment setActiveSubMenu={handleActiveSubMenu} />;
-      case "Manage Department" :
-        return <SubDepartmentManagement/>;
+      case "Manage Department":
+        return <SubDepartmentManagement />;
 
       default:
         return (
@@ -37,8 +37,6 @@ const DepartmentManagement: React.FC = () => {
               onButtonClick={() => setActiveSubMenu("Manage Department")}
               image={CardImage2}
             />
-
-          
           </div>
         );
     }

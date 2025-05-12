@@ -14,6 +14,7 @@ import TableStaticCards, { IStatsCardData } from "@/components/common/TableStati
 import { FetchAllTicketStaticReponse } from "@/interfaces/response.interfaces";
 import { IoTicketOutline } from "react-icons/io5";
 import { GoAlert } from "react-icons/go";
+import { RowsSkelton } from "@/components/common/RowsSkelton";
 
 interface IAllTickets {
   handleCancel: () => void;
@@ -33,14 +34,16 @@ const tableHeaders: string[] = [
 ];
 
 const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, handleSetTicketId }) => {
+  //component states
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [tikcetData, setTicketData] = useState<ITicketContext[]>([]);
+  const [ticketData, setTicketData] = useState<ITicketContext[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [refreshState, setRefreshState] = useState<boolean>(false);
   const [cardLoading, setCardLoading] = useState<boolean>(true);
   const [cardStats, setCardStats] = useState<IStatsCardData[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   //pagination handle function to liftup state
   const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -69,7 +72,6 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
   useEffect(() => {
     const fetchCardStats = async () => {
       try {
-       
         const response: FetchAllTicketStaticReponse = await fetchAllTicketStatics();
 
         const stats: IStatsCardData[] = [
@@ -97,7 +99,7 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
         setCardStats(stats);
         setCardLoading(false);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     };
 
@@ -107,6 +109,7 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
   useEffect(() => {
     const getAllTickets = async () => {
       try {
+        setLoading(true);
         const response = await fetchAllTickets(currentPage, sortBy, searchQuery);
         if (response && response.data) {
           setTicketData(response.data.tickets);
@@ -114,7 +117,8 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
         }
       } catch (error) {
         toast.error(getErrMssg(error));
-
+      } finally {
+        setLoading(false);
       }
     };
     getAllTickets();
@@ -179,50 +183,59 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
             </div>
 
             {/* Rows */}
-            <div className="space-y-4 ">
-              {tikcetData.map((ticket, index) => (
-                <div
-                  key={ticket._id || index}
-                  className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-8 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 ">
-                  <div className="text-center">{ticket.ticketID}</div>
-                  <div className=" text-center">{ticket.ticketRaisedDepartmentName}</div>
-                  <div className="text-center">{ticket.ticketHandlingDepartmentName.toLowerCase()}</div>
-                  <div className="text-center">
-                    <a className=" text-blue-600">{ticket.ticketHandlingEmployeeName}</a>
-                  </div>
-                  <div className="text-center">
-                    <span
-                      className={`flex justify-center ms-2 items-center gap-2 ${
-                        ticket.priority === "High priority"
-                          ? "text-red-500 "
-                          : ticket.priority === "Medium priority"
-                          ? "text-orange-400"
-                          : ""
-                      }`}>
-                      {ticket.priority}
-                    </span>
-                  </div>
 
-                  <div className="flex justify-center">{ticket.status}</div>
-                  {/* reassign ticket */}
-                  <ReassignTicket
-                    selectedDepartmentId={ticket.ticketHandlingDepartmentId}
-                    selectedEmployeeId={ticket.ticketHandlingEmployeeId}
-                    selectedTicketId={ticket._id}
-                    twickParent={() => setRefreshState(!refreshState)}
-                    handleCancel={handleCancel}
-                  />
+            <main>
+              {loading ? (
+                <RowsSkelton lengthNo={5} />
+              ) : ticketData.length === 0 ? (
+                <div className="text-center py-4  font-semibold text-red-500 ">No Tickets were found !</div>
+              ) : (
+                <div className="space-y-4 ">
+                  {ticketData.map((ticket, index) => (
+                    <div
+                      key={ticket._id || index}
+                      className=" bg-white rounded-2xl px-6 py-4 grid grid-cols-8 gap-4 items-center shadow-lg hover:shadow-xl hover:bg-gray-300  transition-transform ease-in-out duration-500 ">
+                      <div className="text-center">{ticket.ticketID}</div>
+                      <div className=" text-center">{ticket.ticketRaisedDepartmentName}</div>
+                      <div className="text-center">{ticket.ticketHandlingDepartmentName.toLowerCase()}</div>
+                      <div className="text-center">
+                        <a className=" text-blue-600">{ticket.ticketHandlingEmployeeName}</a>
+                      </div>
+                      <div className="text-center">
+                        <span
+                          className={`flex justify-center ms-2 items-center gap-2 ${
+                            ticket.priority === "High priority"
+                              ? "text-red-500 "
+                              : ticket.priority === "Medium priority"
+                              ? "text-orange-400"
+                              : ""
+                          }`}>
+                          {ticket.priority}
+                        </span>
+                      </div>
 
-                  {/* ticket view and manage */}
+                      <div className="flex justify-center">{ticket.status}</div>
+                      {/* reassign ticket */}
+                      <ReassignTicket
+                        selectedDepartmentId={ticket.ticketHandlingDepartmentId}
+                        selectedEmployeeId={ticket.ticketHandlingEmployeeId}
+                        selectedTicketId={ticket._id}
+                        twickParent={() => setRefreshState(!refreshState)}
+                        handleCancel={handleCancel}
+                      />
 
-                  <div className="flex justify-center">
-                    <button onClick={() => manageTicketHandle(ticket._id)}>
-                      <FaEye className="hover:text-blue-600" />
-                    </button>
-                  </div>
+                      {/* ticket view and manage */}
+
+                      <div className="flex justify-center">
+                        <button onClick={() => manageTicketHandle(ticket._id)}>
+                          <FaEye className="hover:text-blue-600" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              )}
+            </main>
           </div>
         </div>
 

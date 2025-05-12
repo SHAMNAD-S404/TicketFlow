@@ -1,26 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import NewPasswordImg from "../../assets/images/setPass.png";
 import Tooltips from "../utility/Tooltips";
 import { useForm } from "react-hook-form";
 import regexPatterns, { RegexMessages } from "../../utils/regexPattern";
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
-import {  resetPasswordReq } from "../../api/services/authService";
+import { resetPasswordReq } from "../../api/services/authService";
 import { Messages } from "@/enums/Messages";
 import getErrMssg from "../utility/getErrMssg";
-
-
 
 interface Ipassword {
   password: string;
   confirmPassword?: string;
 }
 
-const ResetPassword: React.FC= () => {
+const ResetPassword: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const {search} = useLocation();
+  const { search } = useLocation();
   const queryParams = new URLSearchParams(search);
-  const token = queryParams.get('token');
+  const token = queryParams.get("token");
   const {
     register,
     handleSubmit,
@@ -32,19 +31,21 @@ const ResetPassword: React.FC= () => {
 
   const handlePasswordReset = async (data: Ipassword) => {
     try {
-      if(!token){
+      if (!token) {
         toast.error(Messages.TOKEN_NOT_FOUND);
         return;
       }
-      const response = await resetPasswordReq(token,data.password);
-      if(response){
+      setLoading(true);
+      const response = await resetPasswordReq(token, data.password);
+      if (response) {
         toast.success(response.message);
-        navigate("/")
+        navigate("/");
       }
     } catch (error) {
-      toast.error(getErrMssg(error))
+      toast.error(getErrMssg(error));
+    } finally {
+      setLoading(false);
     }
-
   };
 
   const password = watch("password");
@@ -68,13 +69,13 @@ const ResetPassword: React.FC= () => {
             className="w-4/5 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
             required
             {...register("password", {
-              minLength : {
-                value : 8,
-                message : RegexMessages.MINIMUM_LIMIT 
+              minLength: {
+                value: 8,
+                message: RegexMessages.MINIMUM_LIMIT,
               },
-              maxLength : {
-                value : 15,
-                message : RegexMessages.MAXIMUM_LIMIT_REACHED
+              maxLength: {
+                value: 15,
+                message: RegexMessages.MAXIMUM_LIMIT_REACHED,
               },
               pattern: {
                 value: regexPatterns.password,
@@ -103,8 +104,9 @@ const ResetPassword: React.FC= () => {
           )}
           <button
             type="submit"
+            disabled={loading}
             className="mt-6 w-4/5 bg-blue-600 hover:bg-green-600 hover:shadow-2xl transition duration-300 text-white py-2 rounded-lg text-lg font-medium shadow-md">
-            Submit
+            {loading ? "Submitting..." : "Submit"}
           </button>
         </form>
       </div>

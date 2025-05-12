@@ -12,6 +12,7 @@ import getErrMssg from "../utility/getErrMssg";
 
 const SignupForm: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -29,6 +30,7 @@ const SignupForm: React.FC = () => {
 
   const formSubmit = async (data: IsignupForm) => {
     try {
+      setLoading(true);
       const response = await signupUser(data);
       if (response.success) {
         toast.success(response.message);
@@ -36,6 +38,8 @@ const SignupForm: React.FC = () => {
       }
     } catch (error) {
       toast.error(getErrMssg(error));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -246,9 +250,12 @@ const SignupForm: React.FC = () => {
             {/* Buttons */}
             <div className="mt-6">
               <button
+                disabled={loading}
                 type="submit"
-                className="w-full bg-purple-600 text-white py-2 rounded-md  hover:font-bold hover:bg-gradient-to-r from-blue-500 to-green-600 font-medium transition">
-                Create account
+                className={`w-full bg-purple-600 text-white py-2 rounded-md  hover:font-bold hover:bg-gradient-to-r from-blue-500 to-green-600 font-medium transition ${
+                  loading ? "cursor-wait" : "cursor-pointer"
+                }`}>
+                {loading ? "Creating...." : "Create account"}
               </button>
               <hr className="my-3 " />
 

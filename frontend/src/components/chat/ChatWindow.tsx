@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Video,  ArrowLeft } from "lucide-react";
+import { Send, Video, ArrowLeft } from "lucide-react";
 import { User, Message } from "../../types/chat";
 import ChatBgImage from "../../assets/images/helpdesk2.png";
 import { GiClick } from "react-icons/gi";
@@ -27,7 +27,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 }: ChatWindowProps) => {
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
 
   const navigate = useNavigate();
   // Scroll to bottom when messages change
@@ -102,15 +101,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                 {selectedUser.lastSeen ? `Last seen ${selectedUser.lastSeen}` : "Online"}
               </p>
             </div>
-          </div>
-          <div className="flex items-center gap-4">
-            
-            <button 
-             onClick={() =>navigate("/company/dashboard/joincall")}
-            className="p-2 hover:bg-gray-100 rounded-full">
-              <Video className="h-5 w-5 text-gray-600" />
-            </button>
-           
           </div>
         </div>
       </header>

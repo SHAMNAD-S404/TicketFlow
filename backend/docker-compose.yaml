@@ -2,7 +2,6 @@
 
 services:
 
-
   rabbitmq:
     image: rabbitmq:3-management
     container_name: ticketflow-rabbitmq

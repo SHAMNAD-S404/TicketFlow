@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import NewPasswordImg from "../../assets/images/setPass.png";
 import Tooltips from "../utility/Tooltips";
 import { useForm } from "react-hook-form";
@@ -19,6 +19,8 @@ interface Ipassword {
 }
 
 const NewPassword: React.FC<NewPasswordProps> = ({ loginHandler, userType }) => {
+
+  const [loading, setLoading] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -30,6 +32,7 @@ const NewPassword: React.FC<NewPasswordProps> = ({ loginHandler, userType }) => 
 
   const onsubmit = async (data: Ipassword) => {
     try {
+      setLoading(true);
       const resetEmail = localStorage.getItem("resetEmail");
       const response = await resetPassword(data.password, resetEmail as string);
       if (response.success) {
@@ -37,11 +40,11 @@ const NewPassword: React.FC<NewPasswordProps> = ({ loginHandler, userType }) => 
         toast.success(response.message, {
           onClose: () => navigate(`/auth/login?role=${userType}`),
         });
-      } else {
-        toast.error(response.message);
-      }
+      } 
     } catch (error) {
         toast.error(getErrMssg(error))
+    } finally {
+      setLoading(false);
     }
 
     loginHandler;
@@ -95,8 +98,9 @@ const NewPassword: React.FC<NewPasswordProps> = ({ loginHandler, userType }) => 
           )}
           <button
             type="submit"
+            disabled={loading}
             className="mt-6 w-4/5 bg-blue-600 hover:bg-green-600 hover:shadow-2xl transition duration-300 text-white py-2 rounded-lg text-lg font-medium shadow-md">
-            Submit
+            {loading ? "Submitting..." : "Submit" }
           </button>
         </form>
       </div>

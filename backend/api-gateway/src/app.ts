@@ -22,7 +22,6 @@ app.get('/health', (req, res) => {
 });
 
 app.use(cookieParser());
-
 app.use(logger);
 app.use(morgan("dev"));
 
@@ -35,6 +34,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 
 //  HTTP server from Express app
 const server = http.createServer(app);
@@ -55,38 +55,19 @@ app.use("/socket.io", socketProxy);
 // AUTH SERVICE
 app.use("/auth", proxy(config.authServiceUrl));
 
-
 // COMPANY SERVICE
-app.use(
-  "/company",
-  authenticateToken,
-  proxy(config.companyServiceUrl, {
-    parseReqBody: false,
-  })
-);
-
+app.use("/company",authenticateToken,proxy(config.companyServiceUrl, {parseReqBody: false}));
 
 // TICKET SERVICE
-app.use(
-  "/tickets",
-  authenticateToken,
-  proxy(config.ticketServiceUrl, {
-    parseReqBody: false,
-  })
-);
+app.use("/tickets",authenticateToken, proxy(config.ticketServiceUrl, { parseReqBody: false}));
 
 // COMMUNICATION SERVICE
 app.use("/communication", authenticateToken, proxy(config.communicationServiceUrl));
 
-
 // SUBSCRIPTION SERVICE
-app.use(
-  "/subscription",
-  proxy(config.subscription_service, {
-    parseReqBody: false,
-  })
-);
+app.use( "/subscription",proxy(config.subscription_service,{ parseReqBody: false}));
 
-
+ 
+  
 
 export { app, server };

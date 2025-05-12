@@ -12,9 +12,11 @@ interface OtpVerificationProps {
 }
 
 const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignupForm }) => {
+  //component states
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [timer, setTimer] = useState(1 * 60 + 59); //initial countdown
   const [isResending, setIsResending] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const inputRef = useRef<(HTMLInputElement | null)[]>([]);
   const navigate = useNavigate();
 
@@ -95,16 +97,18 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignupForm }) => {
           },
         });
       }
+      setLoading(true);
       const response = await otpVerification(otpValue, email as string);
 
       if (response.success) {
         onSignupForm();
         toast.success(response.message);
       }
-
       //navigate("/login?role=admin");
     } catch (error) {
       toast.error(getErrMssg(error));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -152,9 +156,10 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignupForm }) => {
             {/* Verify Button */}
             <button
               type="button"
+              disabled={loading}
               className="w-full bg-blue-600 hover:bg-green-600 text-white py-2 rounded-lg text-lg font-semibold transition-transform duration-300"
               onClick={handleOtpVerify}>
-              Verify
+              {loading ? "Verifying..." : "Verify"}
             </button>
             <button
               type="button"

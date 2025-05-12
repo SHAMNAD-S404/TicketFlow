@@ -72,7 +72,7 @@ export class TicketController implements ITicketController {
         });
         return;
       }
-
+      
       const validateEditForm = EditTicketFormValidation.safeParse(req.body);
       if (!validateEditForm.success) {
         res.status(HttpStatus.BAD_REQUEST).json({

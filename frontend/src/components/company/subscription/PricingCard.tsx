@@ -120,7 +120,7 @@ const PricingCard: React.FC<PricingCardProps> = ({
         }`}
         disabled={loading}
         onClick={() => handlePurchase(price.toString(), title, period)}>
-        {loading ? "Loading..." : "upgrade"}
+        {loading ? "Loading..." : "Upgrade"}
       </button>
     </div>
   );

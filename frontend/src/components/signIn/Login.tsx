@@ -9,7 +9,7 @@ import { loginUser } from "../../api/services/authService";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux store/store";
 import { fetchCompany } from "../../redux store/userSlice";
-import { Messages } from "@/enums/Messages";
+import getErrMssg from "../utility/getErrMssg";
 
 interface LoginProps {
   handleforgotPass: () => void;
@@ -50,9 +50,8 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
 
         navigate("/company/dashboard/dashboard");
       }
-    } catch (error: any) {
-      const errMsg = error.response?.data?.message || error || Messages.SOMETHING_TRY_AGAIN;
-      toast.error(errMsg);
+    } catch (error) {
+      toast.error(getErrMssg(error));
       navigate("/auth/login?role=admin");
     } finally {
       setLoading(false);
@@ -81,7 +80,7 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
                 <input
                   type="email"
                   id="email"
-                  placeholder="flip2@gmail.com"
+                  placeholder="infexsolutions@gmail.com"
                   className={`w-full px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.email ? "border-red-500" : ""
                   }`}
@@ -144,10 +143,11 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
                   Forgot Password?
                 </button>
               </div>
-
               <button
                 type="submit"
-                className="w-full bg-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:bg-gradient-to-t from-lime-500 to-green-500 hover:text-black hover:font-semibold  focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className={`w-full  text-white font-medium py-2 px-4 rounded-lg shadow-md hover:bg-gradient-to-t from-lime-500 to-green-500 hover:text-black hover:font-semibold  focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                  loading ? "cursor-wait bg-black" : "cursor-pointer bg-indigo-600"
+                }`}
                 disabled={loading}>
                 {loading ? "Loggin in..." : "Log in"}
               </button>

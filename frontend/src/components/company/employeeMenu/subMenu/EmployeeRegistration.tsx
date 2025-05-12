@@ -25,8 +25,9 @@ interface EmployeeRegistrationProps {
 }
 
 const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({ handleCancel }) => {
-  const [departments, setDepartments] = useState<Departement[]>([]);
 
+  const [departments, setDepartments] = useState<Departement[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const company = useSelector((state: Rootstate) => state.company.company);
 
   useEffect(() => {
@@ -70,7 +71,7 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({ handleCance
         data.departmentName = selectedDepartment.departmentName;
         data.companyId = company._id;
       }
-
+      setLoading(true);
       const response = await createEmployee(data);
       if (response.success) {
         toast.success(response.message);
@@ -78,12 +79,14 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({ handleCance
       }
     } catch (error) {
       toast.error(getErrMssg(error));
+    } finally {
+      setLoading(false)
     }
   };
 
   return (
-    <div className="bg-gray-50  md:h-[750px] flex items-center justify-center p-8 rounded-2xl shadow-2xl">
-      <div className="bg-white  rounded-2xl shadow-xl overflow-hidden max-w-4xl w-full">
+    <div className="bg-gray-50 mt-8  md:h-[750px] flex items-center justify-center p-6 rounded-2xl shadow-2xl">
+      <div className="bg-white  rounded-2xl shadow-xl overflow-hidden max-w-5xl w-full">
         <div className="flex flex-col md:flex-row">
           {/* Left Section */}
           <div className="bg-gray-200 p-8 md:w-5/12">
@@ -228,16 +231,17 @@ const EmployeeRegistration: React.FC<EmployeeRegistrationProps> = ({ handleCance
               </div>
 
               {/* Buttons */}
-              <div className="flex space-x-4">
+              <div className="flex space-x-4 ">
                 <button
+                  disabled={loading}
                   type="submit"
-                  className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors duration-200">
-                  Register
+                  className={`flex-1 font-semibold text-sm  hover:bg-purple-600 text-white py-2 px-4 rounded-md  transition-colors duration-200 ${loading ? "bg-black cursor-wait" : "bg-blue-500 cursor-pointer"}`}>
+                  {loading ? "Processing....." : "Register"}
                 </button>
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="flex-1 bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 transition-colors duration-200">
+                  className="flex-1 bg-red-500 hover:bg-green-700 font-semibold text-sm text-white py-2 px-4 rounded-md  transition-colors duration-200">
                   Cancel
                 </button>
               </div>

@@ -25,6 +25,8 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
   handleViewTicketProgress,
   handleSetTicketId,
 }) => {
+  
+  //component states
   const [tikcetData, setTicketData] = useState<ITicketContext[]>([]);
   const [sortBy, setSortBy] = useState<string>("createdAt");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -32,6 +34,7 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
   const [totalPages, setTotalPages] = useState<number>(1);
   const [cardLoading, setCardLoading] = useState<boolean>(true);
   const [cardStats, setCardStats] = useState<IStatsCardData[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const company = useSelector((state: Rootstate) => state.company.company);
 
@@ -92,7 +95,6 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
         setCardLoading(false);
       } catch (error) {
         console.log(error);
-        
       }
     };
 
@@ -103,6 +105,7 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
     const getAllTickets = async () => {
       try {
         const employeeId = company?._id as string;
+        setLoading(true);
         const response = await fetchMyTicketProgress(currentPage, employeeId, sortBy, searchQuery);
         if (response && response.data) {
           setTicketData(response.data.tickets);
@@ -110,6 +113,8 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
         }
       } catch (error) {
         toast.error(getErrMssg(error));
+      } finally {
+        setLoading(false);
       }
     };
     getAllTickets();
@@ -119,7 +124,6 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
     <div className="bg-blue-50 ">
       <header className="py-6">
         {/* header card slides */}
-
         <TableStaticCards loading={cardLoading} data={cardStats} />
       </header>
       {/* table section */}
@@ -132,6 +136,7 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
           handleSort={handleSort}
           manageTicketHandle={manageTicketHandle}
           showRaisedBy={false}
+          isLoading={loading}
         />
 
         {/* pagination */}

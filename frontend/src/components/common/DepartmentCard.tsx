@@ -28,7 +28,7 @@ export interface DepartmentCardProps {
   description: string;
   handleView: () => void;
   twickParent: () => void;
-  setDepartmentName : () => void;
+  setDepartmentName: () => void;
 }
 
 //interface for formData
@@ -45,7 +45,7 @@ const DepartmentCard: React.FC<DepartmentCardProps> = ({
   description,
   twickParent,
   handleView,
-  setDepartmentName
+  setDepartmentName,
 }) => {
   const [departmentData, setDepartmentData] = useState<IDepartmentData>({
     id: _id,
@@ -63,7 +63,7 @@ const DepartmentCard: React.FC<DepartmentCardProps> = ({
   const handleViewSubmission = () => {
     setDepartmentName();
     handleView();
-  }
+  };
 
   const onSubmitData = async (data: Partial<IDepartmentData>) => {
     try {
@@ -216,7 +216,7 @@ const DepartmentCard: React.FC<DepartmentCardProps> = ({
                   </div>
                   <DialogFooter>
                     <DialogClose>
-                      <p className="bg-red-600 p-2 rounded-xl text-sm px-6 font-semibold hover:bg-green-500">close</p>
+                      <p className="bg-red-600 p-2 rounded-xl text-sm px-6 font-semibold hover:bg-green-500">Close</p>
                     </DialogClose>
                     <button
                       type="submit"

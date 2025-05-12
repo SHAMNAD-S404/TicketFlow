@@ -171,7 +171,9 @@ const PaymentSuccess: React.FC = () => {
                     <FileText className="mr-2 text-indigo-600" />
                     <div>
                       <h2 className="text-2xl font-bold text-gray-800">INVOICE</h2>
-                      <p className="text-sm text-gray-500">Order ID: ORID-{String(order._id).slice(0, 8)}</p>
+                      <p className="text-sm text-gray-500">
+                        Order ID: ORID-{order._id ? String(order._id).slice(0, 8) : "VX08972"}
+                      </p>
                     </div>
                   </div>
                   <div className="text-right">

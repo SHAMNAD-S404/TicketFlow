@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import ForgotImg from "../../assets/images/forgot2.png";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import regexPatterns from "@/utils/regexPattern";
@@ -15,6 +15,9 @@ interface ForgotPassEmailProps {
 }
 
 const ForgotPassEmail: React.FC<ForgotPassEmailProps> = ({ onBacktoLogin }) => {
+
+  //component states
+  const [loading, setLoading] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
@@ -26,6 +29,7 @@ const ForgotPassEmail: React.FC<ForgotPassEmailProps> = ({ onBacktoLogin }) => {
     }
 
     try {
+      setLoading(true);
       const response = await forgotPasswordReq(email as string);
       if (response) {
         Swal.fire({
@@ -37,6 +41,8 @@ const ForgotPassEmail: React.FC<ForgotPassEmailProps> = ({ onBacktoLogin }) => {
       }
     } catch (error) {
       toast.error(getErrMssg(error))
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -64,8 +70,9 @@ const ForgotPassEmail: React.FC<ForgotPassEmailProps> = ({ onBacktoLogin }) => {
         />
         <button
           onClick={handleForgotPassword}
+          disabled={loading}
           className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg text-lg font-medium hover:bg-orange-600 hover:text-black hover:font-medium transition ease-out duration-300 ">
-          Submit
+          {loading ? "Processing" : "Submit" }
         </button>
       </div>
 
