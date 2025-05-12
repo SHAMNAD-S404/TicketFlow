@@ -28,6 +28,7 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageT
   const [totalPages, setTotalPages] = useState<number>(1);
   const [cardLoading, setCardLoading] = useState<boolean>(true);
   const [cardStats, setCardStats] = useState<IStatsCardData[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const employee = useSelector((state: Rootstate) => state.employee.employee);
 
@@ -97,6 +98,7 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageT
   useEffect(() => {
     const getAllTickets = async () => {
       try {
+        setLoading(true);
         const employeeId = employee?._id as string;
         const response = await fetchTicketsEmployeeWise(currentPage, employeeId, sortBy, searchQuery);
         if (response && response.data) {
@@ -105,6 +107,8 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageT
         }
       } catch (error) {
         toast.error(getErrMssg(error));
+      } finally {
+        setLoading(false)
       }
     };
     getAllTickets();
@@ -126,6 +130,7 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageT
           handleSort={handleSort}
           manageTicketHandle={manageTicketHandle}
           tableHeading="Assigned Tickets for me"
+          isLoading={loading}
         />
 
         {/* pagination */}
