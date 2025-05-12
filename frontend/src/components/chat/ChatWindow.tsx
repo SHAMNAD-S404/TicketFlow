@@ -6,7 +6,6 @@ import { GiClick } from "react-icons/gi";
 import { HiChatBubbleLeftRight } from "react-icons/hi2";
 import { TbHistoryOff } from "react-icons/tb";
 import { FaArrowAltCircleRight } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 
 interface ChatWindowProps {
   selectedUser: User | null;
