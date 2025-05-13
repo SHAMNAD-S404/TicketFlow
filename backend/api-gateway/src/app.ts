@@ -10,6 +10,8 @@ import cookieParser from "cookie-parser";
 import { authenticateToken } from "./middleware/authenticateToken";
 import morgan from "morgan";
 import http from "http";
+import rateLimit from "express-rate-limit";
+import { Messages } from "./const/messages";
 
 dotenv.config();
 validateEnvVariables();
@@ -22,6 +24,25 @@ app.get('/health', (req, res) => {
 });
 
 app.use(cookieParser());
+
+// RATE LIMITTING
+app.set("trust proxy",1);
+
+const apiLimiter = rateLimit({
+  windowMs : 5 * 60 * 1000, //5MIN
+  max : 300,
+  message : {
+    status : 429,
+    message : Messages.IP_LIMIT_EXCEED
+  },
+  standardHeaders : true, //return the rate limmit info in headers
+  legacyHeaders : false, // disable the "x-rate limit headers"
+});
+
+//use rate limiting middleware
+app.use(apiLimiter);
+
+
 app.use(logger);
 app.use(morgan("dev"));
 

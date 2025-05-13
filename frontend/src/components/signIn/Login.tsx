@@ -51,8 +51,8 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
 
         navigate("/company/dashboard/dashboard");
       }
-    } catch (error) {
-      toast.error(getErrMssg(error));
+    } catch (error:any) {
+      toast.error(error);
       navigate("/auth/login?role=admin");
     } finally {
       setLoading(false);

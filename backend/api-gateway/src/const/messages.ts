@@ -32,6 +32,7 @@ export const Messages = {
     INPUT_INVALID_OR_MISSING_SOME_FIELD : "Given input are invalid or some of fields are missing ! try again",
     SOMETHING_WENT_WRONG : "Something went wrong try again later",
     DATA_NOT_FOUND : "requested data not found",
+    IP_LIMIT_EXCEED : "Too many requests from this IP, please try again after 15 minutes",
     
 
 
