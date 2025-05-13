@@ -9,8 +9,6 @@ import regexPatterns, { RegexMessages } from "../../utils/regexPattern";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux store/store";
 import { fetchEmployee } from "../../redux store/employeeSlice";
-import getErrMssg from "../utility/getErrMssg";
-
 interface UserLoginProps {
   forgotPassword: () => void;
 }

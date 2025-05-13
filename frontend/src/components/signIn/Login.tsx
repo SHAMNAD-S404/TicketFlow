@@ -9,7 +9,6 @@ import { loginUser } from "../../api/services/authService";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux store/store";
 import { fetchCompany } from "../../redux store/userSlice";
-import getErrMssg from "../utility/getErrMssg";
 import { LoginWithGoogle } from "../google/GoogleLogin";
 
 interface LoginProps {
