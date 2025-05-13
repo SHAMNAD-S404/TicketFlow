@@ -19,6 +19,8 @@ export const config: Iconfig = {
   resetPasswordUrlLink : process.env.RESET_PASSWORD_LINK_URL as string,
 };
 
+//LOGGING CONFIG FILES
+
 export const loggingConfig = {
   NODE_ENV : process.env.NODE_ENV as string,
   LOKI_HOST : process.env.LOKI_HOST as string,
