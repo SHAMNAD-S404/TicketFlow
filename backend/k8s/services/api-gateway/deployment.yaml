@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: shamnads306/ticketflow-api-gateway-service:v1.0.3
+          image: shamnads306/ticketflow-api-gateway-service:v1.0.4
           ports:
             - containerPort: 3000
           envFrom:

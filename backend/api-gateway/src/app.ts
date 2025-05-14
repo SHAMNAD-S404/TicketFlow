@@ -13,35 +13,35 @@ import http from "http";
 import rateLimit from "express-rate-limit";
 import { Messages } from "./const/messages";
 
+
 dotenv.config();
 validateEnvVariables();
 
 const app = express();
 
 // for health check
-app.get('/health', (req, res) => {
-  res.status(200).send('OK');
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
 });
 
 app.use(cookieParser());
 
 // RATE LIMITTING
-app.set("trust proxy",1);
+app.set("trust proxy", 1);
 
 const apiLimiter = rateLimit({
-  windowMs : 5 * 60 * 1000, //5MIN
-  max : 300,
-  message : {
-    status : 429,
-    message : Messages.IP_LIMIT_EXCEED
+  windowMs: 5 * 60 * 1000, //5MIN
+  max: 300,
+  message: {
+    status: 429,
+    message: Messages.IP_LIMIT_EXCEED,
   },
-  standardHeaders : true, //return the rate limmit info in headers
-  legacyHeaders : false, // disable the "x-rate limit headers"
+  standardHeaders: true, //return the rate limmit info in headers
+  legacyHeaders: false, // disable the "x-rate limit headers"
 });
 
 //use rate limiting middleware
 app.use(apiLimiter);
-
 
 app.use(logger);
 app.use(morgan("dev"));
@@ -56,11 +56,10 @@ app.use(
   })
 );
 
-
 //  HTTP server from Express app
 const server = http.createServer(app);
 
-//  Socket.IO proxy for the communication service
+// Socket.IO proxy for the communication service
 const socketProxy = createProxyMiddleware({
   target: config.communicationServiceUrl,
   changeOrigin: true,
@@ -72,23 +71,19 @@ const socketProxy = createProxyMiddleware({
 app.use("/socket.io", socketProxy);
 
 // Standard REST API routes using express-http-proxy
-
 // AUTH SERVICE
 app.use("/auth", proxy(config.authServiceUrl));
 
 // COMPANY SERVICE
-app.use("/company",authenticateToken,proxy(config.companyServiceUrl, {parseReqBody: false}));
+app.use("/company", authenticateToken, proxy(config.companyServiceUrl, { parseReqBody: false }));
 
 // TICKET SERVICE
-app.use("/tickets",authenticateToken, proxy(config.ticketServiceUrl, { parseReqBody: false}));
+app.use("/tickets", authenticateToken, proxy(config.ticketServiceUrl, { parseReqBody: false }));
 
 // COMMUNICATION SERVICE
 app.use("/communication", authenticateToken, proxy(config.communicationServiceUrl));
 
 // SUBSCRIPTION SERVICE
-app.use( "/subscription",proxy(config.subscription_service,{ parseReqBody: false}));
-
- 
-  
+app.use("/subscription", proxy(config.subscription_service, { parseReqBody: false }));
 
 export { app, server };

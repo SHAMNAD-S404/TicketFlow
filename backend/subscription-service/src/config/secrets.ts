@@ -9,3 +9,11 @@ export const secrets = {
     jwt_secret : process.env.JWT_SECRET as string,
     
 }
+
+//LOGGING CONFIG FILES
+
+export const loggingConfig = {
+    NODE_ENV : process.env.NODE_ENV as string,
+    LOKI_HOST : process.env.LOKI_HOST as string,
+  }
+  

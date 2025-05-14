@@ -18,7 +18,12 @@ export const config: Iconfig = {
     cloudName : process.env.CLOUDINARY_CLOUD_NAME as string,
     cloudApiKey : process.env.CLOUDINARY_API_KEY as string,
     cloudApiSecret : process.env.CLOUDINARY_API_SECRET as string,
-    
-    
   
   };
+
+  //LOGGING CONFIG FILES
+
+export const loggingConfig = {
+  NODE_ENV : process.env.NODE_ENV as string,
+  LOKI_HOST : process.env.LOKI_HOST as string,
+}

@@ -24,3 +24,10 @@ export const config: Iconfig = {
   subscription_service : process.env.SUBSCRIPTION_SERVICE_URL as string,
   frontend_production_url : process.env.FRONTEND_PRODUCTION_URL as string
 };
+
+//LOGGING CONFIG FILES
+
+export const loggingConfig = {
+  NODE_ENV : process.env.NODE_ENV as string,
+  LOKI_HOST : process.env.LOKI_HOST as string,
+}

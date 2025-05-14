@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-config
+  namespace: ticketflow
+data:
+  grafana.ini: |
+    [auth]
+    disable_login_form = false
+    
+    [auth.anonymous]
+    enabled = true
+    org_role = Viewer
+    
+    [server]
+    root_url = https://grafana.ticketflow-api.shamnad.site
+    
+    [datasources]
+    datasources.yaml:
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Loki
+        type: loki
+        access: proxy
+        url: http://loki.ticketflow.svc.cluster.local:3100
+        version: 1
+        editable: true
+        isDefault: true

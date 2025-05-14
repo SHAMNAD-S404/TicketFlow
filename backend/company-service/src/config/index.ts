@@ -18,5 +18,13 @@ export const config: Iconfig = {
 
 };
 
+//LOGGING CONFIG FILES
+
+export const loggingConfig = {
+  NODE_ENV : process.env.NODE_ENV as string,
+  LOKI_HOST : process.env.LOKI_HOST as string,
+}
+
+
 
 

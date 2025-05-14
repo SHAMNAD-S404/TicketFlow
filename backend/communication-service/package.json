@@ -15,7 +15,9 @@
   "devDependencies": {
     "@types/amqplib": "^0.10.6",
     "@types/express": "^5.0.1",
+    "@types/morgan": "^1.9.9",
     "@types/node": "^22.13.14",
+    "@types/winston": "^2.4.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
   },
@@ -27,7 +29,10 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mongoose": "^8.13.0",
+    "morgan": "^1.10.0",
     "nodemon": "^3.1.9",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "winston": "^3.17.0",
+    "winston-loki": "^6.1.3"
   }
 }

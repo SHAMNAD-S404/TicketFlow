@@ -1,9 +1,9 @@
 import { createLogger,format,transports } from "winston";
 import LokiTransport from "winston-loki";
-import { loggingConfig } from "../config";
+import { loggingConfig } from "../config/secrets";
 
 
-export const logger = createLogger({
+export const Lokilogger = createLogger({
     level : "info",
     format: format.combine(
         format.timestamp(),
@@ -12,10 +12,9 @@ export const logger = createLogger({
     transports: [
         new LokiTransport({
             host: loggingConfig.LOKI_HOST || "http://loki:3100",
-            labels : { service: "auth-service"  },
+            labels : { service: "subscription-service"},
             json: true,
             replaceTimestamp: true,
         }),
     ],
 });
-

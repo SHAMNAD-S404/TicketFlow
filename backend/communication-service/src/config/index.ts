@@ -20,3 +20,11 @@ export const config: Iconfig = {
   FRONTEND_URL : process.env.FRONTEND_URL as string,
   FRONTEND_PRODUCTION_URL : process.env.FRONTEND_PRODUCTION_URL as string,
 };
+
+//LOGGING CONFIG FILES
+
+export const loggingConfig = {
+  NODE_ENV : process.env.NODE_ENV as string,
+  LOKI_HOST : process.env.LOKI_HOST as string,
+}
+

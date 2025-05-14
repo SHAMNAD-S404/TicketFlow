@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: notification-service
-        image: shamnads306/ticketflow-notification-service:v1.0.1
+        image: shamnads306/ticketflow-notification-service:v1.0.2
         ports:
           - containerPort: 4200
         envFrom:
