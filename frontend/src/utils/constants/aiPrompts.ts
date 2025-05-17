@@ -1,6 +1,5 @@
-
 export const getAIPrompt = (userInput: string): string => {
-    return `You are a helpful and professional chatbot for the TicketFlow web application. Your job is to answer user questions about how TicketFlow works, including features, navigation, subscription plans, and the founder.
+  return ` You are a helpful and professional chatbot for the TicketFlow web application. Your job is to answer user questions about how TicketFlow works, including features, navigation, subscription plans, and the founder.
   
   Respond in a clear, concise, and structured format. Use:
   - Bullet points for lists
@@ -47,5 +46,4 @@ export const getAIPrompt = (userInput: string): string => {
   Now answer the following user question directly and clearly:
   
   User Question: ${userInput}`;
-  };
-  
+};

@@ -5,6 +5,8 @@ import { TbLiveViewFilled } from "react-icons/tb";
 import { IoMdChatbubbles } from "react-icons/io";
 import { FaFileVideo, FaUsers } from "react-icons/fa";
 import { TbDeviceDesktopAnalytics } from "react-icons/tb";
+import { motion } from "framer-motion";
+import { staggerContainer, fadeUpVariant } from "../../animations/variants";
 
 const features = [
   {
@@ -24,9 +26,8 @@ const features = [
   },
   {
     icon: <FaFileVideo />,
-    title: "Integrated Video Calls for Seamless Communication",
-    description:
-      "Video call in real-time with team members directly within the app.",
+    title: "Video Calls for Seamless Communication",
+    description: "Video call in real-time with team members directly within the app.",
   },
   {
     icon: <TbDeviceDesktopAnalytics />,
@@ -36,40 +37,57 @@ const features = [
   {
     icon: <FaUsers />,
     title: "Role-Based Access Control",
-    description: "Assign roles and permissions to maintain data security.",
+    description: "Assign roles and permissions to maintain data security and controller over the applicaton",
   },
 ];
 
 const FeatureSession: React.FC = () => {
   return (
-    <section className="bg-blue-100 py-12">
+    <motion.section
+      className="bg-blue-100 py-12 overflow-hidden"
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.1 }}
+      variants={fadeUpVariant}>
       <div className="container mx-auto px-6 md:px-12">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+        <motion.div className="text-center mb-12" variants={fadeUpVariant} custom={0}>
+          <motion.h2
+            className="text-3xl md:text-4xl font-bold text-gray-800 mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}>
             Explore Our Innovative Ticketing Feature
-          </h2>
-          <p className="text-gray-600 md:text-lg font-medium shado">
-            Our IT Ticketing System is designed to streamline communication
-            between departments. With real-time updates and efficient ticket
-            management,
+          </motion.h2>
+          <motion.p
+            className="text-gray-600 md:text-lg font-medium"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}>
+            Our IT Ticketing System is designed to streamline communication between departments. With real-time updates
+            and efficient ticket management,
             <br /> your team can resolve issues faster than ever.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Feature Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+        <motion.div
+          className="grid grid-cols-2 md:grid-cols-3 gap-6"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}>
           {features.map((feature, index) => (
-            <FeatureCard
-              key={index}
-              icon={feature.icon}
-              title={feature.title}
-              description={feature.description}
-            />
+            <motion.div key={index} variants={fadeUpVariant} custom={index * 0.1}>
+              <FeatureCard icon={feature.icon} title={feature.title} description={feature.description} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 };
+
 export default FeatureSession;

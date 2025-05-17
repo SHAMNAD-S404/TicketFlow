@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import heroImage from "../assets/images/hero-section2.png";
 import desktopTeam from "../assets/images/helpdesk2.png";
 import details1 from "../assets/images/detailnew.png";
@@ -12,54 +12,39 @@ import TrialComponent from "../components/user/home/TrialComponent";
 import FAQComponent from "../components/user/home/FAQComponent";
 import Footer from "../components/user/layout/Footer";
 import ChatBot from "@/components/chatBot/ChatBot";
+import { faqData } from "@/components/utility/faqData";
 
 const LandingPage: React.FC = () => {
-  const faqData = [
-    {
-      question: "How this UI Kit is different from others in market?",
-      answer:
-        "This UI Kit offers a seamless user experience with unique components, easy-to-use designs, and high flexibility.",
-    },
-    {
-      question: "How long do you provide support?",
-      answer:
-        "We provide lifetime support for all our customers after purchase.",
-    },
-    {
-      question: "Do I need any experience to work with this kit?",
-      answer:
-        "No, you can use this kit without prior design or development experience.",
-    },
-    {
-      question: "What kind of files are included?",
-      answer:
-        "The kit includes Figma, Sketch, and Adobe XD files for all components.",
-    },
-  ];
-
+  const featureRef = useRef<HTMLDivElement>(null);
+  const aboutRef = useRef<HTMLDivElement>(null);
+  const homeRef = useRef<HTMLDivElement>(null);
   return (
     <div>
-      <LandingNavbar />
+      <LandingNavbar featureRef={featureRef} aboutRef={aboutRef} homeRef={homeRef} />
 
-      <HeroSection
-        heading="Streamline Communication with Our IT Ticketing System"
-        text="Our IT Ticketing System enhances inter-departmental collaboration by providing a seamless platform for 
+      <div ref={homeRef}>
+        <HeroSection
+          heading="Streamline Communication with Our IT Ticketing System"
+          text="O ur IT Ticketing System enhances inter-departmental collaboration by providing a seamless platform for 
             reporting and resolving issues. With real-time updates, chat functionality, and comprehensive analytics, 
             teams can work together more efficiently and effectively."
-        image={heroImage}
-      />
+          image={heroImage}
+        />
+      </div>
 
       <HeroSection
         heading="Great Customer Service starts with a Powerful Helpdesk Software"
-        text="Is it one of those days? Sticky notes all over and the phone won’t stop  ringing?  
-              TicketFlow is the helpdesk software of the future and helps you findstructure in the chaos.
+        text="I s it one of those days? Sticky notes all over and the phone won’t stop  ringing?  
+              TicketFlow is the helpdesk software of the future and helps you find structure in the chaos.
               Connect all your communication channels, easily grant user rights, and receive helpful reporting.
               Have everything under control  and your customers under your spell. Discover the TicketFlow ticketing system now!"
         image={desktopTeam}
         reverse={true}
       />
 
-      <FeatureSession />
+      <div ref={featureRef}>
+        <FeatureSession />
+      </div>
 
       <DetailFeature
         header="Streamline Communication and Enhance Efficiency with Our IT Ticketing System"
@@ -96,8 +81,10 @@ const LandingPage: React.FC = () => {
 
       <FAQComponent faqs={faqData} />
 
-      <Footer />
-      <ChatBot/>
+      <div ref={aboutRef}>
+        <Footer />
+      </div>
+      <ChatBot />
     </div>
   );
 };

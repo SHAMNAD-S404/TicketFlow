@@ -45,28 +45,18 @@ const FAQComponent: React.FC<FAQProps> = ({ faqs }) => {
   return (
     <section className="bg-blue-200 pb-10">
       <div className="  max-w-3xl mx-auto pt-5 ">
-        <h2 className="text-4xl font-bold text-center mb-6">
-          Frequently Asked Questions
-        </h2>
-        <p className="text-center text-black mb-8 text-xl">
-          Have a question? Find answers to common queries below.
-        </p>
+        <h2 className="text-4xl font-bold text-center mb-6">Frequently Asked Questions</h2>
+        <p className="text-center text-black mb-8 text-xl">Have a question? Find answers to common queries below.</p>
 
         <div className="space-y-4">
           {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className="border rounded-lg overflow-hidden shadow-md"
-            >
+            <div key={index} className="border rounded-lg overflow-hidden shadow-md">
               {/* Question Section */}
               <div
                 onClick={() => handleToggle(index)}
-                className="p-4 flex justify-between items-center cursor-pointer bg-gray-100 hover:bg-gray-200 transition"
-              >
+                className="p-4 flex justify-between items-center cursor-pointer bg-gray-100 hover:bg-gray-200 transition">
                 <h3 className="font-medium text-gray-800">{faq.question}</h3>
-                <span className="text-xl font-bold">
-                  {activeIndex === index ? "-" : "+"}
-                </span>
+                <span className="text-xl font-bold">{activeIndex === index ? "-" : "+"}</span>
               </div>
 
               {/* Typing Animation in Answer Section */}

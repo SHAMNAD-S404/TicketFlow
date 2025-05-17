@@ -10,6 +10,7 @@ type TregexPatterns = {
   textAndNumberWithoutSpace : RegExp,
   resolutionInputField : RegExp,
   newPasswordValidation : RegExp,
+  newLoginPassValidation : RegExp
 };
 
 const regexPatterns: TregexPatterns = {
@@ -24,6 +25,7 @@ const regexPatterns: TregexPatterns = {
   textAndNumberWithoutSpace : /^[a-zA-Z0-9]+$/,
   resolutionInputField : /^[a-zA-Z0-9.,'"\:(\)\s-]+$/,
   newPasswordValidation : /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
+  newLoginPassValidation : /^[A-Za-z0-9@#*&%]+$/,
 
 
 };

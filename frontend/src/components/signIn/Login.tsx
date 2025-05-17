@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux store/store";
 import { fetchCompany } from "../../redux store/userSlice";
 import { LoginWithGoogle } from "../google/GoogleLogin";
+import getErrMssg from "../utility/getErrMssg";
 
 interface LoginProps {
   handleforgotPass: () => void;
@@ -50,8 +51,8 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
 
         navigate("/company/dashboard/dashboard");
       }
-    } catch (error:any) {
-      toast.error(error);
+    } catch (error: any) {
+      toast.error(getErrMssg(error))
       navigate("/auth/login?role=admin");
     } finally {
       setLoading(false);
@@ -118,11 +119,11 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
                         value: 15,
                         message: "Password must be at most 15 characters",
                       },
-                      // pattern: {
-                      //   value: regexPatterns.password,
-                      //   message:
-                      //     "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
-                      // },
+                      pattern: {
+                        value: regexPatterns.newLoginPassValidation,
+                        message:
+                          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+                      },
                     })}
                   />
 
@@ -155,10 +156,10 @@ const Login: React.FC<LoginProps> = ({ handleforgotPass }) => {
             </form>
 
             <hr className="my-3 " />
-              <h4 className="text-center">OR</h4>
-              {/*Google sign up session*/}
+            <h4 className="text-center">OR</h4>
+            {/*Google sign up session*/}
 
-              <LoginWithGoogle />
+            <LoginWithGoogle />
 
             <p className="mt-4 text-center text-gray-600  ">
               Don't have an account?{" "}

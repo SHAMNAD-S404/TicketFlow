@@ -3,27 +3,27 @@
 services:
 
 
-  loki:
-    image: grafana/loki:2.9.3
-    container_name: ticketFlow-loki
-    ports:
-      - "3100:3100"
-    command: -config.file=/etc/loki/local-config.yaml
-    networks:
-      - ticketFlow-internal
+  # loki:
+  #   image: grafana/loki:2.9.3
+  #   container_name: ticketFlow-loki
+  #   ports:
+  #     - "3100:3100"
+  #   command: -config.file=/etc/loki/local-config.yaml
+  #   networks:
+  #     - ticketFlow-internal
     
 
-  grafana:
-    image: grafana/grafana:10.3.1
-    container_name: ticketFlow-grafana
-    ports:
-      - "3333:3000"
-    depends_on:
-      - loki
-    volumes:
-      - grafana-storage:/var/lib/grafana
-    networks:
-      - ticketFlow-internal
+  # grafana:
+  #   image: grafana/grafana:10.3.1
+  #   container_name: ticketFlow-grafana
+  #   ports:
+  #     - "3333:3000"
+  #   depends_on:
+  #     - loki
+  #   volumes:
+  #     - grafana-storage:/var/lib/grafana
+  #   networks:
+  #     - ticketFlow-internal
 
 
   rabbitmq:
@@ -238,5 +238,5 @@ networks:
 volumes:
   rabbitmq_data:
   redis_data:
-  grafana-storage:
+  # grafana-storage:
 
