@@ -46,6 +46,8 @@ type regexPatternMessages = {
   MINIMUM_LIMIT : string;
   text_area_validation : string;
   newPassValidationMssg : string;
+  newLoginPassValidationMssg : string;
+  INVALID_FIELD_VALUE : string;
 }
 
 
@@ -64,7 +66,9 @@ export const RegexMessages : regexPatternMessages = {
   MAXIMUM_LIMIT_REACHED : "Input Maximun limit reached !",
   MINIMUM_LIMIT : "Enter atleast minimum Limit",
   text_area_validation : "This field only allow alphabates , numbers , allowed symbols ',.(,), text end with ()  not allowed ",
-  newPassValidationMssg : "Password: 8-15 chars, alphanumeric & special chars required"
+  newPassValidationMssg : "Password: 8-15 chars, alphanumeric & special chars required",
+  newLoginPassValidationMssg : "This field only allow alphabates , numbers , allowed symbols @ , # , * , text end with another symbols  not allowed ",
+  INVALID_FIELD_VALUE : "Enter valid field value",
   
 
 }

@@ -9,9 +9,10 @@ import { IsignupForm } from "../../types/auth";
 import { signupUser } from "../../api/services/authService";
 import { toast } from "react-toastify";
 import getErrMssg from "../utility/getErrMssg";
+import { motion } from "framer-motion";
 
 const SignupForm: React.FC = () => {
-  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
   const {
     register,
@@ -24,7 +25,6 @@ const SignupForm: React.FC = () => {
     setPasswordVisible(!passwordVisible);
   };
 
-  //fetching stored email from local storage
   const verifiedEmail = localStorage.getItem("email")?.toString();
   const navigate = useNavigate();
 
@@ -35,6 +35,7 @@ const SignupForm: React.FC = () => {
       if (response.success) {
         toast.success(response.message);
         navigate("/auth/login?role=admin");
+        localStorage.clear();
       }
     } catch (error) {
       toast.error(getErrMssg(error));
@@ -43,37 +44,46 @@ const SignupForm: React.FC = () => {
     }
   };
 
-  //watch password for matching with confirm password
   const password = watch("password");
 
   return (
-    <div className="min-h-screen phone:bg-white md:bg-gray-50  flex items-center justify-center px-4 ">
-      {/* container */}
-      <div className="bg-white   shadow-2xl my-20  phone:mt-4 rounded-xl flex  max-w-7xl w-full overflow-hidden ">
+    <main className="min-h-screen phone:bg-white md:bg-gray-50 flex items-center justify-center px-4">
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="bg-white shadow-2xl my-20 phone:mt-4 rounded-xl flex flex-col md:flex-row max-w-7xl w-full overflow-hidden">
         {/* Left section - Image */}
-        <div className="hidden md:flex items-center justify-center bg-blue-100 w-1/2">
+        <aside className="hidden md:flex items-center justify-center bg-blue-100 w-1/2">
           <img src={Register} alt="Signup Illustration" className="h-3/4" />
-        </div>
-        {/* Right Section - Form */}
-        <div className="w-full md:w-1/2 px-6 py-10 bg-blue-50 ">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2 text-center ">
-            <span className="text-blue-500"> Register</span> Your Company
-          </h2>
-          <p className="text-gray-600 text-sm mb-6 text-center">
-            Let’s get you all set up so you can start creating your company account.
-          </p>
-          {/*Form*/}
-          <form className="space-y-4 " onSubmit={handleSubmit(formSubmit)}>
-            <div className=" grid grid-cols-1 md:grid-cols-2 gap-2">
-              <div>
-                <label className="text-sm font-semibold text-gray-600 flex gap-1 items-center ">
-                  Enter Company Name
-                  <Tooltips message="Only Contain Alphabates and numbers" />
-                </label>
+        </aside>
 
+        {/* Right section - Form */}
+        <motion.article
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+          className="w-full md:w-1/2 px-6 py-10 bg-blue-50">
+          <header className="text-center mb-6">
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+              <span className="text-blue-500">Register</span> Your Company
+            </h2>
+            <p className="text-gray-600 text-sm">
+              Let’s get you all set up so you can start creating your company account.
+            </p>
+          </header>
+
+          <form className="space-y-4" onSubmit={handleSubmit(formSubmit)}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* All inputs below remain same, wrapped in <div> */}
+              {/* Just one shown here as example, you keep rest unchanged */}
+              <div>
+                <label className="text-sm font-semibold text-gray-600 flex gap-1 items-center">
+                  Enter Company Name <Tooltips message="Only Contain Alphabates and numbers" />
+                </label>
                 <input
                   type="text"
-                  placeholder=" Ticket India Ltd"
+                  placeholder="Ticket India Ltd"
                   className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                   {...register("companyName", {
                     required: "Company name is required",
@@ -85,6 +95,7 @@ const SignupForm: React.FC = () => {
                 />
                 {errors.companyName && <p className="text-red-500 text-sm">{errors.companyName.message}</p>}
               </div>
+
               <div>
                 <label className="text-sm font-semibold text-gray-600">Choose company type</label>
                 <select
@@ -249,29 +260,30 @@ const SignupForm: React.FC = () => {
 
             {/* Buttons */}
             <div className="mt-6">
-              <button
-                disabled={loading}
+              <motion.button
                 type="submit"
-                className={`w-full bg-purple-600 text-white py-2 rounded-md  hover:font-bold hover:bg-gradient-to-r from-blue-500 to-green-600 font-medium transition ${
+                disabled={loading}
+                whileHover={{ scale: 1.03 }}
+                className={`w-full bg-purple-600 text-white py-2 rounded-md hover:font-bold hover:bg-gradient-to-r from-blue-500 to-green-600 font-medium transition ${
                   loading ? "cursor-wait" : "cursor-pointer"
                 }`}>
-                {loading ? "Creating...." : "Create account"}
-              </button>
-              <hr className="my-3 " />
+                {loading ? "Creating..." : "Create account"}
+              </motion.button>
 
-              <p className="text-center text-gray-600 text-sm mt-4">
+              <hr className="my-3" />
+              <p className="text-center text-gray-600 text-sm font-semibold mt-4">
                 Already have an account?{" "}
                 <Link
                   to="/auth/login?role=admin"
-                  className="text-purple-500 hover:underline font-medium hover:font-bold ">
+                  className="text-purple-500  hover:underline font-semibold hover:text-green-500 ">
                   Login
                 </Link>
               </p>
             </div>
           </form>
-        </div>
-      </div>
-    </div>
+        </motion.article>
+      </motion.section>
+    </main>
   );
 };
 

@@ -27,8 +27,7 @@ export const fetchEmployee = createAsyncThunk(
       localStorage.removeItem("email");
       return response.data;
     } catch (error: any) {
-      const errMsg = error.response?.data?.message || Messages.SOMETHING_TRY_AGAIN;
-      return rejectWithValue(errMsg);
+      return rejectWithValue(error);
     }
   }
 );

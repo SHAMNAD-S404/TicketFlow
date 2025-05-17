@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { motion } from "framer-motion";
 import ForgotImg from "../../assets/images/forgot2.png";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import regexPatterns from "@/utils/regexPattern";
@@ -15,9 +16,7 @@ interface ForgotPassEmailProps {
 }
 
 const ForgotPassEmail: React.FC<ForgotPassEmailProps> = ({ onBacktoLogin }) => {
-
-  //component states
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
@@ -33,54 +32,73 @@ const ForgotPassEmail: React.FC<ForgotPassEmailProps> = ({ onBacktoLogin }) => {
       const response = await forgotPasswordReq(email as string);
       if (response) {
         Swal.fire({
-          title: "success",
-          text : response.message,
-          icon:"success"
-        }).then(()=>navigate("/"))
-        
+          title: "Success",
+          text: response.message,
+          icon: "success",
+        }).then(() => navigate("/"));
       }
     } catch (error) {
-      toast.error(getErrMssg(error))
+      toast.error(getErrMssg(error));
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col md:flex-row justify-center items-center h-screen bg-blue-50">
-      {/* Left Side: Form */}
-      <div className="bg-blue-100 rounded-lg shadow-md p-6 w-full max-w-xl h-3/4">
-        <button onClick={onBacktoLogin} className="text-blue-600 hover:no-underline flex items-center mb-4">
-          <span className="font-medium hover:text-purple-600 hover:font-bold flex items-center ">
-            {" "}
-            <IoMdArrowRoundBack /> Back to login
-          </span>
-        </button>
-        <h2 className="text-3xl md:mt-20 font-bold text-gray-900">
-          Forgot your <span className="text-blue-600 ">password?</span>
-        </h2>
-        <p className="mt-2 text-gray-600 font-medium ">
-          Don’t worry, happens to all of us. Enter your email below to recover your password.
-        </p>
-        <input
-          type="email"
-          ref={inputRef}
-          placeholder="Enter your registered email ID"
-          className="w-full mt-4 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+    <section className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-blue-50 p-4">
+      {/* Left Side - Form */}
+      <motion.article
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="bg-blue-100 shadow-lg rounded-2xl p-6 md:p-10 w-full max-w-xl md:mr-6 mb-6 md:mb-0">
         <button
-          onClick={handleForgotPassword}
-          disabled={loading}
-          className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg text-lg font-medium hover:bg-orange-600 hover:text-black hover:font-medium transition ease-out duration-300 ">
-          {loading ? "Processing" : "Submit" }
+          onClick={onBacktoLogin}
+          className="text-blue-600 hover:text-purple-600 flex items-center font-medium mb-6">
+          <IoMdArrowRoundBack className="mr-1 text-lg" />
+          Back to login
         </button>
-      </div>
 
-      {/* Right Side: Image */}
-      <div className="hidden lg:flex md:w-1/2  items-center rounded-xl  justify-center">
-        <img src={ForgotImg} alt="Forgot Password Illustration" className="w-3/4  h-3/4" />
-      </div>
-    </div>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Forgot your <span className="text-blue-600">password?</span>
+        </h1>
+        <p className="text-gray-600 font-medium mb-6">
+          Don’t worry — it happens to all of us. Enter your email below to recover your password.
+        </p>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleForgotPassword();
+          }}>
+          <input
+            ref={inputRef}
+            type="email"
+            placeholder="Enter your registered email ID"
+            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+            required
+          />
+
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-2 rounded-lg text-lg font-medium hover:bg-orange-600 hover:text-black transition ease-in-out duration-300">
+            {loading ? "Processing..." : "Submit"}
+          </motion.button>
+        </form>
+      </motion.article>
+
+      {/* Right Side - Image */}
+      <motion.div
+        initial={{ opacity: 0, x: 60 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+        className="hidden md:flex md:w-1/2 items-center justify-center">
+        <img src={ForgotImg} alt="Forgot Password Illustration" className="w-[80%] h-[80%] object-contain rounded-xl" />
+      </motion.div>
+    </section>
   );
 };
 

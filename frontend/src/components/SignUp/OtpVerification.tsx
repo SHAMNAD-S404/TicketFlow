@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import Verify from "../../assets/images/verify.png";
 import { otpVerification, resendOTP } from "../../api/services/authService";
 import { toast } from "react-toastify";
@@ -12,42 +13,33 @@ interface OtpVerificationProps {
 }
 
 const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignupForm }) => {
-  //component states
   const [otp, setOtp] = useState(["", "", "", ""]);
-  const [timer, setTimer] = useState(1 * 60 + 59); //initial countdown
-  const [isResending, setIsResending] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [timer, setTimer] = useState(119);
+  const [isResending, setIsResending] = useState(false);
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef<(HTMLInputElement | null)[]>([]);
   const navigate = useNavigate();
 
-  //Handle OTP input change
   const handleInputChange = (index: number, value: string) => {
     if (value.length > 1) return;
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
-
-    //focus move
-    if (value && index < otp.length - 1) {
-      inputRef.current[index + 1]?.focus();
-    }
+    if (value && index < otp.length - 1) inputRef.current[index + 1]?.focus();
   };
 
   const handleCancel = async () => {
     const result = await showCustomeAlert({
-      title: "Are you sure about it",
-      text: "After  you will redirect to home ",
+      title: "Are you sure?",
+      text: "You will be redirected to home.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Yes,Confirm",
-      cancelButtonText: "No,Canel",
+      confirmButtonText: "Yes, Confirm",
+      cancelButtonText: "No, Cancel",
       reverseButtons: true,
     });
     if (result.isConfirmed) {
-      Swal.fire({
-        text: "success",
-        icon: "success",
-      }).then(() => {
+      Swal.fire({ text: "Cancelled", icon: "success" }).then(() => {
         localStorage.clear();
         navigate("/");
       });
@@ -62,17 +54,14 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignupForm }) => {
     return () => clearInterval(interval);
   }, [timer]);
 
-  //resend otp
   const handleResendOtp = async () => {
     try {
       setIsResending(true);
       const email = localStorage.getItem("email");
-      if (!email) {
-        toast.error("something went wrong try again later!");
-      }
+      if (!email) return toast.error("Something went wrong. Try again!");
       const response = await resendOTP(String(email));
       if (response.success) {
-        setTimer(3 * 60 + 59);
+        setTimer(239);
         toast.success(response.message);
       }
     } catch (error) {
@@ -85,26 +74,23 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignupForm }) => {
   const handleOtpVerify = async () => {
     try {
       const otpValue = otp.join("");
-      if (otpValue.length !== 4) {
-        toast.error("Please enter valid OTP");
-      }
+      if (otpValue.length !== 4) return toast.error("Please enter valid OTP");
       const email = localStorage.getItem("email");
-      if (email === null) {
-        toast.error("Registration failed kindly try again", {
+      if (!email) {
+        toast.error("Registration failed. Try again!", {
           onClose: () => {
             localStorage.removeItem("signupStep");
             localStorage.removeItem("email");
           },
         });
+        return;
       }
       setLoading(true);
-      const response = await otpVerification(otpValue, email as string);
-
+      const response = await otpVerification(otpValue, email);
       if (response.success) {
-        onSignupForm();
         toast.success(response.message);
+        onSignupForm();
       }
-      //navigate("/login?role=admin");
     } catch (error) {
       toast.error(getErrMssg(error));
     } finally {
@@ -113,69 +99,84 @@ const OtpVerification: React.FC<OtpVerificationProps> = ({ onSignupForm }) => {
   };
 
   return (
-    <div className="flex  items-center justify-center h-screen  bg-gray-100">
-      <div className="bg-blue-50 phone:p-8 md:p-11 min-h-[600px] rounded-2xl shadow-2xl  grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-6xl">
-        {/*Left section*/}
-        <div className="flex flex-col justify-center ">
-          <h1 className="text-4xl text-center font-bold mb-4 text-gray-800">Verify code</h1>
-          <p className="text-gray-600 mb-6 text-center">An authentication code has been sent to your email.</p>
+    <main className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+      <motion.section
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 80 }}
+        className="bg-white rounded-2xl shadow-lg phone:p-6 md:p-10 max-w-6xl w-full grid md:grid-cols-2 gap-6">
+        {/* Left Section */}
+        <article className="flex flex-col justify-center space-y-6">
+          <header className="text-center">
+            <h1 className="text-3xl md:text-4xl font-bold text-blue-800 mb-2">Verify Your Code</h1>
+            <p className="text-gray-600">We’ve sent an OTP to your registered email.</p>
+          </header>
 
-          {/* OTP Input Fields */}
-          <div className="flex justify-center gap-4 mb-4">
+          <div className="flex justify-center gap-4 mt-4">
             {otp.map((value, index) => (
-              <input
+              <motion.input
+                whileFocus={{ scale: 1.1 }}
                 key={index}
                 ref={(el) => (inputRef.current[index] = el)}
                 type="text"
                 maxLength={1}
                 value={value}
                 onChange={(e) => handleInputChange(index, e.target.value)}
-                className="w-12 h-12 border-2 border-gray-300 rounded-lg text-center text-xl font-semibold focus:border-blue-500 focus:outline-none"
+                className="w-12 h-12 text-center text-xl border-2 border-gray-300 rounded-md focus:outline-none focus:border-blue-500 transition-all duration-200"
               />
             ))}
           </div>
 
-          <div>
-            {/* Timer and Resend */}
-            <p className="text-sm text-gray-600 mb-4">
-              Didn’t receive a code?{" "}
-              {timer === 0 ? (
-                <span
-                  onClick={handleResendOtp}
-                  className={`text-blue-500 cursor-pointer ${isResending ? "opacity-50" : ""}`}>
-                  {isResending ? "Resending..." : "Resend OTP"}
-                </span>
-              ) : (
-                <span className="text-red-500">
-                  Resend OTP in {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, "0")}
-                </span>
-              )}
-            </p>
+          <div className="text-center text-sm text-gray-600">
+            Didn’t receive a code?{" "}
+            {timer === 0 ? (
+              <button
+                disabled={isResending}
+                onClick={handleResendOtp}
+                className={`text-blue-600 font-semibold hover:underline transition duration-150 ${
+                  isResending && "opacity-50 cursor-not-allowed"
+                }`}>
+                {isResending ? "Resending..." : "Resend OTP"}
+              </button>
+            ) : (
+              <span className="text-red-500 font-medium">
+                Resend in {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, "0")}
+              </span>
+            )}
           </div>
-          <div className="flex flex-col gap-5">
-            {/* Verify Button */}
-            <button
-              type="button"
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-green-600 text-white py-2 rounded-lg text-lg font-semibold transition-transform duration-300"
-              onClick={handleOtpVerify}>
-              {loading ? "Verifying..." : "Verify"}
-            </button>
-            <button
-              type="button"
-              className="w-full bg-red-600 hover:bg-purple-600 text-white py-2 rounded-lg text-lg font-semibold"
-              onClick={handleCancel}>
-              Cancel
-            </button>
-          </div>
-        </div>
 
-        {/* Right Section: Image */}
-        <div className="hidden md:flex items-center justify-center bg-blue-100 rounded-2xl shadow-2xl ">
-          <img src={Verify} alt="OTP Verification" className="w-full object-cover" />
-        </div>
-      </div>
-    </div>
+          <footer className="flex flex-col gap-3">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              type="button"
+              onClick={handleOtpVerify}
+              disabled={loading}
+              className="w-full bg-blue-500 hover:bg-green-500 text-white py-2 rounded-lg font-semibold text-lg transition">
+              {loading ? "Verifying..." : "Verify OTP"}
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              type="button"
+              onClick={handleCancel}
+              className="w-full bg-red-500 hover:bg-black text-white py-2 rounded-lg font-semibold text-lg">
+              Cancel
+            </motion.button>
+          </footer>
+        </article>
+
+        {/* Right Section */}
+        <aside className="hidden md:flex items-center justify-center rounded-xl overflow-hidden bg-blue-100">
+          <motion.img
+            src={Verify}
+            alt="Verification Illustration"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="w-full h-auto object-contain p-6"
+          />
+        </aside>
+      </motion.section>
+    </main>
   );
 };
 

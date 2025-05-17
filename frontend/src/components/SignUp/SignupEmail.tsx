@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 import VerifyEmail from "../../assets/images/verifyemail .png";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -13,7 +14,7 @@ interface SignupFormProps {
   onVerifyEmail: () => void;
 }
 
-const Singup_Email: React.FC<SignupFormProps> = ({ onVerifyEmail }) => {
+const Signup_Email: React.FC<SignupFormProps> = ({ onVerifyEmail }) => {
   const {
     register,
     handleSubmit,
@@ -36,72 +37,77 @@ const Singup_Email: React.FC<SignupFormProps> = ({ onVerifyEmail }) => {
   };
 
   return (
-    <div className="min-h-screen phone:bg-white md:bg-gray-100  flex items-center justify-center px-4 ">
-      {/* container */}
-      <div className="bg-white  min-h-[600px] shadow-2xl my-20  phone:mt-4 rounded-xl flex  max-w-7xl w-full  overflow-hidden ">
-        {/* Left section - Image */}
-        <div className="hidden md:flex items-center justify-center bg-blue-100 w-1/2 ">
-          <img src={VerifyEmail} alt="Signup Illustration" className="h-full object-contain" />
-        </div>
-        {/* Right Section - Form */}
-        <div className="w-full md:w-1/2 phone:px-8 md:px-14 py-10 bg-blue-50 lex flex-col justify-between">
-          <h2 className="phone:text-2xl md:text-3xl font-bold text-gray-800 mb-2 text-center ">
-            Register Your Company
-          </h2>
-          <hr />
-          <p className="text-gray-600 text-sm mt-1 mb-4 text-center">
-            Let’s get you all set up so you can start creating your company account.
-          </p>
-          <h4 className="text-center phone:text-lg md:text-xl font-semibold text-blue-600">Verify your email</h4>
+    <section className="min-h-screen flex items-center justify-center px-4 bg-blue-50">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4 }}
+        className="flex flex-col md:flex-row w-full max-w-7xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+        {/* Left: Image */}
+        <motion.aside
+          initial={{ x: -50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="hidden md:flex w-1/2 items-center justify-center bg-blue-100 p-6">
+          <img src={VerifyEmail} alt="Signup Illustration" className="mh-auto object-contain" />
+        </motion.aside>
 
-          {/*Form*/}
-          <form className="space-y-6 mt-4 " onSubmit={handleSubmit(formSubmit)}>
-            <div className=" grid grid-cols-1 gap-2">
-              <div>
-                <label className="text-sm font-semibold text-gray-600">Enter company email</label>
-                <input
-                  type="email"
-                  placeholder="name@company.com"
-                  className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value: regexPatterns.email,
-                      message: "Invalid email ",
-                    },
-                  })}
-                />
-                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-              </div>
+        {/* Right: Form */}
+        <motion.article
+          initial={{ x: 50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="w-full md:w-1/2 px-6 md:px-10 py-10 bg-blue-50 flex flex-col justify-center">
+          <header className="text-center mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800">Register Your Company</h2>
+            <hr className="my-3" />
+            <p className="text-sm text-gray-600">
+              Let’s get you all set up so you can start creating your company account.
+            </p>
+            <h4 className="mt-3 text-lg md:text-xl font-semibold text-blue-600">Verify your email</h4>
+          </header>
+
+          <form className="space-y-6" onSubmit={handleSubmit(formSubmit)} noValidate>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Enter company email</label>
+              <input
+                type="email"
+                placeholder="name@company.com"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: regexPatterns.email,
+                    message: "Invalid email",
+                  },
+                })}
+              />
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
             </div>
 
-            {/* Buttons */}
-            <div className="mt-6">
+            <div>
               <button
                 type="submit"
-                className="w-full bg-purple-600 text-white py-2 rounded-md  hover:font-bold hover:bg-gradient-to-r from-blue-500 to-green-600 font-medium transition">
+                className="w-full bg-purple-600 text-white py-2 rounded-md font-medium hover:font-bold hover:bg-gradient-to-r from-blue-500 to-green-500 transition duration-200">
                 Verify email
               </button>
-              <hr className="my-3 " />
-              <h4 className="text-center">OR</h4>
-              {/*Google sign up session*/}
-
+              <hr className="my-4" />
+              <p className="text-center text-gray-600">OR</p>
               <GoogleSignIn />
-
               <p className="text-center text-gray-600 text-sm mt-4">
                 Already have an account?{" "}
                 <Link
                   to="/auth/login?role=admin"
-                  className="text-purple-500 hover:underline font-medium hover:font-bold hover:text-blue-600 ">
+                  className="text-purple-500 hover:underline font-medium hover:text-blue-600">
                   Login
                 </Link>
               </p>
             </div>
           </form>
-        </div>
-      </div>
-    </div>
+        </motion.article>
+      </motion.div>
+    </section>
   );
 };
 
-export default Singup_Email;
+export default Signup_Email;
