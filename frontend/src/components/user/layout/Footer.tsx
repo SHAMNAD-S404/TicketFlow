@@ -15,14 +15,6 @@ const Footer: React.FC = () => {
     { link: "#", name: "FAQ" },
   ];
 
-  const socialVariants = {
-    hover: (custom: number) => ({
-      y: -5,
-      rotate: custom,
-      scale: 1.2,
-      transition: { type: "spring", stiffness: 300 },
-    }),
-  };
 
   return (
     <motion.footer
