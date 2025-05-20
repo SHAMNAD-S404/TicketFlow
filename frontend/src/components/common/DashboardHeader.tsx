@@ -18,7 +18,6 @@ import {
   markAllAsRead,
 } from "../../redux store/notificatoinSlice";
 
-
 interface DashboardHeaderProps {
   name: string;
   userId: string;
@@ -27,7 +26,6 @@ interface DashboardHeaderProps {
 }
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name, userId, onLogout, profileImage }) => {
-
   const dispatch = useDispatch();
   const socketRef = useRef<Socket | null>(null);
   const notificationPanelRef = useRef<HTMLDivElement>(null);
@@ -47,20 +45,13 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name, userId, onLogou
       });
 
       socketRef.current.on("connect", () => {
-        console.log("Notification socket connected : ", socketRef.current?.id);
-
         //register user for notification upon connection
         if (userId) {
-          socketRef.current?.emit("register_user", userId);
-
           //fetch initial notification
           socketRef.current?.emit("fetch_notification", userId, 10);
         }
       });
 
-      socketRef.current.on("connect_error", (err) => {
-        console.error("Notification socket connection error ", err);
-      });
     }
 
     return () => {
@@ -127,38 +118,25 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name, userId, onLogou
   };
 
   return (
-    <header className="bg-gradient-to-r from-gray-100 via-gray-200 to-gray-200 border-b border-gray-200 px-6 py-2 rounded-xl w-full ">
-      <div className="flex items-center justify-between ">
+    <header className="bg-gradient-to-r from-gray-100 via-gray-200 to-gray-200 border-b border-gray-200 px-4 py-3 rounded-xl w-full">
+      <div className="flex flex-col phone:flex-row phone:items-center phone:justify-between gap-4">
         {/* Left side - Greeting */}
-        <section>
-          <h1 className="text-xl italic font-medium  text-gray-800">
+        <section className="text-center phone:text-left">
+          <h1 className="text-lg phone:text-xl italic font-medium text-gray-800">
             <span className="text-blue-500">Hello,</span> {name}
           </h1>
           <p className="text-sm font-medium text-pink-400 mt-1 font-inter">Have a good day!</p>
         </section>
 
-        {/* Middle - Search Bar */}
-
-        {/* <section className="flex-1 max-w-2xl mx-8    ">
-          <div className="relative">
-            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-full lg:w-2/3 pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-2xl shadow-xl focus:outline-none focus:ring-1 focus:ring-gray-300 hover:shadow-gray-400 transition-all duration-200 font-inter placeholder:text-gray-400"
-            />
-          </div>
-        </section> */}
-
         {/* Right side - User Profile & Notifications */}
-        <aside className="flex items-center space-x-10">
+        <aside className="flex flex-col phone:flex-row phone:items-center phone:space-x-6 gap-3 phone:gap-0 items-center justify-center">
           {/* Notifications */}
           <section className="relative" ref={notificationPanelRef}>
             <button
-              className="relative p-3 bg-gray-100 hover:bg-white rounded-xl shadow-xl transition-colors duration-200"
+              className="relative p-2 bg-gray-100 hover:bg-white rounded-xl shadow-md transition-colors duration-200"
               onClick={handleToggleNotifications}
               data-notification-toggle>
-              <FaBell className="h-5 w-5 text-black transition-transform duration-300 hover:animate-ring" />
+              <FaBell className="h-5 w-5 text-black hover:animate-ring transition-transform duration-300" />
               {unreadCount > 0 && (
                 <span className="absolute top-1 right-1 flex items-center justify-center h-4 w-4 bg-red-500 text-white text-xs font-bold rounded-full">
                   {unreadCount > 9 ? "9+" : unreadCount}
@@ -175,10 +153,9 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name, userId, onLogou
           </section>
 
           {/* User Profile */}
-          <section className="flex items-center cursor-pointer  bg-gray-100 rounded-xl shadow-2xl shadow-gray-600 "
-            onClick={() => navigate(`profile`)}
-          >
-            <div className="flex flex-col items-end  "></div>
+          <section
+            className="flex items-center cursor-pointer  p-1.5 rounded-xl "
+            onClick={() => navigate("profile")}>
             <img
               src={
                 profileImage
@@ -186,16 +163,15 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({ name, userId, onLogou
                   : "https://imgs.search.brave.com/YH7ay2TlJuJ4PGUTGS-GmsnCPqYehMWwx13lWbFYQnk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS1wc2QvM2Qt/cmVuZGVyaW5nLWhh/aXItc3R5bGUtYXZh/dGFyLWRlc2lnbl8y/My0yMTUxODY5MTUz/LmpwZz9zZW10PWFp/c19oeWJyaWQ"
               }
               alt="Profile"
-              className="h-10 w-10 rounded-full object-cover ring-2 ring-white shadow-xl shadow-gray-500 "
+              className="h-9 w-9 phone:h-10 phone:w-10 rounded-full object-cover ring-2 ring-white shadow-md shadow-gray-500"
             />
           </section>
 
-          {/* logout section */}
-          <section className="flex items-center  rounded-xl shadow-2xl shadow-gray-600 ">
-            <div className="flex flex-col shadow-2xl shadow-gray-400 items-end  "></div>
+          {/* Logout */}
+          <section className="flex items-center">
             <FaPow
-              onClick={() => onLogout()}
-              className="h-9 w-9 rounded-full object-cover text-black shadow-xl shadow-gray-500 hover:text-red-600    hover:shadow-xl cursor-pointer "
+              onClick={onLogout}
+              className="h-8 w-8 phone:h-9 phone:w-9 text-black hover:text-red-600 transition-colors duration-200 cursor-pointer "
             />
           </section>
         </aside>

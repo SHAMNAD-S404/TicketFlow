@@ -87,8 +87,7 @@ const AssignedTickets: React.FC<IManageTickets> = ({ handleCancel, handleManageT
         ];
         setCardStats(stats);
         setCardLoading(false);
-      } catch (error) {
-        console.log(error);
+      } catch (_error) {
       }
     };
 

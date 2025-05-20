@@ -57,10 +57,6 @@ const ProfileUI: React.FC = () => {
     setLoading(true);
 
     try {
-      for (const [key, value] of formData.entries()) {
-        console.log(key, value);
-      }
-
       const response = await updateEmployeeDp(formData);
       if (response.success) {
         setPreviewImage(response.imageUrl);

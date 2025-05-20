@@ -1,9 +1,4 @@
-import {
-  AxiosError,
-  AxiosRequestConfig,
-  AxiosResponse,
-  InternalAxiosRequestConfig,
-} from "axios";
+import { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { toast } from "react-toastify";
 
 export const setupRequestInterceptor = (axiosInstance: any) => {
@@ -34,14 +29,11 @@ export const setupResponseInterceptor = (axiosInstance: any) => {
           await axiosInstance.post("/auth/refreshToken");
           return axiosInstance(originalRequest);
         } catch (error) {
-          toast.error(
-            "Account blocked or something went wrong ! Try to login again !",
-            {
-              onClose: () => {
-                localStorage.clear(), (window.location.href = "/");
-              },
-            }
-          );
+          toast.error("Account blocked or something went wrong ! Try to login again !", {
+            onClose: () => {
+              localStorage.clear(), (window.location.href = "/");
+            },
+          });
 
           return Promise.reject(error);
         }

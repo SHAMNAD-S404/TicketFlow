@@ -20,7 +20,6 @@ const EmployeeDashboard: React.FC = () => {
 
   const handleMenuSelect = (menu: string) => {
     setActiveMenu(menu);
-    console.log(activeMenu);
     navigate(`/employee/dashboard/${menu.toLowerCase().replace(/\s/g, "")}`);
   };
 
@@ -57,7 +56,7 @@ const EmployeeDashboard: React.FC = () => {
 
   return (
     <div className="flex h-screen w-full">
-      <Sidebar role={role} onMenuSelect={handleMenuSelect} />
+      <Sidebar role={role} onMenuSelect={handleMenuSelect} activeMenu={activeMenu} />
 
       <div className="flex-1 flex flex-col w-full ">
         <DashboardHeader

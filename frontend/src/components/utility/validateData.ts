@@ -2,8 +2,6 @@ import { IHandlePurchaseData } from "@/interfaces/IPurchaseData";
 
 // Helper function to validate purchase data
 export const validatePurchaseData = (data: IHandlePurchaseData): { isValid: boolean; message: string } => {
-
-    console.log(data);
     
   // Check each required field
   if (!data.authUserUUID) return { isValid: false, message: "User ID is missing" };

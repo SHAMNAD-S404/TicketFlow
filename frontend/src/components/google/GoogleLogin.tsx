@@ -33,7 +33,7 @@ export const LoginWithGoogle : React.FC = () => {
   };
 
   const handleError = () => {
-    console.error("Google login failed");
+    toast.error("Google login failed");
   };
 
   return (

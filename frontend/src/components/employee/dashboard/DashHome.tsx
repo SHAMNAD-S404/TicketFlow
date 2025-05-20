@@ -62,10 +62,8 @@ const DashHome: React.FC = () => {
         ];
         setCardStats(stats);
         setCardLoading(false);
-      } catch (error) {
+      } catch (_error) {
         setIsLoading(true);
-        console.log(error);
-        
       }
     };
 
@@ -77,8 +75,6 @@ const DashHome: React.FC = () => {
       try {
         setIsLoading(true);
         const result = await fetchEmployeeDashboardData();
-        console.log(result.data);
-        
         setTicketData(result.data.ticketCountByStatus);
         setCountByDepartment(result.data.ticketsCountByDepartment);
         setTicketByPriority(result.data.ticketCountByPrioriy);

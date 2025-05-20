@@ -15,8 +15,7 @@ interface IDockDemo {
   handleVideoCall: () => void;
 }
 
-export const  DockDemo : React.FC<IDockDemo> = ({ticketId , handleChat,handleVideoCall}) => {
-  console.log(ticketId);
+export const  DockDemo : React.FC<IDockDemo> = ({ handleChat,handleVideoCall}) => {
   
   return (
     <div className="relative ">

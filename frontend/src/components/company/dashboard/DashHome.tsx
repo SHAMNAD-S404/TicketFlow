@@ -62,10 +62,8 @@ const DashHome: React.FC = () => {
         ];
         setCardStats(stats);
         setCardLoading(false);
-      } catch (error) {
+      } catch (_error) {
         setIsLoading(true);
-        console.log(error);
-        
       }
     };
 

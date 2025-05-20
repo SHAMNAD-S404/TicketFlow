@@ -1,9 +1,6 @@
 import axios from "axios";
 import secrets from "@/config/secrets";
-import {
-  setupRequestInterceptor,
-  setupResponseInterceptor,
-} from "./interceptors";
+import { setupRequestInterceptor, setupResponseInterceptor } from "./interceptors";
 
 const axiosInstance = axios.create({
   baseURL: secrets.APIGATEWAY_URL,
@@ -11,9 +8,8 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials : true, 
+  withCredentials: true,
 });
-
 
 setupResponseInterceptor(axiosInstance);
 

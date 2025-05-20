@@ -61,12 +61,6 @@ const ProfileUI: React.FC = () => {
     setLoading(true);
 
     try {
-      console.log(selectedFile);
-      console.log("fromdata:", formData);
-      for (const [key, value] of formData.entries()) {
-        console.log(key, value);
-      }
-
       const response = await updateCompanyDp(formData);
       if (response.success) {
         setPreviewImage(response.imageUrl);

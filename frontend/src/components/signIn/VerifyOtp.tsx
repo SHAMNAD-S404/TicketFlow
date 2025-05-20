@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Verify from "../../assets/images/verify.png";
+import { toast } from "react-toastify";
 
 interface VerifyOtpProps {
   userType: "admin" | "employee";
@@ -41,8 +42,7 @@ const VerifyOtp: React.FC<VerifyOtpProps> = ({ verifyHandler }) => {
       setTimer(4 * 60 + 59);
       alert("OTP SENDED");
     } catch (error) {
-      console.log("failed to send otp", error);
-      alert("Failed to send otp");
+      toast.error("failed to send OTP ,TRY AGIAN !")
     } finally {
       setIsResending(false);
     }

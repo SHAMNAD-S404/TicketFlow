@@ -20,7 +20,6 @@ export const searchInputValidate = (value: string): boolean => {
 
     return true;
   } catch (error) {
-    console.log("search input validation failed : ", error);
     throw error;
   }
 };

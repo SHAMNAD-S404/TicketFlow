@@ -1,13 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Page404img from "../assets/images/404.png"; // Adjust the path as needed
+import Page404img from "../assets/images/404.v2.jpg";
 
 const NotFound: React.FC = () => {
   const navigate = useNavigate();
 
   return (
     <div
-      className=" bg-blue-200 flex  flex-col items-center justify-center h-screen bg-cover bg-center"
+      className=" bg-blue-200 flex  flex-col items-center justify-center h-screen bg-cover  bg-center "
       style={{ backgroundImage: `url(${Page404img})` }} // Dynamically set the background image
     >
       <div className="bg-white/80 p-6 rounded-2xl shadow-lg text-center">

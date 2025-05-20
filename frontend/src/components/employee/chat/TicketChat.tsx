@@ -56,11 +56,11 @@ const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1, 
 
       // Global listeners
       socketRef.current.on("connect", () => {
-        console.log("Socket connected:", socketRef.current?.id);
+        // console.log("Socket connected:", socketRef.current?.id);
       });
 
-      socketRef.current.on("connect_error", (err) => {
-        console.error("Socket connection error:", err);
+      socketRef.current.on("connect_error", (_err) => {
+        // console.error("Socket connection error:", err);
         toast.error("Connection error. Please refresh the page.");
       });
     }
@@ -68,7 +68,6 @@ const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1, 
     // Cleanup socket on component unmount
     return () => {
       if (socketRef.current) {
-        console.log("Disconnecting socket");
         socketRef.current.disconnect();
         socketRef.current = null;
       }
@@ -111,7 +110,7 @@ const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1, 
 
   // Function to create new chat room if it doesn't exist
   const initializeChat = useCallback(
-    async (chatTicketID: string, chatSender: string) => {
+    async (chatTicketID: string, _chatSender: string) => {
       if (!socketRef.current) return;
 
       try {
@@ -134,12 +133,9 @@ const TicketChat: React.FC<ChatProps> = ({ ticketID, sender, senderName, user1, 
 
             setChatRooms(roomsResponse.data);
             setMessages(messagesResponse.data);
-            console.log(chatSender);
-            
-          } catch (error) {
-            toast.error("Error fetching messages after initialization");
-            console.log(error);
-            
+                      
+          } catch (_error) {
+            toast.error("Error fetching messages after initialization");            
           }
         }, 1500);
       } catch (error) {

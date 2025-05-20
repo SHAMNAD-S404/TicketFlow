@@ -21,7 +21,6 @@ const CompanyDashboard: React.FC = () => {
 
   const handleMenuSelect = (menu: string) => {
     setActiveMenu(menu);
-    console.log(activeMenu);
     navigate(`/company/dashboard/${menu.toLowerCase().replace(/\s/g, "")}`);
   };
 
@@ -64,17 +63,22 @@ const CompanyDashboard: React.FC = () => {
 
   return (
     <div className="flex h-screen w-full">
-      <Sidebar role={role} isSubscriptionExpired={company.isSubscriptionExpired}  onMenuSelect={handleMenuSelect} />
+      <Sidebar
+        role={role}
+        isSubscriptionExpired={company.isSubscriptionExpired}
+        onMenuSelect={handleMenuSelect}
+        activeMenu={activeMenu}
+      />
 
       <div className="flex-1 flex flex-col w-full ">
-        <DashboardHeader 
+        <DashboardHeader
           name={company.companyName}
           onLogout={handleLogout}
-          profileImage={company.imageUrl} 
+          profileImage={company.imageUrl}
           userId={company._id}
-          />
+        />
 
-        <div className="p-2 bg-gray-100  flex-1 ">
+        <div className="flex-1 overflow-y-auto bg-gray-100 p-2 ">
           <Outlet />
         </div>
       </div>

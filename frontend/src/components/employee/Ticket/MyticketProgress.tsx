@@ -91,8 +91,7 @@ const MyTicketProgress: React.FC<IMyTicketProgress> = ({
         ];
         setCardStats(stats);
         setCardLoading(false);
-      } catch (error) {
-        console.log(error);
+      } catch (_error) {
       } finally {
         setLoading(false);
       }

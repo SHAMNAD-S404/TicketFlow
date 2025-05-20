@@ -98,8 +98,8 @@ const AllTickets: React.FC<IAllTickets> = ({ handleCancel, handleManageTicket, h
         ];
         setCardStats(stats);
         setCardLoading(false);
-      } catch (error) {
-        console.log(error);
+      } catch (_error) {
+        
       }
     };
 
