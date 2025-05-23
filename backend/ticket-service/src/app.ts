@@ -12,6 +12,7 @@ const stream = {
   },
 };
 
+
 dotenv.config();
 validateEnvVariables();
 
@@ -26,6 +27,7 @@ app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
 
+// for in app logging
 app.use((req: Request, res: Response, next: NextFunction) => {
   console.log("Incoming Request Path in ticket-service", req.path);
   console.log("Incoming Request Body in ticket-service", req.body);

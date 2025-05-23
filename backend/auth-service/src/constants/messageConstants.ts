@@ -13,7 +13,7 @@ export const Messages = {
     NO_ACCESS: "Unauthorized Access",
     INVALID_REQUEST: "Invalid request",
     INVALID_CREDENTIALS: "Invalid Credentials",
-    ALL_FILED_REQUIRED_ERR : "Provide all required fields",
+    ALL_FILED_REQUIRED_ERR : "Provide all required fields and valid input",
     VERIFIED_EMAIL_ERR : "Provide Verified Email ID",
     FAIL_TRY_AGAIN : "Operation failed Try again !",
     REGISTER_SUCCESS: "Registraction successfull !",
@@ -33,9 +33,15 @@ export const Messages = {
     SOMETHING_WENT_WRONG : "Something went wrong try again later",
     DATA_NOT_FOUND : "requested data not found",
     PAYLOAD_NOT_FOUND : "Payload data not found!",
-    EMAIL_STORED_AND_CONTINUE : "successfull, fill the form to continue", 
-    
-
+    EMAIL_STORED_AND_CONTINUE : "successfull, fill the form to continue",
+    OPERATION_ROLLBACKED  : "Failed to save data in CS DB, user data rollbacked ", 
+    FIRST_LOGIN_SUCCESS : "Login successfull. Reset your password and continue !",
+    REGISTRATION_IN_PROGRESS :  "User registration already in progress",
+    OTP_SENDED : "Kindly check your email for OTP ",
+    UPDATE_PASS_FAILED : "update password was failed ! retry again",
+    UPDATE_PASS_SUCCESS : "successfully updated password ! kindly login with new credentials",
+    LOGOUT_SUCCESS  : "logout successfully!",
+    ROUTE_WILD_CARD_MESSAGE : "Endpoint not found. Please check the URL.",
 
   };
   

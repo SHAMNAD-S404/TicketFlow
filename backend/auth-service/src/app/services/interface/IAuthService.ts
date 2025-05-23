@@ -15,7 +15,7 @@ export interface IGoogleTokenResponse extends basicResponse {
 }
 export interface IActiveUserResponse extends basicResponse {
   userData: IUser | null;
-  isBlock? : boolean;
+  isBlock?: boolean;
 }
 
 export interface IGenerateUserTokenResponse extends basicResponse {
@@ -23,10 +23,15 @@ export interface IGenerateUserTokenResponse extends basicResponse {
   refreshToken: string;
 }
 
-export interface IAuthService {
-  registerUser(data: RegisterUserDTO): Promise<{ message: string; success: boolean; statusCode: number }>;
+export interface IGetUserRoleResponse extends basicResponse {
+  role?: string;
+}
 
-  verifyOTP(email: string, otp: string): Promise<{ message: string; success: boolean }>;
+//============================== INTERFACE FOR AUTH SERVCIE ==============================================
+export interface IAuthService {
+  registerUser(data: RegisterUserDTO): Promise<basicResponse>;
+
+  verifyOTP(email: string, otp: string): Promise<basicResponse>;
 
   verifyLogin(
     email: string,
@@ -34,6 +39,7 @@ export interface IAuthService {
   ): Promise<{
     message: string;
     success: boolean;
+    statusCode: number;
     tockens?: { accessToken: string; refreshToken: string };
     isFirst?: boolean;
     role?: string;
@@ -50,15 +56,17 @@ export interface IAuthService {
     role?: string;
   }>;
 
-  verifyEmail(email: string): Promise<{ message: string; success: boolean }>;
+  verifyEmail(email: string): Promise<basicResponse>;
 
-  updateUserPassword(email: string, password: string): Promise<{ message: string; success: boolean }>;
+  updateUserPassword(email: string, password: string): Promise<basicResponse>;
 
-  getUserRole(email: string): Promise<{ message: string; success: boolean; role?: string }>;
+  getUserRole(email: string): Promise<IGetUserRoleResponse>;
 
-  getResendOTP(email: string): Promise<{ message: string; success: boolean }>;
+  getResendOTP(email: string): Promise<basicResponse>;
 
-  verifyUser(email: string): Promise<{ message: string; success: boolean; statusCode: number; accessToken?: string }>;
+  verifyUser(
+    email: string
+  ): Promise<{ message: string; success: boolean; statusCode: number; accessToken?: string }>;
 
   updateUserBlockStatus(
     email: string
@@ -70,7 +78,10 @@ export interface IAuthService {
 
   changePasswordService(data: IChangePassData): Promise<basicResponse>;
 
-  updateDocumentService(searchQuery: Record<string, any>, updateQuery: Record<string, any>): Promise<IUpdateOneDocResp>;
+  updateDocumentService(
+    searchQuery: Record<string, any>,
+    updateQuery: Record<string, any>
+  ): Promise<IUpdateOneDocResp>;
 
   extractGoogleToken(token: string): Promise<IGoogleTokenResponse>;
 

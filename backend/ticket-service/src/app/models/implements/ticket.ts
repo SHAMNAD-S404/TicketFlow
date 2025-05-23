@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { ITicket, TicketStatus } from "../interface/ITicketModel";
 
 const ticketSchema: Schema = new Schema<ITicket>(
@@ -98,5 +98,5 @@ const ticketSchema: Schema = new Schema<ITicket>(
   }
 );
 
-const TicketModel = mongoose.model<ITicket >("tickets", ticketSchema);
+const TicketModel = mongoose.model<ITicket>("tickets", ticketSchema);
 export default TicketModel;

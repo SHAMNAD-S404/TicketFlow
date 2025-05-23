@@ -6,7 +6,9 @@ import { Messages } from "./constants/messageConstants";
 
 const startServer = async () => {
   try {
-    await Promise.all([connectRabbitMQ().then(() => console.log("🐇 subscription-service connected to RabbitMQ!"))]);
+    await Promise.all([
+      connectRabbitMQ().then(() => console.log("🐇 subscription-service connected to RabbitMQ!")),
+    ]);
 
     const DBConnect = await verifyDBConnection();
     if (DBConnect) {

@@ -3,13 +3,11 @@ import { sendNotification } from "../eventHandlers/notificationEventHandler";
 import { EventType } from "../EventType";
 import { channel } from "../rabbitConnection";
 
-
 const evnetHandler: { [key: string]: (data: any) => void } = {
   //@EventType is  enum const
   [EventType.TICKET_ASSIGNED]: sendNotification,
   [EventType.TICKET_STATUS_CHANGED]: sendNotification,
   [EventType.OTHER]: sendNotification,
-
 };
 
 export const mainConsumer = async (): Promise<void> => {
@@ -19,7 +17,7 @@ export const mainConsumer = async (): Promise<void> => {
     });
     console.log("🐇 Communication Main consumer queue created");
 
-    channel.consume(RabbitMQConfig.COMMUNICATION_QUEUE, async (message : any) => {
+    channel.consume(RabbitMQConfig.COMMUNICATION_QUEUE, async (message: any) => {
       if (!message) return;
 
       const data = JSON.parse(message.content.toString());

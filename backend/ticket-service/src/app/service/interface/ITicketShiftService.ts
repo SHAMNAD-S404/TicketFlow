@@ -12,6 +12,8 @@ export interface IfetchAllRequestServiceResult extends IBasicResponse {
   data?: { tickets: ITicketShiftReq[] | null; totalPages: number };
 }
 
+//========================= INTERFACE FOR TICKET SHIFT SERVICE =============================================
+
 export interface ITicketShiftService {
   createTicketShiftReqService(data: ITicketShiftReq): Promise<IBasicResponse>;
   fetchAllRequestService(params: IfetchAllRequestServiceParams): Promise<IfetchAllRequestServiceResult>;

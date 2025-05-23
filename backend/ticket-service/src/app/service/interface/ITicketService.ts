@@ -27,10 +27,18 @@ export interface AllTicketStaticsResp extends IBasicResponse {
   };
 }
 
+export interface CreateTicketResponse extends IBasicResponse {
+  data?: ITicket
+}
+
+
+//========================= INTERFACE FOR TICKET SERVICE =============================================
+
 export interface ITicketService {
+
   createTicketDocument(
     ticketData: ITicket
-  ): Promise<{ message: string; success: boolean; statusCode: number; data?: ITicket }>;
+  ): Promise<CreateTicketResponse>;
 
   fetchAllTickets(
     authUserUUID: string,

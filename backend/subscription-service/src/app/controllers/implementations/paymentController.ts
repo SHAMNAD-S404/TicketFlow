@@ -14,140 +14,191 @@ const stripe = new Stripe(secrets.stripe_secret_key, {
   apiVersion: "2025-03-31.basil",
 });
 
+
+/**
+ * @class PaymentController
+ * @description Handles incoming requests related to payments, orchestrating the flow
+ * of data between the client and the payment service layer.
+ * @implements {IPaymentController}
+ */
+
 export class PaymentController implements IPaymentController {
+
+  /**
+   * @type {IPaymentService}
+   * @description Instance of the payment service, responsible for payment-specific business logic.
+   */
   private readonly paymentService: IPaymentService;
+
+  /**
+   * @constructor
+   * @param {IPaymentService} PaymentService - The dependency for the payment service.
+   */ 
+
   constructor(PaymentService: IPaymentService) {
     this.paymentService = PaymentService;
   }
 
+//========================= CREATE CHECKOUT SESSION =============================================
+
   public createCheckoutSession = async (req: Request, res: Response): Promise<void> => {
     try {
 
-      console.log(req.body);
-      
+      //INPUT validation using zod schema
       const validateData = CreateCheckoutSchema.safeParse(req.body);
       if (!validateData.success) {
-        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.INVALID_FILED_OR_MISSING_FIELD, success: false });
+        res.status(HttpStatus.BAD_REQUEST)
+           .json({ message: Messages.INVALID_FILED_OR_MISSING_FIELD, success: false });
         return;
       }
-      const session = await this.paymentService.createCheckoutSession(validateData.data as CreateCheckoutDTO);
+
+      // create checkout session
+      const session = await this.paymentService.createCheckoutSession(
+        validateData.data as CreateCheckoutDTO
+      );
+
       res.status(HttpStatus.OK).json({
         message: Messages.SESSION_SUCCESS,
         success: true,
         sessionUrl: session.url,
       });
-      return;
+
     } catch (error) {
+
       console.log(`${Messages.ERROR_WHILE} createcheckoutSession : `, error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: Messages.SERVER_ERROR, success: false });
     }
   };
 
-  // hanle webhook
+//========================= HANLDE WEBHOOK ======================================================
+
   public handleStripeWebhook = async (req: Request, res: Response): Promise<void> => {
     try {
+
       const signature = req.headers["stripe-signature"]!;
       let event;
 
       try {
+
         event = stripe.webhooks.constructEvent(req.body, signature, secrets.stripe_webhook_secret);
+
       } catch (error) {
+
         console.error(`${Messages.WEBHOOK_SIGN_FAIL} :`, error);
-        res.status(HttpStatus.BAD_REQUEST).json({ message: Messages.VERIFICATION_FAIL, success: false });
+        res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: Messages.VERIFICATION_FAIL, success: false });
         return;
       }
 
       //hanlde checkout session completed event
       if (event.type === "checkout.session.completed") {
-        const session = event.data.object as Stripe.Checkout.Session;
 
+        const session = event.data.object as Stripe.Checkout.Session;
+        // if payment success then store data on the database
         const result = await this.paymentService.handleSuccessfulPayment(session);
         const { message, statusCode, success } = result;
 
         res.status(statusCode).json({ message, success });
-        return;
       }
     } catch (error) {
       console.log(`${Messages.ERROR_WHILE} hanlde Stripe webhook : `, error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: Messages.SERVER_ERROR, success: false });
     }
   };
 
+//========================= GET ORDER DETAILS ======================================================
+
   public getOrderDetails = async (req: Request, res: Response): Promise<void> => {
     try {
+
       const { sessionId } = req.query;
       const { role } = res.locals.userData;
 
       if (role !== Roles.Company) {
-        res.status(HttpStatus.UNAUTHORIZED)
-        .json({ message: Messages.NO_ACCESS, success: false });
-        return;
-      }
-      if (!sessionId) {
-        res.status(HttpStatus.BAD_REQUEST)
-        .json({ message: Messages.SESSION_ID_MISSING, success: false });
+        res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.NO_ACCESS, success: false });
         return;
       }
 
+      if (!sessionId) {
+        res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: Messages.SESSION_ID_MISSING, success: false });
+        return;
+      }
+
+      // Get order details from service
       const result = await this.paymentService.getOrderDetailsService(sessionId as string);
       const { message, statusCode, success, data } = result;
       res.status(statusCode).json({ message, success, data });
+
     } catch (error) {
+
       console.log(`${Messages.ERROR_WHILE} get order details : `, error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: Messages.SERVER_ERROR, success: false });
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: Messages.SERVER_ERROR, success: false });
     }
   };
 
-  // to get the all payment history by  authUserUUID
+//========================= GET ALL PAYMENT HISTORY BY UUID =============================================
+
   public fetchOrderHistory = async (req: Request, res: Response): Promise<void> => {
     try {
 
-      const { role , authUserUUID } = res.locals.userData;
+      const { role, authUserUUID } = res.locals.userData;
       if (role !== Roles.Company) {
-        res.status(HttpStatus.UNAUTHORIZED).
-        json({ message: Messages.NO_ACCESS, success: false });
+        res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.NO_ACCESS, success: false });
         return;
       }
+
       if (!authUserUUID) {
-        res.status(HttpStatus.BAD_REQUEST).
-        json({ message: Messages.SESSION_ID_MISSING, success: false });
+        res
+          .status(HttpStatus.BAD_REQUEST)
+          .json({ message: Messages.SESSION_ID_MISSING, success: false });
         return;
       }
-      
+
       const getData = await this.paymentService.getAllPaymentHistoryService(authUserUUID as string);
       const { message, statusCode, success, data } = getData;
-      res.status(statusCode).
-      json({ message, success, data });
+      res.status(statusCode).json({ message, success, data });
+
     } catch (error) {
+
       console.log(`${Messages.ERROR_WHILE} fetch order history : `, error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR)
-      .json({ message: Messages.SERVER_ERROR, success: false });
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: Messages.SERVER_ERROR, success: false });
     }
   };
 
-  //to fetch the subscription statics 
-  public fetchSubsStatics  = async (req: Request, res: Response): Promise<void> => {
+//========================= FETCH SUBSCRIPTION STATICS    =============================================
+
+  public fetchSubsStatics = async (req: Request, res: Response): Promise<void> => {
     try {
 
       const { role } = res.locals.userData;
       if (role !== Roles.Admin) {
-        res.status(HttpStatus.UNAUTHORIZED).
-        json({ message: Messages.NO_ACCESS, success: false });
+        res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.NO_ACCESS, success: false });
         return;
       }
 
       const result = await this.paymentService.getRevanueAndCount();
-      const { message, statusCode,success,data } = result;
-      res.status(statusCode).json({message,success,data})
-      
+      const { message, statusCode, success, data } = result;
+      res.status(statusCode).json({ message, success, data });
+
     } catch (error) {
+      
       console.log(`${Messages.ERROR_WHILE} fetch sub statics : `, error);
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR)
-      .json({ message: Messages.SERVER_ERROR, success: false });
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: Messages.SERVER_ERROR, success: false });
     }
-  }
+  };
 
-
+//========================= *********************************=============================================
 }
-
-

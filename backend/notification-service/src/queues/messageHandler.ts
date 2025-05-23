@@ -1,15 +1,18 @@
-import { emit, send } from "process";
 import { sendEmail } from "../utils/sendEmail";
 
 export const messageHandlers: Record<string, (payload: any) => Promise<void>> = {
+
+  // REGISTRATION EMAIL 
   registration: async ({ email, subject, template, otp, content }) => {
     await sendEmail(email, subject, template, { otp, content });
   },
 
+  // WELCOME EMAIL WITH ONE LOGIN DETAILS
   sendLoginDetails: async ({ email, subject, template, password, content }) => {
     await sendEmail(email, subject, template, { email, password, content });
   },
 
+  // CHANGE PASSWORD EMAIL LINK
   "change-password-link": async ({ email, subject, template, resetLink }) => {
     await sendEmail(email, subject, template, {
       resetLink,
@@ -18,12 +21,27 @@ export const messageHandlers: Record<string, (payload: any) => Promise<void>> = 
     });
   },
 
+  // TICKET ASSIGN EMAIL
   ticketAssigned: async ({ email, subject, template, ticketId, employeeName, priority }) => {
     await sendEmail(email, subject, template, { ticketId, employeeName, priority });
   },
 
-  ticketClosed: async ({ email, subject, template, ticketId, employeeName, closedDate, resolutionTime }) => {
-    await sendEmail(email, subject, template, { ticketId, employeeName, closedDate, resolutionTime });
+  // TICKET CLOSED EMAIL
+  ticketClosed: async ({
+    email,
+    subject,
+    template,
+    ticketId,
+    employeeName,
+    closedDate,
+    resolutionTime,
+  }) => {
+    await sendEmail(email, subject, template, {
+      ticketId,
+      employeeName,
+      closedDate,
+      resolutionTime,
+    });
   },
 };
 

@@ -1,13 +1,5 @@
 import { UserRepository } from "../../repositories/implements/userRepository";
 import { RegisterUserDTO } from "../../dtos/registerUserDTO";
-import {
-  IActiveUserResponse,
-  IAuthService,
-  IChangePassData,
-  IGenerateUserTokenResponse,
-  IGoogleTokenResponse,
-  IUpdateOneDocResp,
-} from "../../services/interface/IAuthService";
 import { hashPassword, comparePassword } from "../../../utils/hashUtils";
 import { generateOTP } from "../../../utils/otpUtils";
 import { RabbitMQConfig } from "../../../config/rabbitmq";
@@ -26,24 +18,45 @@ import { basicResponse } from "../../interfaces/basicResponse";
 import { nanoid } from "nanoid";
 import { generatesubscriptionEndDate } from "../../../utils/dateUtilFunctions";
 import { IUser } from "../../models/interface/IUser";
+import {
+  IActiveUserResponse,
+  IAuthService,
+  IChangePassData,
+  IGenerateUserTokenResponse,
+  IGetUserRoleResponse,
+  IGoogleTokenResponse,
+  IUpdateOneDocResp,
+} from "../../services/interface/IAuthService";
+
+
+/**
+ * @class AuthService
+ * @description Implements the core business logic for authentication and user management.
+ * Acts as an intermediary between controllers and data access layers.
+ * @implements {IAuthService} mplements the IAuthService interface to ensure consistent behavior
+ * @param {UserRepository} userRepository - Handles database operations related to users.
+ */
 
 export class AuthService implements IAuthService {
   constructor(private userRepository: UserRepository) {}
 
-  // user registraction ===================================================================================================
 
-  async registerUser(data: RegisterUserDTO): Promise<{ message: string; success: boolean; statusCode: number }> {
-    try {
-      const { email, password, companyName, companyType, phoneNumber, corporatedId, originCountry } = data;
 
-      //check if email and password and other details are provided
-      if (!email || !password || !companyName || !companyType || !phoneNumber || !corporatedId || !originCountry) {
-        return {
-          message: Messages.ALL_FILED_REQUIRED_ERR,
-          success: false,
-          statusCode: HttpStatus.BAD_REQUEST,
-        };
-      }
+  //==================================== USER REGISTRATION METHOD ======================================================
+
+  async registerUser(
+    data: RegisterUserDTO
+  ): Promise<basicResponse> {
+
+      const {
+        email,
+        password,
+        companyName,
+        companyType,
+        phoneNumber,
+        corporatedId,
+        originCountry,
+      } = data;
 
       //check if user already exists in Redis
       const isEmailVerified = await getRedisData(`tempEmail:${email}`);
@@ -56,7 +69,7 @@ export class AuthService implements IAuthService {
       }
 
       //check if user already exists in DB
-      const exists = await this.userRepository.findByEmail(email as string);
+      const exists = await this.userRepository.findUserByEmail(email as string);
       if (exists)
         return {
           message: Messages.USER_EXIST,
@@ -64,15 +77,11 @@ export class AuthService implements IAuthService {
           statusCode: HttpStatus.BAD_REQUEST,
         };
 
-      //hash password
       const hashedPassword = await hashPassword(password);
-
       //Generate a UUID V4
       const authUserUUID = uuidv4();
-
       // get subscriptionEndDate
       const subscriptionEndDate = generatesubscriptionEndDate();
-
       //store user data in auth-service db.
       const role = UserRoles.Company;
       const storeUser = await this.userRepository.create(
@@ -82,14 +91,8 @@ export class AuthService implements IAuthService {
         authUserUUID,
         subscriptionEndDate
       );
-      if (!storeUser) {
-        return {
-          message: Messages.FAIL_TRY_AGAIN,
-          success: false,
-          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        };
-      }
 
+      //company data payload for sending to company service
       const companyData = {
         authUserUUID: storeUser.authUserUUID,
         email,
@@ -105,8 +108,17 @@ export class AuthService implements IAuthService {
       //delete user data from reddis
       await deleteRedisData(`tempEmail:${email}`);
 
-      //sending data to company-service to store in DB.
-      const response = await publishToQueueWithRPCAndRetry(RabbitMQConfig.companyRPCQueue, companyData, 3);
+      /**
+       * sending data to company-service to store in DB.
+       * @param queueName
+       * @param sendingData
+       * @param retry_count
+       */
+      const response = await publishToQueueWithRPCAndRetry(
+        RabbitMQConfig.companyRPCQueue,
+        companyData,
+        3
+      );
 
       if (response.success) {
         return {
@@ -115,58 +127,72 @@ export class AuthService implements IAuthService {
           statusCode: HttpStatus.CREATED,
         };
       } else {
+        // Rollback the operation from the auth service
         await this.userRepository.deleteById(storeUser._id as string);
         return {
-          message: "Failed to save data in CS DB, user data rollbacked ",
+          message: Messages.OPERATION_ROLLBACKED,
           success: false,
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         };
       }
-    } catch (error) {
-      return {
-        message: String(error),
-        success: false,
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      };
-    }
   }
 
-  //=====================================================================================================================
+  //==================================== VERIFY OTP METHOD ======================================================
 
-  async verifyOTP(email: string, otp: string): Promise<{ message: string; success: boolean }> {
-    try {
+  async verifyOTP(email: string, otp: string): Promise<basicResponse> {
+
       // Check if email and OTP are provided
       if (!email || !otp) {
-        return { message: Messages.EMAIL_AND_OTP, success: false };
+        return {
+            message: Messages.EMAIL_AND_OTP,
+            success: false,
+            statusCode:HttpStatus.BAD_REQUEST
+           };
       }
 
       // Check if user exists in Redis
       const existingTempUser = await getRedisData(`verifyEmail:${email}`);
       if (!existingTempUser) {
-        return { message: Messages.USER_NOT_FOUND, success: false };
+        return {
+           message: Messages.USER_NOT_FOUND,
+           success: false,
+           statusCode : HttpStatus.BAD_REQUEST
+           };
       }
 
       // Check if user already verified data exists in Redis
       const existingTempEmail = await getRedisData(`tempEmail:${email}`);
       if (existingTempEmail) {
-        return { message: Messages.OTP_VERIFIED, success: true };
+        return {
+            message: Messages.OTP_VERIFIED,
+            success: true,
+            statusCode : HttpStatus.BAD_REQUEST
+           };
       }
 
       // Compare the provided OTP with the OTP stored in Redis
       if (existingTempUser.otp !== otp) {
-        return { message: Messages.INCORRECT_OTP, success: false };
+        return { 
+           message: Messages.INCORRECT_OTP,
+           success: false,
+           statusCode : HttpStatus.BAD_REQUEST
+           };
       }
 
       // Store user email in reddis and delete verifyemail data from reddis
-      await Promise.all([setRedisData(`tempEmail:${email}`, email, 1200), deleteRedisData(`verifyEmail:${email}`)]);
-
-      return { message: Messages.OTP_VERIFIED, success: true };
-    } catch (error) {
-      return { message: String(error), success: false };
-    }
+      await Promise.all([
+        setRedisData(`tempEmail:${email}`, email, 1200),
+        deleteRedisData(`verifyEmail:${email}`),
+      ]);
+      // if success
+      return {
+         message: Messages.OTP_VERIFIED,
+         success: true,
+         statusCode : HttpStatus.OK
+         };
   }
 
-  //====================================================================================================================
+  //================================================ *VERIFY LOGIN* ===================================================
 
   async verifyLogin(
     email: string,
@@ -174,83 +200,107 @@ export class AuthService implements IAuthService {
   ): Promise<{
     message: string;
     success: boolean;
+    statusCode : number;
     role?: string;
     tockens?: { refreshToken: string; accessToken: string };
     isFirst?: boolean;
   }> {
-    try {
+
+
       // Check if email and password are provided
       if (!email || !password) {
-        return { message: "please provide email and password", success: false };
+        return { 
+           message: Messages.ALL_FILED_REQUIRED_ERR,
+           success: false,
+           statusCode : HttpStatus.BAD_REQUEST
+           };
       }
 
       // Find the user in the database
-      const findUser = await this.userRepository.findByEmail(email);
+      const findUser = await this.userRepository.findUserByEmail(email);
       if (!findUser) {
-        return { message: "User not found", success: false };
+        return {
+            message: Messages.USER_NOT_FOUND,
+            success: false,
+            statusCode : HttpStatus.BAD_REQUEST
+           };
       }
 
       if (findUser.isBlock) {
-        return { message: Messages.USER_BLOCKED, success: false };
+        return {
+            message: Messages.USER_BLOCKED,
+            success: false,
+            statusCode : HttpStatus.BAD_REQUEST
+           };
       }
 
       // Compare the provided password with the hashed password stored in the database
       const isMatch = await comparePassword(password, findUser.password);
       if (!isMatch) {
-        return { message: "Invalid Credentials", success: false };
+        return { 
+           message: Messages.INVALID_CREDENTIALS,
+           success: false,
+           statusCode : HttpStatus.BAD_REQUEST
+           };
       }
 
-      // Generate access and refresh tokens
+      // payload for creating tokens
       const payload = {
         authUserUUID: findUser.authUserUUID,
         email: findUser.email,
         role: findUser.role,
       };
+      // Generate access and refresh tokens
       const accessToken = await generateAccessToken(payload);
       const refreshToken = await generateRefreshToken(payload);
 
+      /**
+       * for employees sending one time password through email after registration
+       * If the employee login for first time update the DB field true
+       * so the employee need to reset password after first login
+       */
       if (findUser.isFirstLogin === true) {
         return {
-          message: "Login successfull. Reset your password and continue !",
+          message: Messages.FIRST_LOGIN_SUCCESS,
           success: true,
+          statusCode : HttpStatus.OK,
           tockens: { accessToken, refreshToken },
           isFirst: true,
         };
       }
-
+      // if its regular login
       return {
         message: "Login Successfull",
         success: true,
+        statusCode : HttpStatus.OK,
         tockens: { accessToken, refreshToken },
         role: findUser.role as string,
       };
-    } catch (error) {
-      return { message: String(error), success: false };
-    }
+
   }
 
-  // verify email =====================================================================================================
+  // ========================================== *VERIFY EMAIL METHOD* ========================================================
 
-  async verifyEmail(email: string): Promise<{ message: string; success: boolean }> {
-    try {
-      // Check if email is provided
-      if (!email) {
-        return { message: "Please provide email", success: false };
-      }
-
+  async verifyEmail(email: string): Promise<basicResponse> {
+  
       // Check if email already exists in Redis
       const existingTempUser = await getRedisData(`verifyEmail:${email}`);
       if (existingTempUser) {
         return {
-          message: "User registration already in progress",
+          message: Messages.REGISTRATION_IN_PROGRESS,
           success: false,
+          statusCode: HttpStatus.BAD_REQUEST
         };
       }
 
       // Check if user already exists in the database
-      const existsUser = await this.userRepository.findByEmail(email as string);
+      const existsUser = await this.userRepository.findUserByEmail(email as string);
       if (existsUser) {
-        return { message: "User with email id already exist", success: false };
+        return {
+            message: Messages.USER_EXIST,
+            success: false,
+            statusCode : HttpStatus.BAD_REQUEST
+            };
       }
 
       // Generate OTP for email validation
@@ -271,168 +321,171 @@ export class AuthService implements IAuthService {
 
       // Send notification to notification service using RabbitMQ
       await publishToQueue(RabbitMQConfig.notificationQueue, notificationPayload);
-
-      return { message: "Kindly check your email for OTP ", success: true };
-    } catch (error) {
-      return { message: String(error), success: false };
-    }
+      return {
+          message: Messages.OTP_SENDED,
+          success: true,
+          statusCode : HttpStatus.OK
+         };
   }
 
-  //password updation ===========================================================================================
+  //===================================== UPDATE PASSWORD ======================================================
 
-  async updateUserPassword(email: string, password: string): Promise<{ message: string; success: boolean }> {
-    try {
+  async updateUserPassword(
+    email: string,
+    password: string
+  ): Promise<basicResponse> {
+
       // Check if user exists in the database
-      const userExist = await this.userRepository.findByEmail(email);
+      const userExist = await this.userRepository.findUserByEmail(email);
       if (!userExist) {
-        return { message: "user didn't exist", success: false };
+        return { 
+           message: Messages.USER_NOT_FOUND,
+           success: false,
+           statusCode : HttpStatus.BAD_REQUEST
+           };
       }
 
       // Hash the new password
       const hashedPassword = await hashPassword(password);
-
       // Update the user's password in the database
       const updatePassword = await this.userRepository.resetPassword(email, hashedPassword);
 
-      // Check if password update was successful
+      // Check if password update was successful or not
       if (!updatePassword) {
         return {
-          message: "update password was failed ! retry again",
-          success: false,
+          message : Messages.UPDATE_PASS_FAILED,
+          success : false,
+          statusCode: HttpStatus.BAD_REQUEST
         };
       }
       // Return success message
       return {
-        message: "successfully updated password ! kindly login with new credentials",
+        message: Messages.UPDATE_PASS_SUCCESS,
         success: true,
+        statusCode : HttpStatus.OK
       };
-    } catch (error) {
-      // Return error message if something goes wrong
-      return { message: String(error), success: false };
-    }
+
   }
 
-  //user role fetching ======================================================================================
+  // ============================== GET USER ROLE ================================================================
 
-  async getUserRole(email: string): Promise<{ message: string; success: boolean; role?: string }> {
-    try {
-      const userRole = await this.userRepository.findByEmail(email);
+  async getUserRole(email: string): Promise<IGetUserRoleResponse> {
+
+      const userRole = await this.userRepository.findUserByEmail(email);
+
       if (!userRole) {
-        return { message: "user not found", success: false };
+        return { 
+           message: Messages.USER_NOT_FOUND,
+           success: false,
+           statusCode : HttpStatus.BAD_REQUEST
+          };
       }
-
+      // if user data found!
       return {
-        message: "user data fetched success",
-        success: true,
-        role: userRole.role,
-      };
-    } catch (error) {
-      return { message: String(error), success: false };
-    }
-  }
-
-
-  //======================================================================================================
-
-  //Google token verification and extraction
-
-  async extractGoogleToken(token: string): Promise<IGoogleTokenResponse> {
-    try {
-      // Verify the token with the Google OAuth2 client
-      const CLIENT_ID = config.OAuthClientId;
-      const client = new OAuth2Client(CLIENT_ID);
-      const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: CLIENT_ID,
-      });
-      // Get the payload from the verified token
-      const payload = ticket.getPayload();
-      if (!payload) {
-        return { message: Messages.PAYLOAD_NOT_FOUND, success: false, statusCode: HttpStatus.BAD_REQUEST };
-      }
-      // Extract the user's email from the payload
-      const email = payload.email;
-      return { statusCode: HttpStatus.OK, message: Messages.OK, success: true, email };
-    } catch (error) {
-      throw error;
-    }
-  }
-  //======================================================================================================
-  //CHECKING FOR USER IS EXIST AND IN ACTIVE STATE
-
-  async checkIsActiveUser(email: string): Promise<IActiveUserResponse> {
-    try {
-      const isUserExist = await this.userRepository.findUserByEmail(email);
-      //checking for user exist or not!
-      if (!isUserExist) {
-        return {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: Messages.USER_NOT_FOUND,
-          success: false,
-          userData: null,
-        };
-      }
-      //checking for user blocked or not!
-      if (isUserExist.isBlock) {
-        return {
-          statusCode: HttpStatus.UNAUTHORIZED,
-          message: Messages.USER_BLOCKED,
-          success: false,
-          userData: null,
-          isBlock : true,
-        };
-      }
-      //Is user is active then send response
-      return {
-        statusCode: HttpStatus.OK,
         message: Messages.OK,
         success: true,
-        userData: isUserExist,
+        role: userRole.role,
+        statusCode : HttpStatus.OK
       };
-    } catch (error) {
-      throw error;
-    }
   }
 
-  //======================================================================================================
-  // To generate access tocken and refresh token for the user
- async generateUserToken(userData: IUser): Promise<IGenerateUserTokenResponse> {
-   try {
-      const userPayload = {
-        authUserUUID : userData.authUserUUID,
-        email : userData.email,
-        role : userData.role
-      };
-      
-      //generating tokens
-      const [ accessToken, refreshToken] = await Promise.all([
-        generateAccessToken(userPayload),
-        generateRefreshToken(userPayload)
-      ]);
+  //==================================== Google token verification and extraction  ==============================
+
+  async extractGoogleToken(token: string): Promise<IGoogleTokenResponse> {
+    // Verify the token with the Google OAuth2 client
+    const CLIENT_ID = config.OAuthClientId;
+    const client = new OAuth2Client(CLIENT_ID);
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: CLIENT_ID,
+    });
+    // Get the payload from the verified token
+    const payload = ticket.getPayload();
+    if (!payload) {
       return {
-        statusCode : HttpStatus.OK,
-        message : Messages.LOGIN_SUCCESS,
-        success : true,
-        accessToken,
-        refreshToken
-      }
-   } catch (error) {
-    throw error;
-   }
- }
+        message: Messages.PAYLOAD_NOT_FOUND,
+        success: false,
+        statusCode: HttpStatus.BAD_REQUEST,
+      };
+    }
+    // Extract the user's email from the payload
+    const email = payload.email;
+    return { statusCode: HttpStatus.OK, message: Messages.OK, success: true, email };
+  }
+  //================================= CHECKING FOR USER IS EXIST AND IN ACTIVE STATE ==========================
 
-  //======================================================================================================
+  async checkIsActiveUser(email: string): Promise<IActiveUserResponse> {
+    const isUserExist = await this.userRepository.findUserByEmail(email);
+    //checking for user exist or not!
+    if (!isUserExist) {
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: Messages.USER_NOT_FOUND,
+        success: false,
+        userData: null,
+      };
+    }
+    //checking for user blocked or not!
+    if (isUserExist.isBlock) {
+      return {
+        statusCode: HttpStatus.UNAUTHORIZED,
+        message: Messages.USER_BLOCKED,
+        success: false,
+        userData: null,
+        isBlock: true,
+      };
+    }
+    //Is user is active then send response
+    return {
+      statusCode: HttpStatus.OK,
+      message: Messages.OK,
+      success: true,
+      userData: isUserExist,
+    };
+  }
 
-  async getResendOTP(email: string): Promise<{ message: string; success: boolean }> {
-    try {
+  //======================= To generate access tocken and refresh token for the user  ======================
+  
+  async generateUserToken(userData: IUser): Promise<IGenerateUserTokenResponse> {
+    const userPayload = {
+      authUserUUID: userData.authUserUUID,
+      email: userData.email,
+      role: userData.role,
+    };
+
+    //generating tokens
+    const [accessToken, refreshToken] = await Promise.all([
+      generateAccessToken(userPayload),
+      generateRefreshToken(userPayload),
+    ]);
+    return {
+      statusCode: HttpStatus.OK,
+      message: Messages.LOGIN_SUCCESS,
+      success: true,
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  //========================================== GET RESEND OTP  ===================================================
+
+  async getResendOTP(email: string): Promise<basicResponse> {
+  
+      //verifying email with redis data 
       const verifyEmail = await getRedisData(`verifyEmail:${email}`);
       if (!verifyEmail) {
-        return { message: "user data not found", success: false };
+        return {
+            message: Messages.USER_NOT_FOUND,
+            success: false,
+            statusCode : HttpStatus.BAD_REQUEST
+          };
       }
+      //delete stored email
       await deleteRedisData(`verifyEmail:${email}`);
       const otp = generateOTP();
+      // Store verified email and otp in Redis DB either login proccess complete or 4 min
       await setRedisData(`verifyEmail:${email}`, { otp, email }, 240);
-
+      // Payload for sending OTP to notification service
       const notificationPayload = {
         email,
         type: "registration",
@@ -442,16 +495,21 @@ export class AuthService implements IAuthService {
         template: "otpTemplate",
       };
 
-      //send to notification queue
+      /**
+       * sending data to notification queuw
+       * @param queueName
+       * @param registraction_data for send
+       */
       await publishToQueue(RabbitMQConfig.notificationQueue, notificationPayload);
-
-      return { message: "Resend otp sended to email", success: true };
-    } catch (error) {
-      return { message: String(error), success: false };
-    }
+      // after success
+      return {
+        message: Messages.OTP_RESENT,
+        success: true,
+        statusCode : HttpStatus.OK
+        };
   }
 
-  // super admin login verification ==========================================================================================
+  //=========================== SUPER ADMIN LOGIN VERIFICATION ======================================================
 
   async verifySuperAdminLogin(
     email: string,
@@ -463,8 +521,9 @@ export class AuthService implements IAuthService {
     tockens?: { accessToken: string; refreshToken: string };
     role?: string;
   }> {
-    try {
-      const findUser = await this.userRepository.findByEmail(email);
+
+      // check for user existing
+      const findUser = await this.userRepository.findUserByEmail(email);
       if (!findUser) {
         return {
           message: Messages.USER_NOT_FOUND,
@@ -472,7 +531,7 @@ export class AuthService implements IAuthService {
           success: false,
         };
       }
-
+      // verifying  user email in DB with admin email in configs for double checking!
       if (findUser.email !== config.superAdminEmail) {
         return {
           message: Messages.NO_ACCESS,
@@ -489,16 +548,16 @@ export class AuthService implements IAuthService {
           statusCode: HttpStatus.BAD_REQUEST,
         };
       }
-
+      // payload for creating tokens
       const payload = {
         authUserUUID: findUser.authUserUUID,
         email: findUser.email,
         role: findUser.role,
       };
-
+      // generate tokens with payload data
       const accessToken = await generateAccessToken(payload);
       const refreshToken = await generateRefreshToken(payload);
-
+      // if success
       return {
         message: Messages.LOGIN_SUCCESS,
         statusCode: HttpStatus.OK,
@@ -506,16 +565,10 @@ export class AuthService implements IAuthService {
         tockens: { accessToken, refreshToken },
         role: findUser.role,
       };
-    } catch (error) {
-      return {
-        message: String(error),
-        success: false,
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      };
-    }
+   
   }
 
-  //====================================================================================================================
+  //==================================== VERIFY USER METHOD ========================================================
 
   async verifyUser(email: string): Promise<{
     message: string;
@@ -523,8 +576,8 @@ export class AuthService implements IAuthService {
     statusCode: number;
     accessToken?: string;
   }> {
-    try {
-      const getUser = await this.userRepository.findByEmail(email);
+      // Getting user data
+      const getUser = await this.userRepository.findUserByEmail(email);
       if (!getUser) {
         return {
           message: Messages.USER_NOT_FOUND,
@@ -532,6 +585,7 @@ export class AuthService implements IAuthService {
           success: false,
         };
       }
+      // if user is blocked!
       if (getUser.isBlock) {
         return {
           message: Messages.USER_BLOCKED,
@@ -539,13 +593,13 @@ export class AuthService implements IAuthService {
           success: false,
         };
       }
-
+      // payload for creating token
       const payload: UserData = {
         authUserUUID: getUser.authUserUUID,
         email: getUser.email,
         role: getUser.role,
       };
-
+      // generating access token with payload
       const accessToken = await generateAccessToken(payload);
 
       return {
@@ -554,31 +608,37 @@ export class AuthService implements IAuthService {
         success: true,
         accessToken,
       };
-    } catch (error) {
-      console.error("error while verifyUser", error);
-      return {
-        message: Messages.SERVER_ERROR,
-        success: false,
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      };
-    }
   }
+
+//==================================== UPDATE USER BLOCK STATUS ========================================================
+
 
   async updateUserBlockStatus(
     email: string
   ): Promise<{ message: string; success: boolean; statusCode: number; userDataPayload?: object }> {
-    try {
-      const findUser = await this.userRepository.findByEmail(email);
+
+    // Get the user detailas
+      const findUser = await this.userRepository.findUserByEmail(email);
       if (!findUser) {
-        return { message: Messages.USER_NOT_FOUND, statusCode: HttpStatus.NOT_FOUND, success: false };
+        return {
+          message: Messages.USER_NOT_FOUND,
+          statusCode: HttpStatus.NOT_FOUND,
+          success: false,
+        };
       }
+      // for updating user block status :- for that tacking current opposite status
       const getStatus: boolean = !findUser.isBlock;
-
-      const updateUser = await this.userRepository.userBlockStatusUpdate(email, getStatus);
+      // delegating to repository layer for updatin the data in db.
+      const updateUser = await this.userRepository.blockAndUnblockUserWithEmail(email, getStatus);
+      // if data not updated!
       if (!updateUser) {
-        return { message: Messages.USER_UPDATE_FAILED, statusCode: HttpStatus.BAD_REQUEST, success: false };
+        return {
+          message: Messages.USER_UPDATE_FAILED,
+          statusCode: HttpStatus.BAD_REQUEST,
+          success: false,
+        };
       }
-
+      // user data payload for sending as response
       const userDataPayload = {
         email: updateUser.email,
         isBlock: updateUser.isBlock,
@@ -586,138 +646,170 @@ export class AuthService implements IAuthService {
 
       //store the email id blacklist user in reddis
       const key = `blacklist:user:${email}`;
+      // if user is blocked true , then black listing the user
       if (updateUser.isBlock) {
         await setRedisData(key, { blacklisted: true }, 1800); // 30 min
       } else {
+      // if the user unblocked delete user from black listing
         await deleteRedisData(key);
       }
-
-      return { message: Messages.USER_UPDATE_SUCCESS, statusCode: HttpStatus.OK, success: true, userDataPayload };
-    } catch (error) {
-      return { message: Messages.SERVER_ERROR, statusCode: HttpStatus.INTERNAL_SERVER_ERROR, success: false };
-    }
+      // if success
+      return {
+        message: Messages.USER_UPDATE_SUCCESS,
+        statusCode: HttpStatus.OK,
+        success: true,
+        userDataPayload,
+      };
   }
+
+  //==================================== FORGOT PASSWORD HANDLE ========================================================
 
   async validateForgotPasswordReq(email: string): Promise<basicResponse> {
-    try {
-      const userIsExist = await this.userRepository.findByEmail(email);
-      if (!userIsExist) {
-        return { message: Messages.USER_NOT_FOUND, success: false, statusCode: HttpStatus.BAD_REQUEST };
-      }
-      //create a token using nano module
-      const token = nanoid();
-      const storeData = await setRedisData(token, userIsExist.email, 300);
-      if (storeData !== "OK") {
-        return { message: Messages.SERVER_ERROR, success: false, statusCode: HttpStatus.INTERNAL_SERVER_ERROR };
-      }
-      const notificationPayload = {
-        email: userIsExist.email,
-        type: "change-password-link",
-        resetLink: `${config.resetPasswordUrlLink}?token=${token}`,
-        subject: `Reset Password link`,
-        template: `resetPasswordTemplate`,
-      };
 
-      //send to notification queue
-      await publishToQueue(RabbitMQConfig.notificationQueue, notificationPayload);
-
+    //Get user data
+    const userIsExist = await this.userRepository.findUserByEmail(email);
+    if (!userIsExist) {
       return {
-        message: Messages.FORGOT_PASS_LINK,
-        success: true,
-        statusCode: HttpStatus.OK,
+        message: Messages.USER_NOT_FOUND,
+        success: false,
+        statusCode: HttpStatus.BAD_REQUEST,
       };
-    } catch (error) {
-      throw error;
     }
+
+    //create a token using nano module
+    const token = nanoid();
+    //storing user email with token in Reddis for verification purposes
+    const storeData = await setRedisData(token, userIsExist.email, 300);
+    // if failed to store on reddis
+    if (storeData !== "OK") {
+      return {
+        message: Messages.SERVER_ERROR,
+        success: false,
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      };
+    }
+    // payload for sending forgot password email from notification service
+    const notificationPayload = {
+      email: userIsExist.email,
+      type: "change-password-link",
+      resetLink: `${config.resetPasswordUrlLink}?token=${token}`,
+      subject: `Reset Password link`,
+      template: `resetPasswordTemplate`,
+    };
+
+    //send to notification queue with payload data
+    await publishToQueue(RabbitMQConfig.notificationQueue, notificationPayload);
+    //if it success
+    return {
+      message: Messages.FORGOT_PASS_LINK,
+      success: true,
+      statusCode: HttpStatus.OK,
+    };
   }
+
+//==================================== RESET PASSWORD HANDLE ========================================================
 
   async handleResetPassword(token: string, password: string): Promise<basicResponse> {
-    try {
-      //fetching data from reddis
-      const getEmail = await getRedisData(token);
-      if (!getEmail) {
-        return { message: Messages.TOKEN_EXPIRED, success: false, statusCode: HttpStatus.BAD_REQUEST };
-      }
-      //get hashed password
-      const getHashPassword = await hashPassword(password);
-      const updateUser = await this.userRepository.updatePasswordByEmail(getEmail, getHashPassword);
-      if (updateUser) {
-        return { message: Messages.PASSWORD_UPDATED, statusCode: HttpStatus.OK, success: true };
-      } else {
-        return { message: Messages.SERVER_ERROR, statusCode: HttpStatus.INTERNAL_SERVER_ERROR, success: false };
-      }
-    } catch (error) {
-      throw error;
+
+    //fetching data from reddis that stored on the time of verification
+    const getEmail = await getRedisData(token);
+    // if email not found in reddis DB.
+    if (!getEmail) {
+      return {
+        message: Messages.TOKEN_EXPIRED,
+        success: false,
+        statusCode: HttpStatus.BAD_REQUEST,
+      };
+    }
+    //get hashed password
+    const getHashPassword = await hashPassword(password);
+    // Delegating to the repository layer for update password
+    const updateUser = await this.userRepository.updatePasswordByEmail(getEmail, getHashPassword);
+
+    // if updated successfully
+    if (updateUser) {
+      return { 
+         message: Messages.PASSWORD_UPDATED,
+         statusCode: HttpStatus.OK,
+         success: true };
+    } else {
+    // if updating password failed
+      return {
+        message: Messages.SERVER_ERROR,
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        success: false,
+      };
     }
   }
+
+//==================================== CHANGE PASSWORD HANDLE ========================================================
 
   async changePasswordService(data: IChangePassData): Promise<basicResponse> {
-    try {
-      const { currentPassword, email, newPassword } = data;
-      const isExist = await this.userRepository.findByEmail(email);
-      console.log(isExist);
 
-      if (!isExist) {
-        return {
-          message: Messages.USER_NOT_FOUND,
-          statusCode: HttpStatus.BAD_REQUEST,
-          success: false,
-        };
-      }
-
-      const passwordMatch = await comparePassword(currentPassword, isExist.password);
-      if (!passwordMatch) {
-        return {
-          message: Messages.PASSWORD_NOT_MATCHING,
-          success: false,
-          statusCode: HttpStatus.BAD_REQUEST,
-        };
-      }
-
-      const getHashedPassword = await hashPassword(newPassword);
-      const updatePassword = await this.userRepository.changePasswordRepo(
-        { email: email },
-        { password: getHashedPassword }
-      );
-      if (!updatePassword) {
-        return {
-          message: Messages.SOMETHING_WENT_WRONG,
-          success: false,
-          statusCode: HttpStatus.BAD_REQUEST,
-        };
-      }
+    const { currentPassword, email, newPassword } = data;
+    // check user is existing
+    const isExist = await this.userRepository.findUserByEmail(email);
+    if (!isExist) {
       return {
-        message: Messages.PASSWORD_UPDATED,
-        statusCode: HttpStatus.OK,
-        success: true,
+        message: Messages.USER_NOT_FOUND,
+        statusCode: HttpStatus.BAD_REQUEST,
+        success: false,
       };
-    } catch (error) {
-      throw error;
     }
+
+    // verifying both password are matching
+    const passwordMatch = await comparePassword(currentPassword, isExist.password);
+    // if its doesn't matching
+    if (!passwordMatch) {
+      return {
+        message: Messages.PASSWORD_NOT_MATCHING,
+        success: false,
+        statusCode: HttpStatus.BAD_REQUEST,
+      };
+    }
+
+    const getHashedPassword = await hashPassword(newPassword);
+    // delegating to the repository layer for updating the password
+    const updatePassword = await this.userRepository.changePasswordRepo(
+      { email: email },
+      { password: getHashedPassword }
+    );
+    // if updation failed
+    if (!updatePassword) {
+      return {
+        message: Messages.SOMETHING_WENT_WRONG,
+        success: false,
+        statusCode: HttpStatus.BAD_REQUEST,
+      };
+    }
+    // if its success
+    return {
+      message: Messages.PASSWORD_UPDATED,
+      statusCode: HttpStatus.OK,
+      success: true,
+    };
   }
+
+//==================================== UPDATING ONE DOCUMENT ========================================================
 
   //updae one doucment
   async updateDocumentService(
     searchQuery: Record<string, any>,
     updateQuery: Record<string, any>
   ): Promise<IUpdateOneDocResp> {
-    try {
-      const response = await this.userRepository.updateOneDocument(searchQuery, updateQuery);
-      if (!response) {
-        return {
-          message: Messages.DATA_NOT_FOUND,
-          success: false,
-          statusCode: HttpStatus.BAD_REQUEST,
-        };
-      }
+    const response = await this.userRepository.updateOneDocument(searchQuery, updateQuery);
+    if (!response) {
       return {
-        message: Messages.USER_UPDATE_SUCCESS,
-        statusCode: HttpStatus.OK,
-        success: true,
-        data: response,
+        message: Messages.DATA_NOT_FOUND,
+        success: false,
+        statusCode: HttpStatus.BAD_REQUEST,
       };
-    } catch (error) {
-      throw error;
     }
+    return {
+      message: Messages.USER_UPDATE_SUCCESS,
+      statusCode: HttpStatus.OK,
+      success: true,
+      data: response,
+    };
   }
 }

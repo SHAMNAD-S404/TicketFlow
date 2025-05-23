@@ -13,6 +13,7 @@ export const Messages = {
     ENTER_VALID_INPUT : "Enter valid input !",
     DEPARTMENT_NAME_EXIST : "Department Name is already exist !",
     EMAIL_INVALID : "Email ID is invalid",
+    EMAIL_MISSING : "Email is missing",
     IMAGE_UPDATED : "Image updated successfully",
     REQUIRED_FIELD_MISSING : "Required fields are missing",
     INPUT_INVALID_OR_FIELD_MISSING : "Given input is invalid or Required fileds are missing!",
@@ -23,6 +24,7 @@ export const Messages = {
     ERROR_WHILE : "❌ Error while processing  ",
     COMPANY_SUBS_UPDATE_ERROR : "Error in company subscirption update rabbit queue",
     UPDATE_SUCCESS : "successfully updatd ",
+    ROUTE_WILD_CARD_MESSAGE : "Endpoint not found. Please check the URL.",
 
   };
   

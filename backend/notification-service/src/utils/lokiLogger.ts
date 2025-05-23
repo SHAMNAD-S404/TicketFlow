@@ -1,8 +1,8 @@
-import { createLogger,format,transports } from "winston";
+import { createLogger,format } from "winston";
 import LokiTransport from "winston-loki";
 import { loggingConfig } from "../config";
 
-
+// lOKI for sending logs to grafana
 export const Lokilogger = createLogger({
     level : "info",
     format: format.combine(

@@ -8,7 +8,9 @@ import { mainConsumer } from "./queues/consumer/mainConsumer";
 const startServer = async () => {
   try {
     await Promise.all([
-      mongoose.connect(config.mongoUri).then(() => console.log("✅ Company-service connected to the database!")),
+      mongoose
+        .connect(config.mongoUri)
+        .then(() => console.log("✅ Company-service connected to the database!")),
       connectRabbitMQ().then(() => console.log("🐇 Company-service connected to RabbitMQ!")),
     ]);
 

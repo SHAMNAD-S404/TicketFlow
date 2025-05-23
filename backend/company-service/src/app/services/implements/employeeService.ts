@@ -5,34 +5,49 @@ import { Messages } from "../../../constants/messageConstants";
 import { HttpStatus } from "../../../constants/httpStatus";
 import { IBaseResponse } from "../../interfaces/IBaseResponse";
 import {
+  AddEmployeesResponse,
+  FetchEmployeeDataResponse,
   IChangeDepartmentData,
   IEmployeeService,
   IGetEmployeeWithlessTicket,
   IUpdateProfileImage,
 } from "../interface/IEmployeeService";
 
+/**
+ * @class EmployeeService
+ * @description Implements the core business logic for managing employee-related operations.
+ * This service processes requests from controllers and interacts with data access layers
+ * (e.g., repositories) for employee data persistence and retrieval.
+ * @implements {IEmployeeService}
+ */
 
 export default class EmployeeService implements IEmployeeService {
-  async addEmployees(employeeData: IEmployee): Promise<{
-    message: string;
-    success: boolean;
-    authData?: IEmployeeAuthData;
-  }> {
-    try {
+
+//========================= CREATE EMPLOYEE DOCUMENT =============================================
+
+  async addEmployees(employeeData: IEmployee): Promise<AddEmployeesResponse> {
+
       const employeeExist = await EmployeeRepository.checkEmployeeExistByEmail(employeeData.email);
 
       if (employeeExist) {
         return {
-          message: "employee in this email id already exist ! re-verify email",
+          message: Messages.USER_ALREADY_EXIST,
           success: false,
+          statusCode : HttpStatus.BAD_REQUEST
         };
       }
-
+      // create employee docunent
       const storeEmployeeData = await EmployeeRepository.createEmployee(employeeData);
+
       if (!storeEmployeeData) {
-        return { message: "failed to create employee", success: false };
+        return {
+            message: Messages.FAIL_TRY_AGAIN,
+            success: false,
+            statusCode : HttpStatus.BAD_REQUEST
+           };
       }
 
+      // employee payload for sending to auth service queue
       const employeeAuthData: IEmployeeAuthData = {
         email: storeEmployeeData.email,
         role: storeEmployeeData.role as string,
@@ -44,48 +59,71 @@ export default class EmployeeService implements IEmployeeService {
         message: `successfully registered for ${storeEmployeeData.email}`,
         success: true,
         authData: employeeAuthData,
+        statusCode : HttpStatus.OK
       };
-    } catch (error) {
-      return { message: String(error), success: false };
-    }
+  
   }
 
-  async fetchEmployeeData(email: string): Promise<{ message: string; success: boolean; data?: IEmployee }> {
-    try {
+//========================= FETCH EMPLOYEE DATA =============================================
+
+  async fetchEmployeeData(
+    email: string
+  ): Promise<FetchEmployeeDataResponse> {
+  
       const getUserData = await EmployeeRepository.getEmployeeData(email);
+
       if (!getUserData) {
-        return { message: "employee data not found", success: false };
+        return {
+           message: Messages.USER_NOT_FOUND,
+           success: false,
+           statusCode : HttpStatus.NOT_FOUND
+          };
       }
 
       return {
-        message: "fetched successfully",
+        message: Messages.FETCH_SUCCESS,
         success: true,
         data: getUserData,
+        statusCode : HttpStatus.OK
       };
-    } catch (error) {
-      return { message: String(error), success: false };
-    }
   }
+
+//========================= UPDATE EMPLOYEE PROFILE =============================================
 
   async updateEmployeeProfile(
     email: string,
     updateData: Partial<IEmployee>
-  ): Promise<{ message: string; success: boolean; data?: IEmployee }> {
-    try {
+  ): Promise<FetchEmployeeDataResponse> {
+
       const isExist = await EmployeeRepository.findOneWithEmail(email);
+
       if (!isExist) {
-        return { message: "user not found", success: false };
+        return { 
+          message: Messages.USER_NOT_FOUND,
+          success: false,
+          statusCode : HttpStatus.NOT_FOUND
+        
+        };
       }
+      // update employee profile
       const updatedEmployee = await EmployeeRepository.getUpdatedEmployee(email, updateData);
       if (!updatedEmployee) {
-        return { message: "failed to update try agian", success: false };
+        return { 
+          message: Messages.FAIL_TRY_AGAIN,
+          success: false,
+          statusCode : HttpStatus.BAD_REQUEST
+         };
       }
 
-      return { message: "user profile updated successfull", success: true };
-    } catch (error) {
-      return { message: String(error), success: false };
-    }
+      return {
+        message: Messages.UPDATE_SUCCESS,
+        success: true,
+        statusCode : HttpStatus.OK
+      };
   }
+
+//========================= GET ALL EMPLOYEES IN A COMPANY =============================================
+
 
   async fetchAllEmployees(
     companyId: string,
@@ -98,7 +136,7 @@ export default class EmployeeService implements IEmployeeService {
     statusCode: number;
     data?: { employees: IEmployee[] | null; totalPages: number };
   }> {
-    try {
+      // get all employees in a company 
       const result = await EmployeeRepository.findAllEmployees(companyId, page, sort, searchKey);
       if (result) {
         return {
@@ -114,20 +152,15 @@ export default class EmployeeService implements IEmployeeService {
           success: false,
         };
       }
-    } catch (error) {
-      return {
-        message: Messages.SERVER_ERROR,
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        success: false,
-      };
-    }
   }
+
+//========================= EMPLOYEE BLOCK STATUS CHANGE HANDLING =============================================
 
   async employeeStatusChange(
     email: string,
     isBlock: boolean
-  ): Promise<{ message: string; success: boolean; statusCode: number }> {
-    try {
+  ): Promise<IBaseResponse> {
+
       if (!email || typeof isBlock !== "boolean") {
         return {
           message: Messages.ALL_FILED_REQUIRED_ERR,
@@ -144,7 +177,7 @@ export default class EmployeeService implements IEmployeeService {
           statusCode: HttpStatus.BAD_REQUEST,
         };
       }
-
+      // update employee status
       const updateStatus = await EmployeeRepository.updateEmployeeStatus(email, isBlock);
       if (!updateStatus) {
         return {
@@ -159,15 +192,9 @@ export default class EmployeeService implements IEmployeeService {
         success: true,
         statusCode: HttpStatus.OK,
       };
-    } catch (error) {
-      console.log("error while updating employee status :", error);
-      return {
-        message: Messages.SERVER_ERROR,
-        success: false,
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      };
-    }
   }
+
+//========================= FETCH ALL  EMPLOYEES =============================================
 
   async fetchDeptEmployees(
     companyId: string,
@@ -181,8 +208,15 @@ export default class EmployeeService implements IEmployeeService {
     statusCode: number;
     data?: { employees: IEmployee[] | null; totalPages: number };
   }> {
-    try {
-      const result = await EmployeeRepository.findEmployeeWithDept(companyId, departementId, page, sort, searchKey);
+
+    // get employees with department id
+      const result = await EmployeeRepository.findEmployeeWithDept(
+        companyId,
+        departementId,
+        page,
+        sort,
+        searchKey
+      );
 
       if (result) {
         return {
@@ -198,13 +232,13 @@ export default class EmployeeService implements IEmployeeService {
           success: false,
         };
       }
-    } catch (error) {
-      throw error;
-    }
   }
 
+//========================= UPDATE PROFILE IMAGE ===================================================
+
   async updateProfileImage(email: string, imageUrl: string): Promise<IUpdateProfileImage> {
-    try {
+
+      // update profile image url
       const result = await EmployeeRepository.updateImageUrl(email, imageUrl);
       if (result) {
         return {
@@ -220,10 +254,9 @@ export default class EmployeeService implements IEmployeeService {
           success: false,
         };
       }
-    } catch (error) {
-      throw error;
-    }
   }
+
+//========================= GET EMPLOYEES DEPARTMENT WISE =============================================
 
   async getEmployeesDeptWise(
     id: string,
@@ -234,7 +267,8 @@ export default class EmployeeService implements IEmployeeService {
     statusCode: number;
     data?: { _id: string; name: string; email: string }[];
   }> {
-    try {
+
+      // Get employees department wise
       const result = await EmployeeRepository.findEmployeesBasedOnDept(id, authUserUUID);
       if (result) {
         return {
@@ -250,16 +284,16 @@ export default class EmployeeService implements IEmployeeService {
           statusCode: HttpStatus.BAD_REQUEST,
         };
       }
-    } catch (error) {
-      throw error;
-    }
   }
 
-  async getEmployeeWithlessTicket(id: string, authUserUUID: string): Promise<IGetEmployeeWithlessTicket> {
-    try {
-      const result = await EmployeeRepository.findEmployeeWithlessTicket(id, authUserUUID);
-      
+//========================= GET EMPLOYEE WITH LESS TICKET HANDLING =============================================
 
+  async getEmployeeWithlessTicket(
+    id: string,
+    authUserUUID: string
+  ): Promise<IGetEmployeeWithlessTicket> {
+
+      const result = await EmployeeRepository.findEmployeeWithlessTicket(id, authUserUUID);
 
       return result
         ? {
@@ -273,28 +307,33 @@ export default class EmployeeService implements IEmployeeService {
             success: false,
             statusCode: HttpStatus.BAD_REQUEST,
           };
-    } catch (error) {
-      throw error;
-    }
   }
+
+//========================= UPDATE TICKET COUNT OF EMPLOYEE =============================================
 
   async updateTicketCount(id: string, value: number): Promise<IEmployee | null> {
-    try {
+   
       const updateData = await EmployeeRepository.findAndUpdateTicketCount(id, Number(value));
       return updateData ? updateData : null;
-    } catch (error) {
-      throw error;
-    }
   }
 
+//========================= CHANGE EMPLOYEE DEPARTMENT =============================================
+
   async changeDepartmentService(data: IChangeDepartmentData): Promise<IBaseResponse> {
-    try {
+   
       const { employeeId, ...updationData } = data;
       const isExist = await EmployeeRepository.findOneDoc({ _id: employeeId });
       if (!isExist) {
-        return { message: Messages.USER_NOT_FOUND, success: false, statusCode: HttpStatus.NOT_FOUND };
+        return {
+          message: Messages.USER_NOT_FOUND,
+          success: false,
+          statusCode: HttpStatus.NOT_FOUND,
+        };
       }
-      const updateData = await EmployeeRepository.changeDepartmentRepo({ _id: employeeId }, updationData);
+      const updateData = await EmployeeRepository.changeDepartmentRepo(
+        { _id: employeeId },
+        updationData
+      );
       if (!updateData) {
         return {
           message: Messages.SOMETHING_WRONG,
@@ -307,8 +346,6 @@ export default class EmployeeService implements IEmployeeService {
         success: true,
         statusCode: HttpStatus.OK,
       };
-    } catch (error) {
-      throw error;
-    }
   }
+//========================= *************************************** ==================================================
 }

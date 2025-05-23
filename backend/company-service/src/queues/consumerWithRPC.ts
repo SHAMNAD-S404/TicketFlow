@@ -30,11 +30,9 @@ export const consumeRPCRequest = async (): Promise<void> => {
 
           // Send a response to the reply queue
           if (properties.replyTo && properties.correlationId) {
-            channel.sendToQueue(
-              properties.replyTo,
-              Buffer.from(JSON.stringify(result)),
-              { correlationId: properties.correlationId }
-            );
+            channel.sendToQueue(properties.replyTo, Buffer.from(JSON.stringify(result)), {
+              correlationId: properties.correlationId,
+            });
           }
 
           // Acknowledge the message

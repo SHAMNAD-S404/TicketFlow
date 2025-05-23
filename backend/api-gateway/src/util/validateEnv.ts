@@ -21,9 +21,6 @@ export function validateEnvVariables(): void {
   if(!process.env.REDIS_PORT){
     console.error("REDIS_PORT not defined");
   }
-
-
-
   
 }
 

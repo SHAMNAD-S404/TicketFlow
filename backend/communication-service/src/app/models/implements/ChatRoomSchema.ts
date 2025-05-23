@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import IChatRoom from "../interface/IChatRoom";
 
+// MONGODB SCHEMA FOR CHAT ROOM COLLECTION
 const ChatRoomSchema: Schema = new Schema<IChatRoom>(
   {
     ticketID: {

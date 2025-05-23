@@ -4,6 +4,7 @@ import { RabbitMQConfig } from "../config/rabbitmqConfig";
 let channel: amqplib.Channel;
 let connection: amqplib.Connection;
 
+// Rabbit mq create connection and setup
 export const getRabbitMQChannel = async (): Promise<amqplib.Channel> => {
   let attempts = 0;
   const maxAttempts = 7;
@@ -19,7 +20,9 @@ export const getRabbitMQChannel = async (): Promise<amqplib.Channel> => {
       return channel;
     } catch (error) {
       attempts++;
-      console.error(`Attempt ${attempts}: Failed to connect to RabbitMQ. Retrying in ${retryDelay / 1000}s...`);
+      console.error(
+        `Attempt ${attempts}: Failed to connect to RabbitMQ. Retrying in ${retryDelay / 1000}s...`
+      );
       await new Promise((res) => setTimeout(res, retryDelay));
     }
   }

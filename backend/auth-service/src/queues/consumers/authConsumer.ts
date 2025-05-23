@@ -1,13 +1,13 @@
 import { RabbitMQConfig } from "../../config/rabbitmq";
 import { ConsumerEventType } from "../../constants/consumerEventTypes";
 import { channel } from "../connection";
-import { createAuthUserHandler,  } from "../eventHandlers/authHandler";
+import { createAuthUserHandler } from "../eventHandlers/authHandler";
 
 const eventHandlerMap: { [key: string]: (data: any) => Promise<void> } = {
   [ConsumerEventType.CREATE_AUTH_USER]: createAuthUserHandler,
-  
 };
 
+// Consumer setup for auth service
 export const authMainConsumer = async (): Promise<void> => {
   try {
 
@@ -32,7 +32,6 @@ export const authMainConsumer = async (): Promise<void> => {
       } else {
         console.warn("⚠️ No handler found for event type:", eventType);
       }
-      
 
       channel!.ack(message);
     });

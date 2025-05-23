@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { INotification } from "../interface/INotification";
 
+// MONGO DB SCHEMA FOR NOTIFICATION COLLECTION
 const NotificationSchema: Schema = new Schema<INotification>(
   {
     recipient: {

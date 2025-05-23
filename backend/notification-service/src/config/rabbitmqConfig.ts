@@ -6,6 +6,7 @@ export interface IRabbitMQConfig {
   notificationQueue: string;
 }
 
+// configs for rabbitmq
 export const RabbitMQConfig: IRabbitMQConfig = {
   url: process.env.RABBITMQ_URL as string,
   notificationQueue: process.env.NOTIFICATION_QUEUE as string,

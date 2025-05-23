@@ -1,5 +1,6 @@
-import { channel, connection } from "./connection";
+import { channel } from "./connection";
 
+//Dead letter queue implementation
 export const moveToDeadLetterQueue = async (queueName: string, message: object): Promise<void> => {
   try {
     if (!channel) {

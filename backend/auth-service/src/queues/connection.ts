@@ -4,6 +4,7 @@ import { RabbitMQConfig } from "../config/rabbitmq";
 let connection: amqplib.Connection | null = null;
 let channel: amqplib.Channel | null = null;
 
+// Setting up RabbitMQ
 export const connectRabbitMQ = async (): Promise<void> => {
   try {
     if (!connection) {

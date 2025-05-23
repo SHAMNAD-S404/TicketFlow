@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 
+// node mailer transporter setup for sending emails
 export const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {

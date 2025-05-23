@@ -1,7 +1,12 @@
 import redisClient from "../config/redis";
 
 //store data in redis
-export const setRedisData = async (key: string, value: any, ttlSeconds: number): Promise<string | undefined> => {
+export const setRedisData = async (
+  key: string,
+  value: any,
+  ttlSeconds: number
+): Promise<string | undefined> => {
+
   try {
     const data = await redisClient.setex(key, ttlSeconds, JSON.stringify(value));
     return data ? data : undefined;
@@ -12,6 +17,7 @@ export const setRedisData = async (key: string, value: any, ttlSeconds: number):
 
 //get data from redis
 export const getRedisData = async (key: string) => {
+
   try {
     const data = await redisClient.get(key);
     return data ? JSON.parse(data) : null;
@@ -23,6 +29,7 @@ export const getRedisData = async (key: string) => {
 
 //delete data from redis
 export const deleteRedisData = async (key: string) => {
+  
   try {
     await redisClient.del(key);
   } catch (error) {

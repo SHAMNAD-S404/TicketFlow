@@ -6,9 +6,11 @@ import multer from "multer";
 import { storage } from "../../storage/storage";
 import { fileFilter } from "../middlewares/multerValidation";
 
+// instance of class
 const employeeService = new EmployeeService();
 const employeeController = new EmployeeController(employeeService);
 
+// Multer setup
 const upload = multer({
       storage,
       fileFilter,
@@ -18,15 +20,15 @@ const upload = multer({
 
 const router = Router();
 
-router.post("/add-employee",extractUserData,employeeController.createEmployee)
-      .get("/get-user",extractUserData,employeeController.getEmployeeData)
-      .patch("/update-profile",employeeController.updateEmployee)
-      .get("/get-all-employees",extractUserData,employeeController.getAllEmployees)
-      .get("/get-department-employee",extractUserData,employeeController.getDepartmentWiseEmployees)
-      .post("/upload-dp",extractUserData,upload.single('file'),employeeController.uploadProfileImage)
-      .get("/get-employee-by-department",extractUserData,employeeController.getEmployeesByDept)
-      .get("/get-employee-by-less-ticket",extractUserData,employeeController.fetchEmployeeWithlessTicket)
-      .patch("/change-department",extractUserData,employeeController.changeDepartment)
+router.post  ("/add-employee",extractUserData,employeeController.createEmployee)
+      .get   ("/get-user",extractUserData,employeeController.getEmployeeData)
+      .patch ("/update-profile",employeeController.updateEmployee)
+      .get   ("/get-all-employees",extractUserData,employeeController.getAllEmployees)
+      .get   ("/get-department-employee",extractUserData,employeeController.getDepartmentWiseEmployees)
+      .post  ("/upload-dp",extractUserData,upload.single('file'),employeeController.uploadProfileImage)
+      .get   ("/get-employee-by-department",extractUserData,employeeController.getEmployeesByDept)
+      .get   ("/get-employee-by-less-ticket",extractUserData,employeeController.fetchEmployeeWithlessTicket)
+      .patch ("/change-department",extractUserData,employeeController.changeDepartment)
 
 
 export default router;

@@ -2,6 +2,7 @@ import { transporter } from "../config/nodemailer";
 import ejs from 'ejs';
 import path from 'path';
 
+// dynamic function for sending emails according to payload
 export const sendEmail = async (to: string, subject: string, templateName: string,templateData:object) => {
     try {
         const templatePath = path.join(__dirname,`../templates/${templateName}.ejs`);

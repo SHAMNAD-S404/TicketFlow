@@ -1,9 +1,8 @@
-
-
 import { RabbitMQConfig } from "../config/rabbitmqConfig";
 import { processMessage } from "./messageHandler";
 import { getRabbitMQChannel } from "./connection";
 
+// consumer for listen events from rabbitmq queue
 export const startConsumerQueue = async (): Promise<void> => {
   try {
     const channel = await getRabbitMQChannel();

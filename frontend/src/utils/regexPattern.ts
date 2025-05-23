@@ -17,7 +17,7 @@ const regexPatterns: TregexPatterns = {
   name: /^[a-zA-Z][a-zA-Z\s]*$/, // Only alphabets and spaces
   nameAndNumber: /^[a-zA-Z0-9 ]+$/,
   email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, // Standard email validation
-  phoneNumber: /^(\+?\d{1,3}[- ]?)?(6|7|8|9)\d{9}$/ , // Numbers only, supports optional "+" prefix
+  phoneNumber: /^[6-9]\d{9}$/, // Numbers only, 
   password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/, // 8-15 chars, must contain letters and numbers
   corporateId: /^[A-Za-z0-9]+$/, // Alphanumeric
   textWithSpaceAndCommas: /^[a-zA-Z][a-zA-Z\s,]*$/,
@@ -57,7 +57,7 @@ export const RegexMessages : regexPatternMessages = {
 
   nameRegexMessage : "Only alphabates and spaces allowed.Enter valid name",
   emailRegexMessage : "Enter a valid email id!!",
-  phoneNumberRegexMessage : "Enter a valid phone number !!",
+  phoneNumberRegexMessage : "Enter a valid phone number! number must be 10 digit, prefix not allowed!",
   nameAndNumberRegexMessage : " alphabates , number  are only allowed .",
   passwordRegexMessage : "must contain letter and number length should we between 8-15 .",
   corporateIdRegexMessage: " Alphates and number only allowed",

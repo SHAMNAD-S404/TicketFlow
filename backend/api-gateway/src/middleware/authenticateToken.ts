@@ -5,6 +5,7 @@ import { getRedisData } from "../util/redisUtils";
 import { HttpStatus } from "../const/httpStatus";
 import { Messages } from "../const/messages";
 
+// interface for jwt payload
 interface JwtPayload {
   userId?: string;
   role?: string;
@@ -12,16 +13,23 @@ interface JwtPayload {
   [key: string]: any;
 }
 
-export const authenticateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+// middleware for authenticate jwt token
+export const authenticateToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
+    //getting token
     const token = req.cookies.accessToken || req.headers.authorization?.split(" ")[1];
 
     if (!token) {
-      res.status(403).json({ message: "Unauthorized: Token not found" });
+      res.status(HttpStatus.FORBIDDEN).json({ message: Messages.TOKEN_NOT_FOUND });
       return;
     }
-
+    //decode jwt token
     const decoded = jwt.verify(token, config.jwtSecret) as JwtPayload;
+    //extracting user data
     const userInfo = {
       authUserUUID: decoded.authUserUUID,
       role: decoded.role,
@@ -56,6 +64,5 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
   } catch (error) {
     console.error("Authentication Error:", error);
     res.status(403).json({ message: "Invalid or expired token" });
-    return;
   }
 };

@@ -15,22 +15,40 @@ export interface IGetEmployeeWithlessTicket extends IBaseResponse {
 }
 
 export interface IChangeDepartmentData {
-  employeeId : string,
-  departmentId : string,
-  departmentName : string
+  employeeId: string;
+  departmentId: string;
+  departmentName: string;
+}
+
+export interface AddEmployeesResponse extends IBaseResponse {
+  authData?: IEmployeeAuthData
+}
+
+export interface FetchEmployeeDataResponse extends IBaseResponse {
+  data?: IEmployee
 }
 
 
-export interface IEmployeeService {
-  addEmployees(employeeData: IEmployee): Promise<{ message: string; success: boolean; authData?: IEmployeeAuthData }>;
+//========================= INTERFACE FOR EMPLOYEE SERVICE =============================================
 
-  fetchEmployeeData(email: string): Promise<{ message: string; success: boolean; data?: IEmployee }>;
+export interface IEmployeeService {
+
+  addEmployees(
+    employeeData: IEmployee
+  ): Promise<AddEmployeesResponse>;
+
+
+  fetchEmployeeData(
+    email: string
+  ): Promise<FetchEmployeeDataResponse>;
+  
 
   updateEmployeeProfile(
     email: string,
     updateData: Partial<IEmployee>
-  ): Promise<{ message: string; success: boolean; data?: IEmployee }>;
+  ): Promise<FetchEmployeeDataResponse>;
 
+  
   fetchAllEmployees(
     companyId: string,
     page: number,
@@ -72,8 +90,7 @@ export interface IEmployeeService {
 
   getEmployeeWithlessTicket(id: string, authUserUUID: string): Promise<IGetEmployeeWithlessTicket>;
 
-  updateTicketCount(id:string,value:number) : Promise<IEmployee | null>
+  updateTicketCount(id: string, value: number): Promise<IEmployee | null>;
 
-  changeDepartmentService(data:IChangeDepartmentData) : Promise<IBaseResponse>
-
+  changeDepartmentService(data: IChangeDepartmentData): Promise<IBaseResponse>;
 }

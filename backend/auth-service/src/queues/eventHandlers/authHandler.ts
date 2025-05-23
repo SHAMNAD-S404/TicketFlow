@@ -3,13 +3,6 @@ import { generatePassword } from "../../utils/generatePassword";
 import { hashPassword } from "../../utils/hashUtils";
 import { publishToQueue } from "../publisher";
 import { RabbitMQConfig } from "../../config/rabbitmq";
-import { AuthService } from "../../app/services/implementations/authService";
-import { IAuthService } from "../../app/services/interface/IAuthService";
-import { UserRepository } from "../../app/repositories/implements/userRepository";
-import { IUserRepository } from "../../app/repositories/interface/IUserRepository";
-
-const userRepo = new UserRepository();
-const authService: IAuthService = new AuthService(userRepo);
 
 export interface IUpdateSubsData {
   eventType: string;
@@ -52,5 +45,3 @@ export const createAuthUserHandler = async (data: any) => {
     console.error("❌ Error creating auth user:", error);
   }
 };
-
-

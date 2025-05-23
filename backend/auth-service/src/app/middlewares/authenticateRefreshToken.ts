@@ -12,42 +12,35 @@ interface JwtPayload {
   [key: string]: any;
 }
 
-export const verifyRefreshToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+// middleware for verifying the refresh token
+
+export const verifyRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
     //extraction the token from the cookie
     const refreshToken = req.cookies.refreshToken;
-
     if (!refreshToken) {
       res
         .status(HttpStatus.UNAUTHORIZED)
         .json({ message: Messages.TOKEN_NOT_FOUND, success: false });
-        return;
+      return;
     }
 
     //checking for the refresh token is black listed or not
     const key = `blacklist:token:${refreshToken}`;
     const tokenStatus = await getRedisData(key);
 
-    if(tokenStatus?.blacklisted) {
-      res.status(HttpStatus.UNAUTHORIZED)
-      .json({message : Messages.TOKEN_INVALID,success : false});
+    if (tokenStatus?.blacklisted) {
+      res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.TOKEN_INVALID, success: false });
       return;
     }
 
     //decoding user info
-    const decode = jwt.verify(
-      refreshToken,
-      config.jwtRefreshSecret
-    ) as JwtPayload;
-
+    const decode = jwt.verify(refreshToken, config.jwtRefreshSecret) as JwtPayload;
+    // if token doesn't have required data
     if (!decode.authUserUUID || !decode.email || !decode.role) {
       throw new Error("Invalid Token payload");
     }
-
+    // creating payload from jwt token
     const userInfo: JwtPayload = {
       authUserUUID: decode.authUserUUID,
       email: decode.email,
@@ -60,9 +53,7 @@ export const verifyRefreshToken = async (
     next();
   } catch (error) {
     console.error("refresh token verification failed", error);
-    res
-      .status(HttpStatus.UNAUTHORIZED)
-      .json({ message: Messages.TOKEN_INVALID, success: false });
+    res.status(HttpStatus.UNAUTHORIZED).json({ message: Messages.TOKEN_INVALID, success: false });
     return;
   }
 };

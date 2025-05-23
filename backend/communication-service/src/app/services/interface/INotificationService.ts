@@ -8,10 +8,12 @@ export interface INotificationData {
     relatedId : string;
 }
 
+//========================= INTERFACE FOR NOTIFICATION SERVICE =============================================
+
 export interface INotificationService {
-    createNotification(data : INotificationData) : Promise<INotification>;
-    getNotifications(userId : string, limit?: number) : Promise<INotification[]>;
-    getUnreadCount(userId : string) : Promise<number>;
-    markAsRead(notificationId : string) : Promise<INotification | null>
-    markAllAsRead(userId : string) : Promise<void>;
+    createNotification  ( data : INotificationData) : Promise<INotification>;
+    getNotifications    ( userId : string, limit?: number) : Promise<INotification[]>;
+    getUnreadCount      ( userId : string) : Promise<number>;
+    markAsRead          ( notificationId : string) : Promise<INotification | null>
+    markAllAsRead       ( userId : string) : Promise<void>;
 }

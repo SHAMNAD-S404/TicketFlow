@@ -39,5 +39,8 @@ const ticketShiftReqScheam: Schema = new Schema<ITicketShiftReq>(
   { timestamps: true }
 );
 
-const TicketShiftReqModel = mongoose.model<ITicketShiftReq & Document>("ticketShiftRequests", ticketShiftReqScheam);
+const TicketShiftReqModel = mongoose.model<ITicketShiftReq & Document>(
+  "ticketShiftRequests",
+  ticketShiftReqScheam
+);
 export default TicketShiftReqModel;

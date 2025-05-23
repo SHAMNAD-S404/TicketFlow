@@ -1,6 +1,5 @@
 import {z} from "zod";
 import { regexPatterns } from "./regexPatterns";
-import departement from "../repositories/implements/departement";
 
 export const fetchDeptEmployeesSchema = z.object({
     id : z.string().trim().min(8).max(50).regex(regexPatterns.alphabatesAndNumberOnly),

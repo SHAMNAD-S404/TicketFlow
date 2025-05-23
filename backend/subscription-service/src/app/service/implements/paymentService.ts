@@ -17,16 +17,28 @@ import {
   orderDetailsResponse,
 } from "../interface/IPaymentService";
 
-
+// INSTANCE PAYMENT REPO CLASS
 const paymentRepo: IPaymentRepo = new PaymentRepo();
 
+// STRIPE INSTANCE
 const stipe = new Stripe(secrets.stripe_secret_key, {
   apiVersion: "2025-03-31.basil",
 });
 
+
+/**
+ * @class PaymentService
+ * @description Implements the core business logic for managing payment-related operations.
+ * This service processes requests from controllers and interacts with data access layers
+ * (e.g., repositories) for payment data persistence and retrieval.
+ * @implements {IPaymentService}
+ */
+
 export class PaymentService implements IPaymentService {
+
+//========================= CREATE CHECKOUT SESSION =============================================
   async createCheckoutSession(data: CreateCheckoutDTO): Promise<any> {
-    try {
+    
       const session = await stipe.checkout.sessions.create({
         payment_method_types: ["card"],
         mode: "payment",
@@ -56,13 +68,12 @@ export class PaymentService implements IPaymentService {
         cancel_url: data.cancelUrl,
       });
       return session;
-    } catch (error) {
-      throw error;
-    }
   }
 
+//========================= HANLDE SUCCESSFUL PAYMENT ==============================================
+
   async handleSuccessfulPayment(session: Stripe.Checkout.Session): Promise<IBaseResponse> {
-    try {
+    
       const metadata = session.metadata;
       if (!metadata) {
         return {
@@ -72,6 +83,7 @@ export class PaymentService implements IPaymentService {
         };
       }
 
+      // Creating Payment Data for storing in DB
       const paymentData: IPayment = {
         authUserUUID: metadata.authUserUUID,
         companyName: metadata.companyName,
@@ -87,22 +99,21 @@ export class PaymentService implements IPaymentService {
         stripePaymentIntentId: session.payment_intent?.toString() || "",
       };
 
+      // store data in DB.
       const storeData = await paymentRepo.create(paymentData);
       if (storeData) {
 
         //payload for sending to company queue
         const companyPayload = {
-          eventType : "subscription-purchase-update",
-          companyUUID : storeData.authUserUUID,
-          subscriptionPlan : storeData.plan,
-          subscriptionEndDate : storeData.planEndDate,
-          isSubscriptionExpired : false
-        }
-      
+          eventType: "subscription-purchase-update",
+          companyUUID: storeData.authUserUUID,
+          subscriptionPlan: storeData.plan,
+          subscriptionEndDate: storeData.planEndDate,
+          isSubscriptionExpired: false,
+        };
 
         //publish to company queue
-        publishToQueue(RabbitMQConfig.COMPANY_QUEUE,companyPayload)
-
+        publishToQueue(RabbitMQConfig.COMPANY_QUEUE, companyPayload);
 
         return {
           message: Messages.PURCHASE_SUCCESS,
@@ -116,13 +127,12 @@ export class PaymentService implements IPaymentService {
           success: false,
         };
       }
-    } catch (error) {
-      throw error;
-    }
   }
+//========================= GET ORDER DETAILS OF  PAYMENT  =============================================
 
   async getOrderDetailsService(sessionId: string): Promise<orderDetailsResponse> {
-    try {
+
+     //FIND ONE DOCUMENT 
       const result = await paymentRepo.findOneDocument({ stripeSessionId: sessionId });
       if (result) {
         return {
@@ -138,15 +148,12 @@ export class PaymentService implements IPaymentService {
           success: false,
         };
       }
-    } catch (error) {
-      throw error;
-    }
   }
 
-  // to fetch the all payment history by authUserUUID
+//========================= GET ALL PAYMENT HISTORY =============================================
 
   async getAllPaymentHistoryService(authUserUUID: string): Promise<IPaymentHistoryRes> {
-    try {
+    
       const result = await paymentRepo.getAllPaymentsByAuthUUID(authUserUUID);
       if (result) {
         return {
@@ -162,18 +169,16 @@ export class PaymentService implements IPaymentService {
           statusCode: HttpStatus.NOT_FOUND,
         };
       }
-    } catch (error) {
-      throw error;
-    }
   }
 
-  //to get the total orders and total revanue
+//========================= GET REVANUE COUNT ======================================================
+
   async getRevanueAndCount(): Promise<IRevanuAndCountResp> {
-    try {
+    
       const [revenue, order] = await Promise.all([
         paymentRepo.getTotalRevanue(),
-         paymentRepo.getTotalOrdersCount()
-        ]);
+        paymentRepo.getTotalOrdersCount(),
+      ]);
       if (!revenue || !order) {
         return {
           message: Messages.DATA_NOT_FOUND,
@@ -190,8 +195,6 @@ export class PaymentService implements IPaymentService {
           totalRevenue: revenue,
         },
       };
-    } catch (error) {
-      throw error;
-    }
   }
+//========================= ******************************** =============================================
 }

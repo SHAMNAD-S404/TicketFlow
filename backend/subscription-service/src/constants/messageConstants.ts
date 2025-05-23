@@ -29,6 +29,7 @@ export const Messages = {
     DATABASE_CONNECT_FAIL : "❌ Database connnection establishion failed !!",
     START_SERVER_ERROR : "❌ Error starting server:",
     USER_BLOCKED: "Your are blocked from TicketFlow, Please contact support",
+    ROUTE_WILD_CARD_MESSAGE : "Endpoint not found. Please check the URL.",
 
   } as const;
   

@@ -33,8 +33,7 @@ export const companySubscriptionUpdate = async (data: ISubsriptionUpdate) => {
       { authUserUUID: companyUUID },
       { subscriptionPlan, subscriptionEndDate, isSubscriptionExpired }
     );
-    console.log("company updated" , updateSubsStatus);
-    
+    console.log("company updated", updateSubsStatus);
   } catch (error) {
     console.log(`${Messages.COMPANY_SUBS_UPDATE_ERROR} :`, error);
   }

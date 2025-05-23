@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 
-//Hash the password
+//Hash the password utility function
 export async function hashPassword(password: string): Promise<string> {
   try {
     return bcrypt.hash(password, 10);
@@ -9,6 +9,7 @@ export async function hashPassword(password: string): Promise<string> {
   }
 }
 
+// hashed password compare utility fn.
 export async function comparePassword(
   plainPassword: string,
   hashedPassword: string

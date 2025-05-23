@@ -5,33 +5,40 @@ import { IPaymentRepo } from "../interface/IPaymentRepo";
 
 const prisma = new PrismaClient();
 
+/**
+ * @class PaymentRepo
+ * @description Manages data access operations for the Payment entity.
+ * This class provides a concrete implementation for interacting with the payment collection in the database.
+ * @implements {IPaymentRepo}
+ */
+
 export class PaymentRepo implements IPaymentRepo {
+
+//========================= CREATE DOCUMENT ==========================================================
+
   async create(payment: IPayment): Promise<IPayment> {
-    try {
+    
       const createdPayment = await prisma.payment.create({
         data: payment,
       });
       return createdPayment;
-    } catch (error) {
-      throw error;
-    }
   }
 
+//========================= FIND ONE DOCUMENT =========================================================
+
   async findOneDocument(filter: { stripeSessionId: string }): Promise<IPayment | null> {
-    try {
+    
       return await prisma.payment.findFirst({
         where: {
           stripeSessionId: filter.stripeSessionId,
         },
       });
-    } catch (error) {
-      throw error;
-    }
   }
 
-  // to get all payment details based on the authUserUUID Field
+//========================= GET ALL PAYMENTS BY UUID ====================================================
+
   async getAllPaymentsByAuthUUID(authUserUUID: string): Promise<IPaymentResponseDTO[] | null> {
-    try {
+
       const payments = await prisma.payment.findMany({
         where: {
           authUserUUID,
@@ -48,30 +55,25 @@ export class PaymentRepo implements IPaymentRepo {
         take: 7,
       });
       return payments;
-    } catch (error) {
-      throw error;
-    }
   }
 
-  //to get the total revanue
+//========================= GET TOTOAL REVANUE ==========================================================
+ 
   async getTotalRevanue(): Promise<number> {
-    try {
+
       const result = await prisma.$queryRaw<
         Array<{ total: string | null }>
       >`SELECT SUM(CAST(amount AS FLOAT)) as total FROM "Payment"`;
 
       return parseFloat(result[0]?.total ?? "0");
-    } catch (error) {
-      throw error;
-    }
   }
 
-  //to get total rows count
-  async getTotalOrdersCount(): Promise<number> {
-    try {
+//========================= TOTAL ORDERS COUNT =========================================================
+ 
+  async getTotalOrdersCount(): Promise<number> {   
       return await prisma.payment.count();
-    } catch (error) {
-      throw error;
-    }
   }
+
+//========================= INTERFACE FOR CHAT CONTROLLER ===============================================
+
 }

@@ -19,7 +19,9 @@ export const connectRabbitMQ = async (): Promise<amqplib.Channel> => {
       return channel;
     } catch (error) {
       attempts++;
-      console.error(`Attempt ${attempts}: Failed to connect to RabbitMQ. Retrying in ${retryDelay / 1000}s...`);
+      console.error(
+        `Attempt ${attempts}: Failed to connect to RabbitMQ. Retrying in ${retryDelay / 1000}s...`
+      );
       await new Promise((res) => setTimeout(res, retryDelay));
     }
   }

@@ -19,7 +19,7 @@ export interface IFindAllTicketForEmployeeRaised {
   page: number;
   sortBy: string;
   searchQuery: string;
-  ticketRaisedEmployeeId:string
+  ticketRaisedEmployeeId: string;
 }
 
 export interface ITicketRepository extends IBaseRepository<ITicket> {
@@ -48,20 +48,31 @@ export interface ITicketRepository extends IBaseRepository<ITicket> {
 
   ticketReassign(data: ITicketReassignData): Promise<ITicket | null>;
 
-  findAndupdateStatus(id: string, status: string, ticketResolutions?: string): Promise<ITicket | null>;
+  findAndupdateStatus(
+    id: string,
+    status: string,
+    ticketResolutions?: string
+  ): Promise<ITicket | null>;
 
   updateOnTicketClose(updateData: IupdateOnTicketClose): Promise<ITicket | null>;
 
-  editTicketRepo(id:string,udpateData : Record<string,string>) : Promise<ITicket | null>;
+  editTicketRepo(id: string, udpateData: Record<string, string>): Promise<ITicket | null>;
 
-  getAverageResolutionTime (fieldName : string,fieldValue : string) : Promise<string>
+  getAverageResolutionTime(fieldName: string, fieldValue: string): Promise<string>;
 
-  getDynamicTicketStatusCounts ( fieldName : string, fieldValue : string, statuses : string[] ) : Promise<StatusCount>
+  getDynamicTicketStatusCounts(
+    fieldName: string,
+    fieldValue: string,
+    statuses: string[]
+  ): Promise<StatusCount>;
 
-  getDepartmentTicketCounts ( filedName : string, fieldValue : string ) : Promise<StatusCount>;
+  getDepartmentTicketCounts(filedName: string, fieldValue: string): Promise<StatusCount>;
 
-  getUnResolvedTicketsByPriority (fieldName : string,fieldValue : string) : Promise<StatusCount>;
+  getUnResolvedTicketsByPriority(fieldName: string, fieldValue: string): Promise<StatusCount>;
 
-  getTopGroupCount (mathchField : string, matchValue : string,groupField : string) : Promise<{name:string,count:number}>
-
+  getTopGroupCount(
+    mathchField: string,
+    matchValue: string,
+    groupField: string
+  ): Promise<{ name: string; count: number }>;
 }

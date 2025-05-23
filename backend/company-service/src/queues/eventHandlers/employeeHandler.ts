@@ -9,29 +9,28 @@ export interface IEmployeeStatus {
 }
 
 interface IupdateEmployeeTicketStatus {
-  eventType : string,
-  employeeId : string,
-  value : string
+  eventType: string;
+  employeeId: string;
+  value: string;
 }
 
-
 export const employeeStatusUpdate = async (data: IEmployeeStatus) => {
-  try {  
-    const updateEmployee = await employeeService.employeeStatusChange(
-      data.email,
-      data.isBlock
-    );
+  try {
+    const updateEmployee = await employeeService.employeeStatusChange(data.email, data.isBlock);
     console.log(updateEmployee);
   } catch (error) {
     console.log("error while employeeHandler udpate : ", error);
   }
 };
 
-export const updateEmployeeTicketStatus = async (data : IupdateEmployeeTicketStatus) => {
+export const updateEmployeeTicketStatus = async (data: IupdateEmployeeTicketStatus) => {
   try {
-    const updateTicket = await employeeService.updateTicketCount(data.employeeId,Number(data.value));
-    console.log(updateTicket)
+    const updateTicket = await employeeService.updateTicketCount(
+      data.employeeId,
+      Number(data.value)
+    );
+    console.log(updateTicket);
   } catch (error) {
     console.log("error while update employee ticket udpate : ", error);
   }
-}
+};

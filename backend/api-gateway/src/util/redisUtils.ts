@@ -1,7 +1,11 @@
 import redisClient from "../config/redis";
 
 //store data in redis
-export const setRedisData = async (key: string, value: any, ttlSeconds: number): Promise<string | undefined> => {
+export const setRedisData = async (
+  key: string,
+  value: any,
+  ttlSeconds: number
+): Promise<string | undefined> => {
   try {
     const data = await redisClient.setex(key, ttlSeconds, JSON.stringify(value));
     return data ? data : undefined;

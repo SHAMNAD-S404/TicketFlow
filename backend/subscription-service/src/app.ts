@@ -13,12 +13,12 @@ const stream = {
   },
 };
 
-
 dotenv.config();
 validateEnvVariables();
 
 const app = express();
 
+// Parsing cookies
 app.use(cookieParser());
 app.use(morgan("combined", { stream }));
 
@@ -27,6 +27,7 @@ app.get("/health", (req, res) => {
   Lokilogger.info("Health check route accessed");
   res.status(200).send("OK");
 });
+
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   console.log("Incoming Request Path in ticket-service", req.path);

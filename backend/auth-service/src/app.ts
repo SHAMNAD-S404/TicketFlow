@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import express, { Request as req, Response as res, NextFunction, ErrorRequestHandler } from "express";
+import express from "express";
 import { validateEnvVariables } from "./utils/validateEnv";
 import authRoutes from "./app/routes/authRoutes";
 import cookieParser from "cookie-parser";
@@ -18,7 +18,7 @@ validateEnvVariables();
 
 const app = express();
 
-app.use(express.json()); //  to parse data
+app.use(express.json()); // to parse data
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 

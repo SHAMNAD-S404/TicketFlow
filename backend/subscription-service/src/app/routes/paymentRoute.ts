@@ -1,10 +1,11 @@
-import express, { Router } from "express";
+import express, { Router  } from "express";
 import { PaymentController } from "../controllers/implementations/paymentController";
 import { IPaymentController } from "../controllers/interface/IPaymentController";
 import { PaymentService } from "../service/implements/paymentService";
 import { IPaymentService } from "../service/interface/IPaymentService";
 import { authenticateToken } from "../middlewares/authenticateToken";
 import { extractUserData } from "../middlewares/extractUserData";
+
 
 
 //dependency injection
@@ -26,5 +27,7 @@ router.post ("/create-checkout-session",authenticateToken,paymentController.crea
       .get  ("/get-order-details",authenticateToken,extractUserData,paymentController.getOrderDetails)
       .get  ("/get-purchase-history",authenticateToken,extractUserData,paymentController.fetchOrderHistory)
       .get  ("/get-subscription-statics",authenticateToken,extractUserData,paymentController.fetchSubsStatics)
+
+      
 
 export default router;

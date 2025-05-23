@@ -39,6 +39,9 @@ const menuConfig: { [key: string]: { name: string; icon: React.ReactNode }[] } =
 };
 
 const Sidebar: React.FC<SidebarProps> = ({ role, onMenuSelect, isSubscriptionExpired = false, activeMenu }) => {
+
+  console.log("subss : ",isSubscriptionExpired);
+  
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
 
   const rawMenuItems = menuConfig[role] || [];

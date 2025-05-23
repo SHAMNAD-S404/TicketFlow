@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Tooltips from "../utility/Tooltips";
 import { useForm } from "react-hook-form";
-import regexPatterns from "../../utils/regexPattern";
+import regexPatterns, { RegexMessages } from "../../utils/regexPattern";
 import { IsignupForm } from "../../types/auth";
 import { signupUser } from "../../api/services/authService";
 import { toast } from "react-toastify";
@@ -75,8 +75,6 @@ const SignupForm: React.FC = () => {
 
           <form className="space-y-4" onSubmit={handleSubmit(formSubmit)}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* All inputs below remain same, wrapped in <div> */}
-              {/* Just one shown here as example, you keep rest unchanged */}
               <div>
                 <label className="text-sm font-semibold text-gray-600 flex gap-1 items-center">
                   Enter Company Name <Tooltips message="Only Contain Alphabates and numbers" />
@@ -86,14 +84,24 @@ const SignupForm: React.FC = () => {
                   placeholder="Ticket India Ltd"
                   className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                   {...register("companyName", {
-                    required: "Company name is required",
+                    required: RegexMessages.FEILD_REQUIRED,
+                    minLength: {
+                      value: 4,
+                      message: RegexMessages.MINIMUM_LIMIT,
+                    },
+                    maxLength: {
+                      value: 15,
+                      message: RegexMessages.MAXIMUM_LIMIT_REACHED,
+                    },
                     pattern: {
                       value: regexPatterns.nameAndNumber,
-                      message: "Only alphabets and numbers allowed",
+                      message: RegexMessages.nameAndNumberRegexMessage,
                     },
                   })}
                 />
-                {errors.companyName && <p className="text-red-500 text-sm">{errors.companyName.message}</p>}
+                {errors.companyName && (
+                  <p className="text-red-500 text-sm">{errors.companyName.message}</p>
+                )}
               </div>
 
               <div>
@@ -102,7 +110,7 @@ const SignupForm: React.FC = () => {
                   className="w-full p-2 mt-1  bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 "
                   defaultValue=""
                   {...register("companyType", {
-                    required: "Please select a company type",
+                    required: RegexMessages.FEILD_REQUIRED,
                   })}>
                   <option value="" disabled>
                     Select a company type
@@ -114,7 +122,9 @@ const SignupForm: React.FC = () => {
                   <option value="Manufacturing">Manufacturing</option>
                   <option value="Retail">Retail</option>
                 </select>
-                {errors.companyType && <p className="text-red-500 text-sm">{errors.companyType.message}</p>}
+                {errors.companyType && (
+                  <p className="text-red-500 text-sm">{errors.companyType.message}</p>
+                )}
               </div>
 
               <div>
@@ -124,17 +134,19 @@ const SignupForm: React.FC = () => {
                 </label>
                 <input
                   type="tel"
-                  placeholder="+91 234 567 890"
+                  placeholder="745 896 5874"
                   className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                   {...register("phoneNumber", {
-                    required: "Phone number is required",
+                    required: RegexMessages.FEILD_REQUIRED,
                     pattern: {
                       value: regexPatterns.phoneNumber,
-                      message: "Only number are allowed",
+                      message: RegexMessages.phoneNumberRegexMessage,
                     },
                   })}
                 />
-                {errors.phoneNumber && <p className="text-red-500 text-sm"> {errors.phoneNumber.message} </p>}
+                {errors.phoneNumber && (
+                  <p className="text-red-500 text-sm"> {errors.phoneNumber.message} </p>
+                )}
               </div>
 
               <div>
@@ -147,14 +159,24 @@ const SignupForm: React.FC = () => {
                   placeholder="L01631KA2010PTC096843"
                   className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                   {...register("corporatedId", {
-                    required: "CIN is required",
+                    required: RegexMessages.FEILD_REQUIRED,
+                    minLength: {
+                      value: 6,
+                      message: RegexMessages.MINIMUM_LIMIT,
+                    },
+                    maxLength: {
+                      value: 15,
+                      message: RegexMessages.MAXIMUM_LIMIT_REACHED,
+                    },
                     pattern: {
                       value: regexPatterns.nameAndNumber,
-                      message: "Only alphabated and numbers are allowed ",
+                      message: RegexMessages.nameAndNumberRegexMessage,
                     },
                   })}
                 />
-                {errors.corporatedId && <p className="text-red-500 text-sm">{errors.corporatedId.message}</p>}
+                {errors.corporatedId && (
+                  <p className="text-red-500 text-sm">{errors.corporatedId.message}</p>
+                )}
               </div>
 
               <div>
@@ -185,14 +207,24 @@ const SignupForm: React.FC = () => {
                   placeholder="Eg: India"
                   className="w-full p-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
                   {...register("originCountry", {
-                    required: "Origin of Country is required",
+                    required: RegexMessages.FEILD_REQUIRED,
+                    minLength: {
+                      value: 3,
+                      message: RegexMessages.MINIMUM_LIMIT,
+                    },
+                    maxLength: {
+                      value: 15,
+                      message: RegexMessages.MAXIMUM_LIMIT_REACHED,
+                    },
                     pattern: {
                       value: regexPatterns.name,
-                      message: "Only characters are allowed",
+                      message: RegexMessages.nameRegexMessage,
                     },
                   })}
                 />
-                {errors.originCountry && <p className="text-red-500 text-sm">{errors.originCountry.message}</p>}
+                {errors.originCountry && (
+                  <p className="text-red-500 text-sm">{errors.originCountry.message}</p>
+                )}
               </div>
 
               <div>
@@ -229,7 +261,9 @@ const SignupForm: React.FC = () => {
                     {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
-                {errors.password && <p className="text-red-500 text-sm"> {errors.password.message} </p>}
+                {errors.password && (
+                  <p className="text-red-500 text-sm"> {errors.password.message} </p>
+                )}
               </div>
 
               <div>
@@ -254,7 +288,9 @@ const SignupForm: React.FC = () => {
                     {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
-                {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>
+                )}
               </div>
             </div>
 

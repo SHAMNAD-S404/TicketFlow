@@ -28,6 +28,7 @@ export const Messages = {
     REQ_EXIST : "The Request already exist ! try again",
     REQ_SUBMITED : "Request submitted successfully ! ",
     REQ_REJECTED : "Request reject successfully !",
+    ROUTE_WILD_CARD_MESSAGE : "Endpoint not found. Please check the URL.",
 
   } as const;
   

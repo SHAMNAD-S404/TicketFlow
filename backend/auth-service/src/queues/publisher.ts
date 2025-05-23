@@ -1,5 +1,8 @@
 import { channel } from "./connection";
 
+/** 
+  * @description Publishes a message to a specified RabbitMQ queue asynchronously.
+  */
 export const publishToQueue = async (queueName: string, message: object): Promise<void> => {
   try {
     if (!channel) {

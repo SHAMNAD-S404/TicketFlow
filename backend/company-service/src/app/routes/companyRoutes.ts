@@ -6,24 +6,25 @@ import multer from "multer";
 import {storage} from '../../storage/storage'
 import {fileFilter } from "../middlewares/multerValidation"
 
-
-
+//Instances class for company service and admin controller
 const companyService = new CompanyService()
 const adminController = new AdminController(companyService);
 
+// Multer setup
 const upload = multer({
       storage,
       fileFilter,
       limits : {fileSize : 3* 1024 * 1024},
       });
 
+
 const router = Router();
 
-router.get("/get-user",extractUserData,adminController.getUserData)
-      .patch("/update-profile",adminController.updateCompany)
-      .get("/get-all-companies",extractUserData,adminController.fetchAllCompany)
-      .post("/upload-dp",extractUserData,upload.single('file'),adminController.uploadProfileImage)
-      .get ("/get-company-subs-statics",extractUserData,adminController.fetchSubsStats)
+router.get   ("/get-user",extractUserData,adminController.getUserData)
+      .patch ("/update-profile",adminController.updateCompany)
+      .get   ("/get-all-companies",extractUserData,adminController.fetchAllCompany)
+      .post  ("/upload-dp",extractUserData,upload.single('file'),adminController.uploadProfileImage)
+      .get   ("/get-company-subs-statics",extractUserData,adminController.fetchSubsStats)
      
 
 

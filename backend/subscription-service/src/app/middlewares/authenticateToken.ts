@@ -12,7 +12,11 @@ interface JwtPayload {
   [key: string]: any;
 }
 
-export const authenticateToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const authenticateToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const token = req.cookies.accessToken || req.headers.authorization?.split(" ")[1];
 

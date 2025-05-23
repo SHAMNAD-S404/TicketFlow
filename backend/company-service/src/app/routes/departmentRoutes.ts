@@ -7,6 +7,7 @@ import { IDepartmentController } from "../controllers/interface/IDepartmentContr
 import { ICompanyService } from "../services/interface/ICompanyService";
 import { IDepartmentService } from "../services/interface/IDepartmentService";
 
+// Instance of department service, company service and department controller
 const departementServices : IDepartmentService = new DepartmentService();
 const companyService : ICompanyService = new CompanyService();
 const departmentController : IDepartmentController = new DepartmentController(departementServices, companyService);

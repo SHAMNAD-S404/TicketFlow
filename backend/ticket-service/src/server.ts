@@ -6,9 +6,10 @@ import { connectRabbitMQ } from "./queues/rabbitConnection";
 const startServer = async () => {
   try {
     await Promise.all([
-      mongoose.connect(config.mongoUri).then(() => console.log("✅ Ticket-service connected to the database!")),
-      connectRabbitMQ().then(() => console.log("🐇 Ticket-service connected to RabbitMQ!")
-      )
+      mongoose
+        .connect(config.mongoUri)
+        .then(() => console.log("✅ Ticket-service connected to the database!")),
+      connectRabbitMQ().then(() => console.log("🐇 Ticket-service connected to RabbitMQ!")),
     ]);
 
     app.listen(config.port, () => {

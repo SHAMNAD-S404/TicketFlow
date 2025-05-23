@@ -1,21 +1,23 @@
-import {  Router  } from "express";
+import {  Router , Request, Response  } from "express";
 import { AuthController } from "../controllers/implementations/AuthController";
 import { AuthService } from "../services/implementations/authService";
 import { UserRepository } from "../repositories/implements/userRepository";
 import { authenticateToken } from "../middlewares/authenticateToken";
 import { extractUserData } from "../middlewares/extractUserData";
 import { verifyRefreshToken } from "../middlewares/authenticateRefreshToken";
+import { HttpStatus } from "../../constants/httpStatus";
+import { Messages } from "../../constants/messageConstants";
 
 
 const router = Router();
 
-// Dependency setup
+// Creating instance of classes with depedencies
 const userRepository = new UserRepository(); 
 const authService = new AuthService(userRepository);
 const authController = new AuthController(authService);
 
 
-//Routes
+//Routes Mapping
 router.post ("/signup",authController.registerUser)
       .post ("/verify-otp",authController.verifyOTP)
       .post ("/login",authController.verifyLogin)
@@ -33,6 +35,15 @@ router.post ("/signup",authController.registerUser)
       .post ('/forgot-password',authController.forgotPasswordHandle)
       .post ("/reset-password",authController.resetPassword)
       .patch("/change-password",authenticateToken,authController.changePassword)
+
+
+// Catch all for unknown routes
+router.use("*",(req : Request, res : Response) => {
+      res.status(HttpStatus.NOT_FOUND).json({
+        message : Messages.ROUTE_WILD_CARD_MESSAGE,
+        success : false,
+      });
+});
 
 
 export default router;

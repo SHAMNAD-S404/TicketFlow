@@ -25,6 +25,7 @@ export const Messages = {
     NOTIFICATION_CREATED : "Notification created successfully",
     ERROR_PUBLISH_MSSG :  "Error in publishing the message to queue !",
     CHANNEL_NOT_AVILABLE :  "Channle is not avilable",
+    ROUTE_WILD_CARD_MESSAGE : "Endpoint not found. Please check the URL.",
   
   };
   

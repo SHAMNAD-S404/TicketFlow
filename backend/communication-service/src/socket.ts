@@ -9,6 +9,7 @@ import NotificationService from "./app/services/implements/notificationService";
 import { INotificationService } from "./app/services/interface/INotificationService";
 import Messages from "./constants/Messages";
 
+
 // Creating http server from express app
 const server = http.createServer(app);
 
@@ -19,6 +20,7 @@ const io = new Server(server, {
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   },
+
   // Set the path to match what's expected from the gateway
   path: "/socket.io",
   pingTimeout: 60000,
@@ -29,6 +31,8 @@ const io = new Server(server, {
   },
 });
 
+
+//instance of chat service class
 const chatService = new ChatService();
 //instance of notificaiton service
 const notificationService: INotificationService = new NotificationService();
@@ -46,7 +50,7 @@ io.on("connection", (socket: Socket) => {
   // Initialize rooms set for this socket
   socketRooms.set(socket.id, new Set());
 
-  //**********************************  NOTIFICATION  */
+  //**********************************  NOTIFICATION  ***********************************************/
   //register user for notifications
   socket.on("register_user", (userId: string) => {
     if (!userId) return;
@@ -83,7 +87,7 @@ io.on("connection", (socket: Socket) => {
     console.log(`User ${socket.id} joined room ${ticketID}`);
   });
 
-  //****************************************     SOCKET FN FOR MESSAGE       */
+  //****************************************     SOCKET FN FOR MESSAGE       ***********************/
   // Handle sending a message
   socket.on("send_message", async (data: IMessageData) => {
     try {
@@ -107,7 +111,7 @@ io.on("connection", (socket: Socket) => {
     }
   });
 
-  //************************* NOTIFICATOIN EVENTS  */
+  //************************* NOTIFICATOIN EVENTS  ************************************************/
 
   //fetch notifications for a user
   socket.on("fetch_notification", async (userId: string, limit: number = 10) => {
@@ -165,7 +169,8 @@ io.on("connection", (socket: Socket) => {
   });
 });
 
-// function to send a notification to a specific user
+//========================= SEND NOTIFICATION TO A SPECIFIC USER =============================================
+
 export const sendUserNotification = async (userId: string, notificaitonData: any) => {
   try {
     //save notification to db

@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import express from "express";
+import express,{Request,Response} from "express";
 import cors from "cors";
 import proxy from "express-http-proxy";
 import { createProxyMiddleware } from "http-proxy-middleware";
@@ -12,21 +12,25 @@ import morgan from "morgan";
 import http from "http";
 import rateLimit from "express-rate-limit";
 import { Messages } from "./const/messages";
-
+import { HttpStatus } from "./const/httpStatus";
 
 dotenv.config();
 validateEnvVariables();
 
 const app = express();
 
-// for health check
+//========================= HEALTH CHECK ENDPOINT ===========================================
+
 app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
 
+//========================= FOR COOKIE PARSIN ===============================================
+
 app.use(cookieParser());
 
-// RATE LIMITTING
+//========================= RATE LIMITTING SETUP =============================================
+
 app.set("trust proxy", 1);
 
 const apiLimiter = rateLimit({
@@ -43,21 +47,32 @@ const apiLimiter = rateLimit({
 //use rate limiting middleware
 app.use(apiLimiter);
 
+//========================= LOGGING SETUP CONFIGS =============================================
+
 app.use(logger);
 app.use(morgan("dev"));
 
-// Set up CORS
+//========================= CORS CONFIGURATIONS ===============================================
+
+// Configure CORS Policy
 app.use(
   cors({
-    origin: ["https://ticketflow.shamnad.site", config.frontend_URL, config.frontend_production_url],
+    origin: [
+      "https://ticketflow.shamnad.site",
+      config.frontend_URL,
+      config.frontend_production_url,
+    ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-//  HTTP server from Express app
+//========================= CREAT HTTP SERVER USING EXPESS APP =====================================
+
 const server = http.createServer(app);
+
+//========================= SOCKET PROXY CONFIGURATIONS ============================================
 
 // Socket.IO proxy for the communication service
 const socketProxy = createProxyMiddleware({
@@ -67,10 +82,11 @@ const socketProxy = createProxyMiddleware({
   pathRewrite: { "^/socket.io": "/socket.io" },
 });
 
+//========================= ROUTE MAPPING FOR SERVICES =============================================
+
 //  proxy middleware
 app.use("/socket.io", socketProxy);
 
-// Standard REST API routes using express-http-proxy
 // AUTH SERVICE
 app.use("/auth", proxy(config.authServiceUrl));
 
@@ -85,5 +101,17 @@ app.use("/communication", authenticateToken, proxy(config.communicationServiceUr
 
 // SUBSCRIPTION SERVICE
 app.use("/subscription", proxy(config.subscription_service, { parseReqBody: false }));
+
+//========================= CATCH ALL FOR UNKNKNOW ROUTES ===============================================
+
+app.use("*",(req : Request, res : Response) => {
+  res.status(HttpStatus.NOT_FOUND).json({
+    message : Messages.ROUTE_WILD_CARD_MESSAGE,
+    success : false,
+  });
+});
+
+//========================= ***************************** ================================================
+
 
 export { app, server };

@@ -6,12 +6,9 @@ export interface UserData {
   email: string;
 }
 
-export const extractUserData = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-    
+// middleware for access jwt data from custom header and assign them into req queries
+export const extractUserData = (req: Request, res: Response, next: NextFunction) => {
+
   const userInfo = req.headers["x-user-data"];
   if (userInfo && typeof userInfo === "string") {
     const parsedUserInfo = JSON.parse(userInfo) as UserData;
@@ -25,5 +22,5 @@ export const extractUserData = (
     }
   }
 
-  next();
+  next(); // forward to next middleward
 };
