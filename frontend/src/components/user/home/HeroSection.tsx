@@ -18,20 +18,22 @@ const HeroSection: React.FC<HeroSectionProps> = ({ heading, text, image, reverse
   const textOpacity = useTransform(scrollYProgress, [0, 0.3, 0.4, 0.5], [1, 1, 0.8, 0.6]);
 
   useEffect(() => {
-    setDisplayedText(""); // reset before typing
-
+    setDisplayedText(""); // Reset before typing
+  
     let currentIndex = 0;
-    const interval = setInterval(() => {
-      if (currentIndex >= text.length) {
-        clearInterval(interval);
-        return;
+    let timeoutId: NodeJS.Timeout;
+  
+    const typeNextChar = () => {
+      if (currentIndex < text.length) {
+        setDisplayedText((prev) => prev + text.charAt(currentIndex));
+        currentIndex++;
+        timeoutId = setTimeout(typeNextChar, 20);
       }
-
-      setDisplayedText((prev) => prev + text.charAt(currentIndex));
-      currentIndex++;
-    }, 20);
-
-    return () => clearInterval(interval);
+    };
+  
+    typeNextChar(); // Start typing
+  
+    return () => clearTimeout(timeoutId); // Cleanup on unmount
   }, [text]);
 
   return (
