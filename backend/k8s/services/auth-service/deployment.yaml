@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: auth-service
-        image: shamnads306/ticketflow-auth-service:v1.0.3
+        image: shamnads306/ticketflow-auth-service:v1.0.4
         ports:
           - containerPort: 4000
         envFrom:

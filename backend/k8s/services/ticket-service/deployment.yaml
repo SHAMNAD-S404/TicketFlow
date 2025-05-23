@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: ticket-service
-        image: shamnads306/ticketflow-ticket-service:v1.0.2
+        image: shamnads306/ticketflow-ticket-service:v1.0.3
         ports:
           - containerPort: 4400
         envFrom:
