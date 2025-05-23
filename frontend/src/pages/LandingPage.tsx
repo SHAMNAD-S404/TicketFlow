@@ -25,7 +25,7 @@ const LandingPage: React.FC = () => {
       <div ref={homeRef}>
         <HeroSection
           heading="Streamline Communication with Our IT Ticketing System"
-          text=" O ur IT Ticketing System enhances inter-departmental collaboration by providing a seamless platform for 
+          text="....Our IT Ticketing System enhances inter-departmental collaboration by providing a seamless platform for 
             reporting and resolving issues. With real-time updates, chat functionality, and comprehensive analytics, 
             teams can work together more efficiently and effectively."
           image={heroImage}
@@ -34,7 +34,7 @@ const LandingPage: React.FC = () => {
 
       <HeroSection
         heading="Great Customer Service starts with a Powerful Helpdesk Software"
-        text=" I s it one of those days? Sticky notes all over and the phone won’t stop  ringing?  
+        text="....Is it one of those days? Sticky notes all over and the phone won’t stop  ringing?  
               TicketFlow is the helpdesk software of the future and helps you find structure in the chaos.
               Connect all your communication channels, easily grant user rights, and receive helpful reporting.
               Have everything under control  and your customers under your spell. Discover the TicketFlow ticketing system now!"
