@@ -32,7 +32,7 @@ const EmployeeDashboard: React.FC = () => {
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Yes,Confirm",
-        cancelButtonText: "No,Canel",
+        cancelButtonText: "No,Cancel",
         reverseButtons: true,
       });
       if (result.isConfirmed) {

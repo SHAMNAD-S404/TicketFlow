@@ -3,10 +3,11 @@ import { useForm } from "react-hook-form";
 import { updateCompanyProfile } from "../../../../api/services/companyService";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { Rootstate ,AppDispatch } from "../../../../redux store/store";
+import { Rootstate, AppDispatch } from "../../../../redux store/store";
 import { useDispatch } from "react-redux";
 import { fetchCompany } from "../../../../redux store/userSlice";
 import getErrMssg from "@/components/utility/getErrMssg";
+import regexPatterns, { RegexMessages } from "@/utils/regexPattern";
 
 interface ProfileEditProps {
   onCancel: () => void;
@@ -49,11 +50,10 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ onCancel }) => {
         onCancel();
         toast.success(response.message);
         //update the context to store latest date
-        dispatch(fetchCompany())
-        
+        dispatch(fetchCompany());
       }
     } catch (error) {
-      toast.error(getErrMssg(error))
+      toast.error(getErrMssg(error));
     }
   };
 
@@ -63,33 +63,38 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ onCancel }) => {
         <h2 className="text-xl font-bold text-gray-800 mb-4">Edit Profile</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Company Name
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Company Name</label>
             <input
               type="text"
               {...register("companyName", {
                 required: "Company Name is required",
+                minLength: {
+                  value: 5,
+                  message: RegexMessages.MINIMUM_LIMIT,
+                },
+                maxLength: {
+                  value: 20,
+                  message: RegexMessages.MAXIMUM_LIMIT_REACHED,
+                },
+                pattern: {
+                  value: regexPatterns.name,
+                  message: RegexMessages.nameRegexMessage,
+                },
               })}
               className="w-full mt-1 p-2 border rounded-lg"
             />
             {errors.companyName && (
-              <p className="text-red-500 text-sm">
-                {errors.companyName.message}
-              </p>
+              <p className="text-red-500 text-sm">{errors.companyName.message}</p>
             )}
           </div>
 
           <div>
-            <label className="text-sm font-semibold text-gray-600">
-              Choose company type
-            </label>
+            <label className="text-sm font-semibold text-gray-600">Choose company type</label>
             <select
               className="w-full p-2 mt-1 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
               {...register("companyType", {
                 required: "Please select a company type",
-              })}
-            >
+              })}>
               <option value="" disabled>
                 Select a company type
               </option>
@@ -101,63 +106,77 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ onCancel }) => {
               <option value="Retail">Retail</option>
             </select>
             {errors.companyType && (
-              <p className="text-red-500 text-sm">
-                {errors.companyType.message}
-              </p>
+              <p className="text-red-500 text-sm">{errors.companyType.message}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Phone Number
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Phone Number</label>
             <input
               type="text"
               {...register("phoneNumber", {
                 required: "Phone Number is required",
+                pattern: {
+                  value: regexPatterns.phoneNumber,
+                  message: RegexMessages.phoneNumberRegexMessage,
+                },
               })}
               className="w-full mt-1 p-2 border rounded-lg"
             />
             {errors.phoneNumber && (
-              <p className="text-red-500 text-sm">
-                {errors.phoneNumber.message}
-              </p>
+              <p className="text-red-500 text-sm">{errors.phoneNumber.message}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Corporate ID
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Corporate ID</label>
             <input
               type="text"
               {...register("corporatedId", {
                 required: "Corporate ID is required",
+                minLength: {
+                  value: 8,
+                  message: RegexMessages.MINIMUM_LIMIT,
+                },
+                maxLength: {
+                  value: 12,
+                  message: RegexMessages.MAXIMUM_LIMIT_REACHED,
+                },
+                pattern: {
+                  value: regexPatterns.corporateId,
+                  message: RegexMessages.corporateIdRegexMessage,
+                },
               })}
               className="w-full mt-1 p-2 border rounded-lg"
             />
             {errors.corporatedId && (
-              <p className="text-red-500 text-sm">
-                {errors.corporatedId.message}
-              </p>
+              <p className="text-red-500 text-sm">{errors.corporatedId.message}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Origin Country
-            </label>
+            <label className="block text-sm font-medium text-gray-700">Origin Country</label>
             <input
               type="text"
               {...register("originCountry", {
                 required: "Origin Country is required",
+                minLength: {
+                  value: 3,
+                  message: RegexMessages.MINIMUM_LIMIT,
+                },
+                maxLength: {
+                  value: 15,
+                  message: RegexMessages.MAXIMUM_LIMIT_REACHED,
+                },
+                pattern: {
+                  value: regexPatterns.name,
+                  message: RegexMessages.nameRegexMessage,
+                },
               })}
               className="w-full mt-1 p-2 border rounded-lg"
             />
             {errors.originCountry && (
-              <p className="text-red-500 text-sm">
-                {errors.originCountry.message}
-              </p>
+              <p className="text-red-500 text-sm">{errors.originCountry.message}</p>
             )}
           </div>
 
@@ -165,14 +184,12 @@ const ProfileEdit: React.FC<ProfileEditProps> = ({ onCancel }) => {
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg"
-            >
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg">
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600"
-            >
+              className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
               Save Changes
             </button>
           </div>
