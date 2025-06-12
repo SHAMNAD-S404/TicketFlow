@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaArrowLeft, FaMapMarkerAlt, FaGlobeAmericas, FaRegCalendarAlt } from "react-icons/fa";
+import { FaUserTie, FaMapMarkerAlt, FaGlobeAmericas, FaRegCalendarAlt } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { IoIosMail } from "react-icons/io";
 import { FaPhone, FaBriefcase } from "react-icons/fa6";
@@ -98,7 +98,7 @@ const ProfileUI: React.FC = () => {
           <header>
             <div className="flex justify-between items-center mb-8">
               <button className="hover:bg-purple-100 p-2 rounded-full transition-colors">
-                <FaArrowLeft className="w-6 h-6 text-gray-600" />
+                <FaUserTie className="w-6 h-6 text-gray-600" />
               </button>
               <button
                 className="text-green-500 hover:text-green-600 font-medium flex items-center gap-1"
