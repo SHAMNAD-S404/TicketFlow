@@ -47,7 +47,7 @@ const ManageTicketUI: React.FC<IManageTicketUI> = ({
           </div>
           <div className="w-1/4">
             <h1 className="font-bold text-center">Ticket Raised for</h1>
-            <div className="bg-gray-200 rounded-lg w-full h-2/6">
+            <div className="bg-gray-200 rounded-lg w-full h-4/6">
               <textarea
                 readOnly
                 className="text-white bg-black/90 p-3 w-full h-full rounded-lg bg-gray-00 font-mono "
@@ -64,7 +64,7 @@ const ManageTicketUI: React.FC<IManageTicketUI> = ({
           </div>
           <div className="w-1/4">
             <h1 className=" font-bold text-center ">Ticket description :</h1>
-            <div className="bg-white rounded-lg w-full h-2/6">
+            <div className="bg-white rounded-lg w-full h-4/6">
               <textarea
                 readOnly
                 className="text-white bg-black/90 p-3 w-full h-full rounded-lg font-mono "
@@ -84,7 +84,7 @@ const ManageTicketUI: React.FC<IManageTicketUI> = ({
             <>
               <div className="w-1/4">
                 <h1 className="font-bold text-center">Resolutions Provided :</h1>
-                <div className="bg-gray-200 rounded-lg w-full h-2/6">
+                <div className="bg-gray-200 rounded-lg w-full h-4/6">
                   <textarea
                     readOnly
                     className="text-white bg-black/90 p-3 w-full h-full rounded-lg bg-gray-00 font-mono "
