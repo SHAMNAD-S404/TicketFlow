@@ -134,7 +134,7 @@ const ManageTicketUI: React.FC<IManageTicketUI> = ({
             </>
           )}
         </div>
-        <div className="flex justify-center  ">
+        <div className="flex justify-center mt-12">
           <button
             className={`bg-blue-600 mt-16  hover:bg-green-500  transition-opacity duration-300  text-white p-2 font-semibold rounded-xl w-1/5
                     ${isVisible ? "opacity-100" : "opacity-0 pointer-events-none"}   `}
