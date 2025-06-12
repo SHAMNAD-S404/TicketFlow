@@ -66,7 +66,7 @@ const EmployeeDashboard: React.FC = () => {
           userId={employee._id}
         />
 
-        <div className="p-2 bg-gray-100  flex-1">
+        <div className="flex-1 overflow-y-auto bg-gray-100 p-2">
           <Outlet />
         </div>
       </div>
