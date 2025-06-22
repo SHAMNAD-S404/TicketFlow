@@ -15,10 +15,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - ticketflow-api.shamnad.site
+        - ticketflow-api.shamnads.site
       secretName: api-tls-cert  
   rules:
-    - host: ticketflow-api.shamnad.site
+    - host: ticketflow-api.shamnads.site
       http:
         paths:
           - path: /(.*)

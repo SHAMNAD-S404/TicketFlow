@@ -61,6 +61,7 @@ app.use(
       "https://ticketflow.shamnad.site",
       config.frontend_URL,
       config.frontend_production_url,
+      config.FRONTEND_PRODUCTION_URL2
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,

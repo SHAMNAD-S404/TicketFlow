@@ -13,7 +13,7 @@ data:
     org_role = Viewer
     
     [server]
-    root_url = https://grafana.ticketflow-api.shamnad.site
+    root_url = https://grafana.ticketflow-api.shamnads.site
     
     [datasources]
     datasources.yaml:

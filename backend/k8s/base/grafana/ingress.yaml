@@ -13,10 +13,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - grafana.ticketflow-api.shamnad.site
-      secretName: grafana-tls-cert
+        - grafana.ticketflow-api.shamnads.site
+      secretName: grafana-tls-cert-shamnads
   rules:
-    - host: grafana.ticketflow-api.shamnad.site
+    - host: grafana.ticketflow-api.shamnads.site
       http:
         paths:
           - path: /
