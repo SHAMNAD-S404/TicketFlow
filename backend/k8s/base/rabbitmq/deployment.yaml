@@ -30,11 +30,15 @@ spec:
             command: ["rabbitmqctl", "status"]
           initialDelaySeconds: 20
           periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 5
         readinessProbe:
           exec:
             command: ["rabbitmqctl", "status"]
           initialDelaySeconds: 15
           periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 5
       volumes:
         - name: rabbitmq-storage
           persistentVolumeClaim:
