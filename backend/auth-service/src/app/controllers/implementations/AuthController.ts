@@ -38,11 +38,18 @@ export class AuthController implements IAuthController {
       // validating input using ZOD
       const validateInput = registerUserDTOSchema.safeParse(req.body);
       // return if input data is incorrect
-      if(!validateInput.success){
-        res.status(HttpStatus.BAD_REQUEST)
-        .json({message:Messages.ALL_FILED_REQUIRED_ERR,success:false});
+      if (!validateInput.success) {
+        const errors = validateInput.error.errors.map(err => ({
+          field: err.path.join('.'),
+          message: err.message,
+        }));
+        console.log(`error in validation input ${errors}`)
+        res.status(HttpStatus.BAD_REQUEST).json({
+          success: false,
+           message: Messages.ALL_FILED_REQUIRED_ERR,
+        });
         return;
-      } 
+      }      
       // Remove confirmPassword from the req.body
       delete registerData.confirmPassword;  
       // Delegate user creation to the service layer

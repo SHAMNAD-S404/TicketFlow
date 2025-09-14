@@ -130,7 +130,7 @@ const SignupForm: React.FC = () => {
               <div>
                 <label className="text-sm font-semibold text-gray-600 flex items-center gap-1  ">
                   Enter Phone number
-                  <Tooltips message="Numbers only allowed" />
+                  <Tooltips message="Number only, start with 6,7,8,9 numbers" />
                 </label>
                 <input
                   type="tel"

@@ -5,6 +5,7 @@ import authRoutes from "./app/routes/authRoutes";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import { logger } from "./utils/logger";
+import { customLogger } from "./utils/customLogger";
 
 //custom Morgan stream using winston
 const stream = {
@@ -24,6 +25,9 @@ app.use(cookieParser());
 
 //morgan setup
 app.use(morgan("combined", { stream }));
+
+//logging req & res
+app.use(customLogger)
 
 // FOR HEALT CHECK
 app.get("/health", (req, res) => {

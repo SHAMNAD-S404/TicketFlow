@@ -19,7 +19,7 @@ export const changePasswordSchema = z.object({
 export const registerUserDTOSchema = z.object({
     email : z.string().trim().email(),
     password : z.string().trim().regex(regexPatterns.password).min(8).max(15),
-    companyName : z.string().trim().regex(regexPatterns.nameAndNumber).min(8).max(15),
+    companyName : z.string().trim().regex(regexPatterns.nameAndNumber).min(4).max(15),
     companyType : z.string().trim(),
     phoneNumber : z.string().trim().regex(regexPatterns.phoneNumber),
     corporatedId: z.string().trim().regex(regexPatterns.nameAndNumber).min(6).max(15),
