@@ -27,7 +27,6 @@ const regexPatterns: TregexPatterns = {
   newPasswordValidation : /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
   newLoginPassValidation : /^[A-Za-z0-9@#*&%]+$/,
 
-
 };
 
 

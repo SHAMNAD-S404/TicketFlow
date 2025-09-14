@@ -24,7 +24,7 @@ const LandingPage: React.FC = () => {
 
       <div ref={homeRef}>
         <HeroSection
-          heading="Streamline Communication with Our IT Ticketing System"
+          heading="Shamand Communication with Our IT Ticketing System"
           text="....Our IT Ticketing System enhances inter-departmental collaboration by providing a seamless platform for 
             reporting and resolving issues. With real-time updates, chat functionality, and comprehensive analytics, 
             teams can work together more efficiently and effectively."

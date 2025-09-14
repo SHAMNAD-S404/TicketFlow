@@ -18,11 +18,11 @@ export const changePasswordSchema = z.object({
 //=================================   Register user schema ====================================
 export const registerUserDTOSchema = z.object({
     email : z.string().trim().email(),
-    password : z.string().trim().regex(regexPatterns.newPassword).min(8).max(15),
+    password : z.string().trim().regex(regexPatterns.password).min(8).max(15),
     companyName : z.string().trim().regex(regexPatterns.nameAndNumber).min(8).max(15),
     companyType : z.string().trim(),
     phoneNumber : z.string().trim().regex(regexPatterns.phoneNumber),
-    corporatedId: z.string().trim().regex(regexPatterns.nameAndNumber).min(8).max(15),
+    corporatedId: z.string().trim().regex(regexPatterns.nameAndNumber).min(6).max(15),
     originCountry : z.string().trim().regex(regexPatterns.name).min(3).max(15)
 
 });
